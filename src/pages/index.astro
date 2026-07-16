@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Talk from '../components/Talk.astro';
+---
+<BaseLayout>
+  <main>
+    <!-- HERO -->
+    <div class="hero">
+      <div>
+        <span class="eyebrow">JAPAN IN NUMBERS</span>
+        <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
+        <p class="lead">Countopia（カウントピア）は、日本の公的統計を「へぇ」と眺めて遊ぶ国。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
+        </div>
+      </div>
+      <div class="stamp-area" aria-hidden="true">
+        <div class="stamp">
+          <span class="top">IMMIGRATION</span>
+          <span class="big">COUNTOPIA</span>
+          <span class="date">2026.07</span>
+          <span class="bottom">入国を許可する</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 案内人 -->
+    <section id="guide">
+      <div class="sec-head">
+        <span class="no">GUIDE</span>
+        <h2>この国の案内人</h2>
+      </div>
+      <Talk speaker="kei">ようこそCountopiaへ。この国では、数字はぜんぶ「景色」です。</Talk>
+      <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
+      <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+.hero{
+  display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
+  padding:72px 0 40px;
+}
+@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}}
+.eyebrow{
+  display:inline-block;font-size:.72rem;letter-spacing:.28em;
+  color:var(--ink-soft);border:1px solid var(--line);
+  padding:4px 12px;border-radius:99px;margin-bottom:20px;background:#fff9;
+}
+h1{
+  font-family:"Shippori Mincho",serif;font-weight:800;
+  font-size:clamp(2rem,5.2vw,3.4rem);line-height:1.35;letter-spacing:.04em;
+}
+h1 .num{color:var(--stamp)}
+.lead{margin-top:20px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
+.hero-actions{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+.stamp-area{display:flex;justify-content:center}
+.stamp{
+  width:min(240px,60vw);aspect-ratio:1;border-radius:50%;
+  border:5px double var(--stamp);color:var(--stamp);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  transform:rotate(-8deg);background:#fff5;
+  animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .3s both;
+}
+@keyframes stampIn{from{transform:rotate(-8deg) scale(1.7);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.stamp{animation:none}}
+.stamp .top{font-size:.65rem;letter-spacing:.34em;font-weight:600}
+.stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5rem;letter-spacing:.08em}
+.stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8rem;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:2px 10px;margin-top:4px}
+.stamp .bottom{font-size:.62rem;letter-spacing:.28em;margin-top:2px}
+</style>

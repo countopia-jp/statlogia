@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- 橙子(とうこ) 仮アバター: 大正の女学生 -->
+  <defs>
+    <clipPath id="c2"><circle cx="50" cy="50" r="48"/></clipPath>
+  </defs>
+  <circle cx="50" cy="50" r="48" fill="#F3E2C7"/>
+  <g clip-path="url(#c2)">
+    <!-- 髪(焦げ茶ショートボブ) -->
+    <path d="M50 14 C31 14 24 28 25 42 C26 54 30 60 33 62 L34 46 C40 40 60 40 66 46 L67 62 C70 60 74 54 75 42 C76 28 69 14 50 14 Z" fill="#5C3A28"/>
+    <!-- 顔 -->
+    <ellipse cx="50" cy="45" rx="16.5" ry="17" fill="#F9E8D8"/>
+    <!-- 前髪ぱっつん気味 -->
+    <path d="M50 24 C39 24 34 32 34.5 41 C39 35 44 33.5 50 33.5 C56 33.5 61 35 65.5 41 C66 32 61 24 50 24 Z" fill="#5C3A28"/>
+    <!-- サイドの髪 -->
+    <path d="M33 40 C31 48 32 56 35 62 L38 60 C36 54 35.5 47 36 41 Z" fill="#5C3A28"/>
+    <path d="M67 40 C69 48 68 56 65 62 L62 60 C64 54 64.5 47 64 41 Z" fill="#5C3A28"/>
+    <!-- 朱リボン(頭頂やや右) -->
+    <path d="M58 15 L50 10 L52 20 Z" fill="#B3402A"/>
+    <path d="M58 15 L66 10 L64 20 Z" fill="#B3402A"/>
+    <circle cx="58" cy="15" r="2.6" fill="#8E3122"/>
+    <!-- 目(まんまる好奇心) -->
+    <circle cx="43.5" cy="47" r="2.6" fill="#3A2418"/>
+    <circle cx="56.5" cy="47" r="2.6" fill="#3A2418"/>
+    <circle cx="44.3" cy="46.2" r="0.9" fill="#FFFFFF"/>
+    <circle cx="57.3" cy="46.2" r="0.9" fill="#FFFFFF"/>
+    <!-- 開いた口(元気) -->
+    <path d="M46 54 Q50 58 54 54 Q52 59 50 59 Q48 59 46 54 Z" fill="#B3402A"/>
+    <!-- 頬の赤み -->
+    <circle cx="37" cy="51" r="2.6" fill="#EFB5A0" opacity="0.8"/>
+    <circle cx="63" cy="51" r="2.6" fill="#EFB5A0" opacity="0.8"/>
+    <!-- 朱の着物(合わせ)+山吹の帯 -->
+    <path d="M22 100 C22 78 34 70 50 70 C66 70 78 78 78 100 Z" fill="#C0562F"/>
+    <path d="M50 70 L38 84 L36 78 L46 68 Z" fill="#F2E7D8"/>
+    <path d="M50 70 L62 84 L64 78 L54 68 Z" fill="#F2E7D8"/>
+    <path d="M50 71 L40 82 L50 100 L60 82 Z" fill="#C99A2E"/>
+    <!-- 着物の小花 -->
+    <circle cx="31" cy="88" r="1.7" fill="#F2E7D8"/>
+    <circle cx="69" cy="90" r="1.7" fill="#F2E7D8"/>
+    <circle cx="27" cy="96" r="1.4" fill="#F2E7D8"/>
+    <circle cx="73" cy="98" r="1.4" fill="#F2E7D8"/>
+  </g>
+  <circle cx="50" cy="50" r="48" fill="none" stroke="#8E3122" stroke-width="2.5"/>
+</svg>

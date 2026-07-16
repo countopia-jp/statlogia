@@ -1,0 +1,29 @@
+---
+// 掛け合い用コンポーネント
+// 使い方: <Talk speaker="kei">セリフ</Talk> / <Talk speaker="touko">セリフ</Talk>
+// img を差し替えれば全記事のアイコンが一斉に更新される(原画完成時はここだけ変更)
+const { speaker = 'kei' } = Astro.props;
+const profiles = {
+  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei.svg',   side: 'left'  },
+  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko.svg', side: 'right' },
+  // 旧名の互換
+  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei.svg',   side: 'left'  },
+  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko.svg', side: 'right' },
+};
+const p = profiles[speaker] ?? profiles.kei;
+---
+<div class={`say ${p.side === 'right' ? 'right' : ''}`}>
+  <img class="face" src={p.img} alt={p.name} width="52" height="52" loading="lazy" />
+  <div>
+    <span class="name">{p.name}</span>
+    <div class="bubble"><slot /></div>
+  </div>
+</div>
+
+<style>
+.say{display:flex;gap:14px;align-items:flex-start;max-width:640px;margin:14px 0}
+.say.right{margin-left:auto;flex-direction:row-reverse}
+.face{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--paper)}
+.bubble{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;font-size:.9rem}
+.name{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--ink-soft);display:block;margin-bottom:4px}
+</style>

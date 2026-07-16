@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import BarChart from '../../components/BarChart.astro';
+---
+<BaseLayout title="日本一「眠らない県」はどこだ｜Countopia">
+  <main>
+    <article class="article">
+      <h1>日本一「眠らない県」はどこだ。都道府県別・睡眠時間</h1>
+      <p class="meta">時間の広場｜2026.07｜※本文・数値はサンプルです</p>
+
+      <Talk speaker="kei">今日の展示はこちら。都道府県別の平均睡眠時間です。</Talk>
+      <Talk speaker="touko">え、県によって睡眠時間って違うの？</Talk>
+
+      <BarChart dataUrl="/data/sleep-sample.json" />
+
+      <Talk speaker="kei">よく眠るのは東北勢。短いのは首都圏。差は30分ほどあります。</Talk>
+      <Talk speaker="touko">30分！？ 通勤か……通勤なのか……？</Talk>
+
+      <h2>数字の背景</h2>
+      <p>ここに本文解説が入ります。データの出どころ、読み方の注意、次の展示への導線など。この段落はMarkdown化してAIパイプラインで量産する部分です。</p>
+
+      <p class="src">出典：社会生活基本調査（総務省）を加工して作成（※現在はサンプル値）</p>
+    </article>
+  </main>
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import '../styles/global.css';
+const { title = 'Countopia｜数字の国', description = '日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia。' } = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site">
+    <div class="nav">
+      <a class="logo" href="/">
+        <span class="mark"><b>COUNT</b>OPIA</span>
+        <span class="sub">数字の国</span>
+      </a>
+      <nav aria-label="主要メニュー">
+        <ul>
+          <li><a href="/#facilities">施設案内</a></li>
+          <li><a href="/#exhibits">展示</a></li>
+          <li><a href="/#guide">案内人</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <slot />
+
+  <footer class="site">
+    <div class="foot">
+      <span class="mono">COUNTOPIA — Japan in Numbers</span>
+      <span class="credit">本サイトの図表は政府統計（e-Stat等）を加工して作成しています。</span>
+    </div>
+  </footer>
+</body>
+</html>
