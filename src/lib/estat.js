@@ -11,33 +11,48 @@ export async function fetchSleepByPrefecture() {
 
   const data = json.GET_STATS_DATA.STATISTICAL_DATA;
 
-  // メタ情報からコード→名前の対応表を作る
-  const classMaps = {};
+  // 各分類軸を { id, map(code->name) } の形で収集
+  const axes = [];
   for (const obj of data.CLASS_INF.CLASS_OBJ) {
     const cls = Array.isArray(obj.CLASS) ? obj.CLASS : [obj.CLASS];
-    classMaps[obj['@id']] = Object.fromEntries(
-      cls.map((c) => [c['@code'], c['@name']])
-    );
+    axes.push({
+      id: obj['@id'],
+      name: obj['@name'],
+      map: Object.fromEntries(cls.map((c) => [c['@code'], c['@name']])),
+    });
   }
 
-  // 値を絞り込み: 週全体 × 男女総数 × 地区総数 × 睡眠 × 都道府県のみ
+  // 軸を「中身の名前」で自動判定
+  const findAxis = (word) =>
+    axes.find((a) => Object.values(a.map).some((n) => n.includes(word)));
+
+  const koudouAxis = findAxis('睡眠');     // 行動の種類
+  const youbiAxis  = findAxis('週全体');   // 曜日
+  const areaAxis   = axes.find((a) => a.id === 'area'); // 地域
+  const danjoAxis  = axes.find((a) => a.name.includes('男女'));
+  const chikuAxis  = axes.find((a) => a.name.includes('人口集中'));
+
+  const nameOf = (axis, v) =>
+    axis ? axis.map[v['@' + axis.id]] ?? '' : '';
+
   const values = data.DATA_INF.VALUE;
   const rows = [];
   for (const v of values) {
-    const youbi = classMaps['cat02']?.[v['@cat02']] ?? '';
-    const danjo = classMaps['cat03']?.[v['@cat03']] ?? '';
-    const chiku = classMaps['cat04']?.[v['@cat04']] ?? '';
-    const koudou = classMaps['cat01']?.[v['@cat01']] ?? '';
-    const area = classMaps['area']?.[v['@area']] ?? '';
+    const koudou = nameOf(koudouAxis, v);
+    const youbi  = nameOf(youbiAxis, v);
+    const area   = nameOf(areaAxis, v);
+    const danjo  = nameOf(danjoAxis, v);
+    const chiku  = nameOf(chikuAxis, v);
 
     if (
-      youbi.includes('週全体') &&
-      danjo.includes('総数') &&
-      chiku.includes('総数') &&
       koudou.includes('睡眠') &&
-      area !== '全国'
+      youbi.includes('週全体') &&
+      (!danjoAxis || danjo.includes('総数')) &&
+      (!chikuAxis || chiku.includes('総数')) &&
+      area && !area.includes('全国')
     ) {
-      rows.push({ pref: area, minutes: Number(v['$']) });
+      const num = Number(v['$']);
+      if (!Number.isNaN(num)) rows.push({ pref: area, minutes: num });
     }
   }
 
