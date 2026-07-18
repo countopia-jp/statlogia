@@ -94,3 +94,9 @@ export async function fetchHouseworkBySex() {
   rows.sort((a, b) => b.gap - a.gap); // 男女差の大きい順
   return rows;
 }
+// 趣味・娯楽の時間（長い順 = 遊んでる順）
+export async function fetchHobbyByPrefecture() {
+  const rows = await fetchActivityByPrefecture('趣味・娯楽');
+  rows.sort((a, b) => b.minutes - a.minutes);
+  return rows;
+}
