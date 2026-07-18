@@ -1,0 +1,291 @@
+---
+// =====================================================
+// Countopia - 教育ダッシュボード「学びの登記所」
+// src/pages/education/index.astro
+//
+// 来館者が自治体を選ぶ、Countopia初のインタラクティブ展示。
+// データは /data/education.json（ビルド時生成）から取得。
+// ※ BaseLayout / Talk のprops名は既存の展示ページに
+//    合わせて必要なら調整してください。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getEducationData } from '../../lib/education.js';
+
+// ビルド時にも一度読んで、注記用の年度ラベルを静的に埋め込む
+const edu = await getEducationData();
+const countYears = [...new Set(
+  edu.indicators.filter((i) => i.kind === 'count' && i.year).map((i) => i.year)
+)];
+const yearNote = countYears.join('・');
+---
+
+<BaseLayout title="教育ダッシュボード｜学びの登記所 - Countopia">
+  <main class="edu-dash">
+    <header class="edu-hero">
+      <p class="edu-kicker">ダッシュボード</p>
+      <h1>学びの登記所</h1>
+      <p class="edu-lead">
+        あなたの町に、学校はいくつあるでしょう。<br />
+        全国の市区町村から選んで、幼稚園から高校までの数字を確かめられる窓口です。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      当登記所には全国の市区町村の学校数が記録されています。まずは調べたい町を選んでください。
+    </Talk>
+    <Talk speaker="touko">
+      わたしの通っていた学校も、もう数字になっているのかしら……。
+    </Talk>
+
+    <!-- ===== 自治体セレクタ ===== -->
+    <section class="edu-selector" aria-label="自治体の選択">
+      <div class="edu-select-row">
+        <label>
+          <span>都道府県</span>
+          <select id="prefSelect">
+            <option value="">選んでください</option>
+          </select>
+        </label>
+        <label>
+          <span>市区町村</span>
+          <select id="citySelect" disabled>
+            <option value="">都道府県を先に</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- ===== 選択結果カード ===== -->
+    <section id="resultArea" class="edu-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div class="edu-cards" id="cardGrid"></div>
+      <div class="edu-chart-wrap">
+        <canvas id="schoolChart" height="220"></canvas>
+      </div>
+      <p class="edu-note" id="perSchoolNote"></p>
+    </section>
+
+    <!-- ===== ランキング ===== -->
+    <section class="edu-ranking" aria-label="ランキング">
+      <h2>全国ベスト5</h2>
+      <div class="edu-tabs" role="tablist">
+        <button class="edu-tab is-active" data-rank="count" role="tab">小学校の数</button>
+        <button class="edu-tab" data-rank="perschool" role="tab">1校あたり児童数の少なさ</button>
+      </div>
+      <ol class="edu-rank-list" id="rankList"></ol>
+      <p class="edu-note" id="rankNote"></p>
+    </section>
+
+    <Talk speaker="kei">
+      数の多さは町の大きさを、1校あたりの少なさは学びの届き方を映します。二つの物差しで、まるで違う顔ぶれが並ぶのです。
+    </Talk>
+
+    <footer class="edu-source">
+      <p>
+        出典：{edu.source}（{yearNote}時点）<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+        政令指定都市の区は選択できますが、ランキング集計からは除外しています（市単位で集計）。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script is:inline>
+    (async function () {
+      const res = await fetch('/data/education.json');
+      const data = await res.json();
+      const IND = data.indicators; // 順番はv配列と一致
+      const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
+
+      const GROUPS = [
+        { key: 'kindergarten', label: '幼稚園', count: 'E1101', students: 'E1501', studentLabel: '在園者' },
+        { key: 'elementary', label: '小学校', count: 'E2101', teachers: 'E2401', students: 'E2501', studentLabel: '児童' },
+        { key: 'junior', label: '中学校', count: 'E3101', teachers: 'E3401', students: 'E3501', studentLabel: '生徒' },
+        { key: 'high', label: '高校', count: 'E4101', students: 'E4501', studentLabel: '生徒' },
+      ];
+
+      const fmt = (n) => (n === null || n === undefined) ? '—' : n.toLocaleString('ja-JP');
+      const val = (area, code) => area.v[idx[code]];
+
+      // ---- セレクタ構築 ----
+      const prefSelect = document.getElementById('prefSelect');
+      const citySelect = document.getElementById('citySelect');
+      const prefs = [...new Set(data.areas.map((a) => a.p))];
+      for (const p of prefs) {
+        const opt = document.createElement('option');
+        opt.value = p; opt.textContent = p;
+        prefSelect.appendChild(opt);
+      }
+
+      prefSelect.addEventListener('change', () => {
+        citySelect.innerHTML = '<option value="">選んでください</option>';
+        const list = data.areas.filter((a) => a.p === prefSelect.value);
+        for (const a of list) {
+          const opt = document.createElement('option');
+          opt.value = a.c;
+          opt.textContent = a.n;
+          citySelect.appendChild(opt);
+        }
+        citySelect.disabled = list.length === 0;
+      });
+
+      citySelect.addEventListener('change', () => {
+        const area = data.areas.find((a) => a.c === citySelect.value);
+        if (area) render(area);
+      });
+
+      // ---- カード＋グラフ描画 ----
+      let chart = null;
+      function render(area) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = `${area.p} ${area.n}`;
+
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        for (const g of GROUPS) {
+          const count = val(area, g.count);
+          const students = val(area, g.students);
+          const teachers = g.teachers ? val(area, g.teachers) : null;
+          const card = document.createElement('div');
+          card.className = 'edu-card';
+          card.innerHTML =
+            `<div class="edu-card-label">${g.label}</div>` +
+            `<div class="edu-card-num">${fmt(count)}<span class="edu-card-unit">${g.key === 'kindergarten' ? '園' : '校'}</span></div>` +
+            `<div class="edu-card-sub">${g.studentLabel} ${fmt(students)}人${teachers !== null && teachers !== undefined ? `・教員 ${fmt(teachers)}人` : ''}</div>`;
+          grid.appendChild(card);
+        }
+
+        // 1校あたり児童数（小学校）
+        const elCount = val(area, 'E2101');
+        const elStudents = val(area, 'E2501');
+        const note = document.getElementById('perSchoolNote');
+        if (elCount > 0 && elStudents !== null) {
+          note.textContent = `小学校1校あたりの児童数：約${Math.round(elStudents / elCount).toLocaleString('ja-JP')}人`;
+        } else {
+          note.textContent = '';
+        }
+
+        const ctx = document.getElementById('schoolChart');
+        const counts = GROUPS.map((g) => val(area, g.count) ?? 0);
+        if (chart) chart.destroy();
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: GROUPS.map((g) => g.label),
+            datasets: [{
+              label: '学校数',
+              data: counts,
+              backgroundColor: ['#c9a227', '#1b4332', '#2d6a4f', '#b23a2f'],
+              borderRadius: 4,
+            }],
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      // ---- ランキング ----
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+      const rankable = data.areas.filter((a) => !a.x);
+
+      function showRank(mode) {
+        rankList.innerHTML = '';
+        let rows, noteText;
+        if (mode === 'count') {
+          rows = rankable
+            .filter((a) => val(a, 'E2101') !== null)
+            .sort((a, b) => val(b, 'E2101') - val(a, 'E2101'))
+            .slice(0, 5)
+            .map((a) => ({ a, main: `${fmt(val(a, 'E2101'))}校` }));
+          noteText = '小学校の数ベスト5。町の規模がそのまま数字に表れます。';
+        } else {
+          rows = rankable
+            .filter((a) => val(a, 'E2101') >= 1 && val(a, 'E2501') !== null)
+            .map((a) => ({ a, ratio: val(a, 'E2501') / val(a, 'E2101') }))
+            .sort((x, y) => x.ratio - y.ratio)
+            .slice(0, 5)
+            .map((r) => ({ a: r.a, main: `1校あたり約${Math.round(r.ratio)}人` }));
+          noteText = '小学校1校あたりの児童数が少ないベスト5。小さな学校を守る町の顔ぶれです。';
+        }
+        for (const r of rows) {
+          const li = document.createElement('li');
+          li.innerHTML = `<span class="edu-rank-name">${r.a.p} ${r.a.n}</span><span class="edu-rank-val">${r.main}</span>`;
+          li.addEventListener('click', () => {
+            prefSelect.value = r.a.p;
+            prefSelect.dispatchEvent(new Event('change'));
+            citySelect.value = r.a.c;
+            citySelect.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        }
+        rankNote.textContent = noteText;
+      }
+
+      document.querySelectorAll('.edu-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.edu-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+
+      showRank('count');
+    })();
+  </script>
+
+  <style>
+    .edu-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .edu-hero { text-align: center; padding: 32px 0 8px; }
+    .edu-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .edu-hero h1 { margin: 4px 0 12px; }
+    .edu-lead { color: #555; line-height: 1.9; }
+
+    .edu-selector { margin: 24px 0; }
+    .edu-select-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .edu-select-row label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+    .edu-select-row select {
+      min-width: 220px; padding: 10px 12px; border: 1px solid #1b4332;
+      border-radius: 6px; background: #fff; font-size: 1rem;
+    }
+
+    .edu-result h2 { text-align: center; margin: 24px 0 16px; }
+    .edu-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+    .edu-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fdfdf8; text-align: center; }
+    .edu-card-label { font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.1em; }
+    .edu-card-num { font-size: 1.9rem; font-weight: 700; margin: 4px 0; }
+    .edu-card-unit { font-size: 0.9rem; margin-left: 2px; font-weight: 400; }
+    .edu-card-sub { font-size: 0.75rem; color: #777; }
+
+    .edu-chart-wrap { position: relative; height: 240px; margin: 20px 0 8px; }
+    .edu-note { font-size: 0.85rem; color: #555; text-align: center; }
+
+    .edu-ranking { margin-top: 40px; }
+    .edu-ranking h2 { text-align: center; }
+    .edu-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; }
+    .edu-tab {
+      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      background: #fff; cursor: pointer; font-size: 0.85rem;
+    }
+    .edu-tab.is-active { background: #1b4332; color: #fff; }
+    .edu-rank-list { list-style: none; counter-reset: rank; padding: 0; max-width: 560px; margin: 0 auto 8px; }
+    .edu-rank-list li {
+      counter-increment: rank; display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+    }
+    .edu-rank-list li::before {
+      content: counter(rank); font-weight: 700; color: #b23a2f;
+      margin-right: 12px; min-width: 1.4em; text-align: center;
+    }
+    .edu-rank-list li:hover { background: #f4f7f4; }
+    .edu-rank-name { flex: 1; }
+    .edu-rank-val { font-weight: 700; }
+
+    .edu-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
