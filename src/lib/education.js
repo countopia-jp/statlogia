@@ -106,6 +106,8 @@ function buildAreaIndex(statData) {
     if (!/^\d{5}$/.test(code) || code.endsWith('000')) continue;
 
     const rawName = (c['@name'] || '').trim();
+    // 合併で消滅した旧市町村（"（旧）北海道 ○○町" 形式）は除外
+    if (rawName.startsWith('（旧）') || rawName.startsWith('(旧)')) continue;
     // "北海道 札幌市" / "北海道 札幌市 中央区" 形式を分解
     const parts = rawName.split(/\s+/);
     const pref = parts[0];
@@ -168,6 +170,8 @@ export async function getEducationData() {
       x: a.x,
       v: INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null)),
     }))
+    // 全指標nullの地域（データなし）は出力から除外
+    .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));
 
   const indicators = INDICATORS.map((ind) => ({
