@@ -1,0 +1,12 @@
+---
+import { fetchSleepByPrefecture } from '../lib/estat.js';
+const rows = await fetchSleepByPrefecture();
+---
+<html lang="ja">
+  <body>
+    <h1>睡眠時間テスト（{rows.length}件）</h1>
+    <ol>
+      {rows.map((r) => <li>{r.pref}: {r.minutes}分</li>)}
+    </ol>
+  </body>
+</html>
