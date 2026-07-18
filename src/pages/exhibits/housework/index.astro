@@ -1,1 +1,125 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { fetchHouseworkBySex } from '../../../lib/estat.js';
 
+const rows = await fetchHouseworkBySex(); // 男女差の大きい順
+const biggestGap = rows.slice(0, 5);
+const smallestGap = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avgWomen = Math.round(rows.reduce((s, r) => s + r.women, 0) / rows.length);
+const avgMen = Math.round(rows.reduce((s, r) => s + r.men, 0) / rows.length);
+const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
+---
+<BaseLayout title="家事時間の男女差｜Countopia" description="都道府県別・家事時間の男女差。いちばん差が大きい県、小さい県は？">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 03</span>
+        <h1>家事時間の男女差、いちばん大きい県は</h1>
+        <p class="sub">時間の広場｜家事時間（男女別）の都道府県比較（2021年）</p>
+      </div>
+
+      <Talk speaker="kei">3つめの展示は、1日の家事時間です。今回は男女別に見てみましょう。全国平均で、女性が約{fmt(avgWomen)}、男性が約{fmt(avgMen)}。</Talk>
+      <Talk speaker="touko">えっ、男の人も家事をするの！？　わたしの時代では考えられない……。</Talk>
+      <Talk speaker="kei">大正の頃と比べれば大きな変化です。ただ、数字を見ると、まだ差は残っています。</Talk>
+
+      <div class="highlight">
+        <div class="card">
+          <span class="label">男女差がいちばん大きい</span>
+          <strong>{top.pref}</strong>
+          <span class="num">差 {fmt(top.gap)}／日</span>
+          <span class="detail">女性 {fmt(top.women)}・男性 {fmt(top.men)}</span>
+        </div>
+        <div class="card">
+          <span class="label">男女差がいちばん小さい</span>
+          <strong>{bottom.pref}</strong>
+          <span class="num">差 {fmt(bottom.gap)}／日</span>
+          <span class="detail">女性 {fmt(bottom.women)}・男性 {fmt(bottom.men)}</span>
+        </div>
+      </div>
+
+      <Talk speaker="touko">差がいちばん小さい{bottom.pref}でも、女の人のほうが{fmt(bottom.gap)}長いのね。</Talk>
+      <Talk speaker="kei">はい。「どの県でも女性のほうが長い」——これがこの統計のいちばん大きな景色です。</Talk>
+
+      <h2>男女差が大きい県 TOP5</h2>
+      <ol class="rank">
+        {biggestGap.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.pref}</span>
+            <span class="bars">
+              <span class="bar women" style={`--w:${(r.women / 200) * 100}%`}></span>
+              <span class="bar men" style={`--w:${(r.men / 200) * 100}%`}></span>
+            </span>
+            <span class="min">差{fmt(r.gap)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>男女差が小さい県 TOP5</h2>
+      <ol class="rank">
+        {smallestGap.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.pref}</span>
+            <span class="bars">
+              <span class="bar women" style={`--w:${(r.women / 200) * 100}%`}></span>
+              <span class="bar men" style={`--w:${(r.men / 200) * 100}%`}></span>
+            </span>
+            <span class="min">差{fmt(r.gap)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <p class="legend"><span class="chip women"></span>女性　<span class="chip men"></span>男性</p>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（差が大きい順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.pref}　差{fmt(r.gap)}（女{fmt(r.women)}・男{fmt(r.men)}）</li>)}
+        </ol>
+      </details>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/sleep/">日本一「眠らない県」はどこだ</a>｜<a href="/exhibits/commute/">「通勤地獄」日本一はどの県だ</a></p>
+
+      <div class="source">
+        <p>出典：総務省統計局「令和3年社会生活基本調査」（生活時間編・週全体・10歳以上・総平均時間）を加工して作成</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff8;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.5rem}
+.card .num{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.card .detail{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:var(--ink-soft)}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.bars{display:flex;flex-direction:column;gap:3px}
+.rank .bar{height:8px;border-radius:99px;width:var(--w);min-width:8px;display:block}
+.bar.women{background:var(--stamp);opacity:.85}
+.bar.men{background:#3a6b52;opacity:.85}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.legend{font-size:.78rem;color:var(--ink-soft);margin-top:14px}
+.chip{display:inline-block;width:20px;height:8px;border-radius:99px;vertical-align:middle;margin-right:4px}
+.chip.women{background:var(--stamp)}
+.chip.men{background:#3a6b52}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{margin-top:14px;font-size:.85rem;color:var(--ink-soft)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+</style>
