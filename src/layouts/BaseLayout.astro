@@ -21,20 +21,18 @@ const { title = 'Countopia｜数字の国', description = '日本の公的統計
       </a>
       <nav aria-label="主要メニュー">
         <ul>
-          <li><a href="/#facilities">施設案内</a></li>
-          <li><a href="/#exhibits">展示</a></li>
+          <li><a href="/exhibits/">展示</a></li>
           <li><a href="/#guide">案内人</a></li>
         </ul>
       </nav>
     </div>
   </header>
-
   <slot />
-
   <footer class="site">
     <div class="foot">
       <span class="mono">COUNTOPIA — Japan in Numbers</span>
       <span class="credit">本サイトの図表は政府統計（e-Stat等）を加工して作成しています。</span>
+      <span class="credit">このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</span>
     </div>
   </footer>
 </body>
