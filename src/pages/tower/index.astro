@@ -1,12 +1,20 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchSleepByPrefecture } from '../../lib/estat.js';
+import { fetchSleepByPrefecture, fetchCommuteByPrefecture, fetchHouseworkBySex } from '../../lib/estat.js';
 
-const rows = await fetchSleepByPrefecture();
-const top = rows[0];
-const bottom = rows[rows.length - 1];
-const avg = Math.round(rows.reduce((s, r) => s + r.minutes, 0) / rows.length);
-const diff = bottom.minutes - top.minutes;
+const sleep = await fetchSleepByPrefecture();
+const sleepTop = sleep[0];
+const sleepBottom = sleep[sleep.length - 1];
+const sleepAvg = Math.round(sleep.reduce((s, r) => s + r.minutes, 0) / sleep.length);
+const sleepDiff = sleepBottom.minutes - sleepTop.minutes;
+
+const commute = await fetchCommuteByPrefecture();
+const commuteTop = commute[0];
+
+const housework = await fetchHouseworkBySex();
+const hwTop = housework[0];
+const hwAvgGap = Math.round(housework.reduce((s, r) => s + r.gap, 0) / housework.length);
+
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 ---
 <BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。">
@@ -21,35 +29,48 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
       <div class="board">
         <a class="gauge" href="/exhibits/sleep/">
           <span class="g-label">平均睡眠時間（全国）</span>
-          <span class="g-value">{fmt(avg)}</span>
+          <span class="g-value">{fmt(sleepAvg)}</span>
           <span class="g-unit">時間：分／日</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/sleep/">
           <span class="g-label">いちばん眠らない</span>
-          <span class="g-value small">{top.pref}</span>
-          <span class="g-unit">{fmt(top.minutes)}</span>
+          <span class="g-value small">{sleepTop.pref}</span>
+          <span class="g-unit">{fmt(sleepTop.minutes)}</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/sleep/">
           <span class="g-label">いちばんよく眠る</span>
-          <span class="g-value small">{bottom.pref}</span>
-          <span class="g-unit">{fmt(bottom.minutes)}</span>
+          <span class="g-value small">{sleepBottom.pref}</span>
+          <span class="g-unit">{fmt(sleepBottom.minutes)}</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/commute/">
+          <span class="g-label">通勤地獄・日本一</span>
+          <span class="g-value small">{commuteTop.pref}</span>
+          <span class="g-unit">{commuteTop.minutes}分／日</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/housework/">
+          <span class="g-label">家事の男女差（全国平均）</span>
+          <span class="g-value">{hwAvgGap}<small>分</small></span>
+          <span class="g-unit">1日あたり・女性−男性</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/housework/">
+          <span class="g-label">家事の男女差・最大</span>
+          <span class="g-value small">{hwTop.pref}</span>
+          <span class="g-unit">差 {hwTop.gap}分／日</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/sleep/">
           <span class="g-label">睡眠の都道府県格差</span>
-          <span class="g-value">{diff}<small>分</small></span>
+          <span class="g-value">{sleepDiff}<small>分</small></span>
           <span class="g-unit">1日あたり・最大差</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <div class="gauge soon">
           <span class="g-label">物価の観測計</span>
-          <span class="g-value">—</span>
-          <span class="g-unit">準備中</span>
-        </div>
-        <div class="gauge soon">
-          <span class="g-label">人口の観測計</span>
           <span class="g-value">—</span>
           <span class="g-unit">準備中</span>
         </div>
