@@ -3,17 +3,23 @@ const APP_ID = import.meta.env.ESTAT_APP_ID ?? process.env.ESTAT_APP_ID;
 
 const BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json/getStatsData';
 
-// 統計表 0003457337（社会生活基本調査 68-1-2）から
-// 指定した行動の都道府県別・週全体・総数の総平均時間を取得する共通関数
-async function fetchActivityByPrefecture(activityWord) {
+// 統計表 0003457337（社会生活基本調査 68-1-2）を1回だけ取得して使い回すキャッシュ
+let cachedData = null;
+
+async function fetchTable() {
+  if (cachedData) return cachedData;
   const url = `${BASE}?appId=${APP_ID}&lang=J&statsDataId=0003457337&metaGetFlg=Y&cntGetFlg=N`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`e-Stat API error: ${res.status}`);
   const json = await res.json();
+  cachedData = json.GET_STATS_DATA.STATISTICAL_DATA;
+  return cachedData;
+}
 
-  const data = json.GET_STATS_DATA.STATISTICAL_DATA;
+// 指定した行動・男女区分の都道府県別・週全体の総平均時間を取得する共通関数
+async function fetchActivityByPrefecture(activityWord, sexWord = '総数') {
+  const data = await fetchTable();
 
-  // 各分類軸を { id, name, map(code->name) } の形で収集
   const axes = [];
   for (const obj of data.CLASS_INF.CLASS_OBJ) {
     const cls = Array.isArray(obj.CLASS) ? obj.CLASS : [obj.CLASS];
@@ -24,13 +30,12 @@ async function fetchActivityByPrefecture(activityWord) {
     });
   }
 
-  // 軸を「中身の名前」で自動判定
   const findAxis = (word) =>
     axes.find((a) => Object.values(a.map).some((n) => n.includes(word)));
 
-  const koudouAxis = findAxis('睡眠');     // 行動の種類（睡眠を含む軸＝行動軸）
-  const youbiAxis  = findAxis('週全体');   // 曜日
-  const areaAxis   = axes.find((a) => a.id === 'area'); // 地域
+  const koudouAxis = findAxis('睡眠');
+  const youbiAxis  = findAxis('週全体');
+  const areaAxis   = axes.find((a) => a.id === 'area');
   const danjoAxis  = axes.find((a) => a.name.includes('男女'));
   const chikuAxis  = axes.find((a) => a.name.includes('人口集中'));
 
@@ -49,7 +54,7 @@ async function fetchActivityByPrefecture(activityWord) {
     if (
       koudou.includes(activityWord) &&
       youbi.includes('週全体') &&
-      (!danjoAxis || danjo.includes('総数')) &&
+      (!danjoAxis || danjo.includes(sexWord)) &&
       (!chikuAxis || chiku.includes('総数')) &&
       area && !area.includes('全国')
     ) {
@@ -72,5 +77,20 @@ export async function fetchSleepByPrefecture() {
 export async function fetchCommuteByPrefecture() {
   const rows = await fetchActivityByPrefecture('通勤・通学');
   rows.sort((a, b) => b.minutes - a.minutes);
+  return rows;
+}
+
+// 家事時間・男女別（女性の長い順）
+export async function fetchHouseworkBySex() {
+  const women = await fetchActivityByPrefecture('家事', '女');
+  const men = await fetchActivityByPrefecture('家事', '男');
+  const menMap = Object.fromEntries(men.map((r) => [r.pref, r.minutes]));
+  const rows = women.map((w) => ({
+    pref: w.pref,
+    women: w.minutes,
+    men: menMap[w.pref] ?? 0,
+    gap: w.minutes - (menMap[w.pref] ?? 0),
+  }));
+  rows.sort((a, b) => b.gap - a.gap); // 男女差の大きい順
   return rows;
 }
