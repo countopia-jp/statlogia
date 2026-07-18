@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { fetchSleepByPrefecture } from '../../lib/estat.js';
+
+const rows = await fetchSleepByPrefecture();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = Math.round(rows.reduce((s, r) => s + r.minutes, 0) / rows.length);
+const diff = bottom.minutes - top.minutes;
+const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+---
+<BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。">
+  <main>
+    <section class="tower">
+      <div class="sec-head">
+        <span class="no">OBSERVATORY</span>
+        <h1>展望塔</h1>
+        <p class="sub">日本の「いま」を数字で一望する観測盤。展示が増えるたび、計器も増えます。</p>
+      </div>
+
+      <div class="board">
+        <a class="gauge" href="/exhibits/sleep/">
+          <span class="g-label">平均睡眠時間（全国）</span>
+          <span class="g-value">{fmt(avg)}</span>
+          <span class="g-unit">時間：分／日</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/sleep/">
+          <span class="g-label">いちばん眠らない</span>
+          <span class="g-value small">{top.pref}</span>
+          <span class="g-unit">{fmt(top.minutes)}</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/sleep/">
+          <span class="g-label">いちばんよく眠る</span>
+          <span class="g-value small">{bottom.pref}</span>
+          <span class="g-unit">{fmt(bottom.minutes)}</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/sleep/">
+          <span class="g-label">睡眠の都道府県格差</span>
+          <span class="g-value">{diff}<small>分</small></span>
+          <span class="g-unit">1日あたり・最大差</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <div class="gauge soon">
+          <span class="g-label">物価の観測計</span>
+          <span class="g-value">—</span>
+          <span class="g-unit">準備中</span>
+        </div>
+        <div class="gauge soon">
+          <span class="g-label">人口の観測計</span>
+          <span class="g-value">—</span>
+          <span class="g-unit">準備中</span>
+        </div>
+      </div>
+
+      <p class="note">出典：総務省統計局「令和3年社会生活基本調査」を加工して作成（2021年・週全体・10歳以上）</p>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.tower{padding:56px 0 80px;max-width:880px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px;max-width:36em}
+.board{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;
+  background:var(--line);border:2px solid var(--line);border-radius:14px;overflow:hidden;
+}
+.gauge{
+  background:#fdfcf7;padding:26px 22px 20px;display:flex;flex-direction:column;gap:8px;
+  text-decoration:none;color:inherit;position:relative;transition:background .15s;
+}
+a.gauge:hover{background:#f7f4e9}
+.g-label{font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding-bottom:8px}
+.g-value{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:2.4rem;color:var(--stamp);line-height:1.1}
+.g-value.small{font-family:"Shippori Mincho",serif;font-size:1.7rem;color:inherit}
+.g-value small{font-size:1rem;margin-left:2px}
+.g-unit{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:var(--ink-soft)}
+.g-link{font-size:.72rem;color:var(--stamp);margin-top:auto;padding-top:10px}
+.gauge.soon{opacity:.55}
+.gauge.soon .g-value{color:var(--ink-soft)}
+.note{margin-top:20px;font-size:.72rem;color:var(--ink-soft)}
+</style>
