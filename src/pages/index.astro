@@ -1,72 +1,110 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Talk from '../components/Talk.astro';
+// パスが src/pages/exhibits/sleep/index.astro の場合はこの3行
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { fetchSleepByPrefecture } from '../../../lib/estat.js';
+// ※ src/pages/exhibits/sleep.astro（フォルダなし）の場合は ../../ に減らす
+
+const rows = await fetchSleepByPrefecture(); // 短い順ソート済み
+const shortest = rows.slice(0, 5);
+const longest = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const diff = bottom.minutes - top.minutes;
+const yearlyHours = Math.round((diff * 365) / 60);
+const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 ---
 <BaseLayout>
   <main>
-    <!-- HERO -->
-    <div class="hero">
-      <div>
-        <span class="eyebrow">JAPAN IN NUMBERS</span>
-        <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-        <p class="lead">Countopia（カウントピア）は、日本の公的統計を「へぇ」と眺めて遊ぶ国。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
-        </div>
-      </div>
-      <div class="stamp-area" aria-hidden="true">
-        <div class="stamp">
-          <span class="top">IMMIGRATION</span>
-          <span class="big">COUNTOPIA</span>
-          <span class="date">2026.07</span>
-          <span class="bottom">入国を許可する</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 案内人 -->
-    <section id="guide">
+    <section class="exhibit">
       <div class="sec-head">
-        <span class="no">GUIDE</span>
-        <h2>この国の案内人</h2>
+        <span class="no">EXHIBIT 01</span>
+        <h1>日本一「眠らない県」はどこだ</h1>
+        <p class="sub">時間の広場｜睡眠時間の都道府県ランキング（2021年）</p>
       </div>
-      <Talk speaker="kei">ようこそCountopiaへ。この国では、数字はぜんぶ「景色」です。</Talk>
-      <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
-      <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
+
+      <Talk speaker="kei">最初の展示です。日本人が1日にどれだけ眠っているか、47都道府県で比べました。</Talk>
+      <Talk speaker="touko">へぇ……そんなの調べてる人がいるの？</Talk>
+      <Talk speaker="kei">国が5年に1度、全国規模で調べています。社会生活基本調査という立派な統計です。</Talk>
+
+      <div class="highlight">
+        <div class="card">
+          <span class="label">いちばん眠らない</span>
+          <strong>{top.pref}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card">
+          <span class="label">いちばんよく眠る</span>
+          <strong>{bottom.pref}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <Talk speaker="touko">その差、たった{diff}分でしょ？　大したことなくない？</Talk>
+      <Talk speaker="kei">1日{diff}分でも、1年つもれば約{yearlyHours}時間。まる{Math.round(yearlyHours / 24)}日ぶん、{bottom.pref}の人は{top.pref}より長く眠っている計算です。</Talk>
+      <Talk speaker="touko">まる{Math.round(yearlyHours / 24)}日！？　へぇ……！</Talk>
+
+      <h2>眠らない県 TOP5</h2>
+      <ol class="rank">
+        {shortest.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.pref}</span>
+            <span class="bar" style={`--w:${((r.minutes - 460) / 30) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>よく眠る県 TOP5</h2>
+      <ol class="rank sleepwell">
+        {longest.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.pref}</span>
+            <span class="bar" style={`--w:${((r.minutes - 460) / 30) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（眠らない順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.pref}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <Talk speaker="kei">首都圏が上位に並ぶのは、通勤時間の長さと無関係ではなさそうですね。</Talk>
+      <Talk speaker="touko">わたしの時代は日が暮れたら寝るしかなかったけど……今の人は忙しいのねぇ。</Talk>
+
+      <div class="source">
+        <p>出典：総務省統計局「令和3年社会生活基本調査」（生活時間編・週全体・10歳以上・総平均時間）を加工して作成</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
     </section>
   </main>
 </BaseLayout>
-
 <style>
-.hero{
-  display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
-  padding:72px 0 40px;
-}
-@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}}
-.eyebrow{
-  display:inline-block;font-size:.72rem;letter-spacing:.28em;
-  color:var(--ink-soft);border:1px solid var(--line);
-  padding:4px 12px;border-radius:99px;margin-bottom:20px;background:#fff9;
-}
-h1{
-  font-family:"Shippori Mincho",serif;font-weight:800;
-  font-size:clamp(2rem,5.2vw,3.4rem);line-height:1.35;letter-spacing:.04em;
-}
-h1 .num{color:var(--stamp)}
-.lead{margin-top:20px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
-.hero-actions{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
-.stamp-area{display:flex;justify-content:center}
-.stamp{
-  width:min(240px,60vw);aspect-ratio:1;border-radius:50%;
-  border:5px double var(--stamp);color:var(--stamp);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-  transform:rotate(-8deg);background:#fff5;
-  animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .3s both;
-}
-@keyframes stampIn{from{transform:rotate(-8deg) scale(1.7);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
-@media(prefers-reduced-motion:reduce){.stamp{animation:none}}
-.stamp .top{font-size:.65rem;letter-spacing:.34em;font-weight:600}
-.stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5rem;letter-spacing:.08em}
-.stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8rem;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:2px 10px;margin-top:4px}
-.stamp .bottom{font-size:.62rem;letter-spacing:.28em;margin-top:2px}
-</style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff8;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.5rem}
+.card .num{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.sleepwell .bar{background:#3a6b52}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;
