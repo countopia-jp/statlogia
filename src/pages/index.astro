@@ -59,6 +59,29 @@ import Talk from '../components/Talk.astro';
       <p class="more"><a href="/exhibits/">すべての展示を見る →</a>　<a href="/tower/">展望塔から一望する →</a></p>
     </section>
 
+    <!-- 閲覧室 -->
+    <section id="reading-room">
+      <div class="sec-head">
+        <span class="no">READING ROOM</span>
+        <h2>閲覧室</h2>
+      </div>
+      <div class="cards">
+        <a class="card" href="/education/">
+          <span class="c-no">窓口 01</span>
+          <h3>学びの登記所</h3>
+          <p>全国の市区町村から選んで、幼稚園から高校までの学校の数字を自分の手で引き出せます。あなたの町に、学校はいくつ？</p>
+          <span class="c-place">閲覧室</span>
+        </a>
+        <div class="card card--closed" aria-disabled="true">
+          <span class="c-no">窓口 02</span>
+          <h3>準備中</h3>
+          <p>次の台帳を運び込んでいます。開室をお待ちください。</p>
+          <span class="c-place">閲覧室</span>
+        </div>
+      </div>
+      <p class="more"><a href="/dashboard/">閲覧室のご案内 →</a></p>
+    </section>
+
     <!-- 案内人 -->
     <section id="guide">
       <div class="sec-head">
@@ -105,7 +128,7 @@ h1 .num{color:var(--stamp)}
 .stamp .bottom{font-size:.62rem;letter-spacing:.28em;margin-top:2px}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
 .sec-head h2{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.5rem;margin:6px 0 24px}
-#exhibits,#guide{padding:40px 0}
+#exhibits,#reading-room,#guide{padding:40px 0}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
 .card{
   border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff8;
@@ -113,7 +136,10 @@ h1 .num{color:var(--stamp)}
   transition:transform .15s,box-shadow .15s;
 }
 .card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
+.card--closed{border-style:dashed;color:var(--ink-soft);background:#f4f4ee88}
+.card--closed:hover{transform:none;box-shadow:none}
 .c-no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.26em;color:var(--stamp)}
+.card--closed .c-no{color:var(--ink-soft)}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
 .card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
 .c-place{font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
