@@ -88,6 +88,16 @@ import Talk from '../components/Talk.astro';
         <span class="no">GUIDE</span>
         <h2>この国の案内人</h2>
       </div>
+      <div class="guides">
+        <figure class="portrait">
+          <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
+          <figcaption><b>京</b><span>統計局案内人</span></figcaption>
+        </figure>
+        <figure class="portrait">
+          <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
+          <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
+        </figure>
+      </div>
       <Talk speaker="kei">ようこそCountopiaへ。この国では、数字はぜんぶ「景色」です。</Talk>
       <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
       <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
@@ -145,4 +155,18 @@ h1 .num{color:var(--stamp)}
 .c-place{font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
 .more{margin-top:24px;font-size:.9rem}
 .more a{color:var(--stamp);margin-right:18px}
+.guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
+@media(max-width:760px){.guides{grid-template-columns:1fr}}
+.portrait{
+  margin:0;background:#fff;border:1px solid var(--line);
+  padding:10px 10px 6px;box-shadow:0 6px 16px #0002;
+  transform:rotate(-1deg);
+}
+.portrait:last-child{transform:rotate(1.2deg)}
+.portrait img{display:block;width:100%;height:auto;border:1px solid var(--line)}
+.portrait figcaption{
+  display:flex;align-items:baseline;gap:10px;padding:8px 4px 4px;
+}
+.portrait figcaption b{font-family:"Shippori Mincho",serif;font-size:1.05rem}
+.portrait figcaption span{font-size:.72rem;letter-spacing:.18em;color:var(--ink-soft)}
 </style>
