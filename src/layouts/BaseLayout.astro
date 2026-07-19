@@ -1,122 +1,42 @@
 ---
-// =====================================================
-// Countopia - 入国審査場（このサイトについて）
-// src/pages/about/index.astro
-//
-// About・データ出典・運営者・免責を「入国審査」の演出で。
-// 将来のプライバシーポリシー/お問い合わせはここから分岐予定。
-// =====================================================
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import Talk from '../../components/Talk.astro';
+import '../styles/global.css';
+const { title = 'Countopia｜数字の国', description = '日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia。' } = Astro.props;
 ---
-
-<BaseLayout title="入国審査場｜このサイトについて - Countopia">
-  <main class="imm">
-    <header class="imm-hero">
-      <p class="imm-kicker">IMMIGRATION</p>
-      <h1>入国審査場</h1>
-      <p class="imm-lead">
-        Countopiaへようこそ。ご入国の前に、この国の成り立ちと決まりごとを少しだけご案内します。
-      </p>
-    </header>
-
-    <Talk speaker="kei">
-      審査といっても、パスポートは要りません。この国について知っていただくことが、入国の条件のすべてです。
-    </Talk>
-
-    <section class="imm-sec">
-      <h2>この国について</h2>
-      <p>
-        Countopia（カウントピア）は、日本の公的統計を「へぇ」と眺めて遊ぶ架空の国です。
-        睡眠時間、通勤時間、学校の数——ふだんは表の中で眠っている数字を、
-        展示や展望塔や閲覧室という「景色」に仕立て直してお見せしています。
-        難しい分析はしません。数字の向こうにある暮らしを、案内人と一緒にのんびり眺める国です。
-      </p>
-    </section>
-
-    <section class="imm-sec">
-      <h2>台帳の出どころ</h2>
-      <p>
-        当国の数字は、すべて日本政府の統計ポータル「政府統計の総合窓口（e-Stat）」から取り寄せています。
-        各展示・各窓口には出典（統計名・表番号・年度）を明記しています。
-      </p>
-      <p>
-        本サイトは、政府統計総合窓口(e-Stat)のAPI機能を使用して情報を取得していますが、
-        サービスの内容は国によって保証されたものではありません。
-        数字の集計・加工はCountopiaが独自に行っており、その責任は当国にあります。
-      </p>
-    </section>
-
-    <Talk speaker="touko">
-      つまり、数字は本物。並べ方と眺め方が、この国の発明というわけね。
-    </Talk>
-
-    <section class="imm-sec">
-      <h2>案内人について</h2>
-      <p>
-        統計局案内人の<strong>京</strong>と、大正から来た子<strong>橙子</strong>が、国内をご案内します。
-        二人の名前を並べると「統計」になります。キャラクターとイラストは当国のオリジナルです。
-      </p>
-    </section>
-
-    <section class="imm-sec">
-      <h2>運営について</h2>
-      <p>
-        Countopiaは、個人が趣味と学びのために運営している非公式サイトです。
-        政府機関・統計調査の実施主体とは関係ありません。
-        掲載内容には正確を期していますが、その完全性・正確性を保証するものではなく、
-        本サイトの情報によって生じたいかなる損害についても責任を負いかねます。
-        引用・シェアは出典（本サイトと元統計）を添えていただければ歓迎です。
-      </p>
-    </section>
-
-    <Talk speaker="kei">
-      以上で審査は終わりです。それでは——ようこそ、数字の国へ。
-    </Talk>
-
-    <div class="imm-stamp-area" aria-hidden="true">
-      <div class="imm-stamp">
-        <span class="top">IMMIGRATION</span>
-        <span class="big">COUNTOPIA</span>
-        <span class="date">APPROVED</span>
-        <span class="bottom">入国を許可する</span>
-      </div>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site">
+    <div class="nav">
+      <a class="logo" href="/">
+        <span class="mark"><b>COUNT</b>OPIA</span>
+        <span class="sub">数字の国</span>
+      </a>
+      <nav aria-label="主要メニュー">
+        <ul>
+          <li><a href="/exhibits/">展示</a></li>
+          <li><a href="/tower/">展望塔</a></li>
+          <li><a href="/dashboard/">閲覧室</a></li>
+          <li><a href="/#guide">案内人</a></li>
+        </ul>
+      </nav>
     </div>
-
-    <p class="imm-links">
-      <a href="/">国の玄関へ →</a>
-      <a href="/exhibits/">展示を見る →</a>
-      <a href="/dashboard/">閲覧室へ →</a>
-    </p>
-  </main>
-
-  <style>
-    .imm { max-width: 720px; margin: 0 auto; padding: 0 16px 56px; }
-    .imm-hero { text-align: center; padding: 40px 0 8px; }
-    .imm-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
-    .imm-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
-    .imm-lead { color: #555; line-height: 1.9; }
-
-    .imm-sec { padding: 18px 0; }
-    .imm-sec h2 {
-      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.15rem;
-      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 12px;
-    }
-    .imm-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
-
-    .imm-stamp-area { display: flex; justify-content: center; padding: 28px 0 8px; }
-    .imm-stamp {
-      width: min(200px, 55vw); aspect-ratio: 1; border-radius: 50%;
-      border: 5px double #b23a2f; color: #b23a2f;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-      transform: rotate(-8deg); background: #fff5;
-    }
-    .imm-stamp .top { font-size: 0.6rem; letter-spacing: 0.32em; font-weight: 600; }
-    .imm-stamp .big { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 1.25rem; letter-spacing: 0.06em; }
-    .imm-stamp .date { font-family: "IBM Plex Mono", monospace; font-size: 0.75rem; border-top: 1.5px solid #b23a2f; border-bottom: 1.5px solid #b23a2f; padding: 2px 10px; margin-top: 4px; }
-    .imm-stamp .bottom { font-size: 0.58rem; letter-spacing: 0.26em; margin-top: 2px; }
-
-    .imm-links { text-align: center; margin-top: 28px; font-size: 0.9rem; }
-    .imm-links a { color: #b23a2f; margin: 0 10px; }
-  </style>
-</BaseLayout>
+  </header>
+  <slot />
+  <footer class="site">
+    <div class="foot">
+      <span class="mono">COUNTOPIA — Japan in Numbers</span>
+      <span class="credit">本サイトの図表は政府統計（e-Stat等）を加工して作成しています。</span>
+      <span class="credit">このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</span>
+      <span class="credit"><a href="/about/">入国審査場（このサイトについて）</a></span>
+    </div>
+  </footer>
+</body>
+</html>
