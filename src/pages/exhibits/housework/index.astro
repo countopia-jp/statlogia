@@ -12,7 +12,7 @@ const avgWomen = Math.round(rows.reduce((s, r) => s + r.women, 0) / rows.length)
 const avgMen = Math.round(rows.reduce((s, r) => s + r.men, 0) / rows.length);
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 ---
-<BaseLayout title="家事時間の男女差｜Countopia" description="都道府県別・家事時間の男女差。いちばん差が大きい県、小さい県は？">
+<BaseLayout title="家事時間の男女差｜Countopia" description="都道府県別・家事時間の男女差。いちばん差が大きい県、小さい県は？" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
