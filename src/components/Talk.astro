@@ -4,11 +4,11 @@
 // img を差し替えれば全記事のアイコンが一斉に更新される(原画完成時はここだけ変更)
 const { speaker = 'kei' } = Astro.props;
 const profiles = {
-  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei.svg',   side: 'left'  },
-  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko.svg', side: 'right' },
+  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left'  },
+  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right' },
   // 旧名の互換
-  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei.svg',   side: 'left'  },
-  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko.svg', side: 'right' },
+  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left'  },
+  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right' },
 };
 const p = profiles[speaker] ?? profiles.kei;
 ---
@@ -19,7 +19,6 @@ const p = profiles[speaker] ?? profiles.kei;
     <div class="bubble"><slot /></div>
   </div>
 </div>
-
 <style>
 .say{display:flex;gap:14px;align-items:flex-start;max-width:640px;margin:14px 0}
 .say.right{margin-left:auto;flex-direction:row-reverse}
