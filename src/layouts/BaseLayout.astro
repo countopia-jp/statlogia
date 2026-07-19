@@ -1,6 +1,11 @@
 ---
 import '../styles/global.css';
-const { title = 'Countopia｜数字の国', description = '日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia。' } = Astro.props;
+const {
+  title = 'Countopia｜数字の国',
+  description = '日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia。',
+  backHref = '',
+  backLabel = '',
+} = Astro.props;
 ---
 <!DOCTYPE html>
 <html lang="ja">
@@ -29,6 +34,11 @@ const { title = 'Countopia｜数字の国', description = '日本の公的統計
       </nav>
     </div>
   </header>
+  {backHref && (
+    <div class="backbar">
+      <a href={backHref}>← {backLabel}へ戻る</a>
+    </div>
+  )}
   <slot />
   <footer class="site">
     <div class="foot">
@@ -38,5 +48,14 @@ const { title = 'Countopia｜数字の国', description = '日本の公的統計
       <span class="credit"><a href="/about/">入国審査場（このサイトについて）</a></span>
     </div>
   </footer>
+  <style>
+    .backbar { max-width: 860px; margin: 0 auto; padding: 14px 16px 0; }
+    .backbar a {
+      display: inline-block; font-size: 0.82rem; color: #2d6a4f;
+      border: 1px solid #2d6a4f; border-radius: 999px; padding: 5px 14px;
+      text-decoration: none; background: #fff8;
+    }
+    .backbar a:hover { background: #2d6a4f; color: #fff; }
+  </style>
 </body>
 </html>
