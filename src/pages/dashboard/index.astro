@@ -1,0 +1,94 @@
+---
+// =====================================================
+// Countopia - 閲覧室（ダッシュボード一覧）
+// src/pages/dashboard/index.astro
+//
+// 来館者が自分で数字を引き出す施設の一覧。
+// 展示（読み物）とは別区画。現在は「学びの登記所」1室＋準備中。
+// ※ BaseLayout / Talk のprops名は既存ページに合わせて
+//    必要なら調整してください。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+---
+
+<BaseLayout title="閲覧室 - Countopia">
+  <main class="rr">
+    <header class="rr-hero">
+      <p class="rr-kicker">閲覧室</p>
+      <h1>自分の手で、数字を引き出す部屋</h1>
+      <p class="rr-lead">
+        展示はこちらが選んだ数字の物語。閲覧室では、あなたが選びます。<br />
+        知りたい町を指定して、台帳から数字を取り寄せてください。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
+    </Talk>
+
+    <section class="rr-grid" aria-label="閲覧窓口の一覧">
+      <a class="rr-card" href="/education/">
+        <p class="rr-card-no">窓口 01</p>
+        <h2>学びの登記所</h2>
+        <p class="rr-card-desc">
+          全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
+          学校の数と、1校あたりの児童数——二つの物差しの全国ベスト5つき。
+        </p>
+        <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
+      </a>
+
+      <div class="rr-card rr-card--closed" aria-disabled="true">
+        <p class="rr-card-no">窓口 02</p>
+        <h2>準備中</h2>
+        <p class="rr-card-desc">次の台帳を運び込んでいます。開室をお待ちください。</p>
+      </div>
+    </section>
+
+    <Talk speaker="touko">
+      台帳を自分でめくってよいなんて。役場の帳場では、考えられませんでしたわ。
+    </Talk>
+  </main>
+
+  <style>
+    .rr { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .rr-hero { text-align: center; padding: 32px 0 8px; }
+    .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .rr-hero h1 { margin: 4px 0 12px; }
+    .rr-lead { color: #555; line-height: 1.9; }
+
+    .rr-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 28px 0;
+    }
+    .rr-card {
+      display: block;
+      border: 1px solid #1b4332;
+      border-radius: 10px;
+      padding: 20px;
+      background: #fdfdf8;
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .rr-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
+    }
+    .rr-card-no { font-size: 0.75rem; letter-spacing: 0.15em; color: #b23a2f; margin: 0 0 6px; }
+    .rr-card h2 { margin: 0 0 10px; font-size: 1.2rem; }
+    .rr-card-desc { font-size: 0.9rem; line-height: 1.8; color: #444; margin: 0 0 10px; }
+    .rr-card-meta { font-size: 0.75rem; color: #888; margin: 0; }
+
+    .rr-card--closed {
+      border-style: dashed;
+      border-color: #9aa79e;
+      background: #f4f4ee;
+      color: #888;
+    }
+    .rr-card--closed:hover { transform: none; box-shadow: none; }
+    .rr-card--closed .rr-card-no { color: #9aa79e; }
+  </style>
+</BaseLayout>
