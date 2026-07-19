@@ -12,7 +12,7 @@ const diff = bottom.minutes - top.minutes;
 const yearlyHours = Math.round((diff * 365) / 60);
 const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 ---
-<BaseLayout>
+<BaseLayout backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
