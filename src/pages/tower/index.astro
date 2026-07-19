@@ -17,7 +17,7 @@ const hwAvgGap = Math.round(housework.reduce((s, r) => s + r.gap, 0) / housework
 
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 ---
-<BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。">
+<BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="tower">
       <div class="sec-head">
