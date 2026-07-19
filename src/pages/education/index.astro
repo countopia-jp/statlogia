@@ -64,6 +64,8 @@ const yearNote = countYears.join('・');
         <canvas id="schoolChart" height="220"></canvas>
       </div>
       <p class="edu-note" id="perSchoolNote"></p>
+      <Talk speaker="kei"><span id="keiLine">町を選ぶと、台帳を読み上げます。</span></Talk>
+      <Talk speaker="touko"><span id="toukoLine">どんな町かしら。</span></Talk>
     </section>
 
     <!-- ===== ランキング ===== -->
@@ -135,10 +137,64 @@ const yearNote = countYears.join('・');
         if (area) render(area);
       });
 
+      // ---- 案内人コメント生成 ----
+      // 全国の小学校1校あたり児童数の中央値（ランキング対象で算出）
+      const ratios = data.areas
+        .filter((a) => !a.x && val(a, 'E2101') >= 1 && val(a, 'E2501') !== null)
+        .map((a) => val(a, 'E2501') / val(a, 'E2101'))
+        .sort((x, y) => x - y);
+      const medianRatio = ratios.length
+        ? ratios[Math.floor(ratios.length / 2)]
+        : null;
+
+      function updateCharacterLines(area) {
+        const keiEl = document.getElementById('keiLine');
+        const toukoEl = document.getElementById('toukoLine');
+        if (!keiEl || !toukoEl) return;
+
+        const elCount = val(area, 'E2101');
+        const elStudents = val(area, 'E2501');
+        const hsCount = val(area, 'E4101');
+        const kgCount = val(area, 'E1101');
+        const seed = parseInt(area.c, 10) || 0;
+
+        let kei = '';
+        let touko = '';
+
+        if (elCount >= 1 && elStudents !== null && medianRatio) {
+          const ratio = elStudents / elCount;
+          const r = Math.round(ratio);
+          if (ratio < medianRatio * 0.4) {
+            kei = `小学校1校あたり約${r}人。全国でも指折りの、小さな学び舎の町です。`;
+            touko = ['わたしの学校も、教室はひとつきりでしたのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
+          } else if (ratio > medianRatio * 2) {
+            kei = `小学校1校あたり約${r}人。中央値の倍以上、教室はさぞ賑やかでしょう。`;
+            touko = ['一校にこんなに大勢……運動会は壮観でしょうねえ。', 'お昼の給食を配るだけで、ひと仕事になりそうだわ。'][seed % 2];
+          } else {
+            kei = `小学校1校あたり約${r}人。全国の真ん中どころ（中央値は約${Math.round(medianRatio)}人）です。`;
+            touko = ['ちょうどよい賑わい、というところかしら。', '教室の窓から、どんな景色が見えるのでしょうね。'][seed % 2];
+          }
+        } else {
+          kei = 'この町の小学校は、台帳に記載が見当たりません。';
+          touko = '数字にならない学び舎も、きっとあるのだわ。';
+        }
+
+        if (hsCount === 0 || hsCount === null) {
+          kei += ' 高校の記載はなく、卒業後は町の外の学校へ通うことになります。';
+        }
+        if (kgCount === 0) {
+          touko += ' 幼稚園はないのねえ。';
+        }
+
+        keiEl.textContent = kei;
+        toukoEl.textContent = touko;
+      }
+
       // ---- カード＋グラフ描画 ----
       let chart = null;
       function render(area) {
         document.getElementById('resultArea').hidden = false;
+        updateCharacterLines(area);
         document.getElementById('resultTitle').textContent = `${area.p} ${area.n}`;
 
         const grid = document.getElementById('cardGrid');
