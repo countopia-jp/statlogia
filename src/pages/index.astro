@@ -47,8 +47,10 @@ const latestNews = news.slice(0, 3);
     <section id="exhibits">
       <div class="sec-head">
         <img class="sec-icon" src="/images/icon/icon-exhibit.webp" alt="" width="160" height="160" loading="lazy" />
-        <span class="no">EXHIBITS</span>
-        <h2>いまの展示</h2>
+        <div class="sec-text">
+          <span class="no">EXHIBITS</span>
+          <h2>いまの展示</h2>
+        </div>
       </div>
       <div class="cards">
         <a class="card pc" href="/exhibits/sleep/">
@@ -87,8 +89,10 @@ const latestNews = news.slice(0, 3);
     <section id="reading-room">
       <div class="sec-head">
         <img class="sec-icon" src="/images/icon/icon-reading.webp" alt="" width="160" height="160" loading="lazy" />
-        <span class="no">READING ROOM</span>
-        <h2>閲覧室</h2>
+        <div class="sec-text">
+          <span class="no">READING ROOM</span>
+          <h2>閲覧室</h2>
+        </div>
       </div>
       <div class="cards">
         <a class="card" href="/education/">
@@ -110,8 +114,10 @@ const latestNews = news.slice(0, 3);
     <!-- 案内人 -->
     <section id="guide">
       <div class="sec-head">
-        <span class="no">GUIDE</span>
-        <h2>この国の案内人</h2>
+        <div class="sec-text">
+          <span class="no">GUIDE</span>
+          <h2>この国の案内人</h2>
+        </div>
       </div>
       <div class="guides">
         <figure class="portrait">
@@ -180,9 +186,11 @@ h1 .num{color:var(--stamp)}
 .gz-list a:hover{color:#b23a2f}
 .gz-more{font-size:.8rem;color:#b23a2f;flex-shrink:0;align-self:center}
 @media(max-width:600px){.gazette{flex-direction:column;gap:10px}.gz-more{align-self:flex-end}}
-.sec-icon{width:56px;height:56px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply;vertical-align:middle;margin-right:10px}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.sec-text{display:flex;flex-direction:column}
+.sec-icon{width:56px;height:56px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
-.sec-head h2{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.5rem;margin:6px 0 24px}
+.sec-head h2{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.5rem;margin:4px 0 0}
 #exhibits,#reading-room,#guide{padding:40px 0}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
 .card{
