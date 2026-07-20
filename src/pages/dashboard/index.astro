@@ -6,11 +6,10 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
-
 <BaseLayout title="閲覧室 - Countopia" backHref="/" backLabel="玄関">
   <main class="rr">
     <header class="rr-hero">
-      <img class="rr-figure" src="/images/icon/icon-reading.webp" alt="" width="160" height="160" loading="lazy" />
+      <img class="rr-figure" src="/images/icon/reading-room-large.webp" alt="山あいの木造書庫、机に開かれた台帳" width="1400" height="781" loading="lazy" />
       <p class="rr-kicker">閲覧室</p>
       <h1>自分の手で、数字を引き出す部屋</h1>
       <p class="rr-lead">
@@ -18,11 +17,9 @@ import Talk from '../../components/Talk.astro';
         知りたい町を指定して、台帳から数字を取り寄せてください。
       </p>
     </header>
-
     <Talk speaker="kei">
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
     </Talk>
-
     <section class="rr-grid" aria-label="閲覧窓口の一覧">
       <a class="rr-card" href="/education/">
         <p class="rr-card-no">窓口 01</p>
@@ -33,27 +30,23 @@ import Talk from '../../components/Talk.astro';
         </p>
         <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
       </a>
-
       <div class="rr-card rr-card--closed" aria-disabled="true">
         <p class="rr-card-no">窓口 02</p>
         <h2>準備中</h2>
         <p class="rr-card-desc">次の台帳を運び込んでいます。開室をお待ちください。</p>
       </div>
     </section>
-
     <Talk speaker="touko">
       台帳を自分でめくってよいなんて。役場の帳場では、考えられませんでしたわ。
     </Talk>
   </main>
-
   <style>
     .rr { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
-    .rr-figure { width: 96px; height: 96px; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 4px; }
+    .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
-
     .rr-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -78,7 +71,6 @@ import Talk from '../../components/Talk.astro';
     .rr-card h2 { margin: 0 0 10px; font-size: 1.2rem; }
     .rr-card-desc { font-size: 0.9rem; line-height: 1.8; color: #444; margin: 0 0 10px; }
     .rr-card-meta { font-size: 0.75rem; color: #888; margin: 0; }
-
     .rr-card--closed {
       border-style: dashed;
       border-color: #9aa79e;
