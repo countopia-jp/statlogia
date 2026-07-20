@@ -11,7 +11,7 @@ const latestNews = news.slice(0, 3);
       <div>
         <span class="eyebrow">JAPAN IN NUMBERS</span>
         <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-        <p class="lead">Countopia（カウントピア）は、日本の公的統計を「へぇ」と眺めて遊ぶ国。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+        <p class="lead">Countopia Stats（カウントピア・スタッツ）は、日本の公的統計を「へぇ」と眺めて遊ぶ国。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
         <div class="hero-actions">
           <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
         </div>
@@ -20,6 +20,7 @@ const latestNews = news.slice(0, 3);
         <div class="stamp">
           <span class="top">IMMIGRATION</span>
           <span class="big">COUNTOPIA</span>
+          <span class="big2">STATS</span>
           <span class="date">2026.07</span>
           <span class="bottom">入国を許可する</span>
         </div>
@@ -129,7 +130,7 @@ const latestNews = news.slice(0, 3);
           <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
         </figure>
       </div>
-      <Talk speaker="kei">ようこそCountopiaへ。この国では、数字はぜんぶ「景色」です。</Talk>
+      <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
       <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
       <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
     </section>
@@ -165,6 +166,7 @@ h1 .num{color:var(--stamp)}
 @media(prefers-reduced-motion:reduce){.stamp{animation:none}}
 .stamp .top{font-size:.65rem;letter-spacing:.34em;font-weight:600}
 .stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5rem;letter-spacing:.08em}
+.stamp .big2{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.95rem;letter-spacing:.14em;margin-top:-2px}
 .stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8rem;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:2px 10px;margin-top:4px}
 .stamp .bottom{font-size:.62rem;letter-spacing:.28em;margin-top:2px}
 .gazette{
