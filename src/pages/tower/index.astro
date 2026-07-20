@@ -21,6 +21,7 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
   <main>
     <section class="tower">
       <div class="sec-head">
+　　　　<img class="tw-figure" src="/images/icon/tower-large.webp" alt="" width="520" height="520" loading="lazy" />
         <span class="no">OBSERVATORY</span>
         <h1>展望塔</h1>
         <p class="sub">日本の「いま」を数字で一望する観測盤。展示が増えるたび、計器も増えます。</p>
@@ -103,4 +104,5 @@ a.gauge:hover{background:#f7f4e9}
 .gauge.soon{opacity:.55}
 .gauge.soon .g-value{color:var(--ink-soft)}
 .note{margin-top:20px;font-size:.72rem;color:var(--ink-soft)}
+.tw-figure{display:block;width:120px;height:120px;object-fit:contain;mix-blend-mode:multiply;margin:0 0 6px}
 </style>
