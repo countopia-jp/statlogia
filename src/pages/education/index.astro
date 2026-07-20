@@ -331,10 +331,27 @@ const yearNote = countYears.join('・');
       background: #fff; cursor: pointer; font-size: 0.85rem;
     }
     .edu-tab.is-active { background: #1b4332; color: #fff; }
-    .edu-rank-list { list-style: none; counter-reset: rank; padding: 0; max-width: 560px; margin: 0 auto 8px; }
+    .edu-rank-list {
+      list-style: none;
+      counter-reset: rank;
+      padding: 8px 20px;
+      max-width: 560px;
+      margin: 0 auto 8px;
+      border: 1px solid #e0e0d8;
+      border-radius: 8px;
+      background: #fdfdf8;
+    }
     .edu-rank-list li {
-      counter-increment: rank; display: flex; justify-content: space-between; align-items: center;
-      padding: 10px 14px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+      counter-increment: rank;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 4px;
+      border-bottom: 1px solid #e0e0d8;
+      cursor: pointer;
+    }
+    .edu-rank-list li:last-child {
+      border-bottom: none;
     }
     .edu-rank-list li::before {
       content: counter(rank); font-weight: 700; color: #b23a2f;
