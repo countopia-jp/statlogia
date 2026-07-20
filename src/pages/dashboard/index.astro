@@ -2,11 +2,6 @@
 // =====================================================
 // Countopia - 閲覧室（ダッシュボード一覧）
 // src/pages/dashboard/index.astro
-//
-// 来館者が自分で数字を引き出す施設の一覧。
-// 展示（読み物）とは別区画。現在は「学びの登記所」1室＋準備中。
-// ※ BaseLayout / Talk のprops名は既存ページに合わせて
-//    必要なら調整してください。
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
@@ -15,6 +10,7 @@ import Talk from '../../components/Talk.astro';
 <BaseLayout title="閲覧室 - Countopia" backHref="/" backLabel="玄関">
   <main class="rr">
     <header class="rr-hero">
+      <img class="rr-figure" src="/images/icon/icon-reading.webp" alt="" width="160" height="160" loading="lazy" />
       <p class="rr-kicker">閲覧室</p>
       <h1>自分の手で、数字を引き出す部屋</h1>
       <p class="rr-lead">
@@ -52,7 +48,8 @@ import Talk from '../../components/Talk.astro';
 
   <style>
     .rr { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
-    .rr-hero { text-align: center; padding: 32px 0 8px; }
+    .rr-hero { text-align: center; padding: 28px 0 8px; }
+    .rr-figure { width: 96px; height: 96px; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 4px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
