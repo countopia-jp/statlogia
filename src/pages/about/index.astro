@@ -2,9 +2,6 @@
 // =====================================================
 // Countopia - 入国審査場（このサイトについて）
 // src/pages/about/index.astro
-//
-// About・データ出典・運営者・免責を「入国審査」の演出で。
-// 将来のプライバシーポリシー/お問い合わせはここから分岐予定。
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
@@ -13,6 +10,7 @@ import Talk from '../../components/Talk.astro';
 <BaseLayout title="入国審査場｜このサイトについて - Countopia" backHref="/" backLabel="玄関">
   <main class="imm">
     <header class="imm-hero">
+      <img class="imm-seal" src="/images/icon/stamp-immigration-large.webp" alt="" width="520" height="520" loading="lazy" />
       <p class="imm-kicker">IMMIGRATION</p>
       <h1>入国審査場</h1>
       <p class="imm-lead">
@@ -92,7 +90,8 @@ import Talk from '../../components/Talk.astro';
 
   <style>
     .imm { max-width: 720px; margin: 0 auto; padding: 0 16px 56px; }
-    .imm-hero { text-align: center; padding: 40px 0 8px; }
+    .imm-hero { text-align: center; padding: 32px 0 8px; }
+    .imm-seal { width: 150px; height: 150px; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 6px; }
     .imm-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
     .imm-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
     .imm-lead { color: #555; line-height: 1.9; }
