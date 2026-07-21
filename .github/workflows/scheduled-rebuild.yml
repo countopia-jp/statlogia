@@ -6,6 +6,9 @@ on:
     - cron: '0 18 1 * *'
   workflow_dispatch: {}  # 手動でも実行できるようにしておく
 
+permissions:
+  contents: write
+
 jobs:
   rebuild:
     runs-on: ubuntu-latest
