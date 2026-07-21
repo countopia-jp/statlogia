@@ -27,13 +27,13 @@ const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 
       <div class="highlight">
         <div class="card card--hot">
-          <span class="seal" aria-hidden="true"><i>第</i><b>1</b><i>位</i></span>
+          <span class="seal" aria-hidden="true"><b>最短</b></span>
           <span class="label">いちばん眠らない</span>
           <strong>{top.pref}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
-          <span class="seal" aria-hidden="true"><i>第</i><b>1</b><i>位</i></span>
+          <span class="seal" aria-hidden="true"><b>最長</b></span>
           <span class="label">いちばんよく眠る</span>
           <strong>{bottom.pref}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
@@ -99,7 +99,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
 .card--hot .num{color:#b23a2f}
 .card--cool .num{color:#2d6a4f}
-/* 消印風の1位スタンプ */
+/* 消印風スタンプ（最短/最長） */
 .seal{
   position:absolute;top:12px;right:14px;width:48px;height:48px;
   border:2px solid currentColor;border-radius:50%;
@@ -108,7 +108,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
   font-family:"Shippori Mincho",serif;
 }
 .seal i{font-style:normal;font-size:.6rem}
-.seal b{font-size:1.1rem;line-height:1}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
 .card--hot .seal{color:#b23a2f}
 .card--cool .seal{color:#2d6a4f}
 .rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
