@@ -4,15 +4,15 @@
 // img を差し替えれば全記事のアイコンが一斉に更新される(原画完成時はここだけ変更)
 const { speaker = 'kei' } = Astro.props;
 const profiles = {
-  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left'  },
-  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right' },
+  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
+  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
   // 旧名の互換
-  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left'  },
-  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right' },
+  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
+  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
 };
 const p = profiles[speaker] ?? profiles.kei;
 ---
-<div class={`say ${p.side === 'right' ? 'right' : ''}`}>
+<div class={`say ${p.side === 'right' ? 'right' : ''} ${p.tone}`}>
   <img class="face" src={p.img} alt={p.name} width="52" height="52" loading="lazy" />
   <div>
     <span class="name">{p.name}</span>
@@ -25,4 +25,9 @@ const p = profiles[speaker] ?? profiles.kei;
 .face{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--paper)}
 .bubble{background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:12px 16px;font-size:.9rem}
 .name{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--ink-soft);display:block;margin-bottom:4px}
+/* 話者ごとの色分け（京=深緑、橙子=朱。円形アイコンのリング色と揃える） */
+.say.kei .bubble{background:#eef4f0;border-color:#2d6a4f55}
+.say.kei .name{color:#2d6a4f}
+.say.touko .bubble{background:#fbf0e9;border-color:#b23a2f55}
+.say.touko .name{color:#b23a2f}
 </style>
