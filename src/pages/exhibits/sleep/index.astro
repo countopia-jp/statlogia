@@ -91,17 +91,13 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4v
 h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
 .highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
 @media(max-width:560px){.highlight{grid-template-columns:1fr}}
-.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff8;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card{border:none;border-radius:12px;padding:20px;background:#fff;box-shadow:0 2px 10px #0000000d;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
 .card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
 .card strong{font-family:"Shippori Mincho",serif;font-size:1.5rem}
-.card .num{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
-/* 役割の色分け（hot=眠らない側、cool=よく眠る側） */
-.card--hot{background:#fbf0e9;border-color:#b23a2f44}
-.card--hot .label{color:#b23a2f}
-.card--hot .num{color:#b23a2f}
-.card--cool{background:#eef4f0;border-color:#2d6a4f44}
-.card--cool .label{color:#2d6a4f}
-.card--cool .num{color:#2d6a4f}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.15rem}
+/* 役割の色分けは数字とラベルの文字色だけで */
+.card--hot .label,.card--hot .num{color:#b23a2f}
+.card--cool .label,.card--cool .num{color:#2d6a4f}
 .rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
 .rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
 .rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
