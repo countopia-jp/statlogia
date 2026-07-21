@@ -1,0 +1,21 @@
+name: Scheduled Rebuild
+
+on:
+  schedule:
+    # 毎月1日の 03:00 JST（UTC 18:00 前日）にビルドし直す
+    - cron: '0 18 1 * *'
+  workflow_dispatch: {}  # 手動でも実行できるようにしておく
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trigger empty commit to redeploy
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: scheduled rebuild (data refresh)"
+          git push
