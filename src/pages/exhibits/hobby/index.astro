@@ -16,7 +16,7 @@ const commuteRows = await fetchCommuteByPrefecture();
 const commuteRankOfTop = commuteRows.findIndex((r) => r.pref === top.pref) + 1;
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 ---
-<BaseLayout title="趣味に生きる県はどこだ｜Countopia" description="都道府県別・趣味娯楽時間ランキング。いちばん遊んでいる県はどこ？" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="趣味に生きる県はどこだ｜Countopia Stats" description="都道府県別・趣味娯楽時間ランキング。いちばん遊んでいる県はどこ？" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
@@ -30,12 +30,14 @@ const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
       <Talk speaker="kei">映像、ゲーム、スマートフォン……道具は変わりましたが、「遊ぶ時間を捻出する」努力は今も昔も同じかもしれません。</Talk>
 
       <div class="highlight">
-        <div class="card">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">いちばん趣味に生きる</span>
           <strong>{top.pref}</strong>
           <span class="num">{fmt(top.minutes)}／日</span>
         </div>
-        <div class="card">
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">いちばん趣味の時間が短い</span>
           <strong>{bottom.pref}</strong>
           <span class="num">{fmt(bottom.minutes)}／日</span>
@@ -94,10 +96,24 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4v
 h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
 .highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
 @media(max-width:560px){.highlight{grid-template-columns:1fr}}
-.card{border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff8;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
-.card strong{font-family:"Shippori Mincho",serif;font-size:1.5rem}
-.card .num{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+/* 消印風スタンプ（最多/最少） */
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal i{font-style:normal;font-size:.6rem}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
 .rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
 .rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
 .rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
