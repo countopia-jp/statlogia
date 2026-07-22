@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://countopia.com/sitemap-index.xml
