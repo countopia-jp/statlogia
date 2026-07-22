@@ -1,12 +1,10 @@
 ---
 // =====================================================
-// Countopia - 教育ダッシュボード「学びの登記所」
+// Countopia Stats - 教育ダッシュボード「学びの登記所」
 // src/pages/education/index.astro
 //
 // 来館者が自治体を選ぶ、Countopia初のインタラクティブ展示。
 // データは /data/education.json（ビルド時生成）から取得。
-// ※ BaseLayout / Talk のprops名は既存の展示ページに
-//    合わせて必要なら調整してください。
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
@@ -20,7 +18,7 @@ const countYears = [...new Set(
 const yearNote = countYears.join('・');
 ---
 
-<BaseLayout title="教育ダッシュボード｜学びの登記所 - Countopia" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="教育ダッシュボード｜学びの登記所 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
   <main class="edu-dash">
     <header class="edu-hero">
       <img class="edu-hero-figure" src="/images/icon/school-large.webp" alt="山あいの木造校舎、校庭の一本桜" width="1400" height="781" loading="lazy" />
@@ -38,6 +36,12 @@ const yearNote = countYears.join('・');
     <Talk speaker="touko">
       わたしの通っていた学校も、もう数字になっているのかしら……。
     </Talk>
+
+    <!-- ===== 都道府県タイル地図 ===== -->
+    <section class="edu-map" aria-label="都道府県の地図から選ぶ">
+      <div id="prefMap"></div>
+      <p class="edu-map-note">地図の区画を選ぶと、その県の市区町村が下の窓口に並びます。</p>
+    </section>
 
     <!-- ===== 自治体セレクタ ===== -->
     <section class="edu-selector" aria-label="自治体の選択">
@@ -89,6 +93,7 @@ const yearNote = countYears.join('・');
         出典：{edu.source}（{yearNote}時点）<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
         政令指定都市の区は選択できますが、ランキング集計からは除外しています（市単位で集計）。
+        地図は都道府県の位置関係を模した区画図で、実際の面積や形状を表すものではありません。
       </p>
     </footer>
   </main>
@@ -131,12 +136,101 @@ const yearNote = countYears.join('・');
           citySelect.appendChild(opt);
         }
         citySelect.disabled = list.length === 0;
+        highlightTile(prefSelect.value);
       });
 
       citySelect.addEventListener('change', () => {
         const area = data.areas.find((a) => a.c === citySelect.value);
         if (area) render(area);
       });
+
+      // ---- 都道府県タイル地図 ----
+      // [表示名, 行, 列] 日本の位置関係を模した区画配置（13列×14行）
+      const TILES = [
+        ['北海道', 1, 13],
+        ['青森', 2, 12],
+        ['秋田', 3, 11], ['岩手', 3, 12],
+        ['山形', 4, 11], ['宮城', 4, 12],
+        ['石川', 5, 9], ['富山', 5, 10], ['新潟', 5, 11], ['福島', 5, 12], ['茨城', 5, 13],
+        ['福井', 6, 8], ['岐阜', 6, 9], ['長野', 6, 10], ['群馬', 6, 11], ['栃木', 6, 12],
+        ['鳥取', 7, 6], ['兵庫', 7, 7], ['京都', 7, 8], ['滋賀', 7, 9], ['山梨', 7, 10],
+        ['埼玉', 7, 11], ['東京', 7, 12], ['千葉', 7, 13],
+        ['島根', 8, 5], ['岡山', 8, 6], ['大阪', 8, 7], ['奈良', 8, 8], ['愛知', 8, 9],
+        ['静岡', 8, 10], ['神奈川', 8, 11],
+        ['山口', 9, 4], ['広島', 9, 5], ['香川', 9, 6], ['和歌山', 9, 7], ['三重', 9, 8],
+        ['福岡', 10, 3], ['大分', 10, 4], ['愛媛', 10, 5], ['徳島', 10, 6],
+        ['佐賀', 11, 2], ['熊本', 11, 3], ['高知', 11, 5],
+        ['長崎', 12, 2], ['宮崎', 12, 4],
+        ['鹿児島', 13, 3],
+        ['沖縄', 14, 1],
+      ];
+
+      const NS = 'http://www.w3.org/2000/svg';
+      const CELL = 34, GAP = 3, PAD = 2, COLS = 13, ROWS = 14;
+      const tileByPref = {};
+
+      function buildMap() {
+        const w = COLS * (CELL + GAP) + PAD * 2;
+        const h = ROWS * (CELL + GAP) + PAD * 2;
+        const svg = document.createElementNS(NS, 'svg');
+        svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        svg.setAttribute('role', 'group');
+        svg.setAttribute('aria-label', '都道府県の区画図');
+
+        for (const [base, r, c] of TILES) {
+          const pref = prefs.find((p) => p.startsWith(base));
+          const x = PAD + (c - 1) * (CELL + GAP);
+          const y = PAD + (r - 1) * (CELL + GAP);
+
+          const g = document.createElementNS(NS, 'g');
+          g.setAttribute('class', 'tile' + (pref ? '' : ' is-empty'));
+          if (pref) {
+            g.setAttribute('tabindex', '0');
+            g.setAttribute('role', 'button');
+            g.setAttribute('aria-label', pref);
+          }
+
+          const t = document.createElementNS(NS, 'title');
+          t.textContent = pref || base;
+          g.appendChild(t);
+
+          const rect = document.createElementNS(NS, 'rect');
+          rect.setAttribute('x', x); rect.setAttribute('y', y);
+          rect.setAttribute('width', CELL); rect.setAttribute('height', CELL);
+          rect.setAttribute('rx', 3);
+          g.appendChild(rect);
+
+          const label = document.createElementNS(NS, 'text');
+          label.setAttribute('x', x + CELL / 2);
+          label.setAttribute('y', y + CELL / 2);
+          label.setAttribute('text-anchor', 'middle');
+          label.setAttribute('dominant-baseline', 'central');
+          label.setAttribute('font-size', base.length >= 3 ? 8.5 : 12);
+          label.textContent = base;
+          g.appendChild(label);
+
+          if (pref) {
+            const pick = () => {
+              prefSelect.value = pref;
+              prefSelect.dispatchEvent(new Event('change'));
+            };
+            g.addEventListener('click', pick);
+            g.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+            });
+            tileByPref[pref] = g;
+          }
+          svg.appendChild(g);
+        }
+        document.getElementById('prefMap').appendChild(svg);
+      }
+
+      function highlightTile(pref) {
+        for (const g of Object.values(tileByPref)) g.classList.remove('is-active');
+        if (tileByPref[pref]) tileByPref[pref].classList.add('is-active');
+      }
+
+      buildMap();
 
       // ---- 案内人コメント生成 ----
       // 全国の小学校1校あたり児童数の中央値（ランキング対象で算出）
@@ -303,6 +397,25 @@ const yearNote = countYears.join('・');
     .edu-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .edu-hero h1 { margin: 4px 0 12px; }
     .edu-lead { color: #555; line-height: 1.9; }
+
+    .edu-map { margin: 28px 0 4px; text-align: center; }
+    .edu-map svg { width: 100%; max-width: 440px; height: auto; }
+    .edu-map .tile rect {
+      fill: #fff; stroke: #d9d9cd; stroke-width: 1;
+      cursor: pointer; transition: fill .12s, stroke .12s;
+    }
+    .edu-map .tile text {
+      font-family: "Shippori Mincho", serif; fill: #3a3a32;
+      pointer-events: none; letter-spacing: .02em;
+    }
+    .edu-map .tile:hover rect { fill: #eef4f0; stroke: #2d6a4f; }
+    .edu-map .tile:focus { outline: none; }
+    .edu-map .tile:focus rect { stroke: #2d6a4f; stroke-width: 2; }
+    .edu-map .tile.is-active rect { fill: #1b4332; stroke: #1b4332; }
+    .edu-map .tile.is-active text { fill: #fdfdf8; }
+    .edu-map .tile.is-empty rect { fill: #f4f4ee; stroke: #e8e8de; cursor: default; }
+    .edu-map .tile.is-empty text { fill: #c3c3b8; }
+    .edu-map-note { font-size: 0.78rem; color: #777; margin-top: 10px; }
 
     .edu-selector { margin: 24px 0; }
     .edu-select-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
