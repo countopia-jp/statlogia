@@ -1,12 +1,12 @@
 ---
 // =====================================================
-// Countopia - 閲覧室（ダッシュボード一覧）
+// Countopia Stats - 閲覧室（ダッシュボード一覧）
 // src/pages/dashboard/index.astro
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
-<BaseLayout title="閲覧室 - Countopia" backHref="/" backLabel="玄関">
+<BaseLayout title="閲覧室 - Countopia Stats" backHref="/" backLabel="玄関">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/reading-room-large.webp" alt="山あいの木造書庫、机に開かれた台帳" width="1400" height="781" loading="lazy" />
@@ -30,8 +30,17 @@ import Talk from '../../components/Talk.astro';
         </p>
         <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
       </a>
-      <div class="rr-card rr-card--closed" aria-disabled="true">
+      <a class="rr-card" href="/living/">
         <p class="rr-card-no">窓口 02</p>
+        <h2>暮らしの見積所</h2>
+        <p class="rr-card-desc">
+          都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書に。
+          稼ぎと住まいを並べると、暮らしの釣り合いが見えてきます。
+        </p>
+        <p class="rr-card-meta">出典：社会・人口統計体系（2023・2024年度）</p>
+      </a>
+      <div class="rr-card rr-card--closed" aria-disabled="true">
+        <p class="rr-card-no">窓口 03</p>
         <h2>準備中</h2>
         <p class="rr-card-desc">次の台帳を運び込んでいます。開室をお待ちください。</p>
       </div>
