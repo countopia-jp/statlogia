@@ -1,0 +1,393 @@
+---
+// =====================================================
+// Countopia Stats - 暮らしダッシュボード「暮らしの見積所」
+// src/pages/living/index.astro
+//
+// 都道府県を選んで「稼ぎ」と「住まい」を突き合わせる窓口。
+// データは /data/living.json（ビルド時生成）から取得。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
+//   誤爆防止で全セレクタを .liv- 接頭辞で統一している。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getLivingData } from '../../lib/living.js';
+
+const liv = await getLivingData();
+const years = [...new Set(liv.indicators.map((i) => i.year).filter(Boolean))].sort();
+const yearNote = years.join('・');
+---
+
+<BaseLayout title="暮らしの見積所｜稼ぎと住まい - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="liv-dash">
+    <header class="liv-hero">
+      <p class="liv-kicker">ダッシュボード</p>
+      <h1>暮らしの見積所</h1>
+      <p class="liv-lead">
+        給与、最低賃金、家賃、家の広さ、持ち家率。<br />
+        あなたの県の「稼ぎ」と「住まい」を、同じ台の上に並べてご覧ください。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      当所では、稼ぎと住まいを一緒に見積もります。片方だけでは、暮らしの形は見えてきませんから。
+    </Talk>
+    <Talk speaker="touko">
+      お給金と家賃を並べて見るの？　……なんだか、大人の話ねえ。
+    </Talk>
+
+    <!-- ===== 都道府県セレクタ ===== -->
+    <section class="liv-selector" aria-label="都道府県の選択">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect">
+          <option value="">選んでください</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- ===== 選択結果 ===== -->
+    <section id="resultArea" class="liv-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div class="liv-cards" id="cardGrid"></div>
+      <Talk speaker="kei"><span id="keiLine">県を選ぶと、見積書をお出しします。</span></Talk>
+      <Talk speaker="touko"><span id="toukoLine">どんな暮らしかしら。</span></Talk>
+    </section>
+
+    <!-- ===== 散布図 ===== -->
+    <section class="liv-scatter-sec" aria-label="稼ぎと家賃の散布図">
+      <h2>稼ぎと家賃の見取り図</h2>
+      <p class="liv-note">横軸が給与（男）、縦軸が1畳当たり家賃。右上ほど「稼げるが住居費も高い」県です。</p>
+      <div class="liv-chart-wrap">
+        <canvas id="scatterChart" height="260"></canvas>
+      </div>
+    </section>
+
+    <!-- ===== ランキング ===== -->
+    <section class="liv-ranking" aria-label="ランキング">
+      <h2>全国ベスト5</h2>
+      <div class="liv-tabs" role="tablist">
+        <button class="liv-tab is-active" data-rank="wage" role="tab">給与が高い</button>
+        <button class="liv-tab" data-rank="rent" role="tab">家賃が安い</button>
+        <button class="liv-tab" data-rank="area" role="tab">家が広い</button>
+      </div>
+      <ol class="liv-rank-list" id="rankList"></ol>
+      <p class="liv-note" id="rankNote"></p>
+    </section>
+
+    <Talk speaker="kei">
+      稼ぎの多い県は、たいてい住まいの費用も高くつきます。数字を二つ並べて、はじめて暮らしの手触りが見えてきますね。
+    </Talk>
+    <Talk speaker="touko">
+      広い家に住めるのは、案外お給金の高い県ではないのねえ。
+    </Talk>
+
+    <p class="liv-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/exhibits/housework/">家事時間の男女差</a></p>
+
+    <footer class="liv-source">
+      <p>
+        出典：{liv.source}（{yearNote}）<br />
+        給与・最低賃金は毎年、住宅関係は5年ごとの調査のため、指標によって年度が異なります。各カードに年度を明記しています。<br />
+        「平均」は47都道府県の単純平均であり、全国値とは一致しません。持ち家率は持ち家数÷居住世帯あり住宅数で当所が算出しました。<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script is:inline>
+    (async function () {
+      const res = await fetch('/data/living.json');
+      const data = await res.json();
+      const IND = data.indicators;
+      const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
+      const meta = Object.fromEntries(IND.map((ind) => [ind.code, ind]));
+      const val = (area, code) => area.v[idx[code]];
+
+      // 表示するカード（baseの2指標は内部計算用なので出さない）
+      const CARDS = [
+        { code: 'F620215', short: '給与（男）', dir: 'desc', note: '月あたり' },
+        { code: 'F620216', short: '給与（女）', dir: 'desc', note: '月あたり' },
+        { code: 'F6501', short: '最低賃金', dir: 'desc', note: '時間あたり' },
+        { code: 'H410431', short: '家賃（民営借家）', dir: 'asc', note: '1畳あたり' },
+        { code: 'H2130', short: '家の広さ', dir: 'desc', note: '1住宅あたり' },
+        { code: 'OWNRATE', short: '持ち家率', dir: 'desc', note: '住宅に占める割合' },
+      ];
+
+      // 千円→万円に直して読みやすく
+      function fmtValue(code, v) {
+        if (v === null || v === undefined) return '—';
+        const unit = meta[code].unit || '';
+        if (unit === '千円') return (v / 10).toFixed(1) + '万円';
+        if (unit === '％') return v.toFixed(1) + '％';
+        if (unit === 'm2' || unit === 'ｍ2') return v.toFixed(1) + '㎡';
+        return v.toLocaleString('ja-JP') + unit;
+      }
+
+      // 指標ごとの平均と順位表を作る
+      const stats = {};
+      for (const c of CARDS) {
+        const rows = data.areas
+          .filter((a) => val(a, c.code) !== null)
+          .sort((x, y) =>
+            c.dir === 'desc' ? val(y, c.code) - val(x, c.code) : val(x, c.code) - val(y, c.code)
+          );
+        const avg = rows.reduce((s, a) => s + val(a, c.code), 0) / rows.length;
+        stats[c.code] = {
+          avg,
+          rank: Object.fromEntries(rows.map((a, i) => [a.c, i + 1])),
+          total: rows.length,
+        };
+      }
+
+      // ---- セレクタ ----
+      const prefSelect = document.getElementById('prefSelect');
+      for (const a of data.areas) {
+        const opt = document.createElement('option');
+        opt.value = a.c;
+        opt.textContent = a.n;
+        prefSelect.appendChild(opt);
+      }
+      prefSelect.addEventListener('change', () => {
+        const area = data.areas.find((a) => a.c === prefSelect.value);
+        if (area) render(area);
+      });
+
+      // ---- カード描画 ----
+      function render(area) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = `${area.n}の見積書`;
+
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        for (const c of CARDS) {
+          const v = val(area, c.code);
+          const st = stats[c.code];
+          const rank = st.rank[area.c];
+          const diff = v === null ? null : ((v - st.avg) / st.avg) * 100;
+          const sign = diff === null ? '' : diff >= 0 ? '+' : '';
+          const dirLabel = c.dir === 'desc' ? '高い順' : '安い順';
+
+          const card = document.createElement('div');
+          card.className = 'liv-card';
+          card.innerHTML =
+            `<div class="liv-card-label">${c.short}</div>` +
+            `<div class="liv-card-num">${fmtValue(c.code, v)}</div>` +
+            `<div class="liv-card-sub">${c.note}・${meta[c.code].year || ''}</div>` +
+            (v === null
+              ? ''
+              : `<div class="liv-card-meta"><span class="liv-rank">${st.total}県中 ${rank}位</span>` +
+                `<span class="liv-diff">平均比 ${sign}${diff.toFixed(1)}％</span></div>` +
+                `<div class="liv-card-dir">${dirLabel}</div>`);
+          grid.appendChild(card);
+        }
+
+        updateLines(area);
+        highlightScatter(area);
+      }
+
+      // ---- 案内人のコメント ----
+      function updateLines(area) {
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        const wageRank = stats['F620215'].rank[area.c];
+        const rentRank = stats['H410431'].rank[area.c]; // 安い順
+        const areaRank = stats['H2130'].rank[area.c]; // 広い順
+        const ownRank = stats['OWNRATE'].rank[area.c]; // 高い順
+        const total = stats['F620215'].total;
+        const seed = parseInt(area.c, 10) || 0;
+
+        let k = `給与は${total}県中${wageRank}位、家賃の安さは${rentRank}位、家の広さは${areaRank}位です。`;
+        let t = '';
+
+        const gap = rentRank - wageRank; // 大きいほど「稼げるが家賃も高い」
+        if (wageRank <= 10 && rentRank >= 38) {
+          k += ' 稼ぎは上位ですが、住まいの負担も相応に重い県ですね。';
+          t = ['たくさん稼いでも、その分お家に消えてしまうのね。', 'お給金が高いのに、暮らしは楽とは限らないのねえ。'][seed % 2];
+        } else if (wageRank >= 38 && rentRank <= 10) {
+          k += ' 稼ぎは控えめでも、住まいの負担は全国でも軽いほうです。';
+          t = ['お給金は少なくても、広いお家に住めるのならいいわねえ。', 'つましくても、ゆったり暮らせるということかしら。'][seed % 2];
+        } else if (areaRank <= 5) {
+          k += ' 特に家の広さが全国有数です。';
+          t = ['まあ、そんなに広いお家に！　走り回れそうだわ。', '広いお家は掃除も大変でしょうねえ。'][seed % 2];
+        } else if (gap > 15) {
+          k += ' 稼ぎの順位に比べて、住まいの負担が重めに出ています。';
+          t = ['帳尻は合っているのかしら……。', 'お財布の中身は、見た目ほど増えないのねえ。'][seed % 2];
+        } else {
+          k += ' 稼ぎと住まいの釣り合いは、全国の中ほどというところです。';
+          t = ['ちょうどよい塩梅、というわけね。', '極端でないのが、案外いちばん暮らしやすいのかも。'][seed % 2];
+        }
+
+        if (ownRank <= 5) k += ` 持ち家率は${ownRank}位で、家を持つ人の多い県でもあります。`;
+        if (ownRank >= 43) k += ` 持ち家率は${ownRank}位。借りて住む人が多い県です。`;
+
+        kei.textContent = k;
+        touko.textContent = t;
+      }
+
+      // ---- 散布図 ----
+      let chart = null;
+      let selectedCode = null;
+
+      function buildScatter() {
+        const points = data.areas
+          .filter((a) => val(a, 'F620215') !== null && val(a, 'H410431') !== null)
+          .map((a) => ({ x: val(a, 'F620215') / 10, y: val(a, 'H410431'), n: a.n, c: a.c }));
+
+        const ctx = document.getElementById('scatterChart');
+        chart = new Chart(ctx, {
+          type: 'scatter',
+          data: {
+            datasets: [
+              {
+                label: '都道府県',
+                data: points,
+                pointRadius: (c) => (c.raw && c.raw.c === selectedCode ? 8 : 4),
+                pointBackgroundColor: (c) =>
+                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f88',
+                pointBorderColor: (c) =>
+                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f',
+              },
+            ],
+          },
+          options: {
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (c) =>
+                    `${c.raw.n}：給与 ${c.raw.x.toFixed(1)}万円 / 家賃 ${c.raw.y.toLocaleString('ja-JP')}円`,
+                },
+              },
+            },
+            scales: {
+              x: { title: { display: true, text: '給与（男・万円）' } },
+              y: { title: { display: true, text: '1畳当たり家賃（円）' } },
+            },
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      function highlightScatter(area) {
+        selectedCode = area.c;
+        if (chart) chart.update();
+      }
+
+      buildScatter();
+
+      // ---- ランキング ----
+      const RANKS = {
+        wage: { code: 'F620215', dir: 'desc', note: '給与（男）が高い県ベスト5。' },
+        rent: { code: 'H410431', dir: 'asc', note: '1畳当たり家賃が安い県ベスト5。住まいの負担が軽い顔ぶれです。' },
+        area: { code: 'H2130', dir: 'desc', note: '1住宅当たり延べ面積が広い県ベスト5。' },
+      };
+
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+
+      function showRank(mode) {
+        const cfg = RANKS[mode];
+        rankList.innerHTML = '';
+        const rows = data.areas
+          .filter((a) => val(a, cfg.code) !== null)
+          .sort((x, y) =>
+            cfg.dir === 'desc' ? val(y, cfg.code) - val(x, cfg.code) : val(x, cfg.code) - val(y, cfg.code)
+          )
+          .slice(0, 5);
+        for (const a of rows) {
+          const li = document.createElement('li');
+          li.innerHTML =
+            `<span class="liv-rank-name">${a.n}</span>` +
+            `<span class="liv-rank-val">${fmtValue(cfg.code, val(a, cfg.code))}</span>`;
+          li.addEventListener('click', () => {
+            prefSelect.value = a.c;
+            prefSelect.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        }
+        rankNote.textContent = cfg.note;
+      }
+
+      document.querySelectorAll('.liv-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.liv-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+
+      showRank('wage');
+    })();
+  </script>
+
+  <style is:global>
+    .liv-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .liv-hero { text-align: center; padding: 32px 0 8px; }
+    .liv-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .liv-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .liv-lead { color: #555; line-height: 1.9; }
+
+    .liv-selector { margin: 24px 0; display: flex; justify-content: center; }
+    .liv-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+    .liv-selector select {
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      border-radius: 6px; background: #fff; font-size: 1rem;
+    }
+
+    .liv-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .liv-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .liv-card {
+      border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px;
+      background: #fff; text-align: center;
+    }
+    .liv-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .liv-card-num {
+      font-family: "IBM Plex Mono", monospace; font-size: 1.5rem;
+      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+    }
+    .liv-card-sub { font-size: 0.7rem; color: #999; }
+    .liv-card-meta {
+      display: flex; justify-content: center; gap: 10px;
+      margin-top: 8px; font-size: 0.75rem;
+    }
+    .liv-rank { color: #b23a2f; font-weight: 700; }
+    .liv-diff { color: #666; }
+    .liv-card-dir { font-size: 0.65rem; color: #aaa; margin-top: 2px; }
+
+    .liv-scatter-sec { margin-top: 44px; }
+    .liv-scatter-sec h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .liv-chart-wrap { position: relative; height: 300px; margin: 16px 0 8px; }
+    .liv-note { font-size: 0.8rem; color: #666; text-align: center; line-height: 1.8; }
+
+    .liv-ranking { margin-top: 44px; }
+    .liv-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .liv-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+    .liv-tab {
+      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      background: #fff; cursor: pointer; font-size: 0.85rem;
+    }
+    .liv-tab.is-active { background: #1b4332; color: #fff; }
+    .liv-rank-list {
+      list-style: none; counter-reset: rank; padding: 8px 20px;
+      max-width: 560px; margin: 0 auto 8px;
+      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+    }
+    .liv-rank-list li {
+      counter-increment: rank; display: flex; justify-content: space-between;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+    }
+    .liv-rank-list li:last-child { border-bottom: none; }
+    .liv-rank-list li::before {
+      content: counter(rank); font-weight: 700; color: #b23a2f;
+      margin-right: 12px; min-width: 1.4em; text-align: center;
+    }
+    .liv-rank-list li:hover { background: #f4f7f4; }
+    .liv-rank-name { flex: 1; }
+    .liv-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
+
+    .liv-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
+    .liv-cross a { color: #b23a2f; }
+    .liv-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
