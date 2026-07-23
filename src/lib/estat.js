@@ -100,3 +100,10 @@ export async function fetchHobbyByPrefecture() {
   rows.sort((a, b) => b.minutes - a.minutes);
   return rows;
 }
+
+// 学習・自己啓発・訓練の時間（長い順 = 学ぶ順）
+export async function fetchStudyByPrefecture() {
+  const rows = await fetchActivityByPrefecture('学習・自己啓発');
+  rows.sort((a, b) => b.minutes - a.minutes);
+  return rows;
+}
