@@ -34,13 +34,13 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
-          <span class="label">いちばん学ぶ</span>
+          <span class="label">学ぶ時間がいちばん長い</span>
           <strong>{top.pref}</strong>
           <span class="num">{fmt(top.minutes)}／日</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
-          <span class="label">いちばん学ばない</span>
+          <span class="label">学ぶ時間がいちばん短い</span>
           <strong>{bottom.pref}</strong>
           <span class="num">{fmt(bottom.minutes)}／日</span>
         </div>

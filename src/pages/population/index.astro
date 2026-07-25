@@ -1,0 +1,310 @@
+---
+// =====================================================
+// Countopia Stats - 定番統計ダッシュボード「国勢の間」
+// src/pages/population/index.astro
+//
+// 都道府県を選んで人口・世帯の基礎データを見る窓口。
+// データは /data/population.json（ビルド時生成）から取得。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
+//   誤爆防止で全セレクタを .pop- 接頭辞で統一している。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getPopulationData } from '../../lib/population.js';
+
+const pop = await getPopulationData();
+const years = [...new Set(pop.indicators.map((i) => i.year).filter(Boolean))].sort();
+const yearNote = years.join('・');
+---
+
+<BaseLayout title="国勢の間｜人口と世帯 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="pop-dash">
+    <header class="pop-hero">
+      <p class="pop-kicker">ダッシュボード</p>
+      <h1>国勢の間</h1>
+      <p class="pop-lead">
+        総人口、高齢化率、世帯数、出生率、婚姻率。<br />
+        あなたの県の「人のかたち」を、数字でご覧ください。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      当所では、県の人口と世帯のすがたをまとめて見ていただけます。国の基本、と言えば大げさですが。
+    </Talk>
+    <Talk speaker="touko">
+      その土地に、どれくらいの人が暮らしているか、ということね。
+    </Talk>
+
+    <!-- ===== 都道府県セレクタ ===== -->
+    <section class="pop-selector" aria-label="都道府県の選択">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect">
+          <option value="">選んでください</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- ===== 選択結果 ===== -->
+    <section id="resultArea" class="pop-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div class="pop-cards" id="cardGrid"></div>
+      <Talk speaker="kei"><span id="keiLine">県を選ぶと、台帳をお出しします。</span></Talk>
+      <Talk speaker="touko"><span id="toukoLine">どんな土地かしら。</span></Talk>
+    </section>
+
+    <!-- ===== ランキング ===== -->
+    <section class="pop-ranking" aria-label="ランキング">
+      <h2>全国ベスト5</h2>
+      <div class="pop-tabs" role="tablist">
+        <button class="pop-tab is-active" data-rank="pop" role="tab">人口が多い</button>
+        <button class="pop-tab" data-rank="aging" role="tab">高齢化率が高い</button>
+        <button class="pop-tab" data-rank="young" role="tab">高齢化率が低い</button>
+      </div>
+      <ol class="pop-rank-list" id="rankList"></ol>
+      <p class="pop-note" id="rankNote"></p>
+    </section>
+
+    <Talk speaker="kei">
+      人口が多い県ほど高齢化率が低いとは限りません。数字を並べてみると、土地ごとの事情が見えてきます。
+    </Talk>
+    <Talk speaker="touko">
+      人が多い国、少ない国。それぞれに、暮らしがあるのねえ。
+    </Talk>
+
+    <p class="pop-cross">あわせて見る：<a href="/living/">暮らしの見積所</a>｜<a href="/education/">学びの登記所</a></p>
+
+    <footer class="pop-source">
+      <p>
+        出典：{pop.source}（{yearNote}）<br />
+        「平均」は47都道府県の単純平均であり、全国値とは一致しません。<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline>
+    (async function () {
+      const res = await fetch('/data/population.json');
+      const data = await res.json();
+      const IND = data.indicators;
+      const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
+      const meta = Object.fromEntries(IND.map((ind) => [ind.code, ind]));
+      const val = (area, code) => area.v[idx[code]];
+
+      const CARDS = [
+        { code: 'A1101', short: '総人口', dir: 'desc' },
+        { code: 'A1306', short: '高齢化率', dir: 'desc' },
+        { code: 'A1304', short: '年少人口率', dir: 'desc' },
+        { code: 'A192003', short: '人口増減率', dir: 'desc' },
+        { code: 'A7101', short: '世帯数', dir: 'desc' },
+        { code: 'A710211', short: '1世帯あたり人員', dir: 'desc' },
+        { code: 'A4103', short: '合計特殊出生率', dir: 'desc' },
+        { code: 'A9121', short: '婚姻率', dir: 'desc' },
+      ];
+
+      function fmtValue(code, v) {
+        if (v === null || v === undefined) return '—';
+        const unit = meta[code].unit || '';
+        if (unit === '人' && v >= 10000) return (v / 10000).toFixed(1) + '万人';
+        if (unit === '％' || unit === '‰') return v.toFixed(1) + unit;
+        if (unit === '世帯' && v >= 10000) return (v / 10000).toFixed(1) + '万世帯';
+        return v.toLocaleString('ja-JP') + unit;
+      }
+
+      const stats = {};
+      for (const c of CARDS) {
+        const rows = data.areas
+          .filter((a) => val(a, c.code) !== null)
+          .sort((x, y) =>
+            c.dir === 'desc' ? val(y, c.code) - val(x, c.code) : val(x, c.code) - val(y, c.code)
+          );
+        const avg = rows.reduce((s, a) => s + val(a, c.code), 0) / rows.length;
+        stats[c.code] = {
+          avg,
+          rank: Object.fromEntries(rows.map((a, i) => [a.c, i + 1])),
+          total: rows.length,
+        };
+      }
+
+      const prefSelect = document.getElementById('prefSelect');
+      for (const a of data.areas) {
+        const opt = document.createElement('option');
+        opt.value = a.c;
+        opt.textContent = a.n;
+        prefSelect.appendChild(opt);
+      }
+      prefSelect.addEventListener('change', () => {
+        const area = data.areas.find((a) => a.c === prefSelect.value);
+        if (area) render(area);
+      });
+
+      function render(area) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = `${area.n}の台帳`;
+
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        for (const c of CARDS) {
+          const v = val(area, c.code);
+          const st = stats[c.code];
+          const rank = st.rank[area.c];
+          const diff = v === null ? null : ((v - st.avg) / st.avg) * 100;
+          const sign = diff === null ? '' : diff >= 0 ? '+' : '';
+
+          const card = document.createElement('div');
+          card.className = 'pop-card';
+          card.innerHTML =
+            `<div class="pop-card-label">${c.short}</div>` +
+            `<div class="pop-card-num">${fmtValue(c.code, v)}</div>` +
+            `<div class="pop-card-sub">${meta[c.code].year || ''}</div>` +
+            (v === null
+              ? ''
+              : `<div class="pop-card-meta"><span class="pop-rank">${st.total}県中 ${rank}位</span>` +
+                `<span class="pop-diff">平均比 ${sign}${diff.toFixed(1)}％</span></div>`);
+          grid.appendChild(card);
+        }
+
+        updateLines(area);
+      }
+
+      function updateLines(area) {
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        const popRank = stats['A1101'].rank[area.c];
+        const agingRank = stats['A1306'].rank[area.c];
+        const total = stats['A1101'].total;
+        const seed = parseInt(area.c, 10) || 0;
+
+        let k = `総人口は${total}県中${popRank}位、高齢化率は${agingRank}位です。`;
+        let t = '';
+
+        if (popRank <= 5 && agingRank >= 38) {
+          k += ' 人口の多い県の中では、比較的若い顔ぶれです。';
+          t = ['人が多いと、若い方も多いのかしら。', '賑やかな土地なのねえ。'][seed % 2];
+        } else if (popRank >= 38 && agingRank <= 10) {
+          k += ' 人口は少なめですが、高齢化はかなり進んでいます。';
+          t = ['静かな土地には、お年寄りが多いのねえ。', '人が少ないと、寂しくないのかしら。'][seed % 2];
+        } else if (agingRank <= 5) {
+          k += ' 高齢化率は全国でも上位です。';
+          t = ['ご年配の方が多い土地なのねえ。', '長生きできる土地、ということかしら。'][seed % 2];
+        } else if (agingRank >= 43) {
+          k += ' 高齢化率は全国でも低いほうです。';
+          t = ['若い方の多い、活気のある土地ねえ。'][0];
+        } else {
+          k += ' 人口・高齢化ともに、全国の中ほどというところです。';
+          t = ['ちょうどよい塩梅、というわけね。'][0];
+        }
+
+        kei.textContent = k;
+        touko.textContent = t;
+      }
+
+      const RANKS = {
+        pop: { code: 'A1101', dir: 'desc', note: '総人口が多い県ベスト5。' },
+        aging: { code: 'A1306', dir: 'desc', note: '高齢化率が高い県ベスト5。' },
+        young: { code: 'A1306', dir: 'asc', note: '高齢化率が低い県ベスト5。若い世代の多い顔ぶれです。' },
+      };
+
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+
+      function showRank(mode) {
+        const cfg = RANKS[mode];
+        rankList.innerHTML = '';
+        const rows = data.areas
+          .filter((a) => val(a, cfg.code) !== null)
+          .sort((x, y) =>
+            cfg.dir === 'desc' ? val(y, cfg.code) - val(x, cfg.code) : val(x, cfg.code) - val(y, cfg.code)
+          )
+          .slice(0, 5);
+        for (const a of rows) {
+          const li = document.createElement('li');
+          li.innerHTML =
+            `<span class="pop-rank-name">${a.n}</span>` +
+            `<span class="pop-rank-val">${fmtValue(cfg.code, val(a, cfg.code))}</span>`;
+          li.addEventListener('click', () => {
+            prefSelect.value = a.c;
+            prefSelect.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        }
+        rankNote.textContent = cfg.note;
+      }
+
+      document.querySelectorAll('.pop-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.pop-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+
+      showRank('pop');
+    })();
+  </script>
+
+  <style is:global>
+    .pop-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .pop-hero { text-align: center; padding: 32px 0 8px; }
+    .pop-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .pop-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .pop-lead { color: #555; line-height: 1.9; }
+
+    .pop-selector { margin: 24px 0; display: flex; justify-content: center; }
+    .pop-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+    .pop-selector select {
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      border-radius: 6px; background: #fff; font-size: 1rem;
+    }
+
+    .pop-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .pop-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .pop-card {
+      border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px;
+      background: #fff; text-align: center;
+    }
+    .pop-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .pop-card-num {
+      font-family: "IBM Plex Mono", monospace; font-size: 1.5rem;
+      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+    }
+    .pop-card-sub { font-size: 0.7rem; color: #999; }
+    .pop-card-meta {
+      display: flex; justify-content: center; gap: 10px;
+      margin-top: 8px; font-size: 0.75rem;
+    }
+    .pop-rank { color: #b23a2f; font-weight: 700; }
+    .pop-diff { color: #666; }
+
+    .pop-ranking { margin-top: 44px; }
+    .pop-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .pop-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+    .pop-tab {
+      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      background: #fff; cursor: pointer; font-size: 0.85rem;
+    }
+    .pop-tab.is-active { background: #1b4332; color: #fff; }
+    .pop-rank-list {
+      list-style: none; counter-reset: rank; padding: 8px 20px;
+      max-width: 560px; margin: 0 auto 8px;
+      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+    }
+    .pop-rank-list li {
+      counter-increment: rank; display: flex; justify-content: space-between;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+    }
+    .pop-rank-list li:last-child { border-bottom: none; }
+    .pop-rank-list li::before {
+      content: counter(rank); font-weight: 700; color: #b23a2f;
+      margin-right: 12px; min-width: 1.4em; text-align: center;
+    }
+    .pop-rank-list li:hover { background: #f4f7f4; }
+    .pop-rank-name { flex: 1; }
+    .pop-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
+
+    .pop-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
+    .pop-cross a { color: #b23a2f; }
+    .pop-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
