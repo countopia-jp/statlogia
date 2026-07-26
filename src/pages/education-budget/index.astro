@@ -1,0 +1,303 @@
+---
+// =====================================================
+// Countopia Stats - 教育予算ダッシュボード「教育の帳場」
+// src/pages/education-budget/index.astro
+//
+// 都道府県を選んで、財政力指数と教育費のかけ方を見る窓口。
+// データは /data/education-budget.json（ビルド時生成）から取得。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
+//   誤爆防止で全セレクタを .edb- 接頭辞で統一している。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getEducationBudgetData } from '../../lib/education-budget.js';
+
+const edb = await getEducationBudgetData();
+const years = [...new Set(edb.indicators.map((i) => i.year).filter(Boolean))].sort();
+const yearNote = years.join('・');
+---
+
+<BaseLayout title="教育の帳場｜財政力と教育費 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="edb-dash">
+    <header class="edb-hero">
+      <p class="edb-kicker">ダッシュボード</p>
+      <h1>教育の帳場</h1>
+      <p class="edb-lead">
+        財政力指数、教育費、小・中・高それぞれの1人当たり予算。<br />
+        あなたの県が「教育にどれだけ本気か」、帳簿からご覧ください。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      当所では、県の懐具合と、そこから教育にどれだけ回しているかを、並べて見ていただけます。
+    </Talk>
+    <Talk speaker="touko">
+      お金の余裕と、子どもへの掛け方は、また別のお話なのねえ。
+    </Talk>
+
+    <!-- ===== 都道府県セレクタ ===== -->
+    <section class="edb-selector" aria-label="都道府県の選択">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect">
+          <option value="">選んでください</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- ===== 選択結果 ===== -->
+    <section id="resultArea" class="edb-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div class="edb-cards" id="cardGrid"></div>
+      <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳簿をお出しします。</span></Talk>
+      <Talk speaker="touko"><span id="toukoLine">どれくらい、かけているのかしら。</span></Talk>
+    </section>
+
+    <!-- ===== ランキング ===== -->
+    <section class="edb-ranking" aria-label="ランキング">
+      <h2>全国ベスト5</h2>
+      <div class="edb-tabs" role="tablist">
+        <button class="edb-tab is-active" data-rank="finance" role="tab">財政力が高い</button>
+        <button class="edb-tab" data-rank="edu" role="tab">教育費が高い</button>
+        <button class="edb-tab" data-rank="elem" role="tab">小学校費が高い</button>
+      </div>
+      <ol class="edb-rank-list" id="rankList"></ol>
+      <p class="edb-note" id="rankNote"></p>
+    </section>
+
+    <Talk speaker="kei">
+      財政に余裕のある県が、必ずしも教育にお金をかけているとは限りません。数字を並べると、県ごとの姿勢が見えてきます。
+    </Talk>
+    <Talk speaker="touko">
+      裕福でも、子どもにかけるとは限らない。……大人の世界ねえ。
+    </Talk>
+
+    <p class="edb-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/population/">国勢の間</a></p>
+
+    <footer class="edb-source">
+      <p>
+        出典：{edb.source}（{yearNote}）<br />
+        「平均」は47都道府県の単純平均であり、全国値とは一致しません。<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline>
+    (async function () {
+      const res = await fetch('/data/education-budget.json');
+      const data = await res.json();
+      const IND = data.indicators;
+      const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
+      const meta = Object.fromEntries(IND.map((ind) => [ind.code, ind]));
+      const val = (area, code) => area.v[idx[code]];
+
+      const CARDS = [
+        { code: '#D0110101', short: '財政力指数', dir: 'desc' },
+        { code: '#D0331403', short: '人口1人当たり教育費', dir: 'desc' },
+        { code: '#D0331503', short: '児童1人当たり小学校費', dir: 'desc' },
+        { code: '#D0331603', short: '生徒1人当たり中学校費', dir: 'desc' },
+        { code: '#D0331703', short: '生徒1人当たり高校費', dir: 'desc' },
+        { code: '#D0332003', short: '人口1人当たり社会教育費', dir: 'desc' },
+      ];
+
+      function fmtValue(code, v) {
+        if (v === null || v === undefined) return '—';
+        const unit = meta[code].unit || '';
+        if (unit === '千円') return (v / 10).toFixed(1) + '万円';
+        return v.toLocaleString('ja-JP') + unit;
+      }
+
+      const stats = {};
+      for (const c of CARDS) {
+        const rows = data.areas
+          .filter((a) => val(a, c.code) !== null)
+          .sort((x, y) =>
+            c.dir === 'desc' ? val(y, c.code) - val(x, c.code) : val(x, c.code) - val(y, c.code)
+          );
+        const avg = rows.reduce((s, a) => s + val(a, c.code), 0) / rows.length;
+        stats[c.code] = {
+          avg,
+          rank: Object.fromEntries(rows.map((a, i) => [a.c, i + 1])),
+          total: rows.length,
+        };
+      }
+
+      const prefSelect = document.getElementById('prefSelect');
+      for (const a of data.areas) {
+        const opt = document.createElement('option');
+        opt.value = a.c;
+        opt.textContent = a.n;
+        prefSelect.appendChild(opt);
+      }
+      prefSelect.addEventListener('change', () => {
+        const area = data.areas.find((a) => a.c === prefSelect.value);
+        if (area) render(area);
+      });
+
+      function render(area) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = `${area.n}の帳簿`;
+
+        const grid = document.getElementById('cardGrid');
+        grid.innerHTML = '';
+        for (const c of CARDS) {
+          const v = val(area, c.code);
+          const st = stats[c.code];
+          const rank = st.rank[area.c];
+          const diff = v === null ? null : ((v - st.avg) / st.avg) * 100;
+          const sign = diff === null ? '' : diff >= 0 ? '+' : '';
+
+          const card = document.createElement('div');
+          card.className = 'edb-card';
+          card.innerHTML =
+            `<div class="edb-card-label">${c.short}</div>` +
+            `<div class="edb-card-num">${fmtValue(c.code, v)}</div>` +
+            `<div class="edb-card-sub">${meta[c.code].year || ''}</div>` +
+            (v === null
+              ? ''
+              : `<div class="edb-card-meta"><span class="edb-rank">${st.total}県中 ${rank}位</span>` +
+                `<span class="edb-diff">平均比 ${sign}${diff.toFixed(1)}％</span></div>`);
+          grid.appendChild(card);
+        }
+
+        updateLines(area);
+      }
+
+      function updateLines(area) {
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        const financeRank = stats['#D0110101'].rank[area.c];
+        const eduRank = stats['#D0331403'].rank[area.c];
+        const total = stats['#D0110101'].total;
+        const seed = parseInt(area.c, 10) || 0;
+
+        let k = `財政力指数は${total}県中${financeRank}位、人口1人当たり教育費は${eduRank}位です。`;
+        let t = '';
+
+        if (financeRank <= 10 && eduRank >= 38) {
+          k += ' 財政に余裕がある割に、教育費への配分は控えめです。';
+          t = ['お金があっても、使い道は色々あるものねえ。', '財布は厚くても、子どもへは薄いのかしら。'][seed % 2];
+        } else if (financeRank >= 38 && eduRank <= 10) {
+          k += ' 財政は厳しめでも、教育には手厚く配分している県です。';
+          t = ['懐が厳しくても、子どものためには惜しまないのねえ。', '心意気を感じるわねえ。'][seed % 2];
+        } else if (eduRank <= 5) {
+          k += ' 教育費は全国でも上位です。';
+          t = ['ずいぶんと、子どもにかけている県なのねえ。'][0];
+        } else {
+          k += ' 財政力と教育費のかけ方は、全国の中ほどというところです。';
+          t = ['ちょうどよい塩梅、というわけね。'][0];
+        }
+
+        kei.textContent = k;
+        touko.textContent = t;
+      }
+
+      const RANKS = {
+        finance: { code: '#D0110101', dir: 'desc', note: '財政力指数が高い県ベスト5。' },
+        edu: { code: '#D0331403', dir: 'desc', note: '人口1人当たり教育費が高い県ベスト5。' },
+        elem: { code: '#D0331503', dir: 'desc', note: '児童1人当たり公立小学校費が高い県ベスト5。' },
+      };
+
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+
+      function showRank(mode) {
+        const cfg = RANKS[mode];
+        rankList.innerHTML = '';
+        const rows = data.areas
+          .filter((a) => val(a, cfg.code) !== null)
+          .sort((x, y) =>
+            cfg.dir === 'desc' ? val(y, cfg.code) - val(x, cfg.code) : val(x, cfg.code) - val(y, cfg.code)
+          )
+          .slice(0, 5);
+        for (const a of rows) {
+          const li = document.createElement('li');
+          li.innerHTML =
+            `<span class="edb-rank-name">${a.n}</span>` +
+            `<span class="edb-rank-val">${fmtValue(cfg.code, val(a, cfg.code))}</span>`;
+          li.addEventListener('click', () => {
+            prefSelect.value = a.c;
+            prefSelect.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        }
+        rankNote.textContent = cfg.note;
+      }
+
+      document.querySelectorAll('.edb-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.edb-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+
+      showRank('finance');
+    })();
+  </script>
+
+  <style is:global>
+    .edb-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .edb-hero { text-align: center; padding: 32px 0 8px; }
+    .edb-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .edb-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .edb-lead { color: #555; line-height: 1.9; }
+
+    .edb-selector { margin: 24px 0; display: flex; justify-content: center; }
+    .edb-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+    .edb-selector select {
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      border-radius: 6px; background: #fff; font-size: 1rem;
+    }
+
+    .edb-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .edb-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .edb-card {
+      border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px;
+      background: #fff; text-align: center;
+    }
+    .edb-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .edb-card-num {
+      font-family: "IBM Plex Mono", monospace; font-size: 1.5rem;
+      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+    }
+    .edb-card-sub { font-size: 0.7rem; color: #999; }
+    .edb-card-meta {
+      display: flex; justify-content: center; gap: 10px;
+      margin-top: 8px; font-size: 0.75rem;
+    }
+    .edb-rank { color: #b23a2f; font-weight: 700; }
+    .edb-diff { color: #666; }
+
+    .edb-ranking { margin-top: 44px; }
+    .edb-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .edb-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+    .edb-tab {
+      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      background: #fff; cursor: pointer; font-size: 0.85rem;
+    }
+    .edb-tab.is-active { background: #1b4332; color: #fff; }
+    .edb-rank-list {
+      list-style: none; counter-reset: rank; padding: 8px 20px;
+      max-width: 560px; margin: 0 auto 8px;
+      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+    }
+    .edb-rank-list li {
+      counter-increment: rank; display: flex; justify-content: space-between;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+    }
+    .edb-rank-list li:last-child { border-bottom: none; }
+    .edb-rank-list li::before {
+      content: counter(rank); font-weight: 700; color: #b23a2f;
+      margin-right: 12px; min-width: 1.4em; text-align: center;
+    }
+    .edb-rank-list li:hover { background: #f4f7f4; }
+    .edb-rank-name { flex: 1; }
+    .edb-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
+
+    .edb-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
+    .edb-cross a { color: #b23a2f; }
+    .edb-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
