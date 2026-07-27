@@ -140,14 +140,18 @@ const latestNews = news.slice(0, 3);
         </div>
       </div>
       <div class="guides">
-        <figure class="portrait">
-          <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
-          <figcaption><b>京</b><span>統計局案内人</span></figcaption>
-        </figure>
-        <figure class="portrait">
-          <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
-          <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
-        </figure>
+      <a class="portrait-link" href="/guide/#kei">
+            <figure class="portrait">
+              <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
+              <figcaption><b>京</b><span>統計局案内人</span></figcaption>
+            </figure>
+          </a>
+       <a class="portrait-link" href="/guide/#touko">
+            <figure class="portrait">
+              <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
+              <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
+            </figure>
+          </a>
       </div>
       <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
       <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
@@ -160,6 +164,8 @@ const latestNews = news.slice(0, 3);
   display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
   padding:72px 0 40px;
 }
+.portrait-link{display:block;text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s ease}
+.portrait-link:hover{transform:translateY(-3px)}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}}
 .eyebrow{
   display:inline-block;font-size:.72rem;letter-spacing:.28em;

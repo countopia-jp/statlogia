@@ -1,0 +1,98 @@
+---
+// =====================================================
+// Countopia Stats - 案内人紹介ページ
+// src/pages/guide/index.astro
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+---
+
+<BaseLayout title="案内人｜京と橙子 - Countopia Stats" backHref="/" backLabel="玄関">
+  <main class="guide-page">
+    <header class="guide-hero">
+      <p class="guide-kicker">GUIDE</p>
+      <h1>この国の案内人</h1>
+      <p class="guide-lead">
+        Countopia Statsを案内する、二人のキャラクターをご紹介します。<br />
+        名前を並べると「統計」になる——それだけが、二人に共通する種明かしです。
+      </p>
+    </header>
+
+    <section class="guide-profile" id="kei">
+      <figure class="guide-portrait">
+        <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
+      </figure>
+      <div class="guide-text">
+        <span class="guide-no">GUIDE 01</span>
+        <h2>京<span class="guide-role">統計局案内人</span></h2>
+        <p>
+          この国の数字をご案内する、統計局の案内人。落ち着いた物腰で、平均や順位、
+          倍率といった数字を一つひとつ丁寧に説明してくれます。
+          「その日に学ばなかった人も含めた平均です」というように、
+          数字の裏側にある前提まで、きちんと言葉を添えるタイプです。
+        </p>
+        <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
+      </div>
+    </section>
+
+    <section class="guide-profile" id="touko">
+      <figure class="guide-portrait">
+        <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
+      </figure>
+      <div class="guide-text">
+        <span class="guide-no">GUIDE 02</span>
+        <h2>橙子<span class="guide-role">大正から来た子</span></h2>
+        <p>
+          大正の世からこの国にやってきた、京の道連れ。現代の数字に触れるたび、
+          素直に驚いたり、ときどき鋭い一言を挟んだりします。
+          「大人になっても、勉強するの？」というような、
+          何気ない疑問が、案内をふくらませてくれる存在です。
+        </p>
+        <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
+      </div>
+    </section>
+
+    <p class="guide-note">
+      二人そろって案内するとき、名前を並べると「京」＋「橙子」＝「統計」になります。
+      これは、この国を作るときに仕込んだ、ちょっとした洒落です。
+    </p>
+
+    <p class="guide-links">
+      <a href="/exhibits/">展示を見る →</a>
+      <a href="/dashboard/">閲覧室へ →</a>
+      <a href="/about/">このサイトについて →</a>
+    </p>
+  </main>
+
+  <style>
+    .guide-page { max-width: 780px; margin: 0 auto; padding: 0 16px 56px; }
+    .guide-hero { text-align: center; padding: 32px 0 8px; }
+    .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .guide-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
+    .guide-lead { color: #555; line-height: 1.9; }
+
+    .guide-profile {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 16px; margin: 48px 0;
+      scroll-margin-top: 90px;
+    }
+    .guide-portrait img { width: 100%; height: auto; border-radius: 8px; display: block; }
+    .guide-no { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.2em; font-size: 0.72rem; color: #2d6a4f; }
+    .guide-text { max-width: 480px; }
+    .guide-text h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem;
+      margin: 6px 0 14px; display: flex; align-items: baseline; justify-content: center; gap: 10px;
+    }
+    .guide-role { font-size: 0.75rem; font-weight: 400; color: #888; }
+    .guide-text p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 14px; }
+
+    .guide-note {
+      margin-top: 40px; padding: 16px 20px; border: 1px dashed #b23a2f;
+      border-radius: 8px; font-size: 0.85rem; color: #555; line-height: 1.9;
+      background: #fdfdf8;
+    }
+
+    .guide-links { text-align: center; margin-top: 32px; font-size: 0.9rem; }
+    .guide-links a { color: #b23a2f; margin: 0 10px; }
+  </style>
+</BaseLayout>
