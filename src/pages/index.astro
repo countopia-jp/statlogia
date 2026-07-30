@@ -54,34 +54,13 @@ const latestNews = news.slice(0, 3);
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/sleep/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>01</b></span>
-          <span class="pc-num">468<small>分</small></span>
-          <h3>日本一「眠らない県」はどこだ</h3>
-          <p>睡眠時間の都道府県ランキング。1位と最下位の差は、1年でまる5日ぶん。</p>
-          <span class="c-place">時間の広場</span>
-        </a>
-        <a class="card pc" href="/exhibits/commute/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>02</b></span>
-          <span class="pc-num">36<small>分</small></span>
-          <h3>「通勤地獄」日本一はどの県だ</h3>
-          <p>通勤・通学時間のランキング。1位は意外な、あの県。</p>
-          <span class="c-place">時間の広場</span>
-        </a>
-        <a class="card pc" href="/exhibits/housework/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>03</b></span>
-          <span class="pc-num">2:28<small>差</small></span>
-          <h3>家事時間の男女差、いちばん大きい県は</h3>
-          <p>男女別の家事時間を47都道府県で比較。どの県でも見える、ひとつの景色。</p>
-          <span class="c-place">時間の広場</span>
-        </a>
         <a class="card pc" href="/exhibits/hobby/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>04</b></span>
           <span class="pc-num">56<small>分</small></span>
           <h3>いちばん「趣味に生きる」県はどこだ</h3>
           <p>趣味・娯楽時間のランキング。1位はまさかの、あの都。</p>
           <span class="c-place">時間の広場</span>
-          </a>
+        </a>
         <a class="card pc" href="/exhibits/study/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>05</b></span>
           <span class="pc-num">4.1<small>倍</small></span>
@@ -97,7 +76,7 @@ const latestNews = news.slice(0, 3);
           <span class="c-place">住まいの広場</span>
         </a>
       </div>
-      <p class="more"><a href="/exhibits/">すべての展示を見る →</a>　<a href="/tower/">展望塔から一望する →</a></p>
+      <p class="more"><a href="/exhibits/">すべての展示を見る（全6展示）→</a>　<a href="/tower/">展望塔から一望する →</a></p>
     </section>
 
     <!-- 閲覧室 -->
@@ -123,19 +102,13 @@ const latestNews = news.slice(0, 3);
           <span class="c-place">閲覧室</span>
         </a>
         <a class="card" href="/population/">
-        <span class="c-no">窓口 03</span>
-        <h3>国勢の間</h3>
-        <p>総人口、高齢化率、世帯数、出生率、婚姻率。あなたの県の「人のかたち」を、数字でご覧ください。</p>
-        <span class="c-place">閲覧室</span>
-      </a>
-      <a class="card" href="/education-budget/">
-        <span class="c-no">窓口 04</span>
-        <h3>教育の帳場</h3>
-        <p>財政力指数と教育費のかけ方をまとめた帳簿。懐具合と、子どもへの掛け方は、また別のお話です。</p>
-        <span class="c-place">閲覧室</span>
-      </a>
+          <span class="c-no">窓口 03</span>
+          <h3>国勢の間</h3>
+          <p>総人口、高齢化率、世帯数、出生率、婚姻率。あなたの県の「人のかたち」を、数字でご覧ください。</p>
+          <span class="c-place">閲覧室</span>
+        </a>
       </div>
-      <p class="more"><a href="/dashboard/">閲覧室のご案内 →</a></p>
+      <p class="more"><a href="/dashboard/">閲覧室のご案内（全4窓口）→</a></p>
     </section>
 
     <!-- 案内人 -->
@@ -171,7 +144,7 @@ const latestNews = news.slice(0, 3);
   display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
   padding:72px 0 40px;
 }
-.portrait-link{display:block;text-decoration:none;color:inherit;cursor:pointer;transition:transform .15s ease}
+.portrait-link{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
 .portrait-link:hover{transform:translateY(-3px)}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}}
 .eyebrow{
