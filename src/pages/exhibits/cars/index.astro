@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getCarData } from '../../../lib/cars.js';
+
+const data = await getCarData();
+const rows = data.rows;
+const most = rows.slice(0, 5);
+const least = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = data.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${v}台`;
+---
+<BaseLayout title="自動車保有率｜Countopia Stats" description="都道府県別・二人以上の世帯の1世帯当たり自動車保有台数。日本一のクルマ社会はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 07</span>
+        <h1>日本一の「クルマ社会」はどの県だ</h1>
+        <p class="sub">暮らしの広場｜二人以上の世帯・1世帯当たりの自動車保有台数（{data.year}）</p>
+      </div>
+
+      <Talk speaker="kei">7つめの展示は「自動車の保有率」です。ひと世帯が、車を何台持っているかという数字です。</Talk>
+      <Talk speaker="touko">一家に一台、あるのが当たり前なのかしら？</Talk>
+      <Talk speaker="kei">全国平均は{fmt(avg)}。二人以上の世帯で見ると、1世帯あたり{avg}台という計算になります。</Talk>
+      <Talk speaker="kei">なお、この統計は5年ごとの全国消費実態調査がもとで、都道府県別の数字は{data.year}が最後の更新です。少し前の姿ですが、車の多い少ないという地域の傾向は、そう大きくは変わりません。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">保有台数がいちばん多い</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
+          <span class="label">保有台数がいちばん少ない</span>
+          <strong>{bottom.n}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <Talk speaker="kei">いちばん多い{top.n}では、1世帯あたり{fmt(top.minutes)}。ほぼ2台に近い世帯もめずらしくありません。</Talk>
+      <Talk speaker="touko">いちばん少ない{bottom.n}は、ずいぶん低いのねえ。電車が発達しているから？</Talk>
+      <Talk speaker="kei">その通りです。鉄道網が密で駐車場代も高い都市部では、車を持たない世帯が多くなります。逆に地方では、車は生活の必需品です。</Talk>
+      <Talk speaker="kei">じつは、空き家が多い県ほど車の保有も多い傾向があります。家が余り、けれど車は要る——地方の暮らしの、ひとつの景色です。</Talk>
+
+      <h2>保有台数が多い県 TOP5</h2>
+      <ol class="rank">
+        {most.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>保有台数が少ない県 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/vacancy/">日本一「空き家だらけ」の県はどこだ</a>｜<a href="/living/">暮らしの見積所</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}（{data.year}）</p>
+        <p>{data.note}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>
