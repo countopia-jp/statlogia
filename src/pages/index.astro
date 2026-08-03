@@ -140,7 +140,19 @@ const latestNews = news.slice(0, 3);
 .hero{
   display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
   padding:72px 0 40px;
+  position:relative;
 }
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:-20px -8% 0 -8%;
+  background:url("/images/icon/japan-map.webp") no-repeat center/contain;
+  opacity:.10;
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  z-index:0;
+}
+.hero > *{position:relative;z-index:1}
 .portrait-link{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
 .portrait-link:hover{transform:translateY(-3px)}
 @media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:48px}}
