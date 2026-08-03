@@ -1,8 +1,4 @@
 ---
-// =====================================================
-// Countopia Stats - 閲覧室（ダッシュボード一覧）
-// src/pages/dashboard/index.astro
-// =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
@@ -20,53 +16,59 @@ import Talk from '../../components/Talk.astro';
     <Talk speaker="kei">
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
     </Talk>
-    <section class="rr-grid" aria-label="閲覧窓口の一覧">
-      <a class="rr-card" href="/education/">
-        <p class="rr-card-no">窓口 01</p>
-        <h2>学びの登記所</h2>
-        <p class="rr-card-desc">
-          全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
-          学校の数と、1校あたりの児童数——二つの物差しの全国ベスト5つき。
-        </p>
-        <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
-      </a>
-      <a class="rr-card" href="/living/">
-        <p class="rr-card-no">窓口 02</p>
-        <h2>暮らしの見積所</h2>
-        <p class="rr-card-desc">
-          都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書に。
-          稼ぎと住まいを並べると、暮らしの釣り合いが見えてきます。
-        </p>
-        <p class="rr-card-meta">出典：社会・人口統計体系（2023・2024年度）</p>
-      </a>
-      <a class="rr-card" href="/population/">
-        <p class="rr-card-no">窓口 03</p>
-        <h2>国勢の間</h2>
-        <p class="rr-card-desc">
-          都道府県を選んで、総人口・高齢化率・世帯数・出生率・婚姻率をまとめた台帳をご覧いただけます。
-          人口の多さと高齢化の進み方——重ねてみると、土地ごとの事情が浮かび上がります。
-        </p>
-        <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
-      </a>
-      <a class="rr-card" href="/education-budget/">
-        <p class="rr-card-no">窓口 04</p>
-        <h2>教育の帳場</h2>
-        <p class="rr-card-desc">
-          都道府県を選んで、財政力指数と教育費のかけ方をまとめた帳簿をご覧いただけます。
-          懐具合と、子どもへの掛け方は、また別のお話——数字を並べるとその差が見えてきます。
-        </p>
-        <p class="rr-card-meta">出典：社会・人口統計体系（2022年度）</p>
-      </a>
-      <a class="rr-card" href="/ict/">
-        <p class="rr-card-no">窓口 05</p>
-        <h2>情報化の帳場</h2>
-        <p class="rr-card-desc">
-          都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
-          端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
-        </p>
-        <p class="rr-card-meta">出典：社会・人口統計体系（2017〜2023年度）</p>
-      </a>
+
+    <section class="rr-group" aria-label="学びのしらべ">
+      <h2 class="rr-group-title">学びのしらべ</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/education/">
+          <h3>学びの登記所</h3>
+          <p class="rr-card-desc">
+            全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
+            学校の数と、1校あたりの児童数——二つの物差しの全国ベスト5つき。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
+        </a>
+        <a class="rr-card" href="/education-budget/">
+          <h3>教育の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、財政力指数と教育費のかけ方をまとめた帳簿をご覧いただけます。
+            懐具合と、子どもへの掛け方は、また別のお話——数字を並べるとその差が見えてきます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2022年度）</p>
+        </a>
+        <a class="rr-card" href="/ict/">
+          <h3>情報化の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
+            端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2017〜2023年度）</p>
+        </a>
+      </div>
     </section>
+
+    <section class="rr-group" aria-label="人と暮らしのしらべ">
+      <h2 class="rr-group-title">人と暮らしのしらべ</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/population/">
+          <h3>国勢の間</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、総人口・高齢化率・世帯数・出生率・婚姻率をまとめた台帳をご覧いただけます。
+            人口の多さと高齢化の進み方——重ねてみると、土地ごとの事情が浮かび上がります。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
+        </a>
+        <a class="rr-card" href="/living/">
+          <h3>暮らしの見積所</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書に。
+            稼ぎと住まいを並べると、暮らしの釣り合いが見えてきます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2023・2024年度）</p>
+        </a>
+      </div>
+    </section>
+
     <Talk speaker="touko">
       台帳を自分でめくってよいなんて。役場の帳場では、考えられませんでしたわ。
     </Talk>
@@ -78,11 +80,15 @@ import Talk from '../../components/Talk.astro';
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
+    .rr-group { margin: 32px 0 8px; }
+    .rr-group-title {
+      font-family: "Shippori Mincho", serif; font-size: 1.15rem;
+      border-left: 4px solid #2d6a4f; padding-left: 12px; margin: 0 0 16px;
+    }
     .rr-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 16px;
-      margin: 28px 0;
     }
     .rr-card {
       display: block;
@@ -98,17 +104,8 @@ import Talk from '../../components/Talk.astro';
       transform: translateY(-2px);
       box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
     }
-    .rr-card-no { font-size: 0.75rem; letter-spacing: 0.15em; color: #b23a2f; margin: 0 0 6px; }
-    .rr-card h2 { margin: 0 0 10px; font-size: 1.2rem; }
+    .rr-card h3 { margin: 0 0 10px; font-size: 1.2rem; font-family: "Shippori Mincho", serif; }
     .rr-card-desc { font-size: 0.9rem; line-height: 1.8; color: #444; margin: 0 0 10px; }
     .rr-card-meta { font-size: 0.75rem; color: #888; margin: 0; }
-    .rr-card--closed {
-      border-style: dashed;
-      border-color: #9aa79e;
-      background: #f4f4ee;
-      color: #888;
-    }
-    .rr-card--closed:hover { transform: none; box-shadow: none; }
-    .rr-card--closed .rr-card-no { color: #9aa79e; }
   </style>
 </BaseLayout>
