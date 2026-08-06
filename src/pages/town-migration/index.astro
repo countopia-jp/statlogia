@@ -1,0 +1,434 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getMuniMigrationData } from '../../lib/muni-migration.js';
+const data = await getMuniMigrationData();
+---
+<BaseLayout title="人が集まる町・出ていく町｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="tp">
+    <header class="tp-hero">
+      <p class="tp-kicker">閲覧室</p>
+      <h1>人が集まる町・出ていく町</h1>
+      <p class="tp-lead">
+        市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
+        増えているのか、減っているのか。町の「いま」の勢いを、数字で。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、その町にいま人が集まっているかが分かります。
+    </Talk>
+    <Talk speaker="touko">
+      出ていく人と、入ってくる人……町にも、潮の満ち引きがあるのねえ。
+    </Talk>
+
+    <section class="tp-selector">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect"><option value="">選んでください</option></select>
+      </label>
+      <label>
+        <span>市区町村</span>
+        <select id="townSelect" disabled><option value="">まず都道府県を選ぶ</option></select>
+      </label>
+    </section>
+
+    <section id="resultArea" class="tp-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div id="cardArea" class="tp-cards"></div>
+      <Talk speaker="kei"><span id="keiLine"></span></Talk>
+      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+    </section>
+
+    <section class="tp-ranking">
+      <h2>全国ベスト5</h2>
+      <div class="tp-tabs" role="tablist">
+        <button class="tp-tab is-active" data-rank="in" role="tab">人が集まる町</button>
+        <button class="tp-tab" data-rank="out" role="tab">人が出ていく町</button>
+      </div>
+      <ol class="tp-rank-list" id="rankList"></ol>
+      <p class="tp-note" id="rankNote"></p>
+    </section>
+
+    <p class="tp-cross">あわせて見る：<a href="/town-population/">わが町の人口</a>｜<a href="/population/">国勢の間（都道府県版）</a></p>
+
+    <footer class="tp-source">
+      <p>
+        出典：{data.source}（{data.year}）<br />
+        {data.note}<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline define:vars={{ TP: data }}>
+    (function () {
+      const IND = TP.indicators;
+      const areas = TP.areas;
+      const SR_I = 4; // 社会増減率のインデックス
+
+      const fmt = (i, val) => {
+        if (val === null || val === undefined) return '—';
+        const ind = IND[i];
+        const sign = ind.signed && val > 0 ? '+' : '';
+        const body = ind.decimal ? val.toFixed(1) : Math.round(val).toLocaleString('ja-JP');
+        const unit = ind.unit === '（千人あたり）' ? '' : ind.unit;
+        return sign + body + unit;
+      };
+
+      function rankBy(i, dir) {
+        return areas
+          .filter((a) => !a.x && a.v[i] !== null)
+          .sort((x, y) => (dir === 'desc' ? y.v[i] - x.v[i] : x.v[i] - y.v[i]));
+      }
+      // 社会増減率で順位（集まる=降順の順位）
+      const inRank = rankBy(SR_I, 'desc');
+      const rankOfIn = Object.fromEntries(inRank.map((a, idx) => [a.c, idx + 1]));
+      const totalRank = inRank.length;
+
+      const prefSel = document.getElementById('prefSelect');
+      const sel = document.getElementById('townSelect');
+      const PREF_NAMES = {
+        '01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県',
+        '08':'茨城県','09':'栃木県','10':'群馬県','11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県',
+        '15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県','21':'岐阜県',
+        '22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県',
+        '29':'奈良県','30':'和歌山県','31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県',
+        '36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県','41':'佐賀県','42':'長崎県',
+        '43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'
+      };
+      const byPref = {};
+      for (const a of areas) { const p = a.c.slice(0, 2); (byPref[p] = byPref[p] || []).push(a); }
+      Object.keys(byPref).sort().forEach((p) => {
+        const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; prefSel.appendChild(o);
+      });
+      const shortName = (a) => {
+        const pref = PREF_NAMES[a.c.slice(0, 2)];
+        return pref && a.n.startsWith(pref) ? a.n.slice(pref.length).trim() : a.n;
+      };
+      prefSel.addEventListener('change', () => {
+        sel.innerHTML = '<option value="">選んでください</option>';
+        const list = byPref[prefSel.value] || [];
+        for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); sel.appendChild(o); }
+        sel.disabled = list.length === 0;
+        document.getElementById('resultArea').hidden = true;
+      });
+      sel.addEventListener('change', () => { const a = areas.find((x) => x.c === sel.value); if (a) render(a); });
+
+      function render(a) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = a.n + 'の人の動き';
+        const wrap = document.getElementById('cardArea');
+        wrap.innerHTML = '';
+        IND.forEach((ind, i) => {
+          const card = document.createElement('div');
+          card.className = 'tp-card';
+          const val = a.v[i];
+          let cls = '';
+          if (ind.signed && val !== null) cls = val > 0 ? ' pos' : (val < 0 ? ' neg' : '');
+          let meta = '';
+          if (i === SR_I && !a.x && rankOfIn[a.c]) {
+            meta = `<div class="tp-card-meta">${totalRank}市区町村中 ${rankOfIn[a.c]}位</div>`;
+          }
+          card.innerHTML =
+            `<div class="tp-card-label">${ind.key}</div>` +
+            `<div class="tp-card-num${cls}">${fmt(i, val)}</div>` + meta;
+          wrap.appendChild(card);
+        });
+        updateLines(a);
+      }
+
+      function updateLines(a) {
+        const delta = a.v[3], sr = a.v[SR_I], pop = a.v[0];
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        let k = '';
+        if (delta !== null && pop !== null) {
+          if (delta > 0) k = `1年間で、転入が転出を${delta.toLocaleString('ja-JP')}人上回りました。人が集まっている町です。`;
+          else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。人が出ていく側の町です。`;
+          else k = '転入と転出が、ちょうど釣り合っています。';
+        }
+        if (sr !== null && Math.abs(sr) >= 15) k += ' 人口のわりに、動きの大きな町です。';
+        kei.textContent = k || `${a.n}の人の動きをお出ししました。`;
+        const seed = parseInt(a.c, 10) || 0;
+        touko.textContent = (delta !== null && delta > 0)
+          ? ['にぎわっているのねえ。', '人が集まる町は、活気があるわ。'][seed % 2]
+          : ['寂しくなってしまうのかしら。', 'いつか、また戻ってくるといいわね。'][seed % 2];
+      }
+
+      const RANKS = {
+        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。区・特別区部計は除いています。' },
+        out: { dir: 'asc',  note: '社会増減率が低い＝人が出ていく市区町村ベスト5。マイナスが大きいほど流出しています。' },
+      };
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+      function showRank(mode) {
+        const cfg = RANKS[mode];
+        rankList.innerHTML = '';
+        rankBy(SR_I, cfg.dir).slice(0, 5).forEach((a) => {
+          const li = document.createElement('li');
+          const val = a.v[SR_I];
+          const cls = val > 0 ? 'pos' : (val < 0 ? 'neg' : '');
+          li.innerHTML = `<span class="tp-rank-name">${a.n}</span><span class="tp-rank-val ${cls}">${fmt(SR_I, val)}</span>`;
+          li.addEventListener('click', () => {
+            prefSel.value = a.c.slice(0, 2); prefSel.dispatchEvent(new Event('change'));
+            sel.value = a.c; sel.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        });
+        rankNote.textContent = cfg.note;
+      }
+      document.querySelectorAll('.tp-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tp-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+      showRank('in');
+    })();
+  </script>
+
+  <style is:global>
+    .tp { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .tp-hero { text-align: center; padding: 28px 0 8px; }
+    .tp-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+    .tp-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .tp-lead { color: #555; line-height: 1.9; }
+    .tp-selector { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .tp-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; align-items: flex-start; }
+    .tp-selector select { width: 280px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+    .tp-selector select:disabled { background: #f0f0ea; color: #999; }
+    .tp-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .tp-cards { display: grid; grid-template-columns: repeat(3, 1f
+cat > src/pages/town-migration/index.astro << 'ASTROEOF'
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getMuniMigrationData } from '../../lib/muni-migration.js';
+const data = await getMuniMigrationData();
+---
+<BaseLayout title="人が集まる町・出ていく町｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="tp">
+    <header class="tp-hero">
+      <p class="tp-kicker">閲覧室</p>
+      <h1>人が集まる町・出ていく町</h1>
+      <p class="tp-lead">
+        市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
+        増えているのか、減っているのか。町の「いま」の勢いを、数字で。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、その町にいま人が集まっているかが分かります。
+    </Talk>
+    <Talk speaker="touko">
+      出ていく人と、入ってくる人……町にも、潮の満ち引きがあるのねえ。
+    </Talk>
+
+    <section class="tp-selector">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect"><option value="">選んでください</option></select>
+      </label>
+      <label>
+        <span>市区町村</span>
+        <select id="townSelect" disabled><option value="">まず都道府県を選ぶ</option></select>
+      </label>
+    </section>
+
+    <section id="resultArea" class="tp-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div id="cardArea" class="tp-cards"></div>
+      <Talk speaker="kei"><span id="keiLine"></span></Talk>
+      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+    </section>
+
+    <section class="tp-ranking">
+      <h2>全国ベスト5</h2>
+      <div class="tp-tabs" role="tablist">
+        <button class="tp-tab is-active" data-rank="in" role="tab">人が集まる町</button>
+        <button class="tp-tab" data-rank="out" role="tab">人が出ていく町</button>
+      </div>
+      <ol class="tp-rank-list" id="rankList"></ol>
+      <p class="tp-note" id="rankNote"></p>
+    </section>
+
+    <p class="tp-cross">あわせて見る：<a href="/town-population/">わが町の人口</a>｜<a href="/population/">国勢の間（都道府県版）</a></p>
+
+    <footer class="tp-source">
+      <p>
+        出典：{data.source}（{data.year}）<br />
+        {data.note}<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline define:vars={{ TP: data }}>
+    (function () {
+      const IND = TP.indicators;
+      const areas = TP.areas;
+      const SR_I = 4; // 社会増減率のインデックス
+
+      const fmt = (i, val) => {
+        if (val === null || val === undefined) return '—';
+        const ind = IND[i];
+        const sign = ind.signed && val > 0 ? '+' : '';
+        const body = ind.decimal ? val.toFixed(1) : Math.round(val).toLocaleString('ja-JP');
+        const unit = ind.unit === '（千人あたり）' ? '' : ind.unit;
+        return sign + body + unit;
+      };
+
+      function rankBy(i, dir) {
+        return areas
+          .filter((a) => !a.x && a.v[i] !== null)
+          .sort((x, y) => (dir === 'desc' ? y.v[i] - x.v[i] : x.v[i] - y.v[i]));
+      }
+      // 社会増減率で順位（集まる=降順の順位）
+      const inRank = rankBy(SR_I, 'desc');
+      const rankOfIn = Object.fromEntries(inRank.map((a, idx) => [a.c, idx + 1]));
+      const totalRank = inRank.length;
+
+      const prefSel = document.getElementById('prefSelect');
+      const sel = document.getElementById('townSelect');
+      const PREF_NAMES = {
+        '01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県',
+        '08':'茨城県','09':'栃木県','10':'群馬県','11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県',
+        '15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県','21':'岐阜県',
+        '22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県',
+        '29':'奈良県','30':'和歌山県','31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県',
+        '36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県','41':'佐賀県','42':'長崎県',
+        '43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'
+      };
+      const byPref = {};
+      for (const a of areas) { const p = a.c.slice(0, 2); (byPref[p] = byPref[p] || []).push(a); }
+      Object.keys(byPref).sort().forEach((p) => {
+        const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; prefSel.appendChild(o);
+      });
+      const shortName = (a) => {
+        const pref = PREF_NAMES[a.c.slice(0, 2)];
+        return pref && a.n.startsWith(pref) ? a.n.slice(pref.length).trim() : a.n;
+      };
+      prefSel.addEventListener('change', () => {
+        sel.innerHTML = '<option value="">選んでください</option>';
+        const list = byPref[prefSel.value] || [];
+        for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); sel.appendChild(o); }
+        sel.disabled = list.length === 0;
+        document.getElementById('resultArea').hidden = true;
+      });
+      sel.addEventListener('change', () => { const a = areas.find((x) => x.c === sel.value); if (a) render(a); });
+
+      function render(a) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = a.n + 'の人の動き';
+        const wrap = document.getElementById('cardArea');
+        wrap.innerHTML = '';
+        IND.forEach((ind, i) => {
+          const card = document.createElement('div');
+          card.className = 'tp-card';
+          const val = a.v[i];
+          let cls = '';
+          if (ind.signed && val !== null) cls = val > 0 ? ' pos' : (val < 0 ? ' neg' : '');
+          let meta = '';
+          if (i === SR_I && !a.x && rankOfIn[a.c]) {
+            meta = `<div class="tp-card-meta">${totalRank}市区町村中 ${rankOfIn[a.c]}位</div>`;
+          }
+          card.innerHTML =
+            `<div class="tp-card-label">${ind.key}</div>` +
+            `<div class="tp-card-num${cls}">${fmt(i, val)}</div>` + meta;
+          wrap.appendChild(card);
+        });
+        updateLines(a);
+      }
+
+      function updateLines(a) {
+        const delta = a.v[3], sr = a.v[SR_I], pop = a.v[0];
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        let k = '';
+        if (delta !== null && pop !== null) {
+          if (delta > 0) k = `1年間で、転入が転出を${delta.toLocaleString('ja-JP')}人上回りました。人が集まっている町です。`;
+          else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。人が出ていく側の町です。`;
+          else k = '転入と転出が、ちょうど釣り合っています。';
+        }
+        if (sr !== null && Math.abs(sr) >= 15) k += ' 人口のわりに、動きの大きな町です。';
+        kei.textContent = k || `${a.n}の人の動きをお出ししました。`;
+        const seed = parseInt(a.c, 10) || 0;
+        touko.textContent = (delta !== null && delta > 0)
+          ? ['にぎわっているのねえ。', '人が集まる町は、活気があるわ。'][seed % 2]
+          : ['寂しくなってしまうのかしら。', 'いつか、また戻ってくるといいわね。'][seed % 2];
+      }
+
+      const RANKS = {
+        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。区・特別区部計は除いています。' },
+        out: { dir: 'asc',  note: '社会増減率が低い＝人が出ていく市区町村ベスト5。マイナスが大きいほど流出しています。' },
+      };
+      const rankList = document.getElementById('rankList');
+      const rankNote = document.getElementById('rankNote');
+      function showRank(mode) {
+        const cfg = RANKS[mode];
+        rankList.innerHTML = '';
+        rankBy(SR_I, cfg.dir).slice(0, 5).forEach((a) => {
+          const li = document.createElement('li');
+          const val = a.v[SR_I];
+          const cls = val > 0 ? 'pos' : (val < 0 ? 'neg' : '');
+          li.innerHTML = `<span class="tp-rank-name">${a.n}</span><span class="tp-rank-val ${cls}">${fmt(SR_I, val)}</span>`;
+          li.addEventListener('click', () => {
+            prefSel.value = a.c.slice(0, 2); prefSel.dispatchEvent(new Event('change'));
+            sel.value = a.c; sel.dispatchEvent(new Event('change'));
+          });
+          rankList.appendChild(li);
+        });
+        rankNote.textContent = cfg.note;
+      }
+      document.querySelectorAll('.tp-tab').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tp-tab').forEach((b) => b.classList.remove('is-active'));
+          btn.classList.add('is-active');
+          showRank(btn.dataset.rank);
+        });
+      });
+      showRank('in');
+    })();
+  </script>
+
+  <style is:global>
+    .tp { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .tp-hero { text-align: center; padding: 28px 0 8px; }
+    .tp-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+    .tp-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .tp-lead { color: #555; line-height: 1.9; }
+    .tp-selector { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .tp-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; align-items: flex-start; }
+    .tp-selector select { width: 280px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+    .tp-selector select:disabled { background: #f0f0ea; color: #999; }
+    .tp-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .tp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 560px) { .tp-cards { grid-template-columns: 1fr 1fr; } }
+    .tp-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
+    .tp-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .06em; }
+    .tp-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; margin: 6px 0 2px; color: #1b4332; }
+    .tp-card-num.pos { color: #2d6a4f; }
+    .tp-card-num.neg { color: #b23a2f; }
+    .tp-card-meta { font-size: .72rem; color: #b23a2f; font-weight: 700; }
+    .tp-ranking { margin-top: 44px; }
+    .tp-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .tp-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+    .tp-tab { padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: .85rem; }
+    .tp-tab.is-active { background: #1b4332; color: #fff; }
+    .tp-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+    .tp-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .tp-rank-list li:last-child { border-bottom: none; }
+    .tp-rank-list li::before { content: counter(rank); font-weight: 700; color: #b23a2f; margin-right: 12px; min-width: 1.4em; text-align: center; }
+    .tp-rank-list li:hover { background: #f4f7f4; }
+    .tp-rank-name { flex: 1; }
+    .tp-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
+    .tp-rank-val.pos { color: #2d6a4f; }
+    .tp-rank-val.neg { color: #b23a2f; }
+    .tp-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
+    .tp-cross { margin-top: 36px; font-size: .9rem; text-align: center; }
+    .tp-cross a { color: #b23a2f; }
+    .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
