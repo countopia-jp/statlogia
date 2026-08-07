@@ -1,8 +1,8 @@
 ---
 import '../styles/global.css';
 const {
-  title = 'Countopia Stats｜数字の国',
-  description = '日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
+  title = 'Countopia Stats｜都道府県・市区町村で引ける、暮らしの統計',
+  description = '都道府県・市区町村で引ける、暮らしの統計。日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
   backHref = '',
   backLabel = '',
 } = Astro.props;
@@ -30,7 +30,7 @@ const {
     <div class="nav">
       <a class="logo" href="/">
         <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small></span>
-        <span class="sub">数字の国</span>
+        <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
       </a>
       <nav aria-label="主要メニュー">
         <ul>
@@ -68,6 +68,12 @@ const {
     .mark .stats {
       font-size: 0.9em; opacity: .85; letter-spacing: .05em;
       margin-left: 2px; font-weight: 700;
+    }
+    .sub .tagline {
+      opacity: .8;
+    }
+    @media (max-width: 640px) {
+      .sub .tagline { display: none; }
     }
     .foot-link {
       color: #f4f1e6; text-decoration: underline;

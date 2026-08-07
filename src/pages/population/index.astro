@@ -5,6 +5,7 @@
 //
 // 都道府県を選んで人口・世帯の基礎データを見る窓口。
 // データは /data/population.json（ビルド時生成）から取得。
+// トップのヒーロー検索窓から ?pref=県名 で渡されると自動選択する。
 // ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
 //   誤爆防止で全セレクタを .pop- 接頭辞で統一している。
 // =====================================================
@@ -242,6 +243,18 @@ const yearNote = years.join('・');
       });
 
       showRank('pop');
+
+      // URLの ?pref=県名 を受けて自動選択（トップページのヒーロー検索窓から遷移した場合）
+      const params = new URLSearchParams(location.search);
+      const wantedName = params.get('pref');
+      if (wantedName) {
+        const target = data.areas.find((a) => a.n === wantedName);
+        if (target) {
+          prefSelect.value = target.c;
+          render(target);
+          document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
     })();
   </script>
 

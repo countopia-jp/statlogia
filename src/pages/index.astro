@@ -3,6 +3,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Talk from '../components/Talk.astro';
 import { news } from '../data/news.js';
 const latestNews = news.slice(0, 3);
+const prefectures = [
+  ['01','北海道'],['02','青森県'],['03','岩手県'],['04','宮城県'],['05','秋田県'],
+  ['06','山形県'],['07','福島県'],['08','茨城県'],['09','栃木県'],['10','群馬県'],
+  ['11','埼玉県'],['12','千葉県'],['13','東京都'],['14','神奈川県'],['15','新潟県'],
+  ['16','富山県'],['17','石川県'],['18','福井県'],['19','山梨県'],['20','長野県'],
+  ['21','岐阜県'],['22','静岡県'],['23','愛知県'],['24','三重県'],['25','滋賀県'],
+  ['26','京都府'],['27','大阪府'],['28','兵庫県'],['29','奈良県'],['30','和歌山県'],
+  ['31','鳥取県'],['32','島根県'],['33','岡山県'],['34','広島県'],['35','山口県'],
+  ['36','徳島県'],['37','香川県'],['38','愛媛県'],['39','高知県'],['40','福岡県'],
+  ['41','佐賀県'],['42','長崎県'],['43','熊本県'],['44','大分県'],['45','宮崎県'],
+  ['46','鹿児島県'],['47','沖縄県'],
+];
 ---
 <BaseLayout>
   <main>
@@ -11,10 +23,23 @@ const latestNews = news.slice(0, 3);
       <div>
         <span class="eyebrow">JAPAN IN NUMBERS</span>
         <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-        <p class="lead">Countopia Stats（カウントピア・スタッツ）は、日本の公的統計を「へぇ」と眺めて遊ぶ国。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+        <p class="lead">Countopia Stats（カウントピア・スタッツ）は、都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計を「へぇ」と眺めて遊ぶ国です。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
         <div class="hero-actions">
           <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
         </div>
+  <form class="hero-search" action="/population/" method="get">
+          <label for="hero-pref">あなたの県は、どんな数字？</label>
+          <div class="hero-search-row">
+            <select id="hero-pref" name="pref" required>
+              <option value="" disabled selected>都道府県を選ぶ</option>
+              {prefectures.map(([code, name]) => (
+                <option value={name}>{name}</option>
+              ))}
+            </select>
+            <button type="submit">見にいく →</button>
+          </div>
+          <p class="hero-search-note">「国勢の間」で、人口・世帯の数字をご覧いただけます。</p>
+        </form>
       </div>
       <div class="stamp-area" aria-hidden="true">
         <div class="stamp">
@@ -168,6 +193,28 @@ h1{
 h1 .num{color:var(--stamp)}
 .lead{margin-top:20px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
 .hero-actions{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+.hero-search{
+  margin-top:22px;padding:16px 18px;border:1px solid var(--line);
+  border-radius:12px;background:#fff9;max-width:34em;
+}
+.hero-search label{
+  display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:8px;
+  font-family:"Shippori Mincho",serif;
+}
+.hero-search-row{display:flex;gap:10px;flex-wrap:wrap}
+.hero-search-note{
+  margin-top:10px;font-size:.76rem;color:var(--ink-soft);
+}
+.hero-search select{
+  flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--line);
+  border-radius:8px;background:#fff;font-size:.9rem;color:inherit;
+}
+.hero-search button{
+  padding:8px 18px;border:1px solid var(--stamp);border-radius:8px;
+  background:var(--stamp);color:#fff;font-size:.85rem;cursor:pointer;
+  white-space:nowrap;
+}
+.hero-search button:hover{opacity:.88}
 .stamp-area{display:flex;justify-content:center}
 .stamp{
   width:min(240px,60vw);aspect-ratio:1;border-radius:50%;
