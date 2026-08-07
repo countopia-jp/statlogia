@@ -101,7 +101,10 @@ const prefectures = [
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>
-      <p class="more"><a href="/exhibits/">すべての展示を見る（全8展示）→</a>　<a href="/tower/">展望塔から一望する →</a></p>
+      <div class="more-actions">
+        <a class="more-btn" href="/exhibits/">すべての展示を見る（全8展示）→</a>
+        <a class="more-btn ghost" href="/tower/">展望塔から一望する →</a>
+      </div>
     </section>
 
     <!-- 閲覧室 -->
@@ -130,7 +133,9 @@ const prefectures = [
           <span class="c-place">閲覧室</span>
         </a>
       </div>
-      <p class="more"><a href="/dashboard/">閲覧室のご案内（全9窓口）→</a></p>
+      <div class="more-actions">
+        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全9窓口）→</a>
+      </div>
     </section>
 
     <!-- 案内人 -->
@@ -285,8 +290,17 @@ h1 .num{color:var(--stamp)}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
 .card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
 .c-place{font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
-.more{margin-top:24px;font-size:.9rem}
-.more a{color:var(--stamp);margin-right:18px}
+.more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
+.more-btn{
+  display:inline-block;padding:11px 22px;border-radius:8px;
+  border:1px solid var(--stamp);background:var(--stamp);color:#fff;
+  font-size:.85rem;font-weight:600;text-decoration:none;
+  white-space:nowrap;transition:opacity .15s;
+}
+.more-btn:hover{opacity:.88}
+.more-btn.ghost{
+  border-color:#1b4332;background:#1b4332;
+}
 .guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
 @media(max-width:760px){.guides{grid-template-columns:1fr}}
 .portrait{
