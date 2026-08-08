@@ -1,16 +1,39 @@
+// =====================================================
+// Countopia Stats - 市区町村版 財政・教育費 取得モジュール
+// src/lib/muni-finance.js
+//   財政 : 市区町村データ 基礎データ 0000020104（# 不要）
+//   人口 : 市区町村データ 基礎データ 0000020101（# 不要, A1101総人口）
+//   教育費は総人口で割って「住民1人当たり円」に自作計算。財政力指数はそのまま。
+//   地域の扱いは muni-population.js に準拠。
+// =====================================================
+
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
-const STATS_ID = '0000020104';
+const FIN_ID = '0000020104';
+const POP_ID = '0000020101';
 const RECENT_YEARS = 12;
 
-const FETCH = ['D2201', 'D2202', 'D2203', 'D2211', 'D2212', 'D2213'];
+const FIN_FETCH = ['D2201', 'D320310', 'D3203102', 'D3203103', 'D3203104'];
+const POP_FETCH = ['A1101'];
+
+// 教育費(千円)×1000÷人口 = 1人当たり円
+function perCapitaYen(sen, pop) {
+  if (sen == null || pop == null || pop === 0) return null;
+  return Math.round((sen * 1000) / pop);
+}
 
 export const INDICATORS = [
-  { key: '財政力指数',       unit: '',     kind: 'base', code: 'D2201', decimal: true,  signed: false },
-  { key: '実質収支比率',     unit: '％',   kind: 'base', code: 'D2202', decimal: true,  signed: true },
-  { key: '経常収支比率',     unit: '％',   kind: 'base', code: 'D2203', decimal: true,  signed: false },
-  { key: '実質公債費比率',   unit: '％',   kind: 'base', code: 'D2211', decimal: true,  signed: false },
-  { key: '将来負担比率',     unit: '％',   kind: 'base', code: 'D2212', decimal: true,  signed: false },
-  { key: '標準財政規模',     unit: '千円', kind: 'base', code: 'D2213', decimal: false, signed: false },
+  { key: '財政力指数',           unit: '',   kind: 'fin',  code: 'D2201',
+    calc: (f) => (f.D2201 != null ? Math.round(f.D2201 * 1000) / 1000 : null) },
+  { key: '住民1人当たり教育費',  unit: '円', kind: 'calc',
+    calc: (f, pop) => perCapitaYen(f.D320310, pop) },
+  { key: '1人当たり小学校費',    unit: '円', kind: 'calc',
+    calc: (f, pop) => perCapitaYen(f.D3203102, pop) },
+  { key: '1人当たり中学校費',    unit: '円', kind: 'calc',
+    calc: (f, pop) => perCapitaYen(f.D3203103, pop) },
+  { key: '1人当たり高校費',      unit: '円', kind: 'calc',
+    calc: (f, pop) => perCapitaYen(f.D3203104, pop) },
+  { key: '総人口',               unit: '人', kind: 'pop',
+    calc: (f, pop) => pop },
 ];
 
 let _cache = null;
@@ -20,14 +43,12 @@ function getAppId() {
   if (!appId) throw new Error('[muni-finance.js] ESTAT_APP_ID が設定されていません');
   return appId;
 }
-
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
   const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
   if (!res.ok) throw new Error(`[muni-finance.js] API HTTP ${res.status}: ${path}`);
   return await res.json();
 }
-
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
 function classifyArea(code, name) {
@@ -40,81 +61,90 @@ function classifyArea(code, name) {
   return 'rank';
 }
 
-async function fetchMeta() {
-  const json = await apiGet('getMetaInfo', { statsDataId: STATS_ID });
+async function fetchTimes(statsDataId) {
+  const json = await apiGet('getMetaInfo', { statsDataId });
   const root = json.GET_META_INFO;
   if (!root || root.RESULT.STATUS !== 0) {
-    throw new Error(`[muni-finance.js] getMetaInfo失敗: ${root?.RESULT?.ERROR_MSG || '不明'}`);
+    throw new Error(`[muni-finance.js] getMetaInfo失敗(${statsDataId}): ${root?.RESULT?.ERROR_MSG || '不明'}`);
   }
   const timeObj = asArray(root.METADATA_INF.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'time');
-  if (!timeObj) throw new Error('[muni-finance.js] 時間軸メタが見つかりません');
-  const times = asArray(timeObj.CLASS)
+  return asArray(timeObj.CLASS)
     .map((c) => ({ code: c['@code'], name: c['@name'] }))
     .sort((a, b) => b.code.localeCompare(a.code));
-  return { times };
 }
 
-async function fetchStatsData(timeCodes) {
+async function fetchValues(statsDataId, codes, timeCodes) {
   const params = {
-    statsDataId: STATS_ID,
-    cdCat01: FETCH.join(','),
+    statsDataId,
+    cdCat01: codes.join(','),
     cdTime: timeCodes.map((t) => t.code).join(','),
-    metaGetFlg: 'Y',
-    cntGetFlg: 'N',
-    annotationGetFlg: 'N',
-    explanationGetFlg: 'N',
-    replaceSpChars: '0',
+    metaGetFlg: 'Y', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0',
   };
   const json = await apiGet('getStatsData', params);
   const root = json.GET_STATS_DATA;
   if (!root || root.RESULT.STATUS !== 0) {
-    throw new Error(`[muni-finance.js] getStatsData失敗: ${root?.RESULT?.ERROR_MSG || '不明'}`);
+    throw new Error(`[muni-finance.js] getStatsData失敗(${statsDataId}): ${root?.RESULT?.ERROR_MSG || '不明'}`);
   }
   return root.STATISTICAL_DATA;
 }
 
-export async function getMuniFinanceData() {
-  if (_cache) return _cache;
-
-  const { times } = await fetchMeta();
-  const recentTimes = times.slice(0, RECENT_YEARS);
-  const timeNameByCode = {};
-  for (const t of recentTimes) timeNameByCode[t.code] = t.name;
-
-  const statData = await fetchStatsData(recentTimes);
-
+// area→{cat:value} を最新値で埋める。areasMap（コード→{c,n,x}）も同時に構築
+function collect(statData, byArea, areasMap, latest) {
   const areaObj = asArray(statData.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'area');
-  const areas = new Map();
   if (areaObj) {
     for (const c of asArray(areaObj.CLASS)) {
       const code = c['@code'];
       const name = (c['@name'] || '').trim();
       const kind = classifyArea(code, name);
       if (kind === 'exclude') continue;
-      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {} });
+      if (!areasMap.has(code)) areasMap.set(code, { c: code, n: name, x: kind === 'x' });
     }
   }
-
-  let latestTime = null;
-  const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
-  for (const rec of valueList) {
-    const area = areas.get(rec['@area']);
-    if (!area) continue;
+  const list = asArray(statData.DATA_INF.VALUE);
+  list.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  for (const rec of list) {
+    const area = rec['@area'];
+    if (!areasMap.has(area)) continue;
     const cat = rec['@cat01'];
     const raw = rec['$'];
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
+    byArea[area] = byArea[area] || {};
+    if (byArea[area][cat] === undefined) {
+      byArea[area][cat] = num;
+      if (!latest.t || rec['@time'] > latest.t) latest.t = rec['@time'];
     }
   }
+}
 
-  const areaList = [...areas.values()]
+export async function getMuniFinanceData() {
+  if (_cache) return _cache;
+
+  const areasMap = new Map();
+  const finByArea = {};
+  const popByArea = {};
+  const latestFin = { t: null };
+
+  // 財政表
+  const finTimes = (await fetchTimes(FIN_ID)).slice(0, RECENT_YEARS);
+  const finTimeName = {};
+  for (const t of finTimes) finTimeName[t.code] = t.name;
+  const finData = await fetchValues(FIN_ID, FIN_FETCH, finTimes);
+  collect(finData, finByArea, areasMap, latestFin);
+
+  // 人口表（総人口だけ・突き合わせ用。areasMapには財政側の地域を優先）
+  const popTimes = (await fetchTimes(POP_ID)).slice(0, RECENT_YEARS);
+  const popData = await fetchValues(POP_ID, POP_FETCH, popTimes);
+  const popAreasMap = new Map();
+  const dummyLatest = { t: null };
+  collect(popData, popByArea, popAreasMap, dummyLatest);
+
+  const areaList = [...areasMap.values()]
     .map((a) => {
-      const v = INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null));
+      const f = finByArea[a.c] || {};
+      const pop = (popByArea[a.c] || {}).A1101 ?? null;
+      const v = INDICATORS.map((ind) => ind.calc(f, pop));
       return { c: a.c, n: a.n, x: a.x, v };
     })
     .filter((a) => a.v.some((val) => val !== null))
@@ -122,10 +152,10 @@ export async function getMuniFinanceData() {
 
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
-    source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020104）',
-    note: '財政力指数は1に近いほど自主財源の割合が高いことを示す。区・特別区部計はランキング除外（選択には表示）。',
-    year: latestTime ? timeNameByCode[latestTime] || null : null,
-    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, decimal: i.decimal, signed: i.signed })),
+    source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（財政 表番号0000020104／人口 表番号0000020101）',
+    note: '教育費・学校費は市町村財政の決算額を総人口で割った「住民1人当たり」。財政力指数は1に近いほど自前で財政をまかなえる。区・特別区部計はランキング除外（選択には表示）。',
+    year: latestFin.t ? finTimeName[latestFin.t] || null : null,
+    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
     areas: areaList,
   };
   return _cache;
