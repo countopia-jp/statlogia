@@ -1,6 +1,6 @@
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020101';
-const RECENT_YEARS = 12;
+const RECENT_YEARS = 40; // 国勢調査は5年に一度のため、12年では2点しか取れない。長めに遡って複数時点を確保する
 
 const FETCH = ['A1101', 'A1301', 'A1302', 'A1303', 'A7101', 'A191007'];
 
@@ -12,6 +12,9 @@ export const INDICATORS = [
   { key: '世帯数',           unit: '世帯', kind: 'base', code: 'A7101' },
   { key: '2050年の推計人口', unit: '人',   kind: 'base', code: 'A191007' },
 ];
+
+// 時系列グラフに使う指標コード（総人口のみ）
+const SERIES_CODE = 'A1101';
 
 function rate(a, b) {
   if (a == null || b == null || b === 0) return null;
@@ -96,13 +99,14 @@ export async function getMuniPopulationData() {
       const name = (c['@name'] || '').trim();
       const kind = classifyArea(code, name);
       if (kind === 'exclude') continue;
-      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {} });
+      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {}, h: {} });
     }
   }
 
   let latestTime = null;
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
     if (!area) continue;
@@ -111,10 +115,16 @@ export async function getMuniPopulationData() {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
+
+    // 時系列グラフ対象の指標だけ履歴を蓄積
+    if (cat === SERIES_CODE) {
+      if (!area.h[cat]) area.h[cat] = [];
+      area.h[cat].push({ time: rec['@time'], value: num });
     }
+
+    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+    area.v[cat] = num;
+    if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
   }
 
   const areaList = [...areas.values()]
@@ -124,7 +134,12 @@ export async function getMuniPopulationData() {
           ? (a.v[ind.code] !== undefined ? a.v[ind.code] : null)
           : ind.calc(a.v)
       );
-      return { c: a.c, n: a.n, x: a.x, v };
+      // 総人口の時系列（年名に変換して昇順のまま）
+      const series = (a.h[SERIES_CODE] || []).map((pt) => ({
+        year: timeNameByCode[pt.time] || pt.time,
+        value: pt.value,
+      }));
+      return { c: a.c, n: a.n, x: a.x, v, series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));

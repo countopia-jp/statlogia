@@ -113,10 +113,10 @@ function collectAreas(statData, areas) {
   }
 }
 
-// --- VALUEを走査して (地域×指標) の最新値を採用 ---
+// --- VALUEを走査して (地域×指標) の最新値と履歴を採取 ---
 function collectValues(statData, areas, latestTimeByCat) {
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  valueList.sort((a, b) => a['@time'].localeCompare(a['@time'])); // 昇順（古い→新しい）に変更
 
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
@@ -126,11 +126,16 @@ function collectValues(statData, areas, latestTimeByCat) {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
+
+    // 履歴に追加（時系列順）
+    if (!area.h) area.h = {};
+    if (!area.h[cat]) area.h[cat] = [];
+    area.h[cat].push({ time: rec['@time'], value: num });
+
+    // 最新値の更新（従来通り）
+    if (area.v[cat] === undefined || rec['@time'] > (latestTimeByCat[cat] || '')) {
       area.v[cat] = num;
-      if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
-        latestTimeByCat[cat] = rec['@time'];
-      }
+      latestTimeByCat[cat] = rec['@time'];
     }
   }
 }
@@ -161,7 +166,10 @@ export async function getPopulationData() {
   const areaList = [...areas.values()]
     .map((a) => {
       const base = INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null));
-      return { c: a.c, n: a.n, v: base };
+      // A1101（総人口）の時系列のみ抽出（年名に変換）
+      const totalSeries = (a.h?.A1101 || [])
+        .map((pt) => ({ year: timeNameByCode[pt.time] || pt.time, value: pt.value }));
+      return { c: a.c, n: a.n, v: base, series: totalSeries };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));

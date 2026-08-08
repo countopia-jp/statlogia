@@ -6,6 +6,7 @@
 // 都道府県を選んで人口・世帯の基礎データを見る窓口。
 // データは /data/population.json（ビルド時生成）から取得。
 // トップのヒーロー検索窓から ?pref=県名 で渡されると自動選択する。
+// 総人口は時系列（折れ線グラフ、Chart.js）も表示する。
 // ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
 //   誤爆防止で全セレクタを .pop- 接頭辞で統一している。
 // =====================================================
@@ -19,6 +20,8 @@ const yearNote = years.join('・');
 ---
 
 <BaseLayout title="国勢の間｜人口と世帯 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
   <main class="pop-dash">
     <header class="pop-hero">
     <img class="pop-hero-figure" src="/images/icon/population-large.webp" alt="丘の上から見おろす、屋根の連なる町並みと遠い山" width="1400" height="788" loading="lazy" />
@@ -51,6 +54,12 @@ const yearNote = years.join('・');
     <section id="resultArea" class="pop-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div class="pop-cards" id="cardGrid"></div>
+
+      <div class="pop-chart-wrap">
+        <p class="pop-chart-title">総人口の推移</p>
+        <canvas id="popChart" height="120"></canvas>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、台帳をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな土地かしら。</span></Talk>
     </section>
@@ -141,6 +150,31 @@ const yearNote = years.join('・');
         if (area) render(area);
       });
 
+      function renderChart(area) {
+        const ctx = document.getElementById('popChart');
+        if (!ctx || !area.series || area.series.length === 0) return;
+        if (window._popChartInstance) window._popChartInstance.destroy();
+        window._popChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: area.series.map((p) => p.year),
+            datasets: [{
+              label: '総人口',
+              data: area.series.map((p) => p.value),
+              borderColor: '#1b4332',
+              backgroundColor: '#1b433222',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => (v / 10000).toFixed(0) + '万人' } } },
+          },
+        });
+      }
+
       function render(area) {
         document.getElementById('resultArea').hidden = false;
         document.getElementById('resultTitle').textContent = `${area.n}の台帳`;
@@ -167,6 +201,7 @@ const yearNote = years.join('・');
           grid.appendChild(card);
         }
 
+        renderChart(area);
         updateLines(area);
       }
 
@@ -291,6 +326,15 @@ const yearNote = years.join('・');
     }
     .pop-rank { color: #b23a2f; font-weight: 700; }
     .pop-diff { color: #666; }
+
+    .pop-chart-wrap {
+      margin: 28px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .pop-chart-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
 
     .pop-ranking { margin-top: 44px; }
     .pop-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }

@@ -63,6 +63,14 @@ const yearNote = years.join('・');
       </div>
     </section>
 
+    <!-- ===== 最低賃金の推移 ===== -->
+    <section id="lineSec" class="liv-line-sec" hidden aria-label="最低賃金の推移">
+      <h2 id="lineTitle">最低賃金の推移</h2>
+      <div class="liv-line-wrap">
+        <canvas id="wageLineChart" height="120"></canvas>
+      </div>
+    </section>
+
     <!-- ===== ランキング ===== -->
     <section class="liv-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>
@@ -184,6 +192,7 @@ const yearNote = years.join('・');
 
         updateLines(area);
         highlightScatter(area);
+        renderWageLine(area);
       }
 
       // ---- 案内人のコメント ----
@@ -277,6 +286,39 @@ const yearNote = years.join('・');
 
       buildScatter();
 
+      // ---- 最低賃金の推移（折れ線） ----
+      let wageLineChart = null;
+      function renderWageLine(area) {
+        const lineSec = document.getElementById('lineSec');
+        if (!area.series || area.series.length === 0) {
+          lineSec.hidden = true;
+          return;
+        }
+        lineSec.hidden = false;
+        document.getElementById('lineTitle').textContent = `${area.n}の最低賃金の推移`;
+        const ctx = document.getElementById('wageLineChart');
+        if (wageLineChart) wageLineChart.destroy();
+        wageLineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: area.series.map((p) => p.year),
+            datasets: [{
+              label: '最低賃金',
+              data: area.series.map((p) => p.value),
+              borderColor: '#b23a2f',
+              backgroundColor: '#b23a2f22',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v + '円' } } },
+          },
+        });
+      }
+
       // ---- ランキング ----
       const RANKS = {
         wage: { code: 'F620215', dir: 'desc', note: '給与（男）が高い県ベスト5。' },
@@ -361,6 +403,12 @@ const yearNote = years.join('・');
     .liv-scatter-sec h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .liv-chart-wrap { position: relative; height: 300px; margin: 16px 0 8px; }
     .liv-note { font-size: 0.8rem; color: #666; text-align: center; line-height: 1.8; }
+
+    .liv-line-sec { margin-top: 44px; }
+    .liv-line-sec h2 { text-align: center; margin: 0 0 16px; font-family: "Shippori Mincho", serif; }
+    .liv-line-wrap {
+      padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff;
+    }
 
     .liv-ranking { margin-top: 44px; }
     .liv-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }

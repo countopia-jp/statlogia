@@ -11,6 +11,11 @@
 //   key         内部識別子（スラッグ）
 //   label       表示名
 //   category    生活場面カテゴリ（population/education/work/housing/money/time/finance）
+//   ※重要：categoryは指標そのものの性質で決める。使われているページ(usedIn)では決めない。
+//     1ページが複数カテゴリの指標を組み合わせて構成されることは多いが(例:暮らしの見積所=work+housing)、
+//     各指標のcategoryタグは常に単体で見た時の本来の分類を保つこと。今後カテゴリを追加する際も
+//     体系記号(A〜M)から機械的に判断する: A→population, D→finance, E→education, F→work,
+//     H→housing, L/G→money, M→time が目安。
 //   system      体系コード（内部メタ、e-Stat社会・人口統計体系の分類記号）
 //   scope       'pref' | 'muni' | 'both'（都道府県版/市区町村版/両方）
 //   statsDataId { pref?, muni? }  粒度ごとの統計表ID
@@ -308,10 +313,10 @@ export const catalog = [
     status: 'published',
     usedIn: ['/ict/'],
   },
-  {
+ {
     key: 'fiscal-index-pref',
     label: '財政力指数',
-    category: 'education',
+    category: 'finance',
     system: 'D',
     scope: 'pref',
     statsDataId: { pref: '0000010204' },

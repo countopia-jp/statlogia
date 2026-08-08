@@ -7,6 +7,7 @@
 //   H 居住  statsDataId: 0000010108（5年ごと）
 //
 // 調査周期が違うため、指標ごとに「値のある最新年度」を採用する。
+// 最低賃金（F6501）のみ時系列（毎年データが取れるため）も保持する。
 // appIdはCloudflare PagesのSecret「ESTAT_APP_ID」から取得。
 // =====================================================
 
@@ -44,6 +45,9 @@ export const DERIVED = [
 
 // 直近何年度ぶんを取得するか（住宅・土地統計は5年ごとなので広めに取る）
 const RECENT_YEARS = 12;
+
+// 時系列グラフに使う指標コード（最低賃金のみ。毎年調査のため12点きれいに取れる）
+const SERIES_CODE = 'F6501';
 
 let _cache = null;
 
@@ -123,15 +127,15 @@ function collectAreas(statData, areas) {
     const name = (c['@name'] || '').trim();
     // 全国（00000 等）は除外。都道府県のみ残す
     if (name === '全国' || /^0+$/.test(code)) continue;
-    if (!areas.has(code)) areas.set(code, { c: code, n: name, v: {} });
+    if (!areas.has(code)) areas.set(code, { c: code, n: name, v: {}, h: {} });
   }
 }
 
-// --- VALUEを走査して (地域×指標) の最新値を採用 ---
+// --- VALUEを走査して (地域×指標) の最新値と履歴を採取 ---
 function collectValues(statData, areas, latestTimeByCat) {
   const valueList = asArray(statData.DATA_INF.VALUE);
-  // 新しい年度から先に処理して、以降は上書きしない
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
 
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
@@ -141,11 +145,17 @@ function collectValues(statData, areas, latestTimeByCat) {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
-        latestTimeByCat[cat] = rec['@time'];
-      }
+
+    // 時系列グラフ対象の指標だけ履歴を蓄積
+    if (cat === SERIES_CODE) {
+      if (!area.h[cat]) area.h[cat] = [];
+      area.h[cat].push({ time: rec['@time'], value: num });
+    }
+
+    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+    area.v[cat] = num;
+    if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
+      latestTimeByCat[cat] = rec['@time'];
     }
   }
 }
@@ -183,7 +193,12 @@ export async function getLivingData() {
         const val = d.calc(...args);
         return Number.isFinite(val) ? Math.round(val * 10) / 10 : null;
       });
-      return { c: a.c, n: a.n, v: [...base, ...derived] };
+      // 最低賃金の時系列（年名に変換して昇順のまま）
+      const series = (a.h[SERIES_CODE] || []).map((pt) => ({
+        year: timeNameByCode[pt.time] || pt.time,
+        value: pt.value,
+      }));
+      return { c: a.c, n: a.n, v: [...base, ...derived], series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));
