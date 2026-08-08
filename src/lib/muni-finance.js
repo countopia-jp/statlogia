@@ -5,6 +5,7 @@
 //   人口 : 市区町村データ 基礎データ 0000020101（# 不要, A1101総人口）
 //   教育費は総人口で割って「住民1人当たり円」に自作計算。財政力指数はそのまま。
 //   地域の扱いは muni-population.js に準拠。
+//   財政力指数（D2201）のみ時系列（毎年調査のため12点取れる）も保持する。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -14,6 +15,9 @@ const RECENT_YEARS = 12;
 
 const FIN_FETCH = ['D2201', 'D320310', 'D3203102', 'D3203103', 'D3203104'];
 const POP_FETCH = ['A1101'];
+
+// 時系列グラフに使う指標コード（財政力指数のみ）
+const SERIES_CODE = 'D2201';
 
 // 教育費(千円)×1000÷人口 = 1人当たり円
 function perCapitaYen(sen, pop) {
@@ -88,8 +92,9 @@ async function fetchValues(statsDataId, codes, timeCodes) {
   return root.STATISTICAL_DATA;
 }
 
-// area→{cat:value} を最新値で埋める。areasMap（コード→{c,n,x}）も同時に構築
-function collect(statData, byArea, areasMap, latest) {
+// area→{cat:value} を最新値で埋める。areasMap（コード→{c,n,x,h}）も同時に構築
+// hByArea: area→{cat: [{time,value}, ...]}（時系列グラフ対象の指標のみ蓄積）
+function collect(statData, byArea, areasMap, latest, hByArea) {
   const areaObj = asArray(statData.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'area');
   if (areaObj) {
     for (const c of asArray(areaObj.CLASS)) {
@@ -101,7 +106,8 @@ function collect(statData, byArea, areasMap, latest) {
     }
   }
   const list = asArray(statData.DATA_INF.VALUE);
-  list.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  list.sort((a, b) => a['@time'].localeCompare(b['@time']));
   for (const rec of list) {
     const area = rec['@area'];
     if (!areasMap.has(area)) continue;
@@ -110,11 +116,16 @@ function collect(statData, byArea, areasMap, latest) {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    byArea[area] = byArea[area] || {};
-    if (byArea[area][cat] === undefined) {
-      byArea[area][cat] = num;
-      if (!latest.t || rec['@time'] > latest.t) latest.t = rec['@time'];
+
+    // 時系列グラフ対象の指標だけ履歴を蓄積
+    if (hByArea && cat === SERIES_CODE) {
+      hByArea[area] = hByArea[area] || [];
+      hByArea[area].push({ time: rec['@time'], value: num });
     }
+
+    byArea[area] = byArea[area] || {};
+    byArea[area][cat] = num;
+    if (!latest.t || rec['@time'] > latest.t) latest.t = rec['@time'];
   }
 }
 
@@ -125,27 +136,33 @@ export async function getMuniFinanceData() {
   const finByArea = {};
   const popByArea = {};
   const latestFin = { t: null };
+  const finHByArea = {};
 
   // 財政表
   const finTimes = (await fetchTimes(FIN_ID)).slice(0, RECENT_YEARS);
   const finTimeName = {};
   for (const t of finTimes) finTimeName[t.code] = t.name;
   const finData = await fetchValues(FIN_ID, FIN_FETCH, finTimes);
-  collect(finData, finByArea, areasMap, latestFin);
+  collect(finData, finByArea, areasMap, latestFin, finHByArea);
 
   // 人口表（総人口だけ・突き合わせ用。areasMapには財政側の地域を優先）
   const popTimes = (await fetchTimes(POP_ID)).slice(0, RECENT_YEARS);
   const popData = await fetchValues(POP_ID, POP_FETCH, popTimes);
   const popAreasMap = new Map();
   const dummyLatest = { t: null };
-  collect(popData, popByArea, popAreasMap, dummyLatest);
+  collect(popData, popByArea, popAreasMap, dummyLatest, null);
 
   const areaList = [...areasMap.values()]
     .map((a) => {
       const f = finByArea[a.c] || {};
       const pop = (popByArea[a.c] || {}).A1101 ?? null;
       const v = INDICATORS.map((ind) => ind.calc(f, pop));
-      return { c: a.c, n: a.n, x: a.x, v };
+      // 財政力指数の時系列（年名に変換して昇順のまま）
+      const series = (finHByArea[a.c] || []).map((pt) => ({
+        year: finTimeName[pt.time] || pt.time,
+        value: Math.round(pt.value * 1000) / 1000,
+      }));
+      return { c: a.c, n: a.n, x: a.x, v, series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));

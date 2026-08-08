@@ -5,6 +5,8 @@ import { getMuniFinanceData } from '../../lib/muni-finance.js';
 const data = await getMuniFinanceData();
 ---
 <BaseLayout title="わが町の財政と教育費｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
   <main class="tp">
     <header class="tp-hero">
       <p class="tp-kicker">閲覧室</p>
@@ -36,6 +38,12 @@ const data = await getMuniFinanceData();
     <section id="resultArea" class="tp-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div id="cardArea" class="tp-cards"></div>
+
+      <div class="tp-chart-wrap">
+        <p class="tp-chart-title">財政力指数の推移</p>
+        <canvas id="finChart" height="120"></canvas>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
@@ -114,6 +122,32 @@ const data = await getMuniFinanceData();
       });
       sel.addEventListener('change', () => { const a = areas.find((x) => x.c === sel.value); if (a) render(a); });
 
+      let finChart = null;
+      function renderChart(a) {
+        const ctx = document.getElementById('finChart');
+        if (!ctx || !a.series || a.series.length === 0) return;
+        if (finChart) finChart.destroy();
+        finChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: a.series.map((p) => p.year),
+            datasets: [{
+              label: '財政力指数',
+              data: a.series.map((p) => p.value),
+              borderColor: '#1b4332',
+              backgroundColor: '#1b433222',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v.toFixed(2) } } },
+          },
+        });
+      }
+
       function render(a) {
         document.getElementById('resultArea').hidden = false;
         document.getElementById('resultTitle').textContent = a.n + 'の財政と教育費';
@@ -131,6 +165,7 @@ const data = await getMuniFinanceData();
             `<div class="tp-card-num">${fmt(i, a.v[i])}</div>` + meta;
           wrap.appendChild(card);
         });
+        renderChart(a);
         updateLines(a);
       }
 
@@ -201,6 +236,16 @@ const data = await getMuniFinanceData();
     .tp-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .06em; }
     .tp-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; margin: 6px 0 2px; color: #1b4332; }
     .tp-card-meta { font-size: .72rem; color: #b23a2f; font-weight: 700; }
+
+    .tp-chart-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .tp-chart-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
+
     .tp-ranking { margin-top: 44px; }
     .tp-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .tp-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
