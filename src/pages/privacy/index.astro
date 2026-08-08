@@ -1,0 +1,69 @@
+---
+// =====================================================
+// Countopia Stats - プライバシーポリシー
+// src/pages/privacy/index.astro
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="プライバシーポリシー - Countopia Stats" backHref="/about/" backLabel="入国審査場">
+  <main class="pv">
+    <header class="pv-hero">
+      <p class="pv-kicker">PRIVACY POLICY</p>
+      <h1>プライバシーポリシー</h1>
+    </header>
+
+    <section class="pv-sec">
+      <h2>アクセス解析について</h2>
+      <p>
+        本サイトでは、Cloudflare Web Analyticsを利用してアクセス状況を確認しています。
+        この解析ツールはCookieを使用せず、個人を特定する情報も収集しません。
+      </p>
+    </section>
+
+    <section class="pv-sec">
+      <h2>広告について</h2>
+      <p>
+        現在、本サイトでは第三者配信の広告を利用していません。
+        今後導入する場合は、本ページにその旨を追記します。
+      </p>
+    </section>
+
+    <section class="pv-sec">
+      <h2>お問い合わせフォームについて</h2>
+      <p>
+        お問い合わせフォームでご入力いただいたお名前・メールアドレス等の情報は、
+        お問い合わせへの対応以外の目的には使用しません。
+      </p>
+    </section>
+
+    <section class="pv-sec">
+      <h2>本ポリシーの改定</h2>
+      <p>
+        本ポリシーの内容は、必要に応じて予告なく変更することがあります。
+      </p>
+    </section>
+
+    <p class="pv-links">
+      <a href="/about/">入国審査場へ →</a>
+      <a href="/terms/">利用規約・免責へ →</a>
+    </p>
+  </main>
+
+  <style>
+    .pv { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .pv-hero { text-align: center; padding: 32px 0 8px; }
+    .pv-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .pv-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
+
+    .pv-sec { padding: 16px 0; }
+    .pv-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .pv-sec p { line-height: 2; font-size: 0.9rem; color: #333; margin: 0; }
+
+    .pv-links { text-align: center; margin-top: 28px; font-size: 0.9rem; }
+    .pv-links a { color: #b23a2f; margin: 0 10px; }
+  </style>
+</BaseLayout>

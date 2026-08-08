@@ -1,0 +1,88 @@
+---
+// =====================================================
+// Countopia Stats - 利用規約・免責、お問い合わせ
+// src/pages/terms/index.astro
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+
+const CONTACT_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdNtNiLlYnsvfCIHzpxBSxBsHSUevuoQAe6e6QM6BQak2ocaw/viewform?usp=publish-editor';
+---
+
+<BaseLayout title="利用規約・免責・お問い合わせ - Countopia Stats" backHref="/about/" backLabel="入国審査場">
+  <main class="tm">
+    <header class="tm-hero">
+      <p class="tm-kicker">TERMS</p>
+      <h1>利用規約・免責</h1>
+    </header>
+
+    <section class="tm-sec">
+      <h2>このサイトについて</h2>
+      <p>
+        Countopia Statsは、個人が趣味と学びのために運営している非公式サイトです。
+        政府機関・統計調査の実施主体とは関係ありません。
+      </p>
+    </section>
+
+    <section class="tm-sec">
+      <h2>免責事項</h2>
+      <p>
+        掲載内容には正確を期していますが、その完全性・正確性を保証するものではありません。
+        本サイトの情報によって生じたいかなる損害についても、責任を負いかねます。
+      </p>
+    </section>
+
+    <section class="tm-sec">
+      <h2>著作権・引用について</h2>
+      <p>
+        本サイトのデータは、政府統計の総合窓口（e-Stat）から取得したものを独自に加工しています。
+        引用・シェアは、出典（本サイトと元統計）を添えていただければ歓迎です。
+      </p>
+    </section>
+
+    <Talk speaker="kei">
+      ここからは、お問い合わせについてです。個人で運営している国ですので、少しだけご了承をいただければ。
+    </Talk>
+
+    <section class="tm-sec">
+      <h2>お問い合わせ</h2>
+      <p>
+        個人サイトのため、恐れ入りますが返信は期待しないでください。
+        いただいたご意見・ご要望は、サイト運営の参考にさせていただきます。
+      </p>
+      <p class="tm-contact-btn">
+        <a href={CONTACT_FORM_URL} target="_blank" rel="noopener">お問い合わせフォームへ →</a>
+      </p>
+    </section>
+
+    <p class="tm-links">
+      <a href="/about/">入国審査場へ →</a>
+      <a href="/privacy/">プライバシーポリシーへ →</a>
+    </p>
+  </main>
+
+  <style>
+    .tm { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .tm-hero { text-align: center; padding: 32px 0 8px; }
+    .tm-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .tm-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
+
+    .tm-sec { padding: 16px 0; }
+    .tm-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .tm-sec p { line-height: 2; font-size: 0.9rem; color: #333; margin: 0 0 10px; }
+
+    .tm-contact-btn { text-align: center; margin-top: 16px; }
+    .tm-contact-btn a {
+      display: inline-block; padding: 11px 22px; border-radius: 8px;
+      border: 1px solid #b23a2f; background: #b23a2f; color: #fff;
+      font-size: 0.85rem; font-weight: 600; text-decoration: none;
+    }
+    .tm-contact-btn a:hover { opacity: .88; }
+
+    .tm-links { text-align: center; margin-top: 28px; font-size: 0.9rem; }
+    .tm-links a { color: #b23a2f; margin: 0 10px; }
+  </style>
+</BaseLayout>
