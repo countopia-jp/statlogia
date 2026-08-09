@@ -8,6 +8,7 @@
 // 学校のICT整備を小中高3校種で。living.js と同じ型。
 // 「教育用コンピュータ1台当たりの児童生徒数」は少ないほど整備が進んでいる
 // （lowerIsBetter: true）。窓口側のランキングで昇順に使う。
+// PC1台当たり児童数（小学校・E9401）のみ時系列も保持する。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -33,6 +34,9 @@ export const INDICATORS = [
 export const DERIVED = [];
 
 const RECENT_YEARS = 12;
+
+// 時系列グラフに使う指標コード（PC1台当たり児童数・小学校のみ）
+const SERIES_CODE = 'E9401';
 
 let _cache = null;
 
@@ -108,13 +112,15 @@ function collectAreas(statData, areas) {
     const code = c['@code'];
     const name = (c['@name'] || '').trim();
     if (name === '全国' || /^0+$/.test(code)) continue;
-    if (!areas.has(code)) areas.set(code, { c: code, n: name, v: {} });
+    if (!areas.has(code)) areas.set(code, { c: code, n: name, v: {}, h: {} });
   }
 }
 
+// --- VALUEを走査して (地域×指標) の最新値と履歴を採取 ---
 function collectValues(statData, areas, latestTimeByCat) {
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
 
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
@@ -124,11 +130,17 @@ function collectValues(statData, areas, latestTimeByCat) {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
-        latestTimeByCat[cat] = rec['@time'];
-      }
+
+    // 時系列グラフ対象の指標だけ履歴を蓄積
+    if (cat === SERIES_CODE) {
+      if (!area.h[cat]) area.h[cat] = [];
+      area.h[cat].push({ time: rec['@time'], value: num });
+    }
+
+    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+    area.v[cat] = num;
+    if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
+      latestTimeByCat[cat] = rec['@time'];
     }
   }
 }
@@ -158,7 +170,12 @@ export async function getIctData() {
   const areaList = [...areas.values()]
     .map((a) => {
       const base = INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null));
-      return { c: a.c, n: a.n, v: base };
+      // PC1台当たり児童数（小学校）の時系列（年名に変換して昇順のまま）
+      const series = (a.h[SERIES_CODE] || []).map((pt) => ({
+        year: timeNameByCode[pt.time] || pt.time,
+        value: pt.value,
+      }));
+      return { c: a.c, n: a.n, v: base, series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));

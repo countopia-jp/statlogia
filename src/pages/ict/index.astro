@@ -50,6 +50,13 @@ const yearNote = years.join('・');
     <section id="resultArea" class="ict-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div id="groupArea"></div>
+
+      <div class="ict-line-wrap">
+        <p class="ict-line-title">端末整備の推移（小学校・1台当たり児童数）</p>
+        <canvas id="pcLineChart" height="120"></canvas>
+        <p class="ict-line-note">※数値が少ないほど、1人1台に近づいています（右肩下がりが「整備が進んだ」ことを示します）</p>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳面をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな教室かしら。</span></Talk>
     </section>
@@ -176,6 +183,38 @@ const yearNote = years.join('・');
         if (area) render(area);
       });
 
+      // ---- 端末整備の推移（折れ線） ----
+      let pcLineChart = null;
+      function renderPcLine(area) {
+        const wrap = document.querySelector('.ict-line-wrap');
+        if (!area.series || area.series.length === 0) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        const ctx = document.getElementById('pcLineChart');
+        if (pcLineChart) pcLineChart.destroy();
+        pcLineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: area.series.map((p) => p.year),
+            datasets: [{
+              label: '1台当たり児童数',
+              data: area.series.map((p) => p.value),
+              borderColor: '#1b4332',
+              backgroundColor: '#1b433222',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v.toFixed(1) + '人' } } },
+          },
+        });
+      }
+
       // ---- カード描画（グループごと） ----
       function render(area) {
         document.getElementById('resultArea').hidden = false;
@@ -209,6 +248,7 @@ const yearNote = years.join('・');
           wrap.appendChild(sec);
         }
 
+        renderPcLine(area);
         updateLines(area);
         highlightScatter(area);
       }
@@ -374,6 +414,19 @@ const yearNote = years.join('・');
     .ict-card-sub { font-size: 0.7rem; color: #999; }
     .ict-card-meta { margin-top: 6px; font-size: 0.75rem; }
     .ict-rank { color: #b23a2f; font-weight: 700; }
+
+    .ict-line-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .ict-line-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
+    .ict-line-note {
+      font-size: 0.72rem; color: #888; text-align: center;
+      margin: 10px 0 0;
+    }
 
     .ict-scatter-sec { margin-top: 44px; }
     .ict-scatter-sec h2 { text-align: center; font-family: "Shippori Mincho", serif; }
