@@ -1,8 +1,12 @@
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020108';
-const RECENT_YEARS = 12;
+// 住宅・土地統計調査ベースで5年に一度の調査のため、複数時点を確保するには広めに遡る必要がある
+const RECENT_YEARS = 40;
 
 const FETCH = ['H2905', 'H2906', 'H2907', 'H2908', 'H2909'];
+
+// 時系列グラフに使う指標（「近い」率の計算に必要な全指標）
+const SERIES_CODES = ['H2905', 'H2906', 'H2907', 'H2908', 'H2909'];
 
 function sum(...xs) {
   let s = 0, any = false;
@@ -101,13 +105,13 @@ export async function getMuniNurseryData() {
       const name = (c['@name'] || '').trim();
       const kind = classifyArea(code, name);
       if (kind === 'exclude') continue;
-      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {} });
+      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {}, h: {} });
     }
   }
 
-  let latestTime = null;
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
     if (!area) continue;
@@ -116,16 +120,38 @@ export async function getMuniNurseryData() {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
-    }
+
+    // 年度ごとにまとめて蓄積（5指標が揃う年度だけ後で「近い率」を計算する）
+    if (!area.h[rec['@time']]) area.h[rec['@time']] = {};
+    area.h[rec['@time']][cat] = num;
+
+    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+    area.v[cat] = num;
   }
+
+  let overallLatestCompleteTime = null;
 
   const areaList = [...areas.values()]
     .map((a) => {
       const v = INDICATORS.map((ind) => ind.calc(a.v));
-      return { c: a.c, n: a.n, x: a.x, v };
+
+      // 5指標（H2905〜H2909）すべてが揃っている年度だけを時系列対象にする
+      const completeTimes = Object.keys(a.h)
+        .filter((t) => SERIES_CODES.every((c) => a.h[t][c] !== undefined))
+        .sort();
+
+      const latestComplete = completeTimes[completeTimes.length - 1] || null;
+      if (latestComplete && (!overallLatestCompleteTime || latestComplete > overallLatestCompleteTime)) {
+        overallLatestCompleteTime = latestComplete;
+      }
+
+      const series = completeTimes.map((time) => {
+        const snap = a.h[time];
+        const near = pct(sum(snap.H2905, snap.H2906, snap.H2907), total(snap));
+        return { year: timeNameByCode[time] || time, value: near };
+      }).filter((pt) => pt.value !== null);
+
+      return { c: a.c, n: a.n, x: a.x, v, series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));
@@ -134,7 +160,7 @@ export async function getMuniNurseryData() {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020108）',
     note: '最寄りの保育所までの距離帯別・普通世帯数から算出。「近い」は500m未満、「遠い」は1000m以上の世帯割合。区・特別区部計はランキング除外（選択には表示）。',
-    year: latestTime ? timeNameByCode[latestTime] || null : null,
+    year: overallLatestCompleteTime ? timeNameByCode[overallLatestCompleteTime] || null : null,
     indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
     areas: areaList,
   };
