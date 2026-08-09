@@ -125,7 +125,7 @@ const data = await getMuniMigrationData();
       let migChart = null;
       function renderChart(a) {
         const ctx = document.getElementById('migChart');
-        if (!ctx || !a.series || a.series.length === 0) return;
+        if (!ctx || !a.series || a.series.length < 3) return;
         if (migChart) migChart.destroy();
         migChart = new Chart(ctx, {
           type: 'line',

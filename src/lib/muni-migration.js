@@ -10,7 +10,7 @@
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020101';
-const RECENT_YEARS = 12;
+const RECENT_YEARS = 40; // 転入・転出データも5年おきの場合があるため、わが町の人口と同様に広めに遡る
 
 const FETCH = ['A1101', 'A5101', 'A5102'];
 
