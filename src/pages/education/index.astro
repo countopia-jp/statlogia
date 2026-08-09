@@ -65,6 +65,12 @@ const yearNote = countYears.join('・');
         <canvas id="schoolChart" height="220"></canvas>
       </div>
       <p class="edu-note" id="perSchoolNote"></p>
+
+      <div class="edu-line-wrap">
+        <p class="edu-line-title">小学校児童数の推移</p>
+        <canvas id="studentLineChart" height="120"></canvas>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine">町を選ぶと、台帳を読み上げます。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな町かしら。</span></Talk>
     </section>
@@ -191,6 +197,38 @@ const yearNote = countYears.join('・');
         toukoEl.textContent = touko;
       }
 
+      // ---- 児童数の推移（折れ線） ----
+      let lineChart = null;
+      function renderLineChart(area) {
+        const wrap = document.querySelector('.edu-line-wrap');
+        if (!area.series || area.series.length === 0) {
+          wrap.hidden = true;
+          return;
+        }
+        wrap.hidden = false;
+        const ctx = document.getElementById('studentLineChart');
+        if (lineChart) lineChart.destroy();
+        lineChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: area.series.map((p) => p.year),
+            datasets: [{
+              label: '小学校児童数',
+              data: area.series.map((p) => p.value),
+              borderColor: '#1b4332',
+              backgroundColor: '#1b433222',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v.toLocaleString('ja-JP') + '人' } } },
+          },
+        });
+      }
+
       // ---- カード＋グラフ描画 ----
       let chart = null;
       function render(area) {
@@ -244,6 +282,8 @@ const yearNote = countYears.join('・');
             maintainAspectRatio: false,
           },
         });
+
+        renderLineChart(area);
       }
 
       // ---- ランキング ----
@@ -322,6 +362,15 @@ const yearNote = countYears.join('・');
 
     .edu-chart-wrap { position: relative; height: 240px; margin: 20px 0 8px; }
     .edu-note { font-size: 0.85rem; color: #555; text-align: center; }
+
+    .edu-line-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .edu-line-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
 
     .edu-ranking { margin-top: 40px; }
     .edu-ranking h2 { text-align: center; }

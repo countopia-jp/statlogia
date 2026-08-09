@@ -8,6 +8,7 @@
 // ビルド時に1回だけAPIを叩き、education.json用の
 // 整形済みデータを返す。appIdはCloudflare Pagesの
 // Secret「ESTAT_APP_ID」から取得（クライアントには出ない）。
+// 小学校児童数（E2501）のみ時系列も保持する。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -27,8 +28,11 @@ export const INDICATORS = [
   { code: 'E4501', label: '高等学校生徒数', unit: '人', group: 'high', kind: 'students' },
 ];
 
-// 直近何年度ぶんを取得するか（指標ごとの収録年ズレへの保険）
-const RECENT_YEARS = 3;
+// 直近何年度ぶんを取得するか（指標ごとの収録年ズレへの保険、および時系列グラフのため広めに取る）
+const RECENT_YEARS = 12;
+
+// 時系列グラフに使う指標コード（小学校児童数のみ）
+const SERIES_CODE = 'E2501';
 
 // ビルド内キャッシュ（estat.jsと同じ思想：同一ビルド中は1回だけ叩く）
 let _cache = null;
@@ -120,7 +124,7 @@ function buildAreaIndex(statData) {
     const excludeFromRanking =
       (!isTokyo && last3 >= 101 && last3 <= 199) || code === '13100';
 
-    areas.set(code, { c: code, p: pref, n: name, x: excludeFromRanking, v: {} });
+    areas.set(code, { c: code, p: pref, n: name, x: excludeFromRanking, v: {}, h: {} });
   }
   return areas;
 }
@@ -136,14 +140,14 @@ export async function getEducationData() {
   const areas = buildAreaIndex(statData);
   const timeNameByCode = Object.fromEntries(recentTimes.map((t) => [t.code, t.name]));
 
-  // VALUEを走査：各(地域×指標)について最新年度の値を採用
+  // VALUEを走査：各(地域×指標)について最新年度の値と、対象指標の履歴を採取
   const values = statData.DATA_INF.VALUE;
   const valueList = Array.isArray(values) ? values : [values];
   // 指標ごとに「実際に採用された最新年度」を記録
   const latestTimeByCat = {};
 
-  // timeコード降順で処理できるようソート（新しい値を先に入れて上書きしない）
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
 
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
@@ -153,23 +157,37 @@ export async function getEducationData() {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
-        latestTimeByCat[cat] = rec['@time'];
-      }
+
+    // 時系列グラフ対象の指標だけ履歴を蓄積
+    if (cat === SERIES_CODE) {
+      if (!area.h[cat]) area.h[cat] = [];
+      area.h[cat].push({ time: rec['@time'], value: num });
+    }
+
+    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+    area.v[cat] = num;
+    if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
+      latestTimeByCat[cat] = rec['@time'];
     }
   }
 
   // 出力形状：v をINDICATORS順の配列に変換（欠損はnull）
   const areaList = [...areas.values()]
-    .map((a) => ({
-      c: a.c,
-      p: a.p,
-      n: a.n,
-      x: a.x,
-      v: INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null)),
-    }))
+    .map((a) => {
+      // 小学校児童数の時系列（年名に変換して昇順のまま）
+      const series = (a.h[SERIES_CODE] || []).map((pt) => ({
+        year: timeNameByCode[pt.time] || pt.time,
+        value: pt.value,
+      }));
+      return {
+        c: a.c,
+        p: a.p,
+        n: a.n,
+        x: a.x,
+        v: INDICATORS.map((ind) => (a.v[ind.code] !== undefined ? a.v[ind.code] : null)),
+        series,
+      };
+    })
     // 全指標nullの地域（データなし）は出力から除外
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));
