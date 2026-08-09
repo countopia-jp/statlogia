@@ -18,6 +18,8 @@ const yearNote = years.join('・');
 ---
 
 <BaseLayout title="教育の帳場｜財政力と教育費 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
   <main class="edb-dash">
     <header class="edb-hero">
     <img class="edb-hero-figure" src="/images/icon/education-budget-large.webp" alt="天秤の一方に硬貨、もう一方に本とランドセルを載せた静物" width="1400" height="788" loading="lazy" />
@@ -50,6 +52,12 @@ const yearNote = years.join('・');
     <section id="resultArea" class="edb-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div class="edb-cards" id="cardGrid"></div>
+
+      <div class="edb-chart-wrap">
+        <p class="edb-chart-title">財政力指数の推移</p>
+        <canvas id="edbChart" height="120"></canvas>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳簿をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どれくらい、かけているのかしら。</span></Talk>
     </section>
@@ -136,6 +144,32 @@ const yearNote = years.join('・');
         if (area) render(area);
       });
 
+      let edbChart = null;
+      function renderChart(area) {
+        const ctx = document.getElementById('edbChart');
+        if (!ctx || !area.series || area.series.length === 0) return;
+        if (edbChart) edbChart.destroy();
+        edbChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: area.series.map((p) => p.year),
+            datasets: [{
+              label: '財政力指数',
+              data: area.series.map((p) => p.value),
+              borderColor: '#1b4332',
+              backgroundColor: '#1b433222',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v.toFixed(2) } } },
+          },
+        });
+      }
+
       function render(area) {
         document.getElementById('resultArea').hidden = false;
         document.getElementById('resultTitle').textContent = `${area.n}の帳簿`;
@@ -162,6 +196,7 @@ const yearNote = years.join('・');
           grid.appendChild(card);
         }
 
+        renderChart(area);
         updateLines(area);
       }
 
@@ -271,6 +306,15 @@ const yearNote = years.join('・');
     }
     .edb-rank { color: #b23a2f; font-weight: 700; }
     .edb-diff { color: #666; }
+
+    .edb-chart-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .edb-chart-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
 
     .edb-ranking { margin-top: 44px; }
     .edb-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
