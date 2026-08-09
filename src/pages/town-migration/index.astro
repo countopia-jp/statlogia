@@ -5,6 +5,8 @@ import { getMuniMigrationData } from '../../lib/muni-migration.js';
 const data = await getMuniMigrationData();
 ---
 <BaseLayout title="人が集まる町・出ていく町｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
   <main class="tp">
     <header class="tp-hero">
       <p class="tp-kicker">閲覧室</p>
@@ -36,6 +38,12 @@ const data = await getMuniMigrationData();
     <section id="resultArea" class="tp-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div id="cardArea" class="tp-cards"></div>
+
+      <div class="tp-chart-wrap">
+        <p class="tp-chart-title">社会増減率の推移</p>
+        <canvas id="migChart" height="120"></canvas>
+      </div>
+
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
@@ -114,6 +122,32 @@ const data = await getMuniMigrationData();
       });
       sel.addEventListener('change', () => { const a = areas.find((x) => x.c === sel.value); if (a) render(a); });
 
+      let migChart = null;
+      function renderChart(a) {
+        const ctx = document.getElementById('migChart');
+        if (!ctx || !a.series || a.series.length === 0) return;
+        if (migChart) migChart.destroy();
+        migChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: a.series.map((p) => p.year),
+            datasets: [{
+              label: '社会増減率',
+              data: a.series.map((p) => p.value),
+              borderColor: '#b23a2f',
+              backgroundColor: '#b23a2f22',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { ticks: { callback: (v) => v.toFixed(1) } } },
+          },
+        });
+      }
+
       function render(a) {
         document.getElementById('resultArea').hidden = false;
         document.getElementById('resultTitle').textContent = a.n + 'の人の動き';
@@ -134,6 +168,7 @@ const data = await getMuniMigrationData();
             `<div class="tp-card-num${cls}">${fmt(i, val)}</div>` + meta;
           wrap.appendChild(card);
         });
+        renderChart(a);
         updateLines(a);
       }
 
@@ -207,6 +242,16 @@ const data = await getMuniMigrationData();
     .tp-card-num.pos { color: #2d6a4f; }
     .tp-card-num.neg { color: #b23a2f; }
     .tp-card-meta { font-size: .72rem; color: #b23a2f; font-weight: 700; }
+
+    .tp-chart-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .tp-chart-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
+
     .tp-ranking { margin-top: 44px; }
     .tp-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .tp-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }

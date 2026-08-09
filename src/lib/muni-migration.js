@@ -4,6 +4,8 @@
 //   社会・人口統計体系 市区町村データ 基礎データ A人口 0000020101（# 不要）
 //   社会増減 = 転入(A5101) − 転出(A5102)。率は人口千人あたりで自作計算。
 //   地域の扱いは muni-population.js に準拠。
+//   転入・転出は総人口と違い、データのある年度が揃わない場合があるため、
+//   カード・コメント・時系列グラフはすべて「3指標が揃っている最新年度」で統一する。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -21,6 +23,9 @@ export const INDICATORS = [
   { key: '社会増減率',   unit: '（千人あたり）', kind: 'rate', signed: true, decimal: true,
     calc: (v) => per1000(v.A5101 != null && v.A5102 != null ? v.A5101 - v.A5102 : null, v.A1101) },
 ];
+
+// 時系列グラフ・カード・コメントすべてで、この3指標が揃っている年度だけを「その地域の正式な最新値」とする
+const SERIES_CODES = ['A1101', 'A5101', 'A5102'];
 
 function per1000(delta, pop) {
   if (delta == null || pop == null || pop === 0) return null;
@@ -105,13 +110,13 @@ export async function getMuniMigrationData() {
       const name = (c['@name'] || '').trim();
       const kind = classifyArea(code, name);
       if (kind === 'exclude') continue;
-      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', v: {} });
+      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', h: {} });
     }
   }
 
-  let latestTime = null;
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => b['@time'].localeCompare(a['@time']));
+  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
     if (!area) continue;
@@ -120,20 +125,43 @@ export async function getMuniMigrationData() {
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
     const num = Number(String(raw).replace(/,/g, ''));
     if (!Number.isFinite(num)) continue;
-    if (area.v[cat] === undefined) {
-      area.v[cat] = num;
-      if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
-    }
+
+    // 年度ごとにまとめて蓄積（3指標が揃う年度だけ後で採用する）
+    if (!area.h[rec['@time']]) area.h[rec['@time']] = {};
+    area.h[rec['@time']][cat] = num;
   }
+
+  let overallLatestCompleteTime = null;
 
   const areaList = [...areas.values()]
     .map((a) => {
+      // 3指標（総人口・転入・転出）すべてが揃っている年度だけを対象にする
+      const completeTimes = Object.keys(a.h)
+        .filter((t) => SERIES_CODES.every((c) => a.h[t][c] !== undefined))
+        .sort();
+
+      const latestComplete = completeTimes[completeTimes.length - 1] || null;
+      if (latestComplete && (!overallLatestCompleteTime || latestComplete > overallLatestCompleteTime)) {
+        overallLatestCompleteTime = latestComplete;
+      }
+
+      // カード・コメント用の値は「揃っている最新年度」のスナップショットから作る
+      const snapshot = latestComplete ? a.h[latestComplete] : {};
       const v = INDICATORS.map((ind) =>
         ind.kind === 'base'
-          ? (a.v[ind.code] !== undefined ? a.v[ind.code] : null)
-          : ind.calc(a.v)
+          ? (snapshot[ind.code] !== undefined ? snapshot[ind.code] : null)
+          : ind.calc(snapshot)
       );
-      return { c: a.c, n: a.n, x: a.x, v };
+
+      // 時系列グラフ：揃っている年度ぶんすべての社会増減率
+      const series = completeTimes.map((time) => {
+        const snap = a.h[time];
+        const delta = snap.A5101 - snap.A5102;
+        const rate = per1000(delta, snap.A1101);
+        return { year: timeNameByCode[time] || time, value: rate };
+      });
+
+      return { c: a.c, n: a.n, x: a.x, v, series };
     })
     .filter((a) => a.v.some((val) => val !== null))
     .sort((a, b) => a.c.localeCompare(b.c));
@@ -141,8 +169,8 @@ export async function getMuniMigrationData() {
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020101）',
-    note: '社会増減＝転入者数−転出者数。率は人口千人あたり。日本人移動者ベース。区・特別区部計はランキング除外（選択には表示）。',
-    year: latestTime ? timeNameByCode[latestTime] || null : null,
+    note: '社会増減＝転入者数−転出者数。率は人口千人あたり。日本人移動者ベース。総人口・転入・転出の3指標が揃っている年度の値のみ採用しています。区・特別区部計はランキング除外（選択には表示）。',
+    year: overallLatestCompleteTime ? timeNameByCode[overallLatestCompleteTime] || null : null,
     indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, signed: !!i.signed, decimal: !!i.decimal })),
     areas: areaList,
   };
