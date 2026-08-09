@@ -13,33 +13,68 @@ import Talk from '../../../components/Talk.astro';
       ねえ京、いろんな窓口に「平均は47都道府県の単純平均であり、全国値とは一致しません」って書いてあるけど、平均って一つじゃないの？
     </Talk>
     <Talk speaker="kei">
-      良い質問です。実は「平均」には、計算の仕方によっていくつか種類があるんですよ。
+      良い質問です。実は「平均」には、計算の仕方によっていくつか種類があるんですよ。絵にしてみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単純平均と全国値（加重平均）の違いを表す図">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">単純平均のイメージ（都道府県を同じ大きさで）</text>
+        <g transform="translate(0,36)">
+          <rect x="0" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
+          <rect x="112" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
+          <rect x="224" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
+          <rect x="336" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
+          <rect x="448" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
+          <text x="51" y="40" text-anchor="middle" font-size="13" fill="#1b4332">東京都</text>
+          <text x="163" y="40" text-anchor="middle" font-size="13" fill="#1b4332">大阪府</text>
+          <text x="275" y="40" text-anchor="middle" font-size="13" fill="#1b4332">愛知県</text>
+          <text x="387" y="40" text-anchor="middle" font-size="13" fill="#1b4332">宮城県</text>
+          <text x="499" y="40" text-anchor="middle" font-size="13" fill="#1b4332">高知県</text>
+        </g>
+        <text x="0" y="138" font-size="12" fill="#777">→ 47都道府県を「同じ1票」として平均する</text>
+
+        <text x="0" y="178" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#b23a2f">全国値（加重平均）のイメージ（人口の大きさで）</text>
+        <g transform="translate(0,194)">
+          <rect x="0" width="238" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
+          <rect x="248" width="143" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
+          <rect x="401" width="111" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
+          <rect x="522" width="46" height="70" rx="6" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
+          <rect x="578" width="20" height="70" rx="4" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
+          <text x="119" y="40" text-anchor="middle" font-size="13" fill="#b23a2f">東京都</text>
+          <text x="319" y="40" text-anchor="middle" font-size="12" fill="#b23a2f">大阪府</text>
+          <text x="456" y="40" text-anchor="middle" font-size="11" fill="#b23a2f">愛知県</text>
+          <text x="545" y="90" text-anchor="middle" font-size="10" fill="#b23a2f">宮城</text>
+          <text x="588" y="90" text-anchor="middle" font-size="9" fill="#b23a2f">高知</text>
+        </g>
+        <text x="0" y="292" font-size="12" fill="#777">→ 人口が多い都道府県ほど、平均に大きく響く</text>
+      </svg>
+      <p class="art-diagram-note">※箱の大きさはイメージです。実際の人口比とは一致しません。</p>
+    </section>
+
+    <Talk speaker="touko">
+      あ、下の段は東京の箱がすごく大きいのね。高知はほとんど見えないくらい小さいわ。
+    </Talk>
+    <Talk speaker="kei">
+      そうです。上の段（単純平均）では、東京都も高知県も同じ大きさの1票。でも下の段（全国値）では、人口の多い東京都の数字がずっと強く効いてくるんです。
     </Talk>
 
     <section class="art-sec">
       <h2>単純平均とは</h2>
       <p>
         Countopiaの窓口の多くは、47都道府県の数字を一つずつ足して、47で割った「単純平均」を使っています。
-        たとえば人口なら、東京都も鳥取県も同じ「1票」として扱い、47県の値をならしたものです。
+        東京都も鳥取県も同じ「1票」として扱い、47県の値をならしたものです。
       </p>
     </section>
-
-    <Talk speaker="touko">
-      東京も鳥取も、同じ重みで数えるのねえ。
-    </Talk>
-    <Talk speaker="kei">
-      そうです。でも国が公表する「全国平均」は、たいてい違う計算をしています。
-    </Talk>
 
     <section class="art-sec">
       <h2>全国値（加重平均）とは</h2>
       <p>
-        国の統計でいう「全国」は、多くの場合、47都道府県のデータを都道府県ごとの人口や件数で重みづけして合計した値です。
-        人口が多い都道府県の数字が、より強く反映されます。東京都のように人口の多い県の傾向に、全国値は引っ張られやすいのです。
+        国の統計でいう「全国」は、多くの場合、都道府県ごとの人口や件数で重みづけして合計した値です。
+        人口が多い都道府県の数字が、より強く反映されます。
       </p>
       <p>
-        たとえば家賃のような指標では、人口の少ない県も多い県も同じ1票として扱う単純平均のほうが、
-        全国値よりも低めに出ることがあります。人口の多い都市部は家賃が高い傾向があるためです。
+        たとえば家賃のような指標では、単純平均のほうが全国値よりも低めに出ることがあります。
+        人口の多い都市部は家賃が高い傾向があり、全国値はその影響を強く受けるためです。
       </p>
     </section>
 
@@ -50,7 +85,7 @@ import Talk from '../../../components/Talk.astro';
       なるほど……。Countopiaが単純平均を使っているのは、47都道府県を対等に見てほしいからなのねえ。
     </Talk>
     <Talk speaker="kei">
-      そのとおりです。この国では、東京都も鳥取県も、同じ大きさの窓口として並んでいます。だからこそ、単純平均という物差しを選んでいるのです。
+      そのとおりです。この国では、東京都も鳥取県も、同じ大きさの窓口として並んでいます。
     </Talk>
 
     <section class="art-sec">
@@ -71,6 +106,13 @@ import Talk from '../../../components/Talk.astro';
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
     .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
 
     .art-sec { padding: 16px 0; }
     .art-sec h2 {
