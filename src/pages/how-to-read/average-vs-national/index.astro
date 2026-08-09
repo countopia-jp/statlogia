@@ -16,36 +16,35 @@ import Talk from '../../../components/Talk.astro';
       良い質問です。実は「平均」には、計算の仕方によっていくつか種類があるんですよ。絵にしてみましょう。
     </Talk>
 
-    <section class="art-diagram">
+   <section class="art-diagram">
       <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="単純平均と全国値（加重平均）の違いを表す図">
         <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">単純平均のイメージ（都道府県を同じ大きさで）</text>
         <g transform="translate(0,36)">
-          <rect x="0" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
-          <rect x="112" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
-          <rect x="224" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
-          <rect x="336" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
-          <rect x="448" width="102" height="70" rx="8" fill="#1b433222" stroke="#1b4332" stroke-width="1.5"/>
-          <text x="51" y="40" text-anchor="middle" font-size="13" fill="#1b4332">東京都</text>
-          <text x="163" y="40" text-anchor="middle" font-size="13" fill="#1b4332">大阪府</text>
-          <text x="275" y="40" text-anchor="middle" font-size="13" fill="#1b4332">愛知県</text>
-          <text x="387" y="40" text-anchor="middle" font-size="13" fill="#1b4332">宮城県</text>
-          <text x="499" y="40" text-anchor="middle" font-size="13" fill="#1b4332">高知県</text>
+          <rect x="0" width="102" height="70" rx="8" fill="#1b4332" fill-opacity="0.75"/>
+          <rect x="112" width="102" height="70" rx="8" fill="#1b4332" fill-opacity="0.75"/>
+          <rect x="224" width="102" height="70" rx="8" fill="#1b4332" fill-opacity="0.75"/>
+          <rect x="336" width="102" height="70" rx="8" fill="#1b4332" fill-opacity="0.75"/>
+          <rect x="448" width="102" height="70" rx="8" fill="#1b4332" fill-opacity="0.75"/>
+          <text x="51" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">東京都</text>
+          <text x="163" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">大阪府</text>
+          <text x="275" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">愛知県</text>
+          <text x="387" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">宮城県</text>
+          <text x="499" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">高知県</text>
         </g>
         <text x="0" y="138" font-size="12" fill="#777">→ 47都道府県を「同じ1票」として平均する</text>
 
         <text x="0" y="178" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#b23a2f">全国値（加重平均）のイメージ（人口の大きさで）</text>
         <g transform="translate(0,194)">
-          <rect x="0" width="238" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
-          <rect x="248" width="143" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
-          <rect x="401" width="111" height="70" rx="8" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
-          <rect x="522" width="46" height="70" rx="6" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
-          <rect x="578" width="20" height="70" rx="4" fill="#b23a2f22" stroke="#b23a2f" stroke-width="1.5"/>
-          <text x="119" y="40" text-anchor="middle" font-size="13" fill="#b23a2f">東京都</text>
-          <text x="319" y="40" text-anchor="middle" font-size="12" fill="#b23a2f">大阪府</text>
-          <text x="456" y="40" text-anchor="middle" font-size="11" fill="#b23a2f">愛知県</text>
-          <text x="545" y="90" text-anchor="middle" font-size="10" fill="#b23a2f">宮城</text>
-          <text x="588" y="90" text-anchor="middle" font-size="9" fill="#b23a2f">高知</text>
-        </g>
+          <rect x="0" width="238" height="70" rx="8" fill="#b23a2f" fill-opacity="0.75"/>
+          <rect x="248" width="143" height="70" rx="8" fill="#b23a2f" fill-opacity="0.75"/>
+          <rect x="401" width="111" height="70" rx="8" fill="#b23a2f" fill-opacity="0.75"/>
+          <rect x="522" width="46" height="70" rx="6" fill="#b23a2f" fill-opacity="0.75"/>
+          <rect x="578" width="20" height="70" rx="4" fill="#b23a2f" fill-opacity="0.75"/>
+          <text x="119" y="40" text-anchor="middle" font-size="13" fill="#fff" font-weight="700">東京都</text>
+          <text x="319" y="40" text-anchor="middle" font-size="12" fill="#fff" font-weight="700">大阪府</text>
+          <text x="456" y="40" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">愛知県</text>
+          <text x="545" y="35" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" writing-mode="vertical-rl">宮城県</text>
+          <text x="588" y="35" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" writing-mode="vertical-rl">高知県</text>
         <text x="0" y="292" font-size="12" fill="#777">→ 人口が多い都道府県ほど、平均に大きく響く</text>
       </svg>
       <p class="art-diagram-note">※箱の大きさはイメージです。実際の人口比とは一致しません。</p>
