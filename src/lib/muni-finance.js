@@ -26,7 +26,7 @@ function perCapitaYen(sen, pop) {
 }
 
 export const INDICATORS = [
-  { key: '財政力指数',           unit: '',   kind: 'fin',  code: 'D2201',
+  { key: '財政力指数',           unit: '',   kind: 'fin',  code: 'D2201', decimal: true,
     calc: (f) => (f.D2201 != null ? Math.round(f.D2201 * 1000) / 1000 : null) },
   { key: '住民1人当たり教育費',  unit: '円', kind: 'calc',
     calc: (f, pop) => perCapitaYen(f.D320310, pop) },
@@ -172,7 +172,7 @@ export async function getMuniFinanceData() {
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（財政 表番号0000020104／人口 表番号0000020101）',
     note: '教育費・学校費は市町村財政の決算額を総人口で割った「住民1人当たり」。財政力指数は1に近いほど自前で財政をまかなえる。区・特別区部計はランキング除外（選択には表示）。',
     year: latestFin.t ? finTimeName[latestFin.t] || null : null,
-    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
+    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, decimal: i.decimal })),
     areas: areaList,
   };
   return _cache;
