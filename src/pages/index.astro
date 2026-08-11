@@ -2,7 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Talk from '../components/Talk.astro';
 import { news } from '../data/news.js';
+import { catalog } from '../data/catalog.js';
 const latestNews = news.slice(0, 3);
+const publishedCount = catalog.filter((c) => c.status === 'published').length;
 const prefectures = [
   ['01','北海道'],['02','青森県'],['03','岩手県'],['04','宮城県'],['05','秋田県'],
   ['06','山形県'],['07','福島県'],['08','茨城県'],['09','栃木県'],['10','群馬県'],
@@ -24,6 +26,7 @@ const prefectures = [
         <span class="eyebrow">JAPAN IN NUMBERS</span>
         <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
         <p class="lead">Countopia Stats（カウントピア・スタッツ）は、都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計を「へぇ」と眺めて遊ぶ国です。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+        <span class="api-count">現在 {publishedCount} 指標とAPI連携中</span>
         <div class="hero-actions">
           <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
         </div>
@@ -190,6 +193,10 @@ const prefectures = [
   display:inline-block;font-size:.72rem;letter-spacing:.28em;
   color:var(--ink-soft);border:1px solid var(--line);
   padding:4px 12px;border-radius:99px;margin-bottom:20px;background:#fff9;
+}
+.api-count{
+  display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
+  color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
 }
 h1{
   font-family:"Shippori Mincho",serif;font-weight:800;

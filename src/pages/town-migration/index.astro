@@ -72,6 +72,7 @@ const data = await getMuniMigrationData();
 
   <script is:inline define:vars={{ TP: data }}>
     (function () {
+      console.log('areas総数:', TP.areas.length, 'サンプル:', TP.areas.slice(0, 10).map(a => a.n));
       const IND = TP.indicators;
       const areas = TP.areas;
       const SR_I = 4;

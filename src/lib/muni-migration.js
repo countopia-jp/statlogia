@@ -6,11 +6,13 @@
 //   地域の扱いは muni-population.js に準拠。
 //   転入・転出は総人口と違い、データのある年度が揃わない場合があるため、
 //   カード・コメント・時系列グラフはすべて「3指標が揃っている最新年度」で統一する。
+//   3指標×全市区町村を1回でまとめて取得するとe-Statの取得上限を超えて
+//   データが途中で切り詰められるため、指標ごとに別々のAPIリクエストに分けている。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020101';
-const RECENT_YEARS = 40; // 転入・転出データも5年おきの場合があるため、わが町の人口と同様に広めに遡る
+const RECENT_YEARS = 40; // 指標ごとに別々のAPIリクエストに分けるので、単一指標なら安全に取得できる件数
 
 const FETCH = ['A1101', 'A5101', 'A5102'];
 
@@ -73,10 +75,10 @@ async function fetchMeta() {
   return { times };
 }
 
-async function fetchStatsData(timeCodes) {
+async function fetchStatsData(codes, timeCodes) {
   const params = {
     statsDataId: STATS_ID,
-    cdCat01: FETCH.join(','),
+    cdCat01: codes.join(','),
     cdTime: timeCodes.map((t) => t.code).join(','),
     metaGetFlg: 'Y',
     cntGetFlg: 'N',
@@ -100,35 +102,39 @@ export async function getMuniMigrationData() {
   const timeNameByCode = {};
   for (const t of recentTimes) timeNameByCode[t.code] = t.name;
 
-  const statData = await fetchStatsData(recentTimes);
-
-  const areaObj = asArray(statData.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'area');
   const areas = new Map();
-  if (areaObj) {
-    for (const c of asArray(areaObj.CLASS)) {
-      const code = c['@code'];
-      const name = (c['@name'] || '').trim();
-      const kind = classifyArea(code, name);
-      if (kind === 'exclude') continue;
-      if (!areas.has(code)) areas.set(code, { c: code, n: name, x: kind === 'x', h: {} });
+
+  // 指標ごとに別々のAPIリクエストに分ける（1リクエストあたりの件数を抑え、e-Statの取得上限を超えないようにする）
+  for (const code of FETCH) {
+    const statData = await fetchStatsData([code], recentTimes);
+
+    const areaObj = asArray(statData.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'area');
+    if (areaObj) {
+      for (const c of asArray(areaObj.CLASS)) {
+        const areaCode = c['@code'];
+        const name = (c['@name'] || '').trim();
+        const kind = classifyArea(areaCode, name);
+        if (kind === 'exclude') continue;
+        if (!areas.has(areaCode)) areas.set(areaCode, { c: areaCode, n: name, x: kind === 'x', h: {} });
+      }
     }
-  }
 
-  const valueList = asArray(statData.DATA_INF.VALUE);
-  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
-  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
-  for (const rec of valueList) {
-    const area = areas.get(rec['@area']);
-    if (!area) continue;
-    const cat = rec['@cat01'];
-    const raw = rec['$'];
-    if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
-    const num = Number(String(raw).replace(/,/g, ''));
-    if (!Number.isFinite(num)) continue;
+    const valueList = asArray(statData.DATA_INF.VALUE);
+    // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+    valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
+    for (const rec of valueList) {
+      const area = areas.get(rec['@area']);
+      if (!area) continue;
+      const cat = rec['@cat01'];
+      const raw = rec['$'];
+      if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
+      const num = Number(String(raw).replace(/,/g, ''));
+      if (!Number.isFinite(num)) continue;
 
-    // 年度ごとにまとめて蓄積（3指標が揃う年度だけ後で採用する）
-    if (!area.h[rec['@time']]) area.h[rec['@time']] = {};
-    area.h[rec['@time']][cat] = num;
+      // 年度ごとにまとめて蓄積（3指標が揃う年度だけ後で採用する）
+      if (!area.h[rec['@time']]) area.h[rec['@time']] = {};
+      area.h[rec['@time']][cat] = num;
+    }
   }
 
   let overallLatestCompleteTime = null;
