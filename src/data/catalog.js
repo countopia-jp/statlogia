@@ -247,9 +247,9 @@ export const catalog = [
     code: 'A6108',
     unit: '％',
     direction: 'neutral',
-    points: null,
-    status: 'candidate',
-    usedIn: [],
+    points: 12,
+    status: 'published',
+    usedIn: ['/exhibits/day-night-ratio/'],
   },
 
   // ---------- E 教育 / D 教育財政 ----------
