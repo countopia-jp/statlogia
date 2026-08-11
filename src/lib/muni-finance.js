@@ -6,6 +6,8 @@
 //   教育費は総人口で割って「住民1人当たり円」に自作計算。財政力指数はそのまま。
 //   地域の扱いは muni-population.js に準拠。
 //   財政力指数（D2201）のみ時系列（毎年調査のため12点取れる）も保持する。
+//   財政表は5指標×全市区町村で件数が多いため、指標ごとに別々のAPIリクエストに分割している
+//   （1回でまとめて取得するとe-Statの取得上限を超え、データが途中で切り詰められる恐れがあるため）。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -138,12 +140,14 @@ export async function getMuniFinanceData() {
   const latestFin = { t: null };
   const finHByArea = {};
 
-  // 財政表
+  // 財政表（5指標×全市区町村で件数が多いため、指標ごとに別々のAPIリクエストに分割）
   const finTimes = (await fetchTimes(FIN_ID)).slice(0, RECENT_YEARS);
   const finTimeName = {};
   for (const t of finTimes) finTimeName[t.code] = t.name;
-  const finData = await fetchValues(FIN_ID, FIN_FETCH, finTimes);
-  collect(finData, finByArea, areasMap, latestFin, finHByArea);
+  for (const code of FIN_FETCH) {
+    const finData = await fetchValues(FIN_ID, [code], finTimes);
+    collect(finData, finByArea, areasMap, latestFin, finHByArea);
+  }
 
   // 人口表（総人口だけ・突き合わせ用。areasMapには財政側の地域を優先）
   const popTimes = (await fetchTimes(POP_ID)).slice(0, RECENT_YEARS);
