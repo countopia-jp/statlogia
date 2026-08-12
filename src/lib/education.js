@@ -9,6 +9,10 @@
 // 整形済みデータを返す。appIdはCloudflare Pagesの
 // Secret「ESTAT_APP_ID」から取得（クライアントには出ない）。
 // 小学校児童数（E2501）のみ時系列も保持する。
+//
+// 10指標×全市区町村で件数が多いため、指標ごとに別々のAPIリクエストに分割している
+// （1回でまとめて取得するとe-Statの取得上限を超え、コード順で後方の指標
+// 　＝中学校・高校のデータが多くの市区町村で欠落するバグがあった）。
 // =====================================================
 
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
@@ -75,11 +79,11 @@ async function fetchTimeCodes() {
     .sort((a, b) => b.code.localeCompare(a.code));
 }
 
-// --- 本体データ取得 ---
-async function fetchStatsData(timeCodes) {
+// --- 本体データ取得（指標ごとに個別呼び出し） ---
+async function fetchStatsData(codes, timeCodes) {
   const params = {
     statsDataId: STATS_DATA_ID,
-    cdCat01: INDICATORS.map((i) => i.code).join(','),
+    cdCat01: codes.join(','),
     cdTime: timeCodes.map((t) => t.code).join(','),
     metaGetFlg: 'Y',
     cntGetFlg: 'N',
@@ -135,39 +139,46 @@ export async function getEducationData() {
 
   const allTimes = await fetchTimeCodes();
   const recentTimes = allTimes.slice(0, RECENT_YEARS);
-  const statData = await fetchStatsData(recentTimes);
 
-  const areas = buildAreaIndex(statData);
+  const areas = new Map();
   const timeNameByCode = Object.fromEntries(recentTimes.map((t) => [t.code, t.name]));
-
-  // VALUEを走査：各(地域×指標)について最新年度の値と、対象指標の履歴を採取
-  const values = statData.DATA_INF.VALUE;
-  const valueList = Array.isArray(values) ? values : [values];
-  // 指標ごとに「実際に採用された最新年度」を記録
   const latestTimeByCat = {};
 
-  // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
-  valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
+  // 10指標×全市区町村で件数が多いため、指標ごとに別々のAPIリクエストに分割
+  for (const ind of INDICATORS) {
+    const statData = await fetchStatsData([ind.code], recentTimes);
 
-  for (const rec of valueList) {
-    const area = areas.get(rec['@area']);
-    if (!area) continue;
-    const cat = rec['@cat01'];
-    const raw = rec['$'];
-    if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***') continue;
-    const num = Number(String(raw).replace(/,/g, ''));
-    if (!Number.isFinite(num)) continue;
-
-    // 時系列グラフ対象の指標だけ履歴を蓄積
-    if (cat === SERIES_CODE) {
-      if (!area.h[cat]) area.h[cat] = [];
-      area.h[cat].push({ time: rec['@time'], value: num });
+    // 地域一覧は初回のレスポンスから構築（以降は同じ地域集合のはず）
+    if (areas.size === 0) {
+      const built = buildAreaIndex(statData);
+      for (const [code, area] of built) areas.set(code, area);
     }
 
-    // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
-    area.v[cat] = num;
-    if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
-      latestTimeByCat[cat] = rec['@time'];
+    const values = statData.DATA_INF.VALUE;
+    const valueList = Array.isArray(values) ? values : [values];
+    // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
+    valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
+
+    for (const rec of valueList) {
+      const area = areas.get(rec['@area']);
+      if (!area) continue;
+      const cat = rec['@cat01'];
+      const raw = rec['$'];
+      if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***') continue;
+      const num = Number(String(raw).replace(/,/g, ''));
+      if (!Number.isFinite(num)) continue;
+
+      // 時系列グラフ対象の指標だけ履歴を蓄積
+      if (cat === SERIES_CODE) {
+        if (!area.h[cat]) area.h[cat] = [];
+        area.h[cat].push({ time: rec['@time'], value: num });
+      }
+
+      // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
+      area.v[cat] = num;
+      if (!latestTimeByCat[cat] || rec['@time'] > latestTimeByCat[cat]) {
+        latestTimeByCat[cat] = rec['@time'];
+      }
     }
   }
 
