@@ -109,6 +109,18 @@ const prefectures = [
         <a class="more-btn ghost" href="/tower/">展望塔から一望する →</a>
       </div>
     </section>
+    
+    <section class="notice-board" aria-label="この国のデータについて">
+  <img class="notice-figure" src="/images/icon/toko-board.webp"
+       alt="高札に筆で書き入れる橙子" width="1400" height="788" loading="lazy" />
+  <div class="notice-body">
+    <p class="notice-kicker">お知らせ</p>
+    <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
+    <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
+    <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
+    <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えているので、いつ来ても、いちばん新しい数字が並んでいます。</p>
+  </div>
+</section>
 
     <!-- 閲覧室 -->
     <section id="reading-room">
@@ -308,6 +320,14 @@ h1 .num{color:var(--stamp)}
 .more-btn.ghost{
   border-color:#1b4332;background:#1b4332;
 }
+.notice-board{max-width:860px;margin:8px auto 40px;padding:0 16px}
+.notice-figure{display:block;width:100%;max-width:780px;height:auto;border-radius:6px;margin:0 auto 6px}
+.notice-body{max-width:680px;margin:0 auto}
+.notice-kicker{
+  font-family:"Shippori Mincho",serif;font-weight:800;letter-spacing:.2em;
+  font-size:.85rem;color:#2d6a4f;text-align:center;margin:0 0 10px;
+}
+.notice-body p{color:var(--ink-soft);line-height:1.9;font-size:.92rem;margin:0 0 10px}
 .guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
 @media(max-width:760px){.guides{grid-template-columns:1fr}}
 .portrait{
