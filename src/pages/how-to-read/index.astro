@@ -28,11 +28,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   </main>
 </BaseLayout>
 <style>
-.how{padding:56px 0 80px;max-width:880px;margin:0 auto}
+.how{padding:56px 0 80px;max-width:1280px;margin:0 auto}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
 h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
 .sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr}
+}
 .card{
   border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff8;
   display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;
