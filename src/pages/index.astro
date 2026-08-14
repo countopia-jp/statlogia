@@ -24,53 +24,59 @@ const prefectures = [
     <div class="hero">
       <div>
         <span class="eyebrow">JAPAN IN NUMBERS</span>
-        <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-        <p class="lead">Countopia Stats（カウントピア・スタッツ）は、都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計を「へぇ」と眺めて遊ぶ国です。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
-        <span class="api-count">現在 {publishedCount} 指標とAPI連携中</span>
-        <div class="hero-actions">
+        <div class="hero-title-row">
+          <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
           <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
         </div>
-  <form class="hero-search" action="/population/" method="get">
-          <label for="hero-pref">あなたの県は、どんな数字？</label>
-          <div class="hero-search-row">
-            <select id="hero-pref" name="pref" required>
-              <option value="" disabled selected>都道府県を選ぶ</option>
-              {prefectures.map(([code, name]) => (
-                <option value={name}>{name}</option>
-              ))}
-            </select>
-            <button type="submit">見にいく →</button>
-          </div>
-          <p class="hero-search-note">「国勢の間」で、人口・世帯の数字をご覧いただけます。</p>
-        </form>
+        <p class="lead">Countopia Stats（カウントピア・スタッツ）は、都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計を「へぇ」と眺めて遊ぶ国です。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+        <span class="api-count">現在 {publishedCount} 指標とAPI連携中</span>
       </div>
-      <div class="stamp-area" aria-hidden="true">
-        <div class="stamp">
-          <span class="top">IMMIGRATION</span>
-          <span class="big">COUNTOPIA</span>
-          <span class="big2">STATS</span>
-          <span class="date">2026.07</span>
-          <span class="bottom">入国を許可する</span>
+
+      <div class="hero-side">
+        <div class="stamp-area" aria-hidden="true">
+          <div class="stamp">
+            <span class="top">IMMIGRATION</span>
+            <span class="big">COUNTOPIA</span>
+            <span class="big2">STATS</span>
+            <span class="date">2026.07</span>
+            <span class="bottom">入国を許可する</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 瓦版（最新のお知らせ） -->
-    <aside class="gazette" aria-label="更新のお知らせ">
-      <span class="gz-label">
-        <img class="gz-icon" src="/images/icon/icon-news.webp" alt="" width="160" height="160" loading="lazy" />
-        瓦版
-      </span>
-      <ul class="gz-list">
-        {latestNews.map((n) => (
-          <li>
-            <time datetime={n.date}>{n.date.slice(5).replace('-', '.')}</time>
-            {n.href ? <a href={n.href}>{n.title}</a> : <span>{n.title}</span>}
-          </li>
-        ))}
-      </ul>
-      <a class="gz-more" href="/news/">一覧 →</a>
-    </aside>
+    <!-- 県選択（左）＋ 瓦版（右） -->
+    <div class="hero-row">
+      <form class="hero-search" action="/population/" method="get">
+        <label for="hero-pref">あなたの県は、どんな数字？</label>
+        <div class="hero-search-row">
+          <select id="hero-pref" name="pref" required>
+            <option value="" disabled selected>都道府県を選ぶ</option>
+            {prefectures.map(([code, name]) => (
+              <option value={name}>{name}</option>
+            ))}
+          </select>
+          <button type="submit">見にいく →</button>
+        </div>
+        <p class="hero-search-note">「国勢の間」で、人口・世帯の数字をご覧いただけます。</p>
+      </form>
+
+      <aside class="gazette" aria-label="更新のお知らせ">
+        <span class="gz-label">
+          <img class="gz-icon" src="/images/icon/icon-news.webp" alt="" width="160" height="160" loading="lazy" />
+          瓦版
+        </span>
+        <ul class="gz-list">
+          {latestNews.map((n) => (
+            <li>
+              <time datetime={n.date}>{n.date.slice(5).replace('-', '.')}</time>
+              {n.href ? <a href={n.href}>{n.title}</a> : <span>{n.title}</span>}
+            </li>
+          ))}
+        </ul>
+        <a class="gz-more" href="/news/">一覧 →</a>
+      </aside>
+    </div>
 
     <!-- 展示 -->
     <section id="exhibits">
@@ -116,7 +122,6 @@ const prefectures = [
         <img class="notice-figure" src="/images/icon/toko-board.webp"
              alt="高札に筆で書き入れる橙子" width="1400" height="788" loading="lazy" />
         <div class="notice-overlay">
-          <p class="notice-kicker">お知らせ</p>
           <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
           <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
           <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
@@ -165,18 +170,18 @@ const prefectures = [
         </div>
       </div>
       <div class="guides">
-      <a class="portrait-link" href="/guide/#kei">
-            <figure class="portrait">
-              <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
-              <figcaption><b>京</b><span>統計局案内人</span></figcaption>
-            </figure>
-          </a>
-       <a class="portrait-link" href="/guide/#touko">
-            <figure class="portrait">
-              <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
-              <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
-            </figure>
-          </a>
+        <a class="portrait-link" href="/guide/#kei">
+          <figure class="portrait">
+            <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
+            <figcaption><b>京</b><span>統計局案内人</span></figcaption>
+          </figure>
+        </a>
+        <a class="portrait-link" href="/guide/#touko">
+          <figure class="portrait">
+            <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
+            <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
+          </figure>
+        </a>
       </div>
       <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
       <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
@@ -187,14 +192,18 @@ const prefectures = [
 <style>
 .hero{
   display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
-  padding:72px 0 40px;
+  padding:72px 0 24px;
   position:relative;
 }
+/* 日本地図：左下に固定。幅・高さを直接指定して位置を確定させる */
 .hero::before{
   content:"";
   position:absolute;
-  inset:2% -6% 0% -12%;
-  background:url("/images/icon/japan-map.webp") no-repeat left top/contain;
+  right:20%;
+  top:14%;
+  width:80%;
+  height:150%;
+  background:url("/images/icon/japan-map.webp") no-repeat right center/contain;
   opacity:.10;
   mix-blend-mode:multiply;
   pointer-events:none;
@@ -213,32 +222,47 @@ const prefectures = [
   display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
   color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
 }
+/* タイトルの右下にボタンを置く */
+.hero-title-row{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
+.hero-title-row .btn{flex-shrink:0;margin-bottom:.5rem}
 h1{
   font-family:"Shippori Mincho",serif;font-weight:800;
   font-size:clamp(2rem,5.2vw,3.4rem);line-height:1.35;letter-spacing:.04em;
+  margin:0;
 }
 h1 .num{color:var(--stamp)}
 .lead{margin-top:20px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
-.hero-actions{margin-top:30px;display:flex;gap:14px;flex-wrap:wrap}
+/* 右カラムはスタンプのみ */
+.hero-side{display:flex;flex-direction:column;align-items:stretch}
+/* 県選択（左）＋瓦版（右）を同じ高さで横並び。中央寄せ＋上に余白 */
+.hero-row{
+  display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;justify-content:center;
+  max-width:1140px;margin:64px auto 28px;
+}
 .hero-search{
-  margin-top:22px;padding:16px 18px;border:1px solid var(--line);
-  border-radius:12px;background:#fff9;max-width:34em;
+  width:340px;flex-shrink:0;
+  padding:14px 16px;border:1px solid var(--line);
+  border-radius:12px;background:#fff9;
+}
+@media(max-width:760px){
+  .hero-search{width:100%}
+  .hero-row{margin-top:36px}
 }
 .hero-search label{
-  display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:8px;
+  display:block;font-size:.78rem;color:var(--ink-soft);margin-bottom:8px;
   font-family:"Shippori Mincho",serif;
 }
-.hero-search-row{display:flex;gap:10px;flex-wrap:wrap}
+.hero-search-row{display:flex;gap:8px;flex-wrap:wrap}
 .hero-search-note{
-  margin-top:10px;font-size:.76rem;color:var(--ink-soft);
+  margin-top:8px;font-size:.72rem;color:var(--ink-soft);
 }
 .hero-search select{
-  flex:1;min-width:160px;padding:8px 10px;border:1px solid var(--line);
-  border-radius:8px;background:#fff;font-size:.9rem;color:inherit;
+  flex:1;min-width:120px;padding:7px 9px;border:1px solid var(--line);
+  border-radius:8px;background:#fff;font-size:.85rem;color:inherit;
 }
 .hero-search button{
-  padding:8px 18px;border:1px solid var(--stamp);border-radius:8px;
-  background:var(--stamp);color:#fff;font-size:.85rem;cursor:pointer;
+  padding:7px 14px;border:1px solid var(--stamp);border-radius:8px;
+  background:var(--stamp);color:#fff;font-size:.82rem;cursor:pointer;
   white-space:nowrap;
 }
 .hero-search button:hover{opacity:.88}
@@ -258,24 +282,25 @@ h1 .num{color:var(--stamp)}
 .stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8rem;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:2px 10px;margin-top:4px}
 .stamp .bottom{font-size:.62rem;letter-spacing:.28em;margin-top:2px}
 .gazette{
-  display:flex;gap:18px;align-items:flex-start;
+  flex:1;min-width:340px;max-width:700px;
+  display:flex;gap:12px;align-items:center;
   border:1px solid var(--line);border-radius:12px;
-  padding:14px 18px;margin:6px 0 20px;background:#fff8;
+  padding:12px 16px;margin:0;background:#fff8;
 }
 .gz-label{
-  display:inline-flex;align-items:center;gap:8px;
-  font-family:"Shippori Mincho",serif;font-weight:800;font-size:.85rem;
+  display:inline-flex;align-items:center;gap:6px;
+  font-family:"Shippori Mincho",serif;font-weight:800;font-size:.78rem;
   color:#b23a2f;border:1.5px solid #b23a2f;border-radius:4px;
-  padding:4px 10px;flex-shrink:0;
+  padding:3px 8px;flex-shrink:0;
 }
-.gz-icon{width:48px;height:48px;object-fit:contain;mix-blend-mode:multiply}
-.gz-list{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;gap:6px}
-.gz-list li{display:flex;gap:12px;align-items:baseline;font-size:.85rem}
-.gz-list time{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);flex-shrink:0}
+.gz-icon{width:34px;height:34px;object-fit:contain;mix-blend-mode:multiply}
+.gz-list{list-style:none;margin:0;padding:0;flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.gz-list li{display:flex;gap:10px;align-items:baseline;font-size:.78rem;line-height:1.6}
+.gz-list time{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-soft);flex-shrink:0}
 .gz-list a{color:inherit}
 .gz-list a:hover{color:#b23a2f}
-.gz-more{font-size:.8rem;color:#b23a2f;flex-shrink:0;align-self:center}
-@media(max-width:600px){.gazette{flex-direction:column;gap:10px}.gz-more{align-self:flex-end}}
+.gz-more{font-size:.76rem;color:#b23a2f;flex-shrink:0;align-self:center}
+@media(max-width:600px){.gazette{flex-direction:column;align-items:flex-start;gap:10px}.gz-more{align-self:flex-end}}
 .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
 .sec-text{display:flex;flex-direction:column}
 .sec-icon{width:56px;height:56px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply}
@@ -336,20 +361,16 @@ h1 .num{color:var(--stamp)}
 .notice-figure{display:block;width:100%;height:auto;border-radius:6px}
 .notice-overlay{
   position:absolute;
-  /* 板の右上寄り、無地部分に収める。橙子は右下寄りなので右側は空ける */
+  /* 板の無地部分に収める。橙子は右下寄りなので右側は空ける */
   left:18%;right:26%;top:15%;bottom:22%;
-  display:flex;flex-direction:column;justify-content:center;gap:.5em;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.5em;
   color:#3a3226;
-}
-.notice-kicker{
-  font-family:"Shippori Mincho",serif;font-weight:800;letter-spacing:.22em;
-  font-size:clamp(.8rem,1.7vw,1.1rem);color:#7a3b2e;margin:0 0 .2em;
-  text-align:center;
 }
 .notice-overlay p{
   margin:0;line-height:1.55;
   font-size:clamp(.62rem,1.55vw,1.02rem);
   font-family:"Shippori Mincho",serif;
+  text-align:left;
 }
 /* 狭い画面：板に4段落は収まらないので、板を上に見せて本文はその下へ（絶対配置を解除） */
 @media(max-width:720px){
@@ -361,7 +382,6 @@ h1 .num{color:var(--stamp)}
     color:var(--ink-soft);
   }
   .notice-overlay p{font-size:.9rem;line-height:1.9;font-family:inherit}
-  .notice-kicker{text-align:center;font-size:.85rem;color:#2d6a4f}
 }
 
 .guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
