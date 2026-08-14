@@ -30,21 +30,20 @@ header.site{
   border-bottom:2px solid var(--ink);
 }
 .nav{
-  max-width:1080px;margin:0 auto;padding:14px 20px;
+  max-width:1280px;margin:0 auto;padding:14px 20px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
-.logo{display:flex;align-items:baseline;gap:10px;text-decoration:none;color:var(--ink)}
-.logo .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.25rem;letter-spacing:.06em}
+.logo .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.45rem;letter-spacing:.06em;color:var(--ink)}
 .logo .mark b{color:var(--stamp)}
-.logo .sub{font-size:.68rem;color:var(--ink-soft);letter-spacing:.2em}
-nav ul{display:flex;gap:22px;list-style:none}
-nav a{color:var(--ink);text-decoration:none;font-size:.85rem;font-weight:500}
+.logo .sub{font-size:.78rem;color:var(--ink-soft);letter-spacing:.2em}
+nav ul{display:flex;gap:26px;list-style:none}
+nav a{color:var(--ink);text-decoration:none;font-size:1rem;font-weight:500}
 nav a:hover{color:var(--stamp)}
 nav a:focus-visible,.btn:focus-visible{outline:2px solid var(--stamp);outline-offset:3px}
 @media(max-width:640px){nav ul{gap:14px;font-size:.8rem}}
 
 /* sections */
-main{max-width:1080px;margin:0 auto;padding:0 20px}
+main{max-width:1280px;margin:0 auto;padding:0 20px}
 section{padding:56px 0}
 .sec-head{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:32px}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600;font-size:.85rem;letter-spacing:.1em}
@@ -71,6 +70,6 @@ section{padding:56px 0}
 
 /* footer */
 footer.site{border-top:2px solid var(--ink);background:var(--ink);color:var(--paper);margin-top:40px}
-.foot{max-width:1080px;margin:0 auto;padding:36px 20px;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
+.foot{max-width:1280px;margin:0 auto;padding:36px 20px;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
 .foot .mono{font-size:.8rem;opacity:.85}
 .foot .credit{font-size:.72rem;opacity:.65}

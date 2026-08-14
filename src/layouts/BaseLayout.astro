@@ -28,10 +28,10 @@ const {
 <body>
   <header class="site">
     <div class="nav">
-      <a class="logo" href="/">
+      <div class="logo">
         <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small></span>
         <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
-      </a>
+      </div>
       <nav aria-label="主要メニュー">
         <ul>
           <li><a href="/">玄関</a></li>
@@ -84,7 +84,7 @@ const {
     .sub .tagline {
       opacity: .8;
     }
-    @media (max-width: 640px) {
+    @media (max-width: 1024px) {
       .sub .tagline { display: none; }
     }
 

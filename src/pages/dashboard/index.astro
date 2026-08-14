@@ -123,7 +123,7 @@ import Talk from '../../components/Talk.astro';
     </Talk>
   </main>
   <style>
-    .rr { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+   .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
@@ -136,10 +136,18 @@ import Talk from '../../components/Talk.astro';
       border-left: 4px solid #2d6a4f; padding-left: 12px; margin: 0 0 16px;
     }
     .rr-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+@media(max-width:900px){
+  .rr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:600px){
+  .rr-grid{grid-template-columns:1fr}
+}
     .rr-card {
       display: block;
       border: 1px solid #1b4332;
