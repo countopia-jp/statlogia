@@ -109,18 +109,21 @@ const prefectures = [
         <a class="more-btn ghost" href="/tower/">展望塔から一望する →</a>
       </div>
     </section>
-    
+
+    <!-- データの仕組み（橙子の高札） -->
     <section class="notice-board" aria-label="この国のデータについて">
-  <img class="notice-figure" src="/images/icon/toko-board.webp"
-       alt="高札に筆で書き入れる橙子" width="1400" height="788" loading="lazy" />
-  <div class="notice-body">
-    <p class="notice-kicker">お知らせ</p>
-    <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
-    <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
-    <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
-    <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えているので、いつ来ても、いちばん新しい数字が並んでいます。</p>
-  </div>
-</section>
+      <div class="notice-frame">
+        <img class="notice-figure" src="/images/icon/toko-board.webp"
+             alt="高札に筆で書き入れる橙子" width="1400" height="788" loading="lazy" />
+        <div class="notice-overlay">
+          <p class="notice-kicker">お知らせ</p>
+          <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
+          <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
+          <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
+          <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えているので、いつ来ても、いちばん新しい数字が並んでいます。</p>
+        </div>
+      </div>
+    </section>
 
     <!-- 閲覧室 -->
     <section id="reading-room">
@@ -320,14 +323,41 @@ h1 .num{color:var(--stamp)}
 .more-btn.ghost{
   border-color:#1b4332;background:#1b4332;
 }
-.notice-board{max-width:860px;margin:8px auto 40px;padding:0 16px}
-.notice-figure{display:block;width:100%;max-width:780px;height:auto;border-radius:6px;margin:0 auto 6px}
-.notice-body{max-width:680px;margin:0 auto}
-.notice-kicker{
-  font-family:"Shippori Mincho",serif;font-weight:800;letter-spacing:.2em;
-  font-size:.85rem;color:#2d6a4f;text-align:center;margin:0 0 10px;
+
+/* データの仕組み（橙子の高札）── 板に文字を重ねる */
+.notice-board{max-width:900px;margin:8px auto 40px;padding:0 16px}
+.notice-frame{position:relative;width:100%}
+.notice-figure{display:block;width:100%;height:auto;border-radius:6px}
+.notice-overlay{
+  position:absolute;
+  /* 板の右上寄り、無地部分に収める。橙子は右下寄りなので右側は空ける */
+  left:18%;right:26%;top:15%;bottom:22%;
+  display:flex;flex-direction:column;justify-content:center;gap:.5em;
+  color:#3a3226;
 }
-.notice-body p{color:var(--ink-soft);line-height:1.9;font-size:.92rem;margin:0 0 10px}
+.notice-kicker{
+  font-family:"Shippori Mincho",serif;font-weight:800;letter-spacing:.22em;
+  font-size:clamp(.8rem,1.7vw,1.1rem);color:#7a3b2e;margin:0 0 .2em;
+  text-align:center;
+}
+.notice-overlay p{
+  margin:0;line-height:1.55;
+  font-size:clamp(.62rem,1.55vw,1.02rem);
+  font-family:"Shippori Mincho",serif;
+}
+/* 狭い画面：板に4段落は収まらないので、板を上に見せて本文はその下へ（絶対配置を解除） */
+@media(max-width:720px){
+  .notice-overlay{
+    position:static;
+    left:auto;right:auto;top:auto;bottom:auto;
+    max-width:640px;margin:10px auto 0;padding:0 4px;
+    display:flex;flex-direction:column;justify-content:center;gap:.6em;
+    color:var(--ink-soft);
+  }
+  .notice-overlay p{font-size:.9rem;line-height:1.9;font-family:inherit}
+  .notice-kicker{text-align:center;font-size:.85rem;color:#2d6a4f}
+}
+
 .guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
 @media(max-width:760px){.guides{grid-template-columns:1fr}}
 .portrait{
