@@ -425,15 +425,28 @@ h1 .num{color:var(--stamp)}
   .hero-title-row .btn{margin-bottom:.3rem}
 
   /* 空きすぎる縦間隔を詰める */
-  .hero-row{margin:48px auto 24px;gap:16px;max-width:none}
+  .hero-row{margin:40px auto 24px;gap:16px;max-width:none}
 
-  /* 県選択を細く、瓦版に幅を回す */
-  .hero-search{width:38%;min-width:250px}
-  .gazette{min-width:0;max-width:none;gap:14px}
+  /* 県選択：縦幅を詰める */
+  .hero-search{
+    width:34%;min-width:230px;
+    padding:12px 14px;
+    align-self:flex-start;
+  }
+  .hero-search label{margin-bottom:6px;font-size:.76rem}
+  .hero-search-note{margin-top:6px;font-size:.7rem;line-height:1.6}
+  .hero-search select{padding:6px 8px}
+  .hero-search button{padding:6px 12px}
 
-  /* 瓦版：日付とタイトルを縦積みにして折り返しの窮屈さを解消 */
-  .gz-list{gap:9px}
-  .gz-list li{flex-direction:column;gap:2px;font-size:.8rem;line-height:1.7}
+  /* 瓦版：アイコンを左上に、本文は横長のまま */
+  .gazette{
+    min-width:0;max-width:none;gap:14px;
+    align-items:flex-start;
+    padding:12px 16px;
+  }
+  .gz-label{align-self:flex-start}
+  .gz-list{gap:6px}
+  .gz-list li{flex-direction:row;align-items:baseline;gap:10px;font-size:.78rem;line-height:1.7}
   .gz-list time{font-size:.7rem}
 }
 
