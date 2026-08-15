@@ -88,20 +88,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/vacancy/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>06</b></span>
-          <span class="pc-num">13.8<small>％</small></span>
-          <h3>日本一「空き家だらけ」の県はどこだ</h3>
-          <p>総住宅数に占める空き家の割合を47都道府県で比較。誰も住んでいない家は、どれくらいあるのか。</p>
-          <span class="c-place">住まいの広場</span>
-        </a>
-        <a class="card pc" href="/exhibits/cars/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>07</b></span>
-          <span class="pc-num">1.38<small>台</small></span>
-          <h3>日本一の「クルマ社会」はどの県だ</h3>
-          <p>二人以上の世帯の1世帯当たり自動車保有台数を47都道府県で比較。車は、地方の暮らしの必需品。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/food/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>08</b></span>
           <span class="pc-num">4.0<small>店</small></span>
@@ -109,9 +95,23 @@ const prefectures = [
           <p>人口千人当たりの飲食店数を47都道府県で比較。いちばん大きな街が、いちばん多いとは限りません。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
+        <a class="card pc" href="/exhibits/day-night-ratio/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>09</b></span>
+        　<span class="pc-num">116.1<small>％</small></span>
+          <h3>日本一「昼間だけ賑わう」県はどこだ</h3>
+          <p>昼夜間人口比率を47都道府県で比較。通勤・通学で、昼間だけ人が増える県はどこか。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/fishing/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>10</b></span>
+          <span class="pc-num">7.8<small>％</small></span>
+          <h3>日本一「釣りをする」県はどこだ</h3>
+          <p>過去1年間につりをした人の割合を47都道府県で比較。海の近さだけでは、決まらないようです。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
       </div>
       <div class="more-actions">
-        <a class="more-btn" href="/exhibits/">すべての展示を見る（全9展示）→</a>
+        <a class="more-btn" href="/exhibits/">すべての展示を見る（全10展示）→</a>
         <a class="more-btn ghost" href="/tower/">展望塔から一望する →</a>
       </div>
     </section>
@@ -192,15 +192,14 @@ const prefectures = [
 <style>
 .hero{
   display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;
-  padding:110px 0 24px;
+  padding:72px 0 24px;
   position:relative;
 }
-/* 日本地図：左下に固定。幅・高さを直接指定して位置を確定させる */
 .hero::before{
   content:"";
   position:absolute;
   right:20%;
-  top:20%;
+  top:14%;
   width:80%;
   height:150%;
   background:url("/images/icon/japan-map.webp") no-repeat right center/contain;
@@ -233,7 +232,13 @@ h1{
 h1 .num{color:var(--stamp)}
 .lead{margin-top:20px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
 /* 右カラムはスタンプのみ */
-.hero-side{display:flex;flex-direction:column;align-items:stretch}
+.hero-side{
+  display:flex;flex-direction:column;align-items:stretch;
+  margin-top:48px;
+}
+@media(max-width:760px){
+  .hero-side{margin-top:0}
+}
 /* 県選択（左）＋瓦版（右）を同じ高さで横並び。中央寄せ＋上に余白 */
 .hero-row{
   display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;justify-content:center;

@@ -5,3 +5,5 @@ dist/
 .env
 .env.*
 .astro/
+sports-meta.txt
+tables2021.txt
