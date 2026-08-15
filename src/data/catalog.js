@@ -770,8 +770,7 @@ export const catalog = [
     status: 'published',
     usedIn: ['/exhibits/study/'],
   },
-];
-{
+  {
     key: 'fishing-rate',
     label: 'つりの行動者率',
     category: 'time',
@@ -787,3 +786,4 @@ export const catalog = [
     status: 'published',
     usedIn: ['/exhibits/fishing/'],
   },
+];
