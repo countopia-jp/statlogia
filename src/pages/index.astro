@@ -412,6 +412,31 @@ h1 .num{color:var(--stamp)}
 .portrait figcaption b{font-family:"Shippori Mincho",serif;font-size:1.05rem}
 .portrait figcaption span{font-size:.72rem;letter-spacing:.18em;color:var(--ink-soft)}
 
+/* ── タブレット調整（761〜1024px）──────── */
+@media(min-width:761px) and (max-width:1024px){
+  .hero{grid-template-columns:1fr .58fr;gap:24px;padding:48px 0 16px}
+  .hero::before{
+    right:2%;top:26%;width:70%;height:108%;opacity:.09;
+  }
+  .hero-side{margin-top:16px}
+  .stamp{width:min(210px,27vw)}
+  .lead{font-size:.95rem;max-width:none;margin-top:16px}
+  .hero-title-row{gap:20px}
+  .hero-title-row .btn{margin-bottom:.3rem}
+
+  /* 空きすぎる縦間隔を詰める */
+  .hero-row{margin:48px auto 24px;gap:16px;max-width:none}
+
+  /* 県選択を細く、瓦版に幅を回す */
+  .hero-search{width:38%;min-width:250px}
+  .gazette{min-width:0;max-width:none;gap:14px}
+
+  /* 瓦版：日付とタイトルを縦積みにして折り返しの窮屈さを解消 */
+  .gz-list{gap:9px}
+  .gz-list li{flex-direction:column;gap:2px;font-size:.8rem;line-height:1.7}
+  .gz-list time{font-size:.7rem}
+}
+
 /* ── モバイル調整 ───────────────────── */
 @media(max-width:760px){
   /* ヒーロー：スタンプを小さく、地図の縦伸びを抑える */
