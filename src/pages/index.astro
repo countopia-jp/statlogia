@@ -472,6 +472,14 @@ h1 .num{color:var(--stamp)}
 }
 
 @media(max-width:600px){
+  /* スタンプ：円を縮めたぶん中の文字も縮める */
+  .stamp{gap:2px}
+  .stamp .top{font-size:.5rem;letter-spacing:.24em}
+  .stamp .big{font-size:1.1rem;letter-spacing:.05em}
+  .stamp .big2{font-size:.72rem;letter-spacing:.1em}
+  .stamp .date{font-size:.6rem;padding:1px 7px;margin-top:3px}
+  .stamp .bottom{font-size:.48rem;letter-spacing:.18em}
+
   /* 瓦版：日付とタイトルを縦に、行間を確保 */
   .gz-list{gap:10px}
   .gz-list li{flex-direction:column;gap:2px;font-size:.82rem;line-height:1.75}
