@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchSleepByPrefecture, fetchCommuteByPrefecture, fetchHouseworkBySex } from '../../lib/estat.js';
+import { getVacancyData } from '../../lib/vacancy.js';
 
 const sleep = await fetchSleepByPrefecture();
 const sleepTop = sleep[0];
@@ -15,6 +16,9 @@ const housework = await fetchHouseworkBySex();
 const hwTop = housework[0];
 const hwAvgGap = Math.round(housework.reduce((s, r) => s + r.gap, 0) / housework.length);
 
+const vacancy = await getVacancyData();
+const vacancyAvg = vacancy.national;
+
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 ---
 <BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。" backHref="/" backLabel="玄関">
@@ -24,7 +28,7 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
         <div class="sec-head">
           <span class="no">OBSERVATORY</span>
           <h1>展望塔</h1>
-          <p class="sub">日本の「いま」を数字で一望する観測盤。展示が増えるたび、計器も増えます。</p>
+          <p class="sub">この国の数字を、いくつか選んで並べた観測盤。気になった計器から、展示へどうぞ。</p>
         </div>
       
       <div class="board">
@@ -70,6 +74,12 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
           <span class="g-unit">1日あたり・最大差</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
+        <a class="gauge" href="/exhibits/vacancy/">
+          <span class="g-label">空き家率（全国平均）</span>
+          <span class="g-value">{vacancyAvg}<small>％</small></span>
+          <span class="g-unit">総住宅数に占める割合</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
         <div class="gauge soon">
           <span class="g-label">物価の観測計</span>
           <span class="g-value">—</span>
@@ -78,6 +88,7 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
       </div>
 
       <p class="note">出典：総務省統計局「令和3年社会生活基本調査」を加工して作成（2021年・週全体・10歳以上）</p>
+      <p class="note">空き家率：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010108）</p>
     </section>
   </main>
 </BaseLayout>
@@ -104,5 +115,6 @@ a.gauge:hover{background:#f7f4e9}
 .gauge.soon{opacity:.55}
 .gauge.soon .g-value{color:var(--ink-soft)}
 .note{margin-top:20px;font-size:.72rem;color:var(--ink-soft)}
+.note + .note{margin-top:6px}
 .tw-figure{display:block;width:100%;max-width:900px;height:auto;border-radius:4px;margin:0 auto 28px}
 </style>
