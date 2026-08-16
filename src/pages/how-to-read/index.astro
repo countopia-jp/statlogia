@@ -4,11 +4,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <BaseLayout title="統計の歩き方｜Countopia Stats" description="数字をどう読むか。京と橙子が、統計との付き合い方を語ります。" backHref="/" backLabel="玄関">
   <main>
     <section class="how">
-      <div class="sec-head">
-        <span class="no">HOW TO READ</span>
-        <h1>統計の歩き方</h1>
-        <p class="sub">数字は、読み方ひとつで見え方が変わります。京と橙子が、統計との付き合い方をゆっくり語る場所です。</p>
-      </div>
+      <figure class="how-hero">
+        <img src="/images/icon/kei-panel.webp" alt="パネルの前で統計の読み方を説明する京"
+             width="1400" height="788" loading="lazy" decoding="async" />
+        <figcaption class="how-overlay">
+          <span class="no">HOW TO READ</span>
+          <h1>統計の歩き方</h1>
+          <p class="sub">数字は、読み方ひとつで見え方が変わります。京と橙子が、統計との付き合い方をゆっくり語る場所です。</p>
+        </figcaption>
+      </figure>
 
       <div class="cards">
         <a class="card" href="/how-to-read/average-vs-national/">
@@ -29,9 +33,40 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 <style>
 .how{padding:56px 0 80px;max-width:1280px;margin:0 auto}
-.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
-h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
-.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px}
+
+/* 京のパネル絵に見出しを重ねる */
+.how-hero{position:relative;margin:1rem auto 2.5rem;max-width:1100px}
+.how-hero img{width:100%;height:auto;display:block;border-radius:10px}
+.how-overlay{
+  position:absolute;
+  left:30%;right:16%;top:8%;bottom:50%;
+  display:flex;flex-direction:column;justify-content:center;
+  color:#2b2b2b;
+}
+.how-overlay .no{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:clamp(.6rem,1.05vw,.8rem);letter-spacing:.3em;color:var(--stamp);
+}
+.how-overlay h1{
+  font-family:"Shippori Mincho",serif;font-weight:800;
+  font-size:clamp(1.3rem,3vw,2.4rem);margin:.3em 0 0;
+}
+.how-overlay .sub{
+  font-size:clamp(.7rem,1.35vw,1.05rem);line-height:1.8;
+  margin:.55em 0 0;color:#4a4a4a;
+}
+/* 狭い画面：重ねずに絵の下へ流す（position:staticを明示） */
+@media(max-width:720px){
+  .how-overlay{
+    position:static;
+    left:auto;right:auto;top:auto;bottom:auto;
+    margin-top:14px;
+  }
+  .how-overlay .no{font-size:.7rem}
+  .how-overlay h1{font-size:1.5rem}
+  .how-overlay .sub{font-size:.9rem;color:var(--ink-soft)}
+}
+
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 @media(max-width:900px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
