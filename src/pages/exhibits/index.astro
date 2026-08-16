@@ -10,6 +10,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <p class="sub">数字の風景を、広場ごとに。ひとつずつ増えていきます。</p>
       </div>
 
+      <figure class="ex-hero">
+        <img src="/images/icon/exhibits-gallery.webp" alt="展示室の回廊で、額に入った図表を見上げる京と橙子"
+             width="1400" height="788" loading="lazy" decoding="async" />
+      </figure>
+
       <section class="ex-group" aria-label="時間の広場">
         <h2 class="ex-group-title">時間の広場</h2>
         <div class="cards">
@@ -82,7 +87,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 .exhibits{padding:56px 0 80px;max-width:1280px;margin:0 auto}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
 h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
-.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px}
+.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:28px}
+
+/* 展示室の回廊（京と橙子） */
+.ex-hero{margin:0 auto 40px;max-width:900px}
+.ex-hero img{width:100%;height:auto;display:block;border-radius:10px}
+
 .ex-group{margin:0 0 36px}
 .ex-group-title{
   font-family:"Shippori Mincho",serif;font-size:1.15rem;
