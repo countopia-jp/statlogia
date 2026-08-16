@@ -28,10 +28,10 @@ const {
 <body>
   <header class="site">
     <div class="nav">
-      <div class="logo">
+      <a class="logo" href="/">
         <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small></span>
         <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
-      </div>
+      </a>
       <nav aria-label="主要メニュー">
         <ul>
           <li><a href="/">玄関</a></li>
@@ -88,6 +88,11 @@ const {
       text-decoration: none; background: #fff8;
     }
     .backbar a:hover { background: #2d6a4f; color: #fff; }
+
+    /* ロゴをトップへのリンクに。色はリンク色に引っ張られないよう継承させる */
+    a.logo { text-decoration: none; color: inherit; }
+    a.logo:hover .mark b { opacity: .8; }
+
     .mark .stats {
       font-size: 0.9em; opacity: .85; letter-spacing: .05em;
       margin-left: 2px; font-weight: 700;
