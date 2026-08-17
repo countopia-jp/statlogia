@@ -14,11 +14,18 @@ body{
   font-family:"Zen Kaku Gothic New",sans-serif;
   color:var(--ink);
   background-color:var(--paper);
+  line-height:1.8;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
   background-image:
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size:28px 28px;
-  line-height:1.8;
+  z-index:-1;
+  pointer-events:none;
 }
 .mono{font-family:"IBM Plex Mono",monospace}
 .serif{font-family:"Shippori Mincho",serif}
