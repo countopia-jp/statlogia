@@ -19,7 +19,16 @@ const totalRank = (name) => data.rows.findIndex((r) => r.n === name) + 1;
 const heatRank = (name) => data.heat.rows.findIndex((r) => r.n === name) + 1;
 const topHeatRank = heatRank(top.n);
 const topTotalRank = totalRank(top.n);
-const spread = (top.minutes / bottom.minutes).toFixed(2);
+
+// 費目ごとの「上と下の開き」を実測して比べる
+const spreadOf = (list) => list[0].minutes - list[list.length - 1].minutes;
+const eduSpread = spreadOf(rows);
+const totalSpread = spreadOf(data.rows);
+const heatSpread = spreadOf(data.heat.rows);
+const foodSpread = spreadOf(data.food.rows);
+const isWidest = eduSpread >= totalSpread && eduSpread >= heatSpread && eduSpread >= foodSpread;
+// 教育1位の県が光熱・水道では下位にいるか（反転ネタが成立するかの判定）
+const isFlipped = topHeatRank >= 38;
 ---
 <BaseLayout title="教育の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（教育）。日本一「教育にお金がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -32,7 +41,7 @@ const spread = (top.minutes / bottom.minutes).toFixed(2);
 
       <Talk speaker="kei">16番目の展示は「教育」です。授業料や入学金といった、学びにかかる値段の水準を県ごとに並べました。</Talk>
       <Talk speaker="touko">こちらも、全国の平均が100なのね。</Talk>
-      <Talk speaker="kei">そうです。ここまでの物価の展示のなかで、いちばん差が大きく出ました。</Talk>
+      <Talk speaker="kei">{isWidest ? 'そうです。ここまでの物価の展示のなかで、いちばん差が大きく出た費目です。' : 'そうです。同じ物価でも、費目によって差の出かたはずいぶん違います。'}</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
@@ -50,7 +59,7 @@ const spread = (top.minutes / bottom.minutes).toFixed(2);
       </div>
 
       <Talk speaker="touko">上と下で、これほど違うものなの。</Talk>
-      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread}倍です。総合で見たときの差は、いちばん上と下でも1.1倍ほどでした。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}で、差は{eduSpread.toFixed(1)}。総合で見たときの差は{totalSpread.toFixed(1)}、電気やガスでも{heatSpread.toFixed(1)}でした。</Talk>
 
       <h2>教育が高い県 TOP5</h2>
       <ol class="rank">
@@ -76,9 +85,19 @@ const spread = (top.minutes / bottom.minutes).toFixed(2);
         ))}
       </ol>
 
-      <Talk speaker="touko">この{top.n}という名前、前の展示でも見た気がするわ。</Talk>
-      <Talk speaker="kei">よく覚えていましたね。{top.n}は、電気やガスの展示では{topHeatRank}番目、いちばん安いほうでした。総合では{topTotalRank}番目です。</Talk>
-      <Talk speaker="touko">同じ県なのに、見るものを変えると、いちばん上といちばん下を行ったり来たりするのねえ。</Talk>
+      {isFlipped ? (
+        <>
+          <Talk speaker="touko">この{top.n}、電気やガスの展示では、下のほうにいませんでした？</Talk>
+          <Talk speaker="kei">よく覚えていましたね。{top.n}は光熱・水道では{topHeatRank}番目、総合では{topTotalRank}番目です。</Talk>
+          <Talk speaker="touko">同じ県なのに、見るものを変えると、いちばん上といちばん下を行ったり来たりするのねえ。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">この{top.n}は、ほかの費目ではどうだったのかしら。</Talk>
+          <Talk speaker="kei">光熱・水道では{topHeatRank}番目、総合では{topTotalRank}番目です。</Talk>
+          <Talk speaker="touko">同じ県でも、見るものを変えると順番が動くのねえ。</Talk>
+        </>
+      )}
       <Talk speaker="kei">物価というひとつの言葉でまとめてしまうと、この動きは見えなくなります。何の値段を見ているのか。それを決めてから、順番を眺めることです。</Talk>
 
       <details class="all">

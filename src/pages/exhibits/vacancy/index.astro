@@ -12,6 +12,11 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v}％`;
+
+// 同じ値の県が出たときに備えて順位は値から引く
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 「N軒に1軒」を割合から出す
+const perHouses = (v) => Math.round(100 / v);
 ---
 <BaseLayout title="空き家率｜Countopia Stats" description="都道府県別・総住宅数に占める空き家の割合。日本一「空き家だらけ」の県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -24,7 +29,7 @@ const fmt = (v) => `${v}％`;
 
       <Talk speaker="kei">6つめの展示は「空き家率」です。誰も住んでいない住宅が、全体の何％を占めるかという数字です。</Talk>
       <Talk speaker="touko">お家が余っているということ？　もったいないわねえ。</Talk>
-      <Talk speaker="kei">全国平均は{fmt(avg)}。およそ7軒に1軒が、空き家という計算になります。</Talk>
+      <Talk speaker="kei">全国平均は{fmt(avg)}。およそ{perHouses(avg)}軒に1軒が、空き家という計算になります。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
@@ -41,15 +46,15 @@ const fmt = (v) => `${v}％`;
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん高い{top.n}では、住宅の{fmt(top.minutes)}が空き家です。5軒に1軒近くが、誰も住んでいない計算になります。</Talk>
+      <Talk speaker="kei">いちばん高い{top.n}では、住宅の{fmt(top.minutes)}が空き家です。{perHouses(top.minutes)}軒に1軒ほどが、誰も住んでいない計算になります。</Talk>
       <Talk speaker="touko">寂しい景色ねえ……。でも、別荘や、これから使う予定のお家も混じっているのでしょう？</Talk>
       <Talk speaker="kei">その通りです。この数字には、別荘などの二次的住宅や、売却・賃貸のために空けてある住宅も含まれています。すべてが放置された空き家というわけではありません。</Talk>
 
       <h2>空き家率が高い県 TOP5</h2>
       <ol class="rank">
-        {most.map((r, i) => (
+        {most.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -69,12 +74,17 @@ const fmt = (v) => `${v}％`;
         ))}
       </ol>
 
+      <Talk speaker="touko">いちばん低い{bottom.n}でも、{perHouses(bottom.minutes)}軒に1軒なのねえ。</Talk>
+      <Talk speaker="kei">はい。上と下で{(top.minutes - bottom.minutes).toFixed(1)}ポイントの開きがありますが、空き家がほとんど無いという県は、ひとつもありません。</Talk>
+
       <details class="all">
         <summary>47都道府県すべてを見る（高い順）</summary>
         <ol>
           {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
         </ol>
       </details>
+
+      <p class="note">「N軒に1軒」は、空き家率から計算したおおよその目安です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/living/">暮らしの見積所</a>｜<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a></p>
 
@@ -119,6 +129,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
 .all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
 @media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
 .cross{margin-top:36px;font-size:.9rem}
 .cross a{color:var(--stamp)}
 .source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}

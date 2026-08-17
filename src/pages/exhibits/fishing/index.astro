@@ -12,6 +12,18 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
+
+// 同じ値の県が出たときに備えて順位は値から引く
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+const topTies = rows.filter((r) => r.minutes === top.minutes);
+const topNames = topTies.map((r) => r.n).join('と');
+const ratio = (top.minutes / avg).toFixed(1);
+const diff = (top.minutes - bottom.minutes).toFixed(1);
+
+// 海に面していない8県。下位の顔ぶれを実データから判定する
+const LANDLOCKED = ['栃木県', '群馬県', '埼玉県', '山梨県', '長野県', '岐阜県', '滋賀県', '奈良県'];
+const landlockedInLeast = least.filter((r) => LANDLOCKED.includes(r.n));
+const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
 ---
 <BaseLayout title="つりをする人の割合｜Countopia Stats" description="都道府県別・過去1年間につりをした人の割合。日本一「釣りをする」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -30,7 +42,7 @@ const fmt = (v) => `${v.toFixed(1)}％`;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">つりをする人がいちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
@@ -41,15 +53,15 @@ const fmt = (v) => `${v.toFixed(1)}％`;
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん多いのは{top.n}で{fmt(top.minutes)}。全国平均のおよそ1.5倍です。</Talk>
-      <Talk speaker="touko">あら、北海道でも沖縄でもないのね。</Talk>
-      <Talk speaker="kei">上位には瀬戸内から九州の西側にかけての県が並びます。穏やかな内海や、入り組んだ海岸線を持つ土地です。逆にいちばん少ないのは{bottom.n}で{fmt(bottom.minutes)}でした。</Talk>
+      <Talk speaker="kei">いちばん多いのは{topNames}で{fmt(top.minutes)}。全国平均の{ratio}倍です。</Talk>
+      <Talk speaker="touko">海の大きな県が上に来るのかと思っていました。</Talk>
+      <Talk speaker="kei">いちばん少ないのは{bottom.n}で{fmt(bottom.minutes)}。上と下で{diff}ポイントの開きがあります。</Talk>
 
       <h2>つりをする人が多い県 TOP5</h2>
       <ol class="rank">
-        {most.map((r, i) => (
+        {most.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -69,8 +81,22 @@ const fmt = (v) => `${v.toFixed(1)}％`;
         ))}
       </ol>
 
-      <Talk speaker="touko">下のほうは、東京のまわりばかりねえ。千葉は海に面しているのに。</Talk>
-      <Talk speaker="kei">そうなんです。下位に並ぶのは、内陸の県と、首都圏の県です。海があるかどうかだけでなく、その海が「行きやすい場所にあるか」も効いているのかもしれません。</Talk>
+      {landlockedInLeast.length > 0 && coastalInLeast.length > 0 ? (
+        <>
+          <Talk speaker="touko">下のほうは、海のない県ばかり……でもないのね。</Talk>
+          <Talk speaker="kei">そうなんです。下位5県のうち{landlockedInLeast.length}県は海に面していませんが、{coastalInLeast.map((r) => r.n).join('と')}には海があります。海があるかどうかだけでなく、その海が「行きやすい場所にあるか」も効いているのかもしれません。</Talk>
+        </>
+      ) : landlockedInLeast.length === 0 ? (
+        <>
+          <Talk speaker="touko">下のほうの県にも、海はあるのでしょう？</Talk>
+          <Talk speaker="kei">はい。下位5県は、どこも海に面しています。海があるかどうかだけでは、決まらないようです。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">下のほうは、海のない県ばかりねえ。</Talk>
+          <Talk speaker="kei">はい。下位5県は、どこも海に面していません。海の近さが、そのまま出た並びです。</Talk>
+        </>
+      )}
 
       <details class="all">
         <summary>47都道府県すべてを見る（多い順）</summary>
@@ -79,7 +105,7 @@ const fmt = (v) => `${v.toFixed(1)}％`;
         </ol>
       </details>
 
-      <p class="note">この数字は「過去1年間に1回でも行った人」の割合です。毎週通う人も、一度きりの人も、同じ1人として数えられています。</p>
+      <p class="note">この数字は「過去1年間に1回でも行った人」の割合です。毎週通う人も、一度きりの人も、同じ1人として数えられています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/food/">日本一「外食の街」はどの県だ</a></p>
 
@@ -101,6 +127,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
 .card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card--hot strong{font-size:clamp(1.3rem,4.4vw,1.9rem)}
 .card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
 .card--hot .num{color:#b23a2f}
 .card--cool .num{color:#2d6a4f}
