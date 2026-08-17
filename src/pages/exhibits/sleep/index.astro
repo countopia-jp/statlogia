@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
-import { fetchSleepByPrefecture } from '../../../lib/estat.js';
+import { fetchSleepByPrefecture, fetchCommuteByPrefecture } from '../../../lib/estat.js';
+import { regionsOf } from '../../../data/geo.js';
 
 const rows = await fetchSleepByPrefecture(); // 短い順ソート済み
 const shortest = rows.slice(0, 5);
@@ -11,6 +12,38 @@ const bottom = rows[rows.length - 1];
 const diff = bottom.minutes - top.minutes;
 const yearlyHours = Math.round((diff * 365) / 60);
 const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
+
+// 同じ値の県があるときに備えて順位は値から引く（短い順）
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+
+// バーの幅は実データの範囲から出す（固定値だと範囲外で崩れる）
+const minV = rows[0].minutes;
+const maxV = rows[rows.length - 1].minutes;
+const span = Math.max(maxV - minV, 1);
+const barW = (v) => `${5 + ((v - minV) / span) * 95}%`;
+
+// 眠らない上位5県がどの地方か
+const shortestRegions = regionsOf(shortest.map((r) => r.pref)).join('・');
+
+// 通勤時間との関係を実際に計算する
+const commute = await fetchCommuteByPrefecture();
+const cMap = new Map(commute.map((r) => [r.pref, r.minutes]));
+const pairs = rows.filter((r) => cMap.has(r.pref)).map((r) => [r.minutes, cMap.get(r.pref)]);
+const corr = (() => {
+  const n = pairs.length;
+  if (n < 10) return null;
+  const mx = pairs.reduce((s, p) => s + p[0], 0) / n;
+  const my = pairs.reduce((s, p) => s + p[1], 0) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (const [x, y] of pairs) {
+    sxy += (x - mx) * (y - my);
+    sxx += (x - mx) ** 2;
+    syy += (y - my) ** 2;
+  }
+  if (sxx === 0 || syy === 0) return null;
+  return sxy / Math.sqrt(sxx * syy);
+})();
+const corrLabel = corr === null ? null : corr.toFixed(2);
 ---
 <BaseLayout backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -46,11 +79,11 @@ const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 
       <h2>眠らない県 TOP5</h2>
       <ol class="rank">
-        {shortest.map((r, i) => (
+        {shortest.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.pref}</span>
-            <span class="bar" style={`--w:${((r.minutes - 460) / 30) * 100}%`}></span>
+            <span class="bar" style={`--w:${barW(r.minutes)}`}></span>
             <span class="min">{fmt(r.minutes)}</span>
           </li>
         ))}
@@ -62,7 +95,7 @@ const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
           <li>
             <span class="pos">{i + 1}</span>
             <span class="pref">{r.pref}</span>
-            <span class="bar" style={`--w:${((r.minutes - 460) / 30) * 100}%`}></span>
+            <span class="bar" style={`--w:${barW(r.minutes)}`}></span>
             <span class="min">{fmt(r.minutes)}</span>
           </li>
         ))}
@@ -75,8 +108,15 @@ const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
         </ol>
       </details>
 
-      <Talk speaker="kei">首都圏が上位に並ぶのは、通勤時間の長さと無関係ではなさそうですね。</Talk>
+      <Talk speaker="touko">眠らない県は、どのあたりに集まっているの？</Talk>
+      <Talk speaker="kei">上位5県は{shortestRegions}の県です。{corr !== null && corr <= -0.3
+        ? `通勤時間の展示と並べてみると、通勤が長い県ほど睡眠が短いという関係が出ています。ふたつの数字の相関は${corrLabel}でした。`
+        : corr !== null && corr >= 0.3
+        ? `通勤時間の展示と並べてみると、通勤が長い県ほど睡眠も長いという関係が出ています。相関は${corrLabel}でした。`
+        : `通勤時間と並べてみても、はっきりした関係は見えません${corrLabel ? `（相関は${corrLabel}）` : ''}。`}</Talk>
       <Talk speaker="touko">わたしの時代は日が暮れたら寝るしかなかったけど……今の人は忙しいのねぇ。</Talk>
+
+      <p class="note">同じ値の県が複数あるときは、同じ順位として並べています。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。</p>
 
       <div class="source">
         <p>出典：総務省統計局「令和3年社会生活基本調査」（生活時間編・週全体・10歳以上・総平均時間）を加工して作成</p>
@@ -121,5 +161,6 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
 .all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
 @media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
 .source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
 </style>

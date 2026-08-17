@@ -13,13 +13,27 @@ const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
 
-// 1位・3位が同値なので、順位は並び順ではなく値から引く（1・1・3・3・5と出る）
+// 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
 // 最も高い県が複数あるときは連名にする
 const topTies = rows.filter((r) => r.minutes === top.minutes);
 const topNames = topTies.map((r) => r.n).join('と');
-// 2番目の値との差（沖縄が突出して低いことを動的に出す）
+// 2番目に低い県との差
 const second = rows[rows.length - 2];
+const bottomGap = (second.minutes - bottom.minutes).toFixed(1);
+
+// 山地の広い県が実際に何位にいるかを毎回引き直す
+const MOUNTAIN_PREFS = ['長野県', '岐阜県', '山梨県', '北海道', '岩手県', '高知県'];
+const mountainRanks = MOUNTAIN_PREFS
+  .map((n) => {
+    const r = rows.find((x) => x.n === n);
+    return r ? { n, rank: rankOf(r.minutes) } : null;
+  })
+  .filter(Boolean)
+  .sort((a, b) => a.rank - b.rank);
+const mountainHigh = mountainRanks.filter((m) => m.rank <= 10);
+const mountainLow = mountainRanks.filter((m) => m.rank > 20);
+const listRanks = (arr) => arr.map((m) => `${m.n}が${m.rank}番目`).join('、');
 ---
 <BaseLayout title="登山・ハイキングをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に登山やハイキングをした人の割合。日本一「山を歩く」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -32,7 +46,7 @@ const second = rows[rows.length - 2];
 
       <Talk speaker="kei">13番目の展示は「登山・ハイキング」です。過去1年のあいだに、一度でも山を歩いた人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">それなら、山の深い県が上に来るのでしょうね。</Talk>
-      <Talk speaker="kei">そう思いますよね。ところが、いちばん高いのは{topNames}で、どちらも{fmt(top.minutes)}。同じ値で並びました。</Talk>
+      <Talk speaker="kei">そう思いますよね。ところが、いちばん高いのは{topNames}で{fmt(top.minutes)}{topTies.length > 1 ? '、同じ値で並びました' : ''}。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
@@ -49,8 +63,8 @@ const second = rows[rows.length - 2];
         </div>
       </div>
 
-      <Talk speaker="touko">東京が一番だなんて。</Talk>
-      <Talk speaker="kei">東京にも西のほうには山がありますし、ここで数えているのは「その県に住んでいる人」であって、「その県の山に登った人」ではありません。県境を越えて出かけた人も、住んでいる県の側に数えられます。</Talk>
+      <Talk speaker="touko">この顔ぶれは、思っていたのと違うわ。</Talk>
+      <Talk speaker="kei">ここで数えているのは「その県に住んでいる人」であって、「その県の山に登った人」ではありません。県境を越えて出かけた人も、住んでいる県の側に数えられます。</Talk>
 
       <h2>山を歩く人が多い県 TOP5</h2>
       <ol class="rank">
@@ -64,8 +78,17 @@ const second = rows[rows.length - 2];
         ))}
       </ol>
 
-      <Talk speaker="touko">長野は分かるけれど、その両隣が東京と京都というのは妙な並びねえ。</Talk>
-      <Talk speaker="kei">山の多さと、そのまま同じ順にはならないんです。北海道は29番目、岩手は33番目、高知は45番目でした。</Talk>
+      {mountainLow.length > 0 ? (
+        <>
+          <Talk speaker="touko">山の名所が、そのまま上に並ぶわけではないのねえ。</Talk>
+          <Talk speaker="kei">はい。山の広い県で言えば、{listRanks(mountainLow)}。{mountainHigh.length > 0 ? `いっぽうで${listRanks(mountainHigh)}と、上位に入る県もあります。` : '山の多さと、そのまま同じ順にはならないんです。'}</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">山の多い県が、やはり上のほうにいるのね。</Talk>
+          <Talk speaker="kei">そうですね。{listRanks(mountainRanks)}という並びでした。</Talk>
+        </>
+      )}
 
       <h2>山を歩く人が少ない県 TOP5</h2>
       <ol class="rank low">
@@ -79,8 +102,18 @@ const second = rows[rows.length - 2];
         ))}
       </ol>
 
-      <Talk speaker="touko">いちばん下が、ずいぶん離れているのね。</Talk>
-      <Talk speaker="kei">{bottom.n}が{fmt(bottom.minutes)}。ひとつ上の{second.n}が{fmt(second.minutes)}ですから、最下位の一県だけが大きく開いています。</Talk>
+      {Number(bottomGap) >= 1 ? (
+        <>
+          <Talk speaker="touko">いちばん下が、ずいぶん離れているのね。</Talk>
+          <Talk speaker="kei">{bottom.n}が{fmt(bottom.minutes)}。ひとつ上の{second.n}が{fmt(second.minutes)}ですから、最下位の一県だけが{bottomGap}ポイント開いています。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">下のほうは、団子になっているのね。</Talk>
+          <Talk speaker="kei">{bottom.n}が{fmt(bottom.minutes)}、ひとつ上の{second.n}が{fmt(second.minutes)}。下位は僅差で並んでいます。</Talk>
+        </>
+      )}
+
       <details class="all">
         <summary>47都道府県すべてを見る（多い順）</summary>
         <ol>
@@ -110,6 +143,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
 .card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card--hot strong{font-size:clamp(1.3rem,4.4vw,1.9rem)}
 .card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
 .card--hot .num{color:#b23a2f}
 .card--cool .num{color:#2d6a4f}
@@ -137,5 +171,4 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .cross{margin-top:36px;font-size:.9rem}
 .cross a{color:var(--stamp)}
 .source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
-.card--hot strong{font-size:clamp(1.3rem,4.4vw,1.9rem)}
 </style>

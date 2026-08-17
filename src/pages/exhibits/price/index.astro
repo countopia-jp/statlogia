@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getPriceData } from '../../../lib/price.js';
+import { regionsOf, BIG_CITY_PREFS } from '../../../data/geo.js';
 
 const data = await getPriceData();
 const rows = data.rows;
@@ -12,14 +13,27 @@ const bottom = rows[rows.length - 1];
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}`;
 
+// 同じ値の県が出たときに備えて順位は値から引く
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+const gap = (top.minutes - bottom.minutes).toFixed(1);
+const ratio = top.minutes / bottom.minutes;
+
+// 上位・下位に並ぶ地方を実データから拾う
+const mostRegions = regionsOf(most).join('・');
+const leastRegions = regionsOf(least).join('・');
+const bigInMost = most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
+
 const foodRows = data.food.rows;
 const foodMost = foodRows.slice(0, 5);
 const foodTop = foodRows[0];
 const foodMaxMin = foodTop.minutes;
+const foodRankOf = (v) => foodRows.findIndex((r) => r.minutes === v) + 1;
 // 総合での順位を引いて、食料との落差を見せる
 const totalRank = (name) => rows.findIndex((r) => r.n === name) + 1;
 const foodTopTotalRank = totalRank(foodTop.n);
 const foodTopTotal = rows.find((r) => r.n === foodTop.n);
+const topChanged = foodTop.n !== top.n;
+const foodJump = foodTopTotalRank >= 10;
 ---
 <BaseLayout title="物価の高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数。日本一「物価が高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -49,15 +63,24 @@ const foodTopTotal = rows.find((r) => r.n === foodTop.n);
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん高い{top.n}が{fmt(top.minutes)}、いちばん安い{bottom.n}が{fmt(bottom.minutes)}。その差は{(top.minutes - bottom.minutes).toFixed(1)}ポイントです。</Talk>
-      <Talk speaker="touko">思ったより、差は小さいのねえ。倍もちがうのかと思っていました。</Talk>
-      <Talk speaker="kei">全国どこでも同じものが同じように届く国ですから。ただ、この数ポイントが毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
+      <Talk speaker="kei">いちばん高い{top.n}が{fmt(top.minutes)}、いちばん安い{bottom.n}が{fmt(bottom.minutes)}。その差は{gap}ポイントです。</Talk>
+      {ratio < 1.2 ? (
+        <>
+          <Talk speaker="touko">思ったより、差は小さいのねえ。倍もちがうのかと思っていました。</Talk>
+          <Talk speaker="kei">全国どこでも同じものが同じように届く国ですから。ただ、この数ポイントが毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">ずいぶん開きがあるのねえ。</Talk>
+          <Talk speaker="kei">上と下で{ratio.toFixed(2)}倍。毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
+        </>
+      )}
 
       <h2>物価が高い県 TOP5</h2>
       <ol class="rank">
-        {most.map((r, i) => (
+        {most.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -77,17 +100,17 @@ const foodTopTotal = rows.find((r) => r.n === foodTop.n);
         ))}
       </ol>
 
-      <Talk speaker="touko">上のほうは、大きな街ばかり……でもないのね。</Talk>
-      <Talk speaker="kei">はい。上位には大都市を抱える県が並びますが、そうでない県も混じっています。逆に安いほうは、関東と九州の県が並びました。</Talk>
+      <Talk speaker="touko">上と下では、顔ぶれがまるで違うのねえ。</Talk>
+      <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。{bigInMost >= 3 ? '上位には大きな都市を抱える県が目立ちます。' : '大きな都市を抱える県ばかりが上に来るわけでもありません。'}</Talk>
 
       <h2>ところが、食べものだけを見ると</h2>
 
-      <Talk speaker="kei">同じ調査は、費目ごとの数字も出しています。食料だけを取り出すと、順番がすっかり変わるんです。</Talk>
+      <Talk speaker="kei">同じ調査は、費目ごとの数字も出しています。食料だけを取り出すと、順番が変わるんです。</Talk>
 
       <ol class="rank food">
-        {foodMost.map((r, i) => (
+        {foodMost.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{foodRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / foodMaxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -95,66 +118,10 @@ const foodTopTotal = rows.find((r) => r.n === foodTop.n);
         ))}
       </ol>
 
-      <Talk speaker="touko">あら。さっきの表と、いちばん上がちがうじゃないの。</Talk>
-      <Talk speaker="kei">食料でいちばん高いのは{foodTop.n}で{fmt(foodTop.minutes)}。総合では{foodTopTotalRank}位、{fmt(foodTopTotal.minutes)}でしたから、この費目だけ大きく飛び出しています。</Talk>
-      <Talk speaker="touko">同じ県なのに、見るものを変えると、こんなに順番が動くのねえ。</Talk>
-      <Talk speaker="kei">物価という一語で括っていても、中身は家賃も光熱費も食べものも混ざっています。どれを見るかで、県の姿は変わります。</Talk>
-
-      <details class="all">
-        <summary>47都道府県すべてを見る（総合・高い順）</summary>
-        <ol>
-          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
-        </ol>
-      </details>
-
-      <p class="note">この数字は「全国平均＝100」とした指数です。金額そのものではなく、全国とくらべてどのくらいか、を表しています。総合には家賃や光熱・水道なども含まれます。</p>
-
-      <p class="cross">あわせて読む：<a href="/living/">暮らしの見積所</a>｜<a href="/how-to-read/national-average/">全国平均と単純平均はなぜ違うのか</a></p>
-
-      <div class="source">
-        <p>出典：{data.source}（{data.year}）</p>
-        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
-      </div>
-    </section>
-  </main>
-</BaseLayout>
-<style>
-.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
-.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
-h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
-.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
-h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
-.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
-@media(max-width:560px){.highlight{grid-template-columns:1fr}}
-.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
-.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
-.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
-.card--hot .num{color:#b23a2f}
-.card--cool .num{color:#2d6a4f}
-.seal{
-  position:absolute;top:12px;right:14px;width:48px;height:48px;
-  border:2px solid currentColor;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;gap:1px;
-  transform:rotate(-12deg);opacity:.55;
-  font-family:"Shippori Mincho",serif;
-}
-.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
-.card--hot .seal{color:#b23a2f}
-.card--cool .seal{color:#2d6a4f}
-.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
-.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
-.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
-.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
-.rank.low .bar{background:#3a6b52}
-.rank.food .bar{background:#c08a3e}
-.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
-.all{margin:32px 0}
-.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
-.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
-@media(max-width:560px){.all ol{columns:1}}
-.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
-.cross{margin-top:36px;font-size:.9rem}
-.cross a{color:var(--stamp)}
-.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
-</style>
+      {topChanged ? (
+        <Talk speaker="touko">あら。さっきの表と、いちばん上がちがうじゃないの。</Talk>
+      ) : (
+        <Talk speaker="touko">いちばん上は、さっきと同じ県なのね。</Talk>
+      )}
+      <Talk speaker="kei">食料でいちばん高いのは{foodTop.n}で{fmt(foodTop.minutes)}。総合では{foodTopTotalRank}位、{fmt(foodTopTotal.minutes)}でした{foodJump ? 'から、この費目だけ大きく飛び出しています' : ''}。</Talk>
+      <Talk speaker="touko">同じ県なのに、見るものを変えると、順番が動くのねえ。</Talk>

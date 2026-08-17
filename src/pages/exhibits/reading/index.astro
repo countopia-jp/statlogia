@@ -22,10 +22,29 @@ const mangaMaxMin = mangaTop.minutes;
 
 // 同じ値の県があるときに備えて順位は値から引く
 const rankOf = (list, v) => list.findIndex((r) => r.minutes === v) + 1;
-// 読書での順位を引いて、マンガとの落差を見せる
-const bookRank = (name) => rows.findIndex((r) => r.n === name) + 1;
 // 上と下の開き（何倍か）
 const spread = (list) => (list[0].minutes / list[list.length - 1].minutes).toFixed(2);
+const bookSpread = Number(spread(rows));
+const mangaSpread = Number(spread(mangaRows));
+
+// 「何人にひとり」を割合から出す
+const perPeople = (v) => Math.round(100 / v);
+
+// マンガのほうが多いか、差が小さいかは実際の値で判定する
+const mangaMore = mangaAvg > avg;
+const mangaFlatter = mangaSpread < bookSpread;
+
+// 読書とマンガで順位がいちばん動いた県を拾う
+const mangaRankOf = (name) => {
+  const r = mangaRows.find((x) => x.n === name);
+  return r ? rankOf(mangaRows, r.minutes) : null;
+};
+const moves = rows
+  .map((r) => ({ n: r.n, book: rankOf(rows, r.minutes), manga: mangaRankOf(r.n) }))
+  .filter((m) => m.manga !== null)
+  .map((m) => ({ ...m, delta: m.book - m.manga }));
+const riser = [...moves].sort((a, b) => b.delta - a.delta)[0];
+const faller = [...moves].sort((a, b) => a.delta - b.delta)[0];
 ---
 <BaseLayout title="本を読む人の割合｜Countopia Stats" description="都道府県別・過去1年間に読書またはマンガを読んだ人の割合。日本一「本を読む」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -37,7 +56,7 @@ const spread = (list) => (list[0].minutes / list[list.length - 1].minutes).toFix
       </div>
 
       <Talk speaker="kei">15番目の展示は「読書」です。過去1年のあいだに、趣味として本を読んだ人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
-      <Talk speaker="touko">三人にひとりくらいなのねえ。</Talk>
+      <Talk speaker="touko">{perPeople(avg)}人にひとりくらいなのねえ。</Talk>
       <Talk speaker="kei">この調査では、マンガは別に数えられています。あとで、そちらも見てみましょう。</Talk>
 
       <div class="highlight">
@@ -79,14 +98,23 @@ const spread = (list) => (list[0].minutes / list[list.length - 1].minutes).toFix
         ))}
       </ol>
 
-      <Talk speaker="touko">上と下で、倍ほども違うのね。</Talk>
-      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread(rows)}倍です。ここまでは、よくある形の展示でした。</Talk>
+      <Talk speaker="touko">上と下で、{bookSpread >= 1.8 ? '倍ほども' : 'ずいぶん'}違うのね。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{bookSpread.toFixed(2)}倍です。ここまでは、よくある形の展示でした。</Talk>
 
       <h2>ところが、マンガを見ると</h2>
 
       <Talk speaker="kei">同じ調査で、マンガを読んだ人の割合も数えられています。全国平均は{fmt(mangaAvg)}。</Talk>
-      <Talk speaker="touko">あら、さっきより多いじゃないの。</Talk>
-      <Talk speaker="kei">本が{fmt(avg)}で、マンガが{fmt(mangaAvg)}。この国では、本よりもマンガを読んだ人のほうが多いんです。</Talk>
+      {mangaMore ? (
+        <>
+          <Talk speaker="touko">あら、さっきより多いじゃないの。</Talk>
+          <Talk speaker="kei">本が{fmt(avg)}で、マンガが{fmt(mangaAvg)}。この国では、本よりもマンガを読んだ人のほうが多いんです。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">こちらは、さっきより少ないのねえ。</Talk>
+          <Talk speaker="kei">本が{fmt(avg)}で、マンガが{fmt(mangaAvg)}。人数では本のほうが多いという結果です。</Talk>
+        </>
+      )}
 
       <ol class="rank manga">
         {mangaMost.map((r) => (
@@ -100,9 +128,18 @@ const spread = (list) => (list[0].minutes / list[list.length - 1].minutes).toFix
       </ol>
 
       <Talk speaker="touko">顔ぶれが少し入れかわっているようね。</Talk>
-      <Talk speaker="kei">愛知は、本では{bookRank('愛知県')}番目でしたが、マンガでは{rankOf(mangaRows, mangaRows.find((r) => r.n === '愛知県').minutes)}番目。石川は{bookRank('石川県')}番目から{rankOf(mangaRows, mangaRows.find((r) => r.n === '石川県').minutes)}番目に上がります。</Talk>
-      <Talk speaker="touko">それに、下のほうとの差も小さいみたい。</Talk>
-      <Talk speaker="kei">よく気づきましたね。本は{spread(rows)}倍でしたが、マンガは{mangaTop.n}の{fmt(mangaTop.minutes)}に対して{mangaBottom.n}が{fmt(mangaBottom.minutes)}で、{spread(mangaRows)}倍。マンガのほうが、県による違いが小さいんです。</Talk>
+      <Talk speaker="kei">{riser.n}は、本では{riser.book}番目でしたが、マンガでは{riser.manga}番目。逆に{faller.n}は、{faller.book}番目から{faller.manga}番目に下がります。</Talk>
+      {mangaFlatter ? (
+        <>
+          <Talk speaker="touko">それに、下のほうとの差も小さいみたい。</Talk>
+          <Talk speaker="kei">よく気づきましたね。本は{bookSpread.toFixed(2)}倍でしたが、マンガは{mangaTop.n}の{fmt(mangaTop.minutes)}に対して{mangaBottom.n}が{fmt(mangaBottom.minutes)}で、{mangaSpread.toFixed(2)}倍。マンガのほうが、県による違いが小さいんです。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">上と下の開きは、どうかしら。</Talk>
+          <Talk speaker="kei">マンガは{mangaTop.n}の{fmt(mangaTop.minutes)}に対して{mangaBottom.n}が{fmt(mangaBottom.minutes)}で{mangaSpread.toFixed(2)}倍。本の{bookSpread.toFixed(2)}倍とくらべて、こちらのほうが開いています。</Talk>
+        </>
+      )}
 
       <details class="all">
         <summary>47都道府県すべてを見る（本を読む人が多い順）</summary>
