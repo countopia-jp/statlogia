@@ -6,6 +6,8 @@
 //   statsDataId: 0000010103
 //   C5701 消費者物価地域差指数（総合）  ※全国平均=100
 //   C5703 消費者物価地域差指数（食料）
+//   C5705 消費者物価地域差指数（光熱・水道）
+//   C5710 消費者物価地域差指数（教育）
 // 旧系統（C5201/C5301/C5601）は2007〜2013年度で更新停止のため使わない。
 // =====================================================
 
@@ -15,6 +17,8 @@ const STATS_DATA_ID = '0000010103';
 export const CODES = {
   total: 'C5701',
   food: 'C5703',
+  heat: 'C5705',
+  education: 'C5710',
 };
 
 let _cache = null;
@@ -41,7 +45,7 @@ export async function getPriceData() {
 
   const json = await apiGet('getStatsData', {
     statsDataId: STATS_DATA_ID,
-    cdCat01: `${CODES.total},${CODES.food}`,
+    cdCat01: `${CODES.total},${CODES.food},${CODES.heat},${CODES.education}`,
     metaGetFlg: 'Y',
     cntGetFlg: 'N',
     annotationGetFlg: 'N',
@@ -83,6 +87,8 @@ export async function getPriceData() {
 
   const total = build(CODES.total);
   const food = build(CODES.food);
+  const heat = build(CODES.heat);
+  const education = build(CODES.education);
 
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
@@ -92,6 +98,8 @@ export async function getPriceData() {
     national: 100,
     rows: total.rows,
     food,
+    heat,
+    education,
   };
   return _cache;
 }

@@ -1,0 +1,171 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getReadingData } from '../../../lib/reading.js';
+
+const data = await getReadingData();
+const rows = data.rows;
+const most = rows.slice(0, 5);
+const least = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = data.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${v.toFixed(1)}％`;
+
+const mangaRows = data.manga.rows;
+const mangaMost = mangaRows.slice(0, 5);
+const mangaTop = mangaRows[0];
+const mangaBottom = mangaRows[mangaRows.length - 1];
+const mangaAvg = data.manga.national;
+const mangaMaxMin = mangaTop.minutes;
+
+// 同じ値の県があるときに備えて順位は値から引く
+const rankOf = (list, v) => list.findIndex((r) => r.minutes === v) + 1;
+// 読書での順位を引いて、マンガとの落差を見せる
+const bookRank = (name) => rows.findIndex((r) => r.n === name) + 1;
+// 上と下の開き（何倍か）
+const spread = (list) => (list[0].minutes / list[list.length - 1].minutes).toFixed(2);
+---
+<BaseLayout title="本を読む人の割合｜Countopia Stats" description="都道府県別・過去1年間に読書またはマンガを読んだ人の割合。日本一「本を読む」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 15</span>
+        <h1>日本一「本を読む」県はどこだ</h1>
+        <p class="sub">暮らしの広場｜過去1年間に趣味としての読書をした人の割合（{data.year}）</p>
+      </div>
+
+      <Talk speaker="kei">15番目の展示は「読書」です。過去1年のあいだに、趣味として本を読んだ人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
+      <Talk speaker="touko">三人にひとりくらいなのねえ。</Talk>
+      <Talk speaker="kei">この調査では、マンガは別に数えられています。あとで、そちらも見てみましょう。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">本を読む人がいちばん多い</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
+          <span class="label">本を読む人がいちばん少ない</span>
+          <strong>{bottom.n}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <h2>本を読む人が多い県 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(rows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>本を読む人が少ない県 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">上と下で、倍ほども違うのね。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread(rows)}倍です。ここまでは、よくある形の展示でした。</Talk>
+
+      <h2>ところが、マンガを見ると</h2>
+
+      <Talk speaker="kei">同じ調査で、マンガを読んだ人の割合も数えられています。全国平均は{fmt(mangaAvg)}。</Talk>
+      <Talk speaker="touko">あら、さっきより多いじゃないの。</Talk>
+      <Talk speaker="kei">本が{fmt(avg)}で、マンガが{fmt(mangaAvg)}。この国では、本よりもマンガを読んだ人のほうが多いんです。</Talk>
+
+      <ol class="rank manga">
+        {mangaMost.map((r) => (
+          <li>
+            <span class="pos">{rankOf(mangaRows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / mangaMaxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">顔ぶれが少し入れかわっているようね。</Talk>
+      <Talk speaker="kei">愛知は、本では{bookRank('愛知県')}番目でしたが、マンガでは{rankOf(mangaRows, mangaRows.find((r) => r.n === '愛知県').minutes)}番目。石川は{bookRank('石川県')}番目から{rankOf(mangaRows, mangaRows.find((r) => r.n === '石川県').minutes)}番目に上がります。</Talk>
+      <Talk speaker="touko">それに、下のほうとの差も小さいみたい。</Talk>
+      <Talk speaker="kei">よく気づきましたね。本は{spread(rows)}倍でしたが、マンガは{mangaTop.n}の{fmt(mangaTop.minutes)}に対して{mangaBottom.n}が{fmt(mangaBottom.minutes)}で、{spread(mangaRows)}倍。マンガのほうが、県による違いが小さいんです。</Talk>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（本を読む人が多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（マンガを読む人が多い順）</summary>
+        <ol>
+          {mangaRows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <p class="note">この数字は「過去1年間に1回でも読んだ人」の割合です。毎日読む人も、一度きりの人も、同じ1人として数えられています。「趣味としての読書」にマンガは含まれず、別の項目として数えられています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.manga .bar{background:#c08a3e}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>
