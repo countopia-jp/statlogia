@@ -3,27 +3,33 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { fetchSleepByPrefecture, fetchCommuteByPrefecture, fetchHouseworkBySex } from '../../lib/estat.js';
 import { getVacancyData } from '../../lib/vacancy.js';
 import { getPriceData } from '../../lib/price.js';
+import { getReadingData } from '../../lib/reading.js';
+import { getHikingData } from '../../lib/hiking.js';
 
 const sleep = await fetchSleepByPrefecture();
 const sleepTop = sleep[0];
-const sleepBottom = sleep[sleep.length - 1];
 const sleepAvg = Math.round(sleep.reduce((s, r) => s + r.minutes, 0) / sleep.length);
-const sleepDiff = sleepBottom.minutes - sleepTop.minutes;
 
 const commute = await fetchCommuteByPrefecture();
 const commuteTop = commute[0];
 
 const housework = await fetchHouseworkBySex();
-const hwTop = housework[0];
 const hwAvgGap = Math.round(housework.reduce((s, r) => s + r.gap, 0) / housework.length);
 
 const vacancy = await getVacancyData();
 const vacancyAvg = vacancy.national;
 
+const reading = await getReadingData();
+const hiking = await getHikingData();
+
 const price = await getPriceData();
+const priceTop = price.rows[0];
+const foodTop = price.food.rows[0];
+const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+const pct = (v) => v.toFixed(1);
 ---
 <BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。" backHref="/" backLabel="玄関">
   <main>
@@ -34,7 +40,8 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
           <h1>展望塔</h1>
           <p class="sub">この国の数字を、いくつか選んで並べた観測盤。気になった計器から、展示へどうぞ。</p>
         </div>
-      
+
+      <h2 class="board-head">時間の計器</h2>
       <div class="board">
         <a class="gauge" href="/exhibits/sleep/">
           <span class="g-label">平均睡眠時間（全国）</span>
@@ -46,12 +53,6 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
           <span class="g-label">いちばん眠らない</span>
           <span class="g-value small">{sleepTop.pref}</span>
           <span class="g-unit">{fmt(sleepTop.minutes)}</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/sleep/">
-          <span class="g-label">いちばんよく眠る</span>
-          <span class="g-value small">{sleepBottom.pref}</span>
-          <span class="g-unit">{fmt(sleepBottom.minutes)}</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/commute/">
@@ -66,26 +67,58 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
           <span class="g-unit">1日あたり・女性−男性</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
-        <a class="gauge" href="/exhibits/housework/">
-          <span class="g-label">家事の男女差・最大</span>
-          <span class="g-value small">{hwTop.pref}</span>
-          <span class="g-unit">差 {hwTop.gap}分／日</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/sleep/">
-          <span class="g-label">睡眠の都道府県格差</span>
-          <span class="g-value">{sleepDiff}<small>分</small></span>
-          <span class="g-unit">1日あたり・最大差</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
+      </div>
+
+      <h2 class="board-head">暮らしの計器</h2>
+      <div class="board">
         <a class="gauge" href="/exhibits/vacancy/">
           <span class="g-label">空き家率（全国平均）</span>
           <span class="g-value">{vacancyAvg}<small>％</small></span>
           <span class="g-unit">総住宅数に占める割合</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
+        <a class="gauge" href="/exhibits/reading/">
+          <span class="g-label">本を読む人（全国平均）</span>
+          <span class="g-value">{pct(reading.national)}<small>％</small></span>
+          <span class="g-unit">過去1年間・10歳以上</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/reading/">
+          <span class="g-label">マンガを読む人（全国平均）</span>
+          <span class="g-value">{pct(reading.manga.national)}<small>％</small></span>
+          <span class="g-unit">本より多いという結果</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/hiking/">
+          <span class="g-label">山を歩く人（全国平均）</span>
+          <span class="g-value">{pct(hiking.national)}<small>％</small></span>
+          <span class="g-unit">過去1年間・10歳以上</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+      </div>
+
+      <h2 class="board-head">物価の計器</h2>
+      <div class="board">
+        <a class="gauge" href="/exhibits/price/">
+          <span class="g-label">物価がいちばん高い</span>
+          <span class="g-value small">{priceTop.n}</span>
+          <span class="g-unit">{priceTop.minutes}（全国平均＝100）</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/price/">
+          <span class="g-label">食べものがいちばん高い</span>
+          <span class="g-value small">{foodTop.n}</span>
+          <span class="g-unit">{foodTop.minutes}（全国平均＝100）</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/utility/">
+          <span class="g-label">光熱・水道がいちばん高い</span>
+          <span class="g-value small">{heatTop.n}</span>
+          <span class="g-unit">{heatTop.minutes}（全国平均＝100）</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
         <a class="gauge" href="/exhibits/education-price/">
-          <span class="g-label">教育の物価がいちばん高い</span>
+          <span class="g-label">教育がいちばん高い</span>
           <span class="g-value small">{eduTop.n}</span>
           <span class="g-unit">{eduTop.minutes}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
@@ -102,6 +135,12 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 .sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
 h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
 .sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px;max-width:36em}
+.board-head{
+  font-family:"Shippori Mincho",serif;font-size:1.05rem;
+  border-left:4px solid var(--stamp);padding-left:12px;
+  margin:36px 0 14px;
+}
+.board-head:first-of-type{margin-top:0}
 .board{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;
   background:var(--line);border:2px solid var(--line);border-radius:14px;overflow:hidden;
