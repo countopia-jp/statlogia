@@ -4,7 +4,7 @@ import Talk from '../../../components/Talk.astro';
 import { getPriceData } from '../../../lib/price.js';
 
 const data = await getPriceData();
-const rows = data.heat.rows;
+const rows = data.education.rows;
 const most = rows.slice(0, 5);
 const least = rows.slice(-5).reverse();
 const top = rows[0];
@@ -12,45 +12,56 @@ const bottom = rows[rows.length - 1];
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}`;
 
-// 3位が同値なので順位は値から引く
+// 同じ値の県があるときに備えて順位は値から引く
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
-// 総合での順位と見くらべる
+// 総合・光熱水道での順位を引く
 const totalRank = (name) => data.rows.findIndex((r) => r.n === name) + 1;
+const heatRank = (name) => data.heat.rows.findIndex((r) => r.n === name) + 1;
+const topHeatRank = heatRank(top.n);
 const topTotalRank = totalRank(top.n);
-const bottomTotalRank = totalRank(bottom.n);
+
+// 費目ごとの「上と下の開き」を実測して比べる
+const spreadOf = (list) => list[0].minutes - list[list.length - 1].minutes;
+const eduSpread = spreadOf(rows);
+const totalSpread = spreadOf(data.rows);
+const heatSpread = spreadOf(data.heat.rows);
+const foodSpread = spreadOf(data.food.rows);
+const isWidest = eduSpread >= totalSpread && eduSpread >= heatSpread && eduSpread >= foodSpread;
+// 教育1位の県が光熱・水道では下位にいるか（反転ネタが成立するかの判定）
+const isFlipped = topHeatRank >= 38;
 ---
-<BaseLayout title="光熱・水道の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（光熱・水道）。日本一「電気やガスが高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="教育の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（教育）。日本一「教育にお金がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
-        <span class="no">EXHIBIT 14</span>
-        <h1>日本一「電気やガスが高い」県はどこだ</h1>
-        <p class="sub">暮らしの広場｜消費者物価地域差指数・光熱・水道（{data.heat.year}）</p>
+        <span class="no">EXHIBIT 16</span>
+        <h1>日本一「教育にお金がかかる」県はどこだ</h1>
+        <p class="sub">暮らしの広場｜消費者物価地域差指数・教育（{data.education.year}）</p>
       </div>
 
-      <Talk speaker="kei">14番目の展示は「光熱・水道」です。電気、ガス、水道、灯油。同じものを買うのに、県によっていくら違うかを並べました。</Talk>
-      <Talk speaker="touko">同じ電気なのに、値段が違うの？</Talk>
-      <Talk speaker="kei">違います。全国の平均を100として、それより高いか安いかで表します。</Talk>
+      <Talk speaker="kei">16番目の展示は「教育」です。授業料や入学金といった、学びにかかる値段の水準を県ごとに並べました。</Talk>
+      <Talk speaker="touko">こちらも、全国の平均が100なのね。</Talk>
+      <Talk speaker="kei">{isWidest ? 'そうです。ここまでの物価の展示のなかで、いちばん差が大きく出た費目です。' : 'そうです。同じ物価でも、費目によって差の出かたはずいぶん違います。'}</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最高</b></span>
-          <span class="label">光熱・水道がいちばん高い</span>
+          <span class="label">教育がいちばん高い</span>
           <strong>{top.n}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最低</b></span>
-          <span class="label">光熱・水道がいちばん安い</span>
+          <span class="label">教育がいちばん安い</span>
           <strong>{bottom.n}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
-      <Talk speaker="touko">上と下で、ずいぶん開きがあるのねえ。</Talk>
-      <Talk speaker="kei">{fmt(top.minutes)}と{fmt(bottom.minutes)}。展示12で見た「総合」は104.0から96.2までの間に収まっていましたから、光熱・水道はその何倍もの幅があります。</Talk>
+      <Talk speaker="touko">上と下で、これほど違うものなの。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}で、差は{eduSpread.toFixed(1)}。総合で見たときの差は{totalSpread.toFixed(1)}、電気やガスでも{heatSpread.toFixed(1)}でした。</Talk>
 
-      <h2>光熱・水道が高い県 TOP5</h2>
+      <h2>教育が高い県 TOP5</h2>
       <ol class="rank">
         {most.map((r) => (
           <li>
@@ -62,7 +73,7 @@ const bottomTotalRank = totalRank(bottom.n);
         ))}
       </ol>
 
-      <h2>光熱・水道が安い県 TOP5</h2>
+      <h2>教育が安い県 TOP5</h2>
       <ol class="rank low">
         {least.map((r, i) => (
           <li>
@@ -74,8 +85,20 @@ const bottomTotalRank = totalRank(bottom.n);
         ))}
       </ol>
 
-      <Talk speaker="touko">総合のときとは、顔ぶれが入れかわっているのね。</Talk>
-      <Talk speaker="kei">はい。{top.n}は総合では{topTotalRank}番目、{bottom.n}は{bottomTotalRank}番目でした。何の値段を見るかで、並びは変わります。</Talk>
+      {isFlipped ? (
+        <>
+          <Talk speaker="touko">この{top.n}、電気やガスの展示では、下のほうにいませんでした？</Talk>
+          <Talk speaker="kei">よく覚えていましたね。{top.n}は光熱・水道では{topHeatRank}番目、総合では{topTotalRank}番目です。</Talk>
+          <Talk speaker="touko">同じ県なのに、見るものを変えると、いちばん上といちばん下を行ったり来たりするのねえ。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">この{top.n}は、ほかの費目ではどうだったのかしら。</Talk>
+          <Talk speaker="kei">光熱・水道では{topHeatRank}番目、総合では{topTotalRank}番目です。</Talk>
+          <Talk speaker="touko">同じ県でも、見るものを変えると順番が動くのねえ。</Talk>
+        </>
+      )}
+      <Talk speaker="kei">物価というひとつの言葉でまとめてしまうと、この動きは見えなくなります。何の値段を見ているのか。それを決めてから、順番を眺めることです。</Talk>
 
       <details class="all">
         <summary>47都道府県すべてを見る（高い順）</summary>
@@ -84,9 +107,9 @@ const bottomTotalRank = totalRank(bottom.n);
         </ol>
       </details>
 
-      <p class="note">この数字は「全国平均＝100」とした指数で、同じものを買うときの値段の水準を表しています。使った量や、支払った金額そのものではありません。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">この数字は「全国平均＝100」とした指数で、教育に関わるものを買うときの値段の水準を表しています。各家庭が実際に支払った金額や、教育にかける熱心さを表すものではありません。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
-      <p class="cross">あわせて読む：<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/exhibits/vacancy/">日本一「空き家が多い」県はどこだ</a></p>
+      <p class="cross">あわせて読む：<a href="/exhibits/utility/">日本一「電気やガスが高い」県はどこだ</a>｜<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/education-budget/">教育の帳場</a></p>
 
       <div class="source">
         <p>出典：{data.source}</p>
