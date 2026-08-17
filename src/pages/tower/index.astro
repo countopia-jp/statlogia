@@ -21,7 +21,7 @@ const vacancy = await getVacancyData();
 const vacancyAvg = vacancy.national;
 
 const price = await getPriceData();
-const priceTop = price.rows[0];
+const eduTop = price.education.rows[0];
 
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 ---
@@ -84,10 +84,10 @@ const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
           <span class="g-unit">総住宅数に占める割合</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
-        <a class="gauge" href="/exhibits/">
-          <span class="g-label">物価がいちばん高い</span>
-          <span class="g-value small">{priceTop.n}</span>
-          <span class="g-unit">{priceTop.minutes}（全国平均＝100）</span>
+        <a class="gauge" href="/exhibits/education-price/">
+          <span class="g-label">教育の物価がいちばん高い</span>
+          <span class="g-value small">{eduTop.n}</span>
+          <span class="g-unit">{eduTop.minutes}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
       </div>
