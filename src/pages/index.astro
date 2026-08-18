@@ -321,7 +321,7 @@ h1{
 }
 h1 .num{color:var(--stamp)}
 .lead{margin-top:18px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
-/* 右カラム：入国印 → 案内人の立ち絵 */
+/* 右カラム：入国印にキャラを重ねる */
 .hero-side{
   position:relative;
   display:flex;flex-direction:column;align-items:stretch;
@@ -329,9 +329,8 @@ h1 .num{color:var(--stamp)}
   min-height:340px;
 }
 @media(max-width:760px){
-  .hero-side{margin-top:0}
+  .hero-side{margin-top:8px;min-height:300px}
 }
-/* 案内人の立ち絵（透過PNG/WebP） */
 /* 案内人の立ち絵：スタンプの左下に重ねる */
 .hero-chara{
   position:absolute;left:-16%;bottom:-16px;
@@ -395,21 +394,23 @@ h1 .num{color:var(--stamp)}
   white-space:nowrap;
 }
 .hero-search button:hover{opacity:.88}
-.stamp-area{display:flex;justify-content:center}
+.stamp-area{display:flex;justify-content:center;position:relative;z-index:1}
+/* 入国印：中の文字は em 基準にして円のサイズに追従させる */
 .stamp{
   width:min(290px,68vw);aspect-ratio:1;border-radius:50%;
   border:5px double var(--stamp);color:var(--stamp);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.14em;
   transform:rotate(-8deg);background:#fff5;
+  font-size:min(16px,3.8vw);
   animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .3s both;
 }
 @keyframes stampIn{from{transform:rotate(-8deg) scale(1.7);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
 @media(prefers-reduced-motion:reduce){.stamp{animation:none}}
-.stamp .top{font-size:.78rem;letter-spacing:.34em;font-weight:600}
-.stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.8rem;letter-spacing:.08em}
-.stamp .big2{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.15rem;letter-spacing:.14em;margin-top:-2px}
-.stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.95rem;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:2px 12px;margin-top:4px}
-.stamp .bottom{font-size:.74rem;letter-spacing:.28em;margin-top:2px}
+.stamp .top{font-size:.62em;letter-spacing:.34em;font-weight:600}
+.stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5em;letter-spacing:.08em}
+.stamp .big2{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.95em;letter-spacing:.14em;margin-top:-.1em}
+.stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8em;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:.1em .6em;margin-top:.22em}
+.stamp .bottom{font-size:.6em;letter-spacing:.28em;margin-top:.1em}
 .gazette{
   flex:1;min-width:340px;max-width:700px;
   display:flex;gap:12px;align-items:center;
@@ -535,12 +536,13 @@ h1 .num{color:var(--stamp)}
 
 /* ── タブレット調整（761〜1024px）──────── */
 @media(min-width:761px) and (max-width:1024px){
-  .desk{padding:28px 0 40px}
+  .desk{padding:28px 0 48px}
   .sheet{padding:28px 4.5% 32px}
   .hero{grid-template-columns:1fr .58fr;gap:24px;padding:4px 0 0}
-  .hero-side{margin-top:4px}
-  .stamp{width:min(200px,26vw)}
-  .hero-chara{max-width:280px}
+  .hero-side{margin-top:4px;min-height:280px}
+  /* 円を縮めれば中の文字も em で追従する */
+  .stamp{width:min(240px,30vw);font-size:min(13px,1.6vw)}
+  .hero-chara{max-width:190px;left:-20%;bottom:-12px}
   .lead{font-size:.95rem;max-width:none;margin-top:14px}
   .hero-title-row{gap:20px}
   .hero-title-row .btn{margin-bottom:.3rem}
@@ -586,10 +588,10 @@ h1 .num{color:var(--stamp)}
   .tape-r{right:-28px}
 
   .hero{padding:4px 0 0;gap:20px}
-  .hero-side{margin-top:8px;min-height:300px}
-  .stamp{width:min(180px,46vw)}
+  /* キャラは左、スタンプは右に振り分ける */
+  .hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}
   .stamp-area{justify-content:flex-end;padding-right:2%}
-  .hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}.hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}
+  .stamp{width:min(200px,44vw)}
   .lead{margin-top:14px;font-size:.92rem}
 
   /* タイトルとボタン：縦積みで詰める */
@@ -601,14 +603,6 @@ h1 .num{color:var(--stamp)}
 }
 
 @media(max-width:600px){
-  /* スタンプ：円を縮めたぶん中の文字も縮める */
-  .stamp{gap:2px}
-  .stamp .top{font-size:.5rem;letter-spacing:.24em}
-  .stamp .big{font-size:1.1rem;letter-spacing:.05em}
-  .stamp .big2{font-size:.72rem;letter-spacing:.1em}
-  .stamp .date{font-size:.6rem;padding:1px 7px;margin-top:3px}
-  .stamp .bottom{font-size:.48rem;letter-spacing:.18em}
-
   /* 瓦版：日付とタイトルを縦に、行間を確保 */
   .gz-list{gap:10px}
   .gz-list li{flex-direction:column;gap:2px;font-size:.82rem;line-height:1.75}
