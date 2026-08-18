@@ -18,11 +18,28 @@ const exhibitCount = new Set(
 
 // カードの数字も統計から出す（月次の再ビルドで自動的に入れ替わる）
 const price = await getPriceData();
+const priceTop = price.rows[0];
+const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const reading = await getReadingData();
+const readingTop = reading.rows[0];
 
 const num = (v) => v.toFixed(1);
+
+// 入国印の日付はビルド時のもの（月初の再ビルドで押し直される）
+const stampDate = new Date().toISOString().slice(0, 7).replace('-', '.');
+
+// きょうの一数字：読み込み済みのデータから、月ごとに1つ選ぶ
+const todayFacts = [
+  { text: `物価がいちばん高いのは${priceTop.n}。全国平均を100として${num(priceTop.minutes)}です。`, href: '/exhibits/price/' },
+  { text: `食べものの値段がいちばん高いのは${foodTop.n}。全国平均を100として${num(foodTop.minutes)}。`, href: '/exhibits/price/' },
+  { text: `電気やガスの値段がいちばん高いのは${heatTop.n}。全国平均を100として${num(heatTop.minutes)}。`, href: '/exhibits/utility/' },
+  { text: `教育にかかる値段がいちばん高いのは${eduTop.n}。全国平均を100として${num(eduTop.minutes)}。`, href: '/exhibits/education-price/' },
+  { text: `本を読んだ人は全国で${num(reading.national)}％。マンガを読んだ人は${num(reading.manga.national)}％でした。`, href: '/exhibits/reading/' },
+  { text: `本を読む人がいちばん多いのは${readingTop.n}で${num(readingTop.minutes)}％です。`, href: '/exhibits/reading/' },
+];
+const todayFact = todayFacts[new Date().getMonth() % todayFacts.length];
 
 const prefectures = [
   ['01','北海道'],['02','青森県'],['03','岩手県'],['04','宮城県'],['05','秋田県'],
@@ -57,12 +74,19 @@ const prefectures = [
             <span class="top">IMMIGRATION</span>
             <span class="big">COUNTOPIA</span>
             <span class="big2">STATS</span>
-            <span class="date">2026.07</span>
+            <span class="date">{stampDate}</span>
             <span class="bottom">入国を許可する</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- きょうの一数字 -->
+    <a class="today" href={todayFact.href}>
+      <span class="today-label">きょうの一数字</span>
+      <span class="today-text">{todayFact.text}</span>
+      <span class="today-more">→</span>
+    </a>
 
     <!-- 県選択（左）＋ 瓦版（右） -->
     <div class="hero-row">
@@ -230,6 +254,21 @@ const prefectures = [
   pointer-events:none;
   z-index:0;
 }
+/* 玄関だけ方眼を細かく重ねる（製図台の上のような密度に） */
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:-32px -6vw -8px;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:14px 14px;
+  opacity:.5;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 58%,transparent 100%);
+  mask-image:linear-gradient(180deg,#000 0%,#000 58%,transparent 100%);
+  pointer-events:none;
+  z-index:0;
+}
 .hero > *{position:relative;z-index:1}
 .portrait-link{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
 .portrait-link:hover{transform:translateY(-3px)}
@@ -261,10 +300,35 @@ h1 .num{color:var(--stamp)}
 @media(max-width:760px){
   .hero-side{margin-top:0}
 }
-/* 県選択（左）＋瓦版（右）を同じ高さで横並び。中央寄せ＋上に余白 */
+/* きょうの一数字 */
+.today{
+  display:flex;align-items:center;gap:16px;
+  max-width:1140px;margin:72px auto 0;
+  padding:14px 20px;
+  border:1.5px solid var(--ink);border-radius:12px;
+  background:#fffdf6;text-decoration:none;color:inherit;
+  box-shadow:0 3px 0 var(--ink);
+  transition:transform .15s,box-shadow .15s;
+}
+.today:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
+.today-label{
+  flex-shrink:0;font-family:"Shippori Mincho",serif;font-weight:800;
+  font-size:.72rem;letter-spacing:.16em;color:var(--paper);
+  background:var(--ink);border-radius:4px;padding:5px 10px;
+}
+.today-text{
+  flex:1;min-width:0;font-family:"Shippori Mincho",serif;
+  font-size:clamp(.88rem,1.6vw,1.08rem);line-height:1.7;
+}
+.today-more{flex-shrink:0;color:var(--stamp);font-size:1.1rem}
+@media(max-width:600px){
+  .today{flex-direction:column;align-items:flex-start;gap:8px;margin-top:40px}
+  .today-more{align-self:flex-end;margin-top:-24px}
+}
+/* 県選択（左）＋瓦版（右）を同じ高さで横並び */
 .hero-row{
   display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;justify-content:center;
-  max-width:1140px;margin:150px auto 28px;
+  max-width:1140px;margin:40px auto 28px;
 }
 .hero-search{
   width:340px;flex-shrink:0;
@@ -273,7 +337,6 @@ h1 .num{color:var(--stamp)}
 }
 @media(max-width:760px){
   .hero-search{width:100%}
-  .hero-row{margin-top:36px}
 }
 .hero-search label{
   display:block;font-size:.78rem;color:var(--ink-soft);margin-bottom:8px;
@@ -443,8 +506,10 @@ h1 .num{color:var(--stamp)}
   .hero-title-row{gap:20px}
   .hero-title-row .btn{margin-bottom:.3rem}
 
+  .today{margin-top:56px;max-width:none}
+
   /* 空きすぎる縦間隔を詰める */
-  .hero-row{margin:130px auto 24px;gap:16px;max-width:none}
+  .hero-row{margin:32px auto 24px;gap:16px;max-width:none}
 
   /* 県選択：縦幅を詰める */
   .hero-search{
@@ -481,6 +546,7 @@ h1 .num{color:var(--stamp)}
     top:auto;bottom:0;width:110%;height:70%;
     background-position:center bottom;opacity:.07;
   }
+  .hero::after{inset:-20px -4vw 0;background-size:12px 12px;opacity:.42}
   .hero-side{margin-top:8px}
   .stamp{width:min(180px,46vw)}
   .lead{margin-top:14px;font-size:.92rem}
@@ -490,7 +556,7 @@ h1 .num{color:var(--stamp)}
   .hero-title-row .btn{margin-bottom:0}
 
   /* 県選択・瓦版の行 */
-  .hero-row{margin:28px auto 20px;gap:14px}
+  .hero-row{margin:20px auto 20px;gap:14px}
 }
 
 @media(max-width:600px){
