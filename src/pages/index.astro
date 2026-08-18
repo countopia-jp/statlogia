@@ -394,14 +394,15 @@ h1 .num{color:var(--stamp)}
   white-space:nowrap;
 }
 .hero-search button:hover{opacity:.88}
-.stamp-area{display:flex;justify-content:center;position:relative;z-index:1}
-/* 入国印：中の文字は em 基準にして円のサイズに追従させる */
+/* 入国印は右端に寄せる（左下にキャラが入るぶんの逃げ） */
+.stamp-area{display:flex;justify-content:flex-end;position:relative;z-index:1;padding-right:2%}
+/* 中の文字は em 基準にして円のサイズに追従させる */
 .stamp{
   width:min(290px,68vw);aspect-ratio:1;border-radius:50%;
   border:5px double var(--stamp);color:var(--stamp);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.14em;
   transform:rotate(-8deg);background:#fff5;
-  font-size:min(16px,3.8vw);
+  font-size:min(20px,4.6vw);
   animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .3s both;
 }
 @keyframes stampIn{from{transform:rotate(-8deg) scale(1.7);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
@@ -541,7 +542,7 @@ h1 .num{color:var(--stamp)}
   .hero{grid-template-columns:1fr .58fr;gap:24px;padding:4px 0 0}
   .hero-side{margin-top:4px;min-height:280px}
   /* 円を縮めれば中の文字も em で追従する */
-  .stamp{width:min(240px,30vw);font-size:min(13px,1.6vw)}
+  .stamp{width:min(240px,30vw);font-size:min(16px,2vw)}
   .hero-chara{max-width:190px;left:-20%;bottom:-12px}
   .lead{font-size:.95rem;max-width:none;margin-top:14px}
   .hero-title-row{gap:20px}
@@ -590,7 +591,6 @@ h1 .num{color:var(--stamp)}
   .hero{padding:4px 0 0;gap:20px}
   /* キャラは左、スタンプは右に振り分ける */
   .hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}
-  .stamp-area{justify-content:flex-end;padding-right:2%}
   .stamp{width:min(200px,44vw)}
   .lead{margin-top:14px;font-size:.92rem}
 
