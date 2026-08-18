@@ -17,11 +17,16 @@ const fmt = (v) => `${v.toFixed(1)}`;
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
 const gap = (top.minutes - bottom.minutes).toFixed(1);
 const ratio = top.minutes / bottom.minutes;
+// 比較はここで真偽値にしておく（テンプレート内に生の < を書くとAstroが壊れる）
+const ratioSmall = ratio < 1.2;
+const bigCityLead = bigInMostCount() >= 3;
+function bigInMostCount() {
+  return most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
+}
 
 // 上位・下位に並ぶ地方を実データから拾う
 const mostRegions = regionsOf(most).join('・');
 const leastRegions = regionsOf(least).join('・');
-const bigInMost = most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
 
 const foodRows = data.food.rows;
 const foodMost = foodRows.slice(0, 5);
@@ -64,7 +69,7 @@ const foodJump = foodTopTotalRank >= 10;
       </div>
 
       <Talk speaker="kei">いちばん高い{top.n}が{fmt(top.minutes)}、いちばん安い{bottom.n}が{fmt(bottom.minutes)}。その差は{gap}ポイントです。</Talk>
-      {ratio < 1.2 ? (
+      {ratioSmall ? (
         <>
           <Talk speaker="touko">思ったより、差は小さいのねえ。倍もちがうのかと思っていました。</Talk>
           <Talk speaker="kei">全国どこでも同じものが同じように届く国ですから。ただ、この数ポイントが毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
@@ -101,7 +106,11 @@ const foodJump = foodTopTotalRank >= 10;
       </ol>
 
       <Talk speaker="touko">上と下では、顔ぶれがまるで違うのねえ。</Talk>
-      <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。{bigInMost >= 3 ? '上位には大きな都市を抱える県が目立ちます。' : '大きな都市を抱える県ばかりが上に来るわけでもありません。'}</Talk>
+      {bigCityLead ? (
+        <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。上位には大きな都市を抱える県が目立ちます。</Talk>
+      ) : (
+        <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。大きな都市を抱える県ばかりが上に来るわけでもありません。</Talk>
+      )}
 
       <h2>ところが、食べものだけを見ると</h2>
 
@@ -123,5 +132,69 @@ const foodJump = foodTopTotalRank >= 10;
       ) : (
         <Talk speaker="touko">いちばん上は、さっきと同じ県なのね。</Talk>
       )}
-      <Talk speaker="kei">食料でいちばん高いのは{foodTop.n}で{fmt(foodTop.minutes)}。総合では{foodTopTotalRank}位、{fmt(foodTopTotal.minutes)}でした{foodJump ? 'から、この費目だけ大きく飛び出しています' : ''}。</Talk>
+      {foodJump ? (
+        <Talk speaker="kei">食料でいちばん高いのは{foodTop.n}で{fmt(foodTop.minutes)}。総合では{foodTopTotalRank}位、{fmt(foodTopTotal.minutes)}でしたから、この費目だけ大きく飛び出しています。</Talk>
+      ) : (
+        <Talk speaker="kei">食料でいちばん高いのは{foodTop.n}で{fmt(foodTop.minutes)}。総合では{foodTopTotalRank}位、{fmt(foodTopTotal.minutes)}でした。</Talk>
+      )}
       <Talk speaker="touko">同じ県なのに、見るものを変えると、順番が動くのねえ。</Talk>
+      <Talk speaker="kei">物価という一語で括っていても、中身は家賃も光熱費も食べものも混ざっています。どれを見るかで、県の姿は変わります。</Talk>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（総合・高い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <p class="note">この数字は「全国平均＝100」とした指数です。金額そのものではなく、全国とくらべてどのくらいか、を表しています。総合には家賃や光熱・水道なども含まれます。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/living/">暮らしの見積所</a>｜<a href="/how-to-read/national-average/">全国平均と単純平均はなぜ違うのか</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}（{data.year}）</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.food .bar{background:#c08a3e}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>

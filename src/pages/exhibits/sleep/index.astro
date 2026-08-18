@@ -11,6 +11,7 @@ const top = rows[0];
 const bottom = rows[rows.length - 1];
 const diff = bottom.minutes - top.minutes;
 const yearlyHours = Math.round((diff * 365) / 60);
+const yearlyDays = Math.round(yearlyHours / 24);
 const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 
 // 同じ値の県があるときに備えて順位は値から引く（短い順）
@@ -44,6 +45,9 @@ const corr = (() => {
   return sxy / Math.sqrt(sxx * syy);
 })();
 const corrLabel = corr === null ? null : corr.toFixed(2);
+// 比較はここで真偽値にしておく（テンプレート内に生の < を書くとAstroが壊れる）
+const corrNegative = corr !== null && corr <= -0.3;
+const corrPositive = corr !== null && corr >= 0.3;
 ---
 <BaseLayout backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -74,8 +78,8 @@ const corrLabel = corr === null ? null : corr.toFixed(2);
       </div>
 
       <Talk speaker="touko">その差、たった{diff}分でしょ？　大したことなくない？</Talk>
-      <Talk speaker="kei">1日{diff}分でも、1年つもれば約{yearlyHours}時間。まる{Math.round(yearlyHours / 24)}日ぶん、{bottom.pref}の人は{top.pref}より長く眠っている計算です。</Talk>
-      <Talk speaker="touko">まる{Math.round(yearlyHours / 24)}日！？　へぇ……！</Talk>
+      <Talk speaker="kei">1日{diff}分でも、1年つもれば約{yearlyHours}時間。まる{yearlyDays}日ぶん、{bottom.pref}の人は{top.pref}より長く眠っている計算です。</Talk>
+      <Talk speaker="touko">まる{yearlyDays}日！？　へぇ……！</Talk>
 
       <h2>眠らない県 TOP5</h2>
       <ol class="rank">
@@ -109,11 +113,13 @@ const corrLabel = corr === null ? null : corr.toFixed(2);
       </details>
 
       <Talk speaker="touko">眠らない県は、どのあたりに集まっているの？</Talk>
-      <Talk speaker="kei">上位5県は{shortestRegions}の県です。{corr !== null && corr <= -0.3
-        ? `通勤時間の展示と並べてみると、通勤が長い県ほど睡眠が短いという関係が出ています。ふたつの数字の相関は${corrLabel}でした。`
-        : corr !== null && corr >= 0.3
-        ? `通勤時間の展示と並べてみると、通勤が長い県ほど睡眠も長いという関係が出ています。相関は${corrLabel}でした。`
-        : `通勤時間と並べてみても、はっきりした関係は見えません${corrLabel ? `（相関は${corrLabel}）` : ''}。`}</Talk>
+      {corrNegative ? (
+        <Talk speaker="kei">上位5県は{shortestRegions}の県です。通勤時間の展示と並べてみると、通勤が長い県ほど睡眠が短いという関係が出ています。ふたつの数字の相関は{corrLabel}でした。</Talk>
+      ) : corrPositive ? (
+        <Talk speaker="kei">上位5県は{shortestRegions}の県です。通勤時間の展示と並べてみると、通勤が長い県ほど睡眠も長いという関係が出ています。相関は{corrLabel}でした。</Talk>
+      ) : (
+        <Talk speaker="kei">上位5県は{shortestRegions}の県です。通勤時間と並べてみても、はっきりした関係は見えませんでした。</Talk>
+      )}
       <Talk speaker="touko">わたしの時代は日が暮れたら寝るしかなかったけど……今の人は忙しいのねぇ。</Talk>
 
       <p class="note">同じ値の県が複数あるときは、同じ順位として並べています。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。</p>

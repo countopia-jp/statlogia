@@ -42,6 +42,9 @@ const corr = (() => {
   return sxy / Math.sqrt(sxx * syy);
 })();
 const corrLabel = corr === null ? null : corr.toFixed(2);
+// 比較はここで真偽値にしておく（テンプレート内に生の < を書くとAstroが壊れる）
+const corrPositive = corr !== null && corr >= 0.3;
+const corrNegative = corr !== null && corr <= -0.3;
 ---
 <BaseLayout title="自動車保有率｜Countopia Stats" description="都道府県別・二人以上の世帯の1世帯当たり自動車保有台数。日本一のクルマ社会はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -84,12 +87,12 @@ const corrLabel = corr === null ? null : corr.toFixed(2);
           <Talk speaker="kei">車がどれだけ要るかは、鉄道やバスの通りぐあいと、日々の移動の長さで変わります。土地ごとに事情はさまざまです。</Talk>
         </>
       )}
-      {corr !== null && corr >= 0.3 ? (
+      {corrPositive ? (
         <Talk speaker="kei">じつは、空き家が多い県ほど車の保有も多いという関係が出ています。ふたつの数字の相関は{corrLabel}。家が余り、けれど車は要る——地方の暮らしの、ひとつの景色です。</Talk>
-      ) : corr !== null && corr <= -0.3 ? (
+      ) : corrNegative ? (
         <Talk speaker="kei">空き家の多い県ほど、車の保有はむしろ少ないという関係が出ています。ふたつの数字の相関は{corrLabel}でした。</Talk>
       ) : (
-        <Talk speaker="kei">空き家率と並べてみると、はっきりした関係は見えません{corrLabel ? `（相関は${corrLabel}）` : ''}。数字どうしが、いつも結びつくとはかぎりません。</Talk>
+        <Talk speaker="kei">空き家率と並べてみると、はっきりした関係は見えません。数字どうしが、いつも結びつくとはかぎりません。</Talk>
       )}
 
       <h2>保有台数が多い県 TOP5</h2>
