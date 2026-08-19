@@ -60,9 +60,6 @@ const {
       <nav class="foot-links" aria-label="サイト情報">
         <span class="foot-heading">この国について</span>
         <a class="foot-link" href="/about/">入国審査場</a>
-        <a class="foot-link" href="/how-to-read/">統計の歩き方</a>
-        <a class="foot-link" href="/sources/">出典一覧</a>
-        <a class="foot-link" href="/guide/">案内人</a>
       </nav>
 
       <nav class="foot-links" aria-label="規約">
@@ -70,6 +67,15 @@ const {
         <a class="foot-link" href="/privacy/">プライバシーポリシー</a>
         <a class="foot-link" href="/terms/">利用規約・お問い合わせ</a>
       </nav>
+
+      <a class="foot-source" href="/sources/">
+        <span class="fs-label">SOURCES</span>
+        <span class="fs-body">
+          <span class="fs-title">出典一覧</span>
+          <span class="fs-note">社会生活基本調査、住宅・土地統計調査、国勢調査ほか。どの数字がどの統計表から来ているか、表番号とe-Statへのリンクをまとめています。</span>
+        </span>
+        <span class="fs-arrow">→</span>
+      </a>
 
       <div class="foot-credit">
         <p>本サイトの図表は政府統計（e-Stat等）を加工して作成しています。</p>
@@ -133,6 +139,30 @@ const {
     }
     .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
 
+    /* 出典一覧：3カラムをまたいで横いっぱいに置く */
+    .foot-source {
+      grid-column: 1 / -1;
+      justify-self: stretch;
+      width: 100%;
+      display: flex; align-items: center; gap: 18px;
+      padding: 14px 20px;
+      border: 1px solid #f4f1e644; border-radius: 10px;
+      background: #ffffff0a; text-decoration: none; color: #f4f1e6;
+      transition: background .15s, border-color .15s;
+    }
+    .foot-source:hover { background: #ffffff14; border-color: #f0b78a88; }
+    .fs-label {
+      flex-shrink: 0; font-family: "IBM Plex Mono", monospace;
+      font-size: .62rem; letter-spacing: .24em; opacity: .6;
+    }
+    .fs-body { flex: 1; min-width: 0; }
+    .fs-title {
+      display: block; font-family: "Shippori Mincho", serif;
+      font-weight: 800; font-size: .95rem;
+    }
+    .fs-note { display: block; font-size: .75rem; opacity: .6; margin-top: 3px; line-height: 1.6; }
+    .fs-arrow { flex-shrink: 0; color: #f0b78a; font-size: 1.1rem; }
+
     .foot-credit {
       grid-column: 1 / -1;
       padding-top: 24px; border-top: 1px solid #f4f1e622;
@@ -154,6 +184,8 @@ const {
     }
     @media (max-width: 560px) {
       .foot { grid-template-columns: 1fr; gap: 28px; padding: 32px 16px 20px; }
+      .foot-source { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .fs-arrow { align-self: flex-end; margin-top: -24px; }
     }
   </style>
   <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1929c443f3004e709b99ca6023f0f912"}'></script><!-- End Cloudflare Web Analytics -->
