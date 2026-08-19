@@ -1,0 +1,181 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { catalog } from '../../data/catalog.js';
+
+// 統計表の名前。表番号の系統から機械的に決まる
+// （00000101xx=基礎データ / 00000102xx=社会生活統計指標 / 00034xxxxx=社会生活基本調査）
+const SURVEY_NAMES = {
+  '0003457337': '社会生活基本調査（生活時間編）',
+  '0003456409': '社会生活基本調査（男女・スポーツの種類別行動者率）',
+  '0003456573': '社会生活基本調査（男女・趣味娯楽の種類別行動者率）',
+};
+const surveyName = (id) => {
+  if (SURVEY_NAMES[id]) return SURVEY_NAMES[id];
+  if (id.startsWith('0000010')) return '社会・人口統計体系 都道府県データ 基礎データ';
+  if (id.startsWith('0000020')) return '社会・人口統計体系 市区町村データ 基礎データ';
+  return '政府統計';
+};
+const isIndicatorTable = (id) => id.startsWith('00000102') || id.startsWith('00000202');
+
+// この国のページ名。リンクの文字に使う
+const PAGE_NAMES = {
+  '/exhibits/sleep/': '展示01　日本一「眠らない県」はどこだ',
+  '/exhibits/commute/': '展示02　「通勤地獄」日本一はどの県だ',
+  '/exhibits/housework/': '展示03　家事時間の男女差、いちばん大きい県は',
+  '/exhibits/hobby/': '展示04　いちばん「趣味に生きる」県はどこだ',
+  '/exhibits/study/': '展示05　日本の大人は、1日何分学ぶのか',
+  '/exhibits/vacancy/': '展示06　日本一「空き家だらけ」の県はどこだ',
+  '/exhibits/cars/': '展示07　日本一の「クルマ社会」はどの県だ',
+  '/exhibits/food/': '展示08　日本一「外食の街」はどの県だ',
+  '/exhibits/day-night-ratio/': '展示09　日本一「昼間だけ賑わう」県はどこだ',
+  '/exhibits/fishing/': '展示10　日本一「釣りをする」県はどこだ',
+  '/exhibits/pachinko/': '展示11　日本一「パチンコをする」県はどこだ',
+  '/exhibits/price/': '展示12　日本一「物価が高い」県はどこだ',
+  '/exhibits/hiking/': '展示13　日本一「山を歩く」県はどこだ',
+  '/exhibits/utility/': '展示14　日本一「電気やガスが高い」県はどこだ',
+  '/exhibits/reading/': '展示15　日本一「本を読む」県はどこだ',
+  '/exhibits/education-price/': '展示16　日本一「教育にお金がかかる」県はどこだ',
+  '/education/': '閲覧室　学びの登記所',
+  '/education-budget/': '閲覧室　教育の帳場',
+  '/ict/': '閲覧室　情報化の帳場',
+  '/living/': '閲覧室　暮らしの見積所',
+  '/population/': '閲覧室　国勢の間',
+  '/muni-finance/': '閲覧室　町の台所事情',
+  '/town-population/': '閲覧室　わが町の人口',
+  '/town-migration/': '閲覧室　人が集まる町・出ていく町',
+  '/town-nursery/': '閲覧室　保育所は、近いか',
+  '/town-daycare/': '閲覧室　介護は、近いか',
+  '/town-finance/': '閲覧室　わが町の財政と教育費',
+  '/town-commute/': '閲覧室　通勤の足は、何か',
+};
+const pageName = (path) => PAGE_NAMES[path] || path;
+
+// 公開済みの指標を、統計表ごとにまとめる
+const groups = new Map();
+for (const c of catalog) {
+  if (c.status !== 'published') continue;
+  for (const id of Object.values(c.statsDataId || {})) {
+    if (!id) continue;
+    if (!groups.has(id)) groups.set(id, { id, indicators: [], pages: new Set() });
+    const g = groups.get(id);
+    if (!g.indicators.some((x) => x.key === c.key)) g.indicators.push(c);
+    for (const p of c.usedIn || []) g.pages.add(p);
+  }
+}
+const tables = [...groups.values()]
+  .map((g) => ({ ...g, pages: [...g.pages].sort() }))
+  .sort((a, b) => a.id.localeCompare(b.id));
+
+const indicatorCount = new Set(
+  catalog.filter((c) => c.status === 'published').map((c) => c.key)
+).size;
+---
+<BaseLayout title="出典一覧｜Countopia Stats" description="Countopia Statsで使っている政府統計の一覧。統計表ごとに、表番号とe-Statへのリンクをまとめています。" backHref="/about/" backLabel="入国審査場">
+  <main>
+    <section class="sources">
+      <div class="sec-head">
+        <span class="no">SOURCES</span>
+        <h1>出典一覧</h1>
+        <p class="sub">この国の数字が、どの統計表から来ているか。{tables.length}の表・{indicatorCount}の指標をまとめました。</p>
+      </div>
+
+      <p class="intro">この国の数字は、すべて政府統計の総合窓口〈e-Stat〉から取得しています。表示のために割合や「1人あたり」に直しているものもありますが、もとの数字はここに挙げた統計表のとおりです。確かめたい数字があれば、元の表を直接ご覧ください。</p>
+
+      <p class="note">リンクが切れていた場合は、<strong>表番号</strong>でe-Stat内を検索すると同じ表に辿り着けます。表番号は変わりません。</p>
+
+      {tables.map((t) => (
+        <section class="tbl">
+          <h2>
+            <span class="tbl-id">{t.id}</span>
+            <span class="tbl-name">{surveyName(t.id)}</span>
+          </h2>
+
+          <div class="tbl-body">
+            <div class="tbl-col">
+              <h3>この表から取っている数字</h3>
+              <ul class="ind">
+                {t.indicators.map((c) => (
+                  <li>
+                    {c.label}
+                    {c.unit ? <span class="u">（{c.unit}）</span> : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="tbl-col">
+              <h3>使っているページ</h3>
+              {t.pages.length ? (
+                <ul class="pages">
+                  {t.pages.map((p) => <li><a href={p}>{pageName(p)}</a></li>)}
+                </ul>
+              ) : (
+                <p class="empty">（準備中）</p>
+              )}
+            </div>
+          </div>
+
+          <p class="links">
+            e-Statで見る：
+            <a href={`https://www.e-stat.go.jp/dbview?sid=${t.id}`} target="_blank" rel="noopener">統計表</a>
+            ｜
+            <a href={`https://www.e-stat.go.jp/stat-search/database?statdisp_id=${t.id}`} target="_blank" rel="noopener">データベース</a>
+            {isIndicatorTable(t.id) ? <span class="hint">　※この系統はコードに「#」が付きます</span> : null}
+          </p>
+        </section>
+      ))}
+
+      <div class="source">
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+        <p>このページは指標カタログから自動で作られています。展示や窓口が増えれば、ここにも自動で並びます。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.sources{padding:56px 0 80px;max-width:900px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px}
+.intro{margin-top:24px;line-height:1.9;font-size:.95rem}
+.note{
+  margin-top:16px;padding:12px 16px;
+  border:1px solid var(--line);border-radius:10px;background:#fff8;
+  font-size:.85rem;color:var(--ink-soft);line-height:1.8;
+}
+.note strong{color:var(--ink)}
+
+.tbl{
+  margin:28px 0 0;padding:20px 22px;
+  border:1px solid var(--line);border-radius:12px;background:#fff8;
+}
+.tbl h2{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  margin:0 0 14px;padding-bottom:12px;border-bottom:1px dashed var(--line);
+}
+.tbl-id{
+  font-family:"IBM Plex Mono",monospace;font-size:.95rem;font-weight:600;
+  color:var(--stamp);letter-spacing:.02em;
+}
+.tbl-name{font-family:"Shippori Mincho",serif;font-size:1.02rem;font-weight:800}
+.tbl-body{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:640px){.tbl-body{grid-template-columns:1fr;gap:14px}}
+.tbl-col h3{
+  font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);
+  margin:0 0 8px;font-weight:600;
+}
+.ind,.pages{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.ind li{font-size:.88rem;line-height:1.7}
+.ind .u{font-size:.78rem;color:var(--ink-soft)}
+.pages li{font-size:.88rem;line-height:1.7}
+.pages a{color:var(--stamp)}
+.empty{font-size:.85rem;color:var(--ink-soft);margin:0}
+.links{
+  margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line);
+  font-size:.85rem;color:var(--ink-soft);
+}
+.links a{color:var(--stamp)}
+.hint{font-size:.76rem}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+.source p{margin:0 0 6px}
+</style>

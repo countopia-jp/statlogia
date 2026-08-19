@@ -229,13 +229,13 @@ const prefectures = [
         <a class="portrait-link" href="/guide/#kei">
           <figure class="portrait">
             <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
-            <figcaption><b>京</b><span>統計局案内人</span></figcaption>
+            <figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption><figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption>
           </figure>
         </a>
         <a class="portrait-link" href="/guide/#touko">
           <figure class="portrait">
             <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
-            <figcaption><b>橙子</b><span>大正から来た子</span></figcaption>
+            <figcaption><b>橙子</b><span class="romaji">TOUKO</span><span>大正から来た子</span></figcaption>
           </figure>
         </a>
       </div>
@@ -534,6 +534,10 @@ h1 .num{color:var(--stamp)}
 }
 .portrait figcaption b{font-family:"Shippori Mincho",serif;font-size:1.05rem}
 .portrait figcaption span{font-size:.72rem;letter-spacing:.18em;color:var(--ink-soft)}
+.portrait figcaption .romaji{
+  font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:600;
+  letter-spacing:.14em;color:var(--stamp);
+}
 
 /* ── タブレット調整（761〜1024px）──────── */
 @media(min-width:761px) and (max-width:1024px){

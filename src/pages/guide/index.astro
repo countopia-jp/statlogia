@@ -24,7 +24,7 @@ import Talk from '../../components/Talk.astro';
       </figure>
       <div class="guide-text">
         <span class="guide-no">GUIDE 01</span>
-        <h2>京<span class="guide-role">統計局案内人</span></h2>
+        <h2>京<span class="guide-romaji">KEI</span><span class="guide-role">統計局案内人</span></h2>
         <p>
           この国の数字をご案内する、統計局の案内人。落ち着いた物腰で、平均や順位、
           倍率といった数字を一つひとつ丁寧に説明してくれます。
@@ -41,7 +41,7 @@ import Talk from '../../components/Talk.astro';
       </figure>
       <div class="guide-text">
         <span class="guide-no">GUIDE 02</span>
-        <h2>橙子<span class="guide-role">大正から来た子</span></h2>
+        <h2>橙子<span class="guide-romaji">TOUKO</span><span class="guide-role">大正から来た子</span></h2>
         <p>
           大正の世からこの国にやってきた、京の道連れ。現代の数字に触れるたび、
           素直に驚いたり、ときどき鋭い一言を挟んだりします。
@@ -82,6 +82,12 @@ import Talk from '../../components/Talk.astro';
     .guide-text h2 {
       font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem;
       margin: 6px 0 14px; display: flex; align-items: baseline; justify-content: center; gap: 10px;
+      flex-wrap: wrap;
+    }
+    /* 「橙子と京」が地名に読まれないよう、読みを添える */
+    .guide-romaji {
+      font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.16em; color: #b23a2f;
     }
     .guide-role { font-size: 0.75rem; font-weight: 400; color: #888; }
     .guide-text p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 14px; }
