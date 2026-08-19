@@ -5,6 +5,7 @@ import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
+import { getWasteData } from '../lib/waste.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -24,6 +25,7 @@ const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
+const waste = await getWasteData();
 
 const num = (v) => v.toFixed(1);
 
@@ -141,14 +143,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/utility/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>14</b></span>
-          <span class="pc-kind">最高・{heatTop.n}</span>
-          <span class="pc-num">{num(heatTop.minutes)}</span>
-          <h3>日本一「電気やガスが高い」県はどこだ</h3>
-          <p>光熱・水道の消費者物価地域差指数を47都道府県で比較。同じ電気やガスでも、県によって値段の水準は違います。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/reading/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>15</b></span>
           <span class="pc-kind">全国平均</span>
@@ -163,6 +157,14 @@ const prefectures = [
           <span class="pc-num">{num(eduTop.minutes)}</span>
           <h3>日本一「教育にお金がかかる」県はどこだ</h3>
           <p>教育の消費者物価地域差指数を47都道府県で比較。何の値段を見るかで、県の順番は入れかわります。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/waste/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>17</b></span>
+          <span class="pc-kind">全国平均</span>
+          <span class="pc-num">{Math.round(waste.national)}<small>g</small></span>
+          <h3>日本一「ごみを出す」県はどこだ</h3>
+          <p>1人が1日に出すごみの量を47都道府県で比較。全国の量は、この{waste.trend.length - 1}年でずいぶん減りました。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>
@@ -229,7 +231,7 @@ const prefectures = [
         <a class="portrait-link" href="/guide/#kei">
           <figure class="portrait">
             <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
-            <figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption><figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption>
+            <figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption>
           </figure>
         </a>
         <a class="portrait-link" href="/guide/#touko">
@@ -595,7 +597,7 @@ h1 .num{color:var(--stamp)}
   .hero{padding:4px 0 0;gap:20px}
   /* キャラは左、スタンプは右に振り分ける */
   .hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}
-  .stamp{width:min(260px,58vw)}.stamp{width:min(260px,58vw)}
+  .stamp{width:min(260px,58vw)}
   .lead{margin-top:14px;font-size:.92rem}
 
   /* タイトルとボタン：縦積みで詰める */

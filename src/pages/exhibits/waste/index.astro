@@ -1,0 +1,265 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getWasteData } from '../../../lib/waste.js';
+
+const data = await getWasteData();
+const rows = data.rows;
+const most = rows.slice(0, 5);
+const least = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = data.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${Math.round(v)}g`;
+
+const rec = data.recycle;
+const recRows = rec.rows;
+const recMost = recRows.slice(0, 5);
+const recTop = recRows[0];
+const recBottom = recRows[recRows.length - 1];
+const recFmt = (v) => `${v.toFixed(1)}％`;
+
+const rankOf = (list, v) => list.findIndex((r) => r.minutes === v) + 1;
+const spread = Number((top.minutes / bottom.minutes).toFixed(2));
+
+// 相関はほぼゼロか、向きがあるか。実測から出し分ける
+const corr = data.corr;
+const corrPositive = corr >= 0.3;
+const corrNegative = corr <= -0.3;
+const corrFlat = !corrPositive && !corrNegative;
+
+// 推移：全国平均。時点が増えても等間隔で間引けるようにする
+const trend = data.trend;
+const first = trend[0];
+const last = trend[trend.length - 1];
+const spanYears = trend.length - 1;
+const dropped = first.waste - last.waste;
+const droppedPct = ((dropped / first.waste) * 100).toFixed(1);
+const trendMax = Math.max(...trend.map((t) => t.waste));
+const step = Math.max(1, Math.round(spanYears / 4));
+const trendShown = trend.filter((_, i) => i % step === 0 || i === trend.length - 1);
+const recDropped = last.recycle - first.recycle;
+const recFlat = Math.abs(recDropped) < 3;
+
+// 排出量が多い県が、リサイクル率では何番目か
+const recRankOf = (name) => {
+  const r = recRows.find((x) => x.n === name);
+  return r ? rankOf(recRows, r.minutes) : null;
+};
+const topRecRank = recRankOf(top.n);
+const bottomRecRank = recRankOf(bottom.n);
+// 両方の上位にいる県（多く出すが、よく再生する）
+const bothHigh = rows
+  .slice(0, 10)
+  .map((r) => ({ n: r.n, waste: rankOf(rows, r.minutes), rec: recRankOf(r.n) }))
+  .filter((r) => r.rec !== null && r.rec <= 10)
+  .sort((a, b) => a.rec - b.rec)[0];
+---
+<BaseLayout title="1人1日当たりのごみ排出量｜Countopia Stats" description="都道府県別・1人1日当たりのごみ排出量とリサイクル率。日本一ごみを出す県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 17</span>
+        <h1>日本一「ごみを出す」県はどこだ</h1>
+        <p class="sub">暮らしの広場｜1人が1日に出すごみの量（{data.year}年度）</p>
+      </div>
+
+      <Talk speaker="kei">17番目の展示は「ごみ」です。1人が1日に出すごみの量を、県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
+      <Talk speaker="touko">{Math.round(avg)}グラム……{avg >= 900 ? 'かなりの' : avg >= 700 ? 'それなりの' : 'ちょっとした'}重さねえ。毎日それだけ捨てているの。</Talk>
+      <Talk speaker="kei">家庭から出るごみだけでなく、お店や事業所から出るごみも含めた量を、住んでいる人の数で割ったものです。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">ごみがいちばん多い</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
+          <span class="label">ごみがいちばん少ない</span>
+          <strong>{bottom.n}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <h2>ごみが多い県 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(rows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>ごみが少ない県 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">上と下で、{spread >= 1.5 ? 'ずいぶん' : 'そこそこ'}違うのね。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread}倍です。</Talk>
+
+      <h2>では、リサイクルはどうか</h2>
+
+      <Talk speaker="kei">同じ調査に、ごみのうち再生利用にまわった割合も出ています。全国では{recFmt(rec.national)}。</Talk>
+      <Talk speaker="touko">さっきと顔ぶれが変わるのかしら。</Talk>
+
+      <ol class="rank recycle">
+        {recMost.map((r) => (
+          <li>
+            <span class="pos">{rankOf(recRows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / recTop.minutes) * 100}%`}></span>
+            <span class="min">{recFmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="kei">ごみがいちばん多い{top.n}は、リサイクル率では{topRecRank}番目。いちばん少ない{bottom.n}は{bottomRecRank}番目です。</Talk>
+      {corrFlat ? (
+        <>
+          <Talk speaker="touko">……順番が、ばらばらねえ。</Talk>
+          <Talk speaker="kei">そうなんです。ごみを多く出す県ほど再生しない、という関係は見あたりません。二つの数字の結びつきを測ると、ほとんどゼロでした。量の話と、再生の話は、別なんです。</Talk>
+        </>
+      ) : corrNegative ? (
+        <>
+          <Talk speaker="touko">多く出す県ほど、再生していないみたい。</Talk>
+          <Talk speaker="kei">測ってみると、たしかにその向きの関係が出ています。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">多く出す県ほど、よく再生しているの？</Talk>
+          <Talk speaker="kei">測ってみると、その向きの関係が出ています。多いからこそ、分けるしくみが育ったのかもしれません。</Talk>
+        </>
+      )}
+      {bothHigh ? (
+        <Talk speaker="kei">たとえば{bothHigh.n}は、ごみの多さで{bothHigh.waste}番目、リサイクル率でも{bothHigh.rec}番目。たくさん出して、たくさん分けている県です。</Talk>
+      ) : null}
+
+      <h2>ところで、この{spanYears}年で</h2>
+
+      <Talk speaker="kei">この数字は毎年とられています。{first.year}年度からの推移を見てみましょう。</Talk>
+
+      <ol class="rank trend">
+        {trendShown.map((t) => (
+          <li>
+            <span class="pos yr">{t.year}</span>
+            <span class="pref">年度</span>
+            <span class="bar" style={`--w:${(t.waste / trendMax) * 100}%`}></span>
+            <span class="min">{fmt(t.waste)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">あら。だんだん短くなっていくわ。</Talk>
+      <Talk speaker="kei">{first.year}年度は{fmt(first.waste)}でした。いまは{fmt(last.waste)}。{spanYears}年で{Math.round(dropped)}グラム、{droppedPct}％減っています。</Talk>
+      <Talk speaker="touko">じゃあ、みんなで一生懸命リサイクルしたのねえ。</Talk>
+      {recFlat ? (
+        <>
+          <Talk speaker="kei">それが、そうでもないんです。リサイクル率は{first.year}年度が{recFmt(first.recycle)}、いまが{recFmt(last.recycle)}。ほとんど変わっていません。</Talk>
+          <Talk speaker="touko">……じゃあ、どうして減ったの？</Talk>
+          <Talk speaker="kei">そもそも捨てる量が減ったから、ということになります。分けて再生する割合ではなく、出す量そのものが小さくなった。この統計から言えるのは、そこまでです。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="kei">リサイクル率も{first.year}年度の{recFmt(first.recycle)}から{recFmt(last.recycle)}へ動いています。こちらも一緒に見ておきたいところです。</Talk>
+        </>
+      )}
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（ごみが多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（リサイクル率が高い順）</summary>
+        <ol>
+          {recRows.map((r) => <li>{r.n}　{recFmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <details class="all">
+        <summary>全国平均の推移をすべて見る</summary>
+        <ol class="rank trend full">
+          {trend.map((t) => (
+            <li>
+              <span class="pos yr">{t.year}</span>
+              <span class="pref">年度</span>
+              <span class="bar" style={`--w:${(t.waste / trendMax) * 100}%`}></span>
+              <span class="min">{fmt(t.waste)}</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+
+      <p class="note">ここでいう「ごみ」は、家庭から出るものに加えて、お店や事業所から出て市区町村が集めるものも含みます。それを住んでいる人の数で割っているので、通勤・通学や観光で人がたくさん訪れる県は、その分だけ多く見えます。リサイクル率は、集めたごみのうち再生利用にまわった量の割合です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/exhibits/utility/">日本一「電気やガスが高い」県はどこだ</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .pos.yr{font-size:.85rem}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.recycle .bar{background:#2d6a4f}
+.rank.trend .bar{background:#8a6a3a}
+.rank.trend li{grid-template-columns:3.4em 3em 1fr auto}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+/* 推移は棒つきで縦一列に並べる（2段組にしない） */
+.all ol.rank{columns:1;margin-top:14px;list-style:none;padding:0}
+.all ol.rank.full{gap:6px}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>

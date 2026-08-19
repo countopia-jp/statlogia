@@ -7,3 +7,7 @@ dist/
 .astro/
 sports-meta.txt
 tables2021.txt
+
+# 調査用の一時出力
+housing-codes.txt
+housing-both.txt
