@@ -10,7 +10,7 @@
 // スキーマ:
 //   key         内部識別子（スラッグ）
 //   label       表示名
-//   category    生活場面カテゴリ（population/education/work/housing/money/time/finance）
+//　　category    生活場面カテゴリ（population/education/work/housing/money/time/finance/nature）
 //   ※重要：categoryは指標そのものの性質で決める。使われているページ(usedIn)では決めない。
 //     1ページが複数カテゴリの指標を組み合わせて構成されることは多いが(例:暮らしの見積所=work+housing)、
 //     各指標のcategoryタグは常に単体で見た時の本来の分類を保つこと。今後カテゴリを追加する際も
@@ -939,5 +939,37 @@ export const catalog = [
     points: 19,
     status: 'published',
     usedIn: ['/exhibits/waste/'],
+  },
+    // ---------- B 自然環境 ----------
+  {
+    key: 'sunshine-hours',
+    label: '日照時間（年間）',
+    category: 'nature',
+    system: 'B',
+    scope: 'pref',
+    statsDataId: { pref: '0000010102' },
+    fetchMode: 'code',
+    code: 'B4108',
+    unit: '時間',
+    direction: 'neutral',
+    points: 50,
+    status: 'published',
+    usedIn: ['/exhibits/sunshine/'],
+  },
+  {
+    key: 'clear-days',
+    label: '快晴日数（年間）',
+    category: 'nature',
+    system: 'B',
+    scope: 'pref',
+    statsDataId: { pref: '0000010102' },
+    fetchMode: 'code',
+    code: 'B4104',
+    unit: '日',
+    direction: 'neutral',
+    points: 46,
+    status: 'published',
+    codeNote: '雲量の目視観測が終了したため2020年で更新停止。47県がそろう最新は2018年',
+    usedIn: ['/exhibits/sunshine/'],
   },
 ];

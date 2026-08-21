@@ -6,6 +6,7 @@ import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
 import { getWasteData } from '../lib/waste.js';
+import { getClimateData } from '../lib/climate.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -26,6 +27,7 @@ const eduTop = price.education.rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 const waste = await getWasteData();
+const climate = await getClimateData();
 
 const num = (v) => v.toFixed(1);
 
@@ -144,14 +146,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/reading/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>15</b></span>
-          <span class="pc-kind">全国平均</span>
-          <span class="pc-num">{num(reading.national)}<small>％</small></span>
-          <h3>日本一「本を読む」県はどこだ</h3>
-          <p>過去1年間に本を読んだ人の割合を47都道府県で比較。マンガを見ると、また別の景色が現れます。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/education-price/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>16</b></span>
           <span class="pc-kind">最高・{eduTop.n}</span>
@@ -166,6 +160,14 @@ const prefectures = [
           <span class="pc-num">{Math.round(waste.national)}<small>g</small></span>
           <h3>日本一「ごみを出す」県はどこだ</h3>
           <p>1人が1日に出すごみの量を47都道府県で比較。全国の量は、この{waste.trend.length - 1}年でずいぶん減りました。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/sunshine/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>18</b></span>
+          <span class="pc-kind">最長・{climate.sun.top.n}</span>
+          <span class="pc-num">{Math.round(climate.sun.top.minutes).toLocaleString()}<small>時間</small></span>
+          <h3>日本一「晴れる」県はどこだ</h3>
+          <p>1年に日が差した時間を47都道府県で比較。「快晴の日」を数えると、順番は変わります。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>

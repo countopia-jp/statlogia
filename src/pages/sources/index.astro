@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { catalog } from '../../data/catalog.js';
+import { exhibitNameOf } from '../../data/exhibits.js';
 
 // 統計表の名前。表番号の系統から機械的に決まる
 // （00000101xx=基礎データ / 00000102xx=社会生活統計指標 / 00034xxxxx=社会生活基本調査）
@@ -17,25 +18,9 @@ const surveyName = (id) => {
 };
 const isIndicatorTable = (id) => id.startsWith('00000102') || id.startsWith('00000202');
 
-// この国のページ名。リンクの文字に使う
-const PAGE_NAMES = {
-  '/exhibits/sleep/': '展示01　日本一「眠らない県」はどこだ',
-  '/exhibits/commute/': '展示02　「通勤地獄」日本一はどの県だ',
-  '/exhibits/housework/': '展示03　家事時間の男女差、いちばん大きい県は',
-  '/exhibits/hobby/': '展示04　いちばん「趣味に生きる」県はどこだ',
-  '/exhibits/study/': '展示05　日本の大人は、1日何分学ぶのか',
-  '/exhibits/vacancy/': '展示06　日本一「空き家だらけ」の県はどこだ',
-  '/exhibits/cars/': '展示07　日本一の「クルマ社会」はどの県だ',
-  '/exhibits/food/': '展示08　日本一「外食の街」はどの県だ',
-  '/exhibits/day-night-ratio/': '展示09　日本一「昼間だけ賑わう」県はどこだ',
-  '/exhibits/fishing/': '展示10　日本一「釣りをする」県はどこだ',
-  '/exhibits/pachinko/': '展示11　日本一「パチンコをする」県はどこだ',
-  '/exhibits/price/': '展示12　日本一「物価が高い」県はどこだ',
-  '/exhibits/hiking/': '展示13　日本一「山を歩く」県はどこだ',
-  '/exhibits/utility/': '展示14　日本一「電気やガスが高い」県はどこだ',
-  '/exhibits/reading/': '展示15　日本一「本を読む」県はどこだ',
-  '/exhibits/education-price/': '展示16　日本一「教育にお金がかかる」県はどこだ',
-  '/exhibits/waste/': '展示17　日本一「ごみを出す」県はどこだ',
+// 閲覧室の窓口名だけ手で持つ。
+// 展示の名前は exhibits.js の exhibitNameOf から引くので、ここに書かない。
+const ROOM_NAMES = {
   '/education/': '閲覧室　学びの登記所',
   '/education-budget/': '閲覧室　教育の帳場',
   '/ict/': '閲覧室　情報化の帳場',
@@ -49,7 +34,7 @@ const PAGE_NAMES = {
   '/town-finance/': '閲覧室　わが町の財政と教育費',
   '/town-commute/': '閲覧室　通勤の足は、何か',
 };
-const pageName = (path) => PAGE_NAMES[path] || path;
+const pageName = (path) => exhibitNameOf.get(path) || ROOM_NAMES[path] || path;
 
 // 公開済みの指標を、統計表ごとにまとめる
 const groups = new Map();

@@ -71,6 +71,9 @@ export const exhibits = [
   { no: 17, href: '/exhibits/waste/', place: 'living',
     title: '日本一「ごみを出す」県はどこだ',
     lead: '1人が1日に出すごみの量を47都道府県で比較。全国の量は、この18年でずいぶん減りました。' },
+  { no: 18, href: '/exhibits/sunshine/', place: 'living',
+    title: '日本一「晴れる」県はどこだ',
+    lead: '1年に日が差した時間を47都道府県で比較。「快晴の日」を数えると、順番は変わります。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書
