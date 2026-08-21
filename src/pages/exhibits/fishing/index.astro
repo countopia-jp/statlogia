@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getFishingData } from '../../../lib/fishing.js';
+import { LANDLOCKED } from '../../../data/geo.js';
 
 const data = await getFishingData();
 const rows = data.rows;
@@ -21,7 +22,6 @@ const ratio = (top.minutes / avg).toFixed(1);
 const diff = (top.minutes - bottom.minutes).toFixed(1);
 
 // 海に面していない8県。下位の顔ぶれを実データから判定する
-const LANDLOCKED = ['栃木県', '群馬県', '埼玉県', '山梨県', '長野県', '岐阜県', '滋賀県', '奈良県'];
 const landlockedInLeast = least.filter((r) => LANDLOCKED.includes(r.n));
 const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
 ---
