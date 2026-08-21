@@ -1,0 +1,271 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getClimateData } from '../../../lib/climate.js';
+
+const data = await getClimateData();
+
+const sun = data.sun;
+const rows = sun.rows;
+const most = rows.slice(0, 5);
+const least = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = sun.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${Math.round(v).toLocaleString()}時間`;
+
+const clear = data.clear;
+const clearRows = clear.rows;
+const clearMost = clearRows.slice(0, 5);
+const clearTop = clearRows[0];
+const clearFmt = (v) => `${Math.round(v)}日`;
+
+const rankOf = (list, v) => list.findIndex((r) => r.minutes === v) + 1;
+const spread = sun.spread;
+const clearSpread = clear.spread;
+const spreadWide = spread >= 1.5;
+const clearSpreadWider = clearSpread >= spread * 2;
+
+// 2つの数え方の突き合わせ（顔ぶれは統計更新で変わるので固定で書かない）
+const cmp = data.compare;
+const bothTop = cmp.bothTop;
+const bothLow = cmp.bothLow;
+const bothTopNames = bothTop.map((r) => r.n).join('と');
+const bothLowNames = bothLow.map((r) => r.n).join('と');
+const hasBothTop = bothTop.length >= 1;
+const hasBothLow = bothLow.length >= 1;
+const onlyTwoTop = bothTop.length >= 1 && bothTop.length <= 2;
+
+const corr = cmp.correlation;
+const corrStrong = corr >= 0.6;
+const corrMild = corr >= 0.3 && corr < 0.6;
+
+// 推移：47県平均。時点が増えても等間隔で間引ける
+const trend = sun.trend;
+const first = trend[0];
+const last = trend[trend.length - 1];
+const spanYears = last.year - first.year;
+const diff = last.minutes - first.minutes;
+const diffPct = ((diff / first.minutes) * 100).toFixed(1);
+const trendFlat = Math.abs(diff / first.minutes) <= 0.05;
+const trendUp = diff > 0;
+const trendMax = Math.max(...trend.map((t) => t.minutes));
+const step = Math.max(1, Math.round((trend.length - 1) / 4));
+const trendShown = trend.filter((_, i) => i % step === 0 || i === trend.length - 1);
+---
+<BaseLayout title="日照時間と快晴日数｜Countopia Stats" description="都道府県別の年間日照時間と快晴日数。日本でいちばん日が差す県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 18</span>
+        <h1>日本一「晴れる」県はどこだ</h1>
+        <p class="sub">暮らしの広場｜1年間に日が差した時間（{sun.year}年）</p>
+      </div>
+
+      <Talk speaker="kei">18番目の展示は「晴れ」です。1年のあいだに日が差した時間を、県ごとに並べました。47県の平均は{fmt(avg)}。</Talk>
+      <Talk speaker="touko">お日さまの出ている時間を、一年ぶん足すのねえ。</Talk>
+      <Talk speaker="kei">はい。各県の気象台で測った記録です。ひとつ先にお断りしておくと、これは県のまんなかの空ではなく、観測所のある場所の空です。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最長</b></span>
+          <span class="label">いちばん日が差す</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最短</b></span>
+          <span class="label">いちばん日が差さない</span>
+          <strong>{bottom.n}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <h2>日が差す時間が長い県 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(rows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>日が差す時間が短い県 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">上と下で、{spreadWide ? 'ずいぶん' : 'そこそこ'}違うのね。</Talk>
+      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread}倍です。</Talk>
+
+      <h2>ところが、「快晴の日」を数えると</h2>
+
+      <Talk speaker="kei">同じ調査に、雲がほとんど出なかった日を数えた記録もあります。{clear.year}年で、47県の平均は{clearFmt(clear.national)}。</Talk>
+      <Talk speaker="touko">こちらも、さっきと同じ順番かしら。</Talk>
+
+      <ol class="rank clear">
+        {clearMost.map((r) => (
+          <li>
+            <span class="pos">{rankOf(clearRows, r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / clearTop.minutes) * 100}%`}></span>
+            <span class="min">{clearFmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      {cmp.sameWinner ? (
+        <Talk speaker="kei">どちらの数え方でも、いちばんは{top.n}でした。</Talk>
+      ) : (
+        <>
+          <Talk speaker="kei">日が差す時間で1位だった{top.n}は、快晴の日数では{cmp.sunTopInClear}番目。かわりに{clearTop.n}が1番になります。</Talk>
+          <Talk speaker="touko">……入れかわってしまったわ。</Talk>
+        </>
+      )}
+      {hasBothTop ? (
+        <Talk speaker="kei">{onlyTwoTop ? '両方の上位5に残るのは' : '両方の上位5に残るのは'}{bothTopNames}です。</Talk>
+      ) : (
+        <Talk speaker="kei">両方の上位5に残る県は、ひとつもありません。</Talk>
+      )}
+      <Talk speaker="touko">下のほうは、どうなの。</Talk>
+      {hasBothLow ? (
+        <Talk speaker="kei">どちらでも下から5番目までに入っているのは{bothLowNames}です。</Talk>
+      ) : (
+        <Talk speaker="kei">下のほうは、二つの数え方で顔ぶれが揃いません。</Talk>
+      )}
+
+      <Talk speaker="touko">同じ「晴れ」を数えているのに、ずいぶん違うのねえ。</Talk>
+      <Talk speaker="kei">開きかたも違います。日が差す時間は上と下で{spread}倍でしたが、快晴の日数は{clearSpread}倍。{clearSpreadWider ? '桁がひとつ変わります。' : '同じ空を、別のものさしで測っているからです。'}</Talk>
+      {corrStrong ? (
+        <Talk speaker="kei">二つの数字はよく似た動きをします。それでも、上位の顔ぶれはこのとおり入れ替わります。</Talk>
+      ) : corrMild ? (
+        <Talk speaker="kei">二つの数字はゆるやかに似た動きをしますが、顔ぶれは一致しません。</Talk>
+      ) : (
+        <Talk speaker="kei">二つの数字は、あまり似た動きをしていません。</Talk>
+      )}
+
+      <h2>この{spanYears}年で</h2>
+
+      <Talk speaker="kei">日が差す時間のほうは、毎年とられています。{first.year}年からの47県平均を並べてみましょう。</Talk>
+
+      <ol class="rank trend">
+        {trendShown.map((t) => (
+          <li>
+            <span class="pos yr">{t.year}</span>
+            <span class="pref">年</span>
+            <span class="bar" style={`--w:${(t.minutes / trendMax) * 100}%`}></span>
+            <span class="min">{fmt(t.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      {trendFlat ? (
+        <>
+          <Talk speaker="touko">……あまり、変わらないのねえ。</Talk>
+          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％です。伸びも縮みもしていません。</Talk>
+          <Talk speaker="touko">半世紀ちかく、同じだけお日さまが出ていたの。</Talk>
+          <Talk speaker="kei">少なくとも、この数字はそう言っています。年ごとの上下はありますが、長い目で見ると同じところに戻ってきます。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">だんだん{trendUp ? '長く' : '短く'}なっているみたい。</Talk>
+          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％です。</Talk>
+        </>
+      )}
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（日が差す時間が長い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（快晴の日数が多い順・{clear.year}年）</summary>
+        <ol>
+          {clearRows.map((r) => <li>{r.n}　{clearFmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <details class="all">
+        <summary>47県平均の推移をすべて見る</summary>
+        <ol class="rank trend full">
+          {trend.map((t) => (
+            <li>
+              <span class="pos yr">{t.year}</span>
+              <span class="pref">年</span>
+              <span class="bar" style={`--w:${(t.minutes / trendMax) * 100}%`}></span>
+              <span class="min">{fmt(t.minutes)}</span>
+            </li>
+          ))}
+        </ol>
+      </details>
+
+      <p class="note">この数字は、各県にある気象台などの観測所で測ったものです。観測所はおおむね県庁所在地に置かれているので、県のなかでも場所によって空模様は違います。日照時間は、日ざしが一定の強さ以上あった時間の合計。快晴日数は、1日を通して雲がほとんどなかった日の数で、{clear.year}年の値です。快晴の判定に必要な雲の目視観測は各地の気象台で終了しており、この数字は今後更新されません。全国の値は公表されていないため、47都道府県の単純平均を「平均」として載せています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/hiking/">日本一「山に登る」県はどこだ</a>｜<a href="/exhibits/waste/">日本一「ごみを出す」県はどこだ</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .pos.yr{font-size:.85rem}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.clear .bar{background:#c99a2e}
+.rank.trend .bar{background:#8a6a3a}
+.rank.trend li{grid-template-columns:3.4em 3em 1fr auto}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+/* 推移は棒つきで縦一列に並べる（2段組にしない） */
+.all ol.rank{columns:1;margin-top:14px;list-style:none;padding:0}
+.all ol.rank.full{gap:6px}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>
