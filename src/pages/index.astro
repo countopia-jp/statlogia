@@ -71,10 +71,11 @@ const prefectures = [
               <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
               <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
             </div>
-            <p class="lead">Countopia Stats（カウントピア・スタッツ）は、都道府県・市区町村で引ける、暮らしの統計サイト。難しい話はしません。数字の風景を、案内人と一緒にのんびり巡ってください。</p>
+            <p class="lead">
+              <span>Countopia Stats（カウントピア・スタッツ）は、</span><span>都道府県・市区町村で引ける、暮らしの統計サイト。</span><span>難しい話はしません。</span><span>数字の風景を、案内人と一緒にのんびり巡ってください。</span>
+            </p>
             <span class="api-count">現在 {publishedCount} 指標とAPI連携中</span>
           </div>
-
           <div class="hero-side">
             <div class="stamp-area" aria-hidden="true">
               <div class="stamp">
@@ -323,6 +324,8 @@ h1{
 }
 h1 .num{color:var(--stamp)}
 .lead{margin-top:18px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
+/* 意味のまとまりごとに span で包み、途中で折り返さないようにする */
+.lead span{display:inline-block}
 /* 右カラム：入国印にキャラを重ねる */
 .hero-side{
   position:relative;
