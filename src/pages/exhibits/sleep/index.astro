@@ -49,7 +49,7 @@ const corrLabel = corr === null ? null : corr.toFixed(2);
 const corrNegative = corr !== null && corr <= -0.3;
 const corrPositive = corr !== null && corr >= 0.3;
 ---
-<BaseLayout backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="睡眠時間｜Countopia Stats" description="都道府県別・1日あたりの睡眠時間。日本一「眠らない県」はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
@@ -122,7 +122,7 @@ const corrPositive = corr !== null && corr >= 0.3;
       )}
       <Talk speaker="touko">わたしの時代は日が暮れたら寝るしかなかったけど……今の人は忙しいのねぇ。</Talk>
 
-      <p class="note">同じ値の県が複数あるときは、同じ順位として並べています。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。</p>
+      <p class="note">バーの長さは、いちばん短い県を起点に描いています。差を見やすくするためで、実際の開きより大きく見えます。同じ値の県が複数あるときは、同じ順位として並べています。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。</p>
 
       <div class="source">
         <p>出典：総務省統計局「令和3年社会生活基本調査」（生活時間編・週全体・10歳以上・総平均時間）を加工して作成</p>

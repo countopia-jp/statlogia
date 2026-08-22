@@ -19,10 +19,10 @@ const gap = (top.minutes - bottom.minutes).toFixed(1);
 const ratio = top.minutes / bottom.minutes;
 // 比較はここで真偽値にしておく（テンプレート内に生の < を書くとAstroが壊れる）
 const ratioSmall = ratio < 1.2;
-const bigCityLead = bigInMostCount() >= 3;
 function bigInMostCount() {
   return most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
 }
+const bigCityLead = bigInMostCount() >= 3;
 
 // 上位・下位に並ぶ地方を実データから拾う
 const mostRegions = regionsOf(most).join('・');
