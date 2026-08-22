@@ -8,6 +8,8 @@ const most = rows.slice(0, 5);
 const least = rows.slice(-5).reverse();
 const top = rows[0];
 const bottom = rows[rows.length - 1];
+// 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
 const avg = Math.round(rows.reduce((s, r) => s + r.minutes, 0) / rows.length);
 const maxMin = top.minutes;
 
@@ -52,9 +54,9 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
 
       <h2>よく学ぶ県 TOP5</h2>
       <ol class="rank">
-        {most.map((r, i) => (
+        {most.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.pref}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -81,6 +83,7 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
         </ol>
       </details>
 
+      <p class="note">「総平均時間」は、その行動をしなかった人の0分も含めた平均です。実際にその行動をした人だけで見ると、時間はもっと長くなります。</p>
       <p class="cross">あわせて読む：<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/sleep/">日本一「眠らない県」はどこだ</a></p>
 
       <div class="source">

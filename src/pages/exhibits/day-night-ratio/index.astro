@@ -9,6 +9,8 @@ const most = rows.slice(0, 5);
 const least = rows.slice(-5).reverse();
 const top = rows[0];
 const bottom = rows[rows.length - 1];
+// 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v}％`;
@@ -47,9 +49,9 @@ const fmt = (v) => `${v}％`;
 
       <h2>昼間人口が多い県 TOP5</h2>
       <ol class="rank">
-        {most.map((r, i) => (
+        {most.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{rankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
