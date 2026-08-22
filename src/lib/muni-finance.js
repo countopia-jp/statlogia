@@ -63,6 +63,8 @@ function classifyArea(code, name) {
   if (/^\d{2}000$/.test(code)) return 'exclude';
   if (/（旧|\(旧/.test(nm)) return 'exclude';
   if (code === '13100') return 'x';
+  // 東京の特別区（13101〜13123）は政令市の行政区と違い独立した自治体なので、ランキングに含める
+  if (/^131\d\d$/.test(code)) return 'rank';
   if (/^\d{2}1\d\d$/.test(code) && !code.endsWith('100')) return 'x';
   return 'rank';
 }
@@ -174,7 +176,7 @@ export async function getMuniFinanceData() {
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（財政 表番号0000020104／人口 表番号0000020101）',
-    note: '教育費・学校費は市町村財政の決算額を総人口で割った「住民1人当たり」。財政力指数は1に近いほど自前で財政をまかなえる。区・特別区部計はランキング除外（選択には表示）。',
+    note: '教育費・学校費は市町村財政の決算額を総人口で割った「住民1人当たり」。財政力指数は1に近いほど自前で財政をまかなえる。政令指定都市の行政区と、特別区部計はランキング除外（選択には表示）。',
     year: latestFin.t ? finTimeName[latestFin.t] || null : null,
     indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, decimal: i.decimal })),
     areas: areaList,

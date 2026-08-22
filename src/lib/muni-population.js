@@ -44,6 +44,8 @@ function classifyArea(code, name) {
   if (/^\d{2}000$/.test(code)) return 'exclude';
   if (/（旧|\(旧/.test(nm)) return 'exclude';
   if (code === '13100') return 'x';
+  // 東京の特別区（13101〜13123）は政令市の行政区と違い独立した自治体なので、ランキングに含める
+  if (/^131\d\d$/.test(code)) return 'rank';
   if (/^\d{2}1\d\d$/.test(code) && !code.endsWith('100')) return 'x';
   return 'rank';
 }
@@ -147,7 +149,7 @@ export async function getMuniPopulationData() {
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020101）',
-    note: '高齢化率・年少人口率・生産年齢人口率は年齢別人口から算出。2050年は将来推計人口。区・特別区部計はランキング除外（選択には表示）。',
+    note: '高齢化率・年少人口率・生産年齢人口率は年齢別人口から算出。2050年は将来推計人口。政令指定都市の行政区と、特別区部計はランキング除外（選択には表示）。',
     year: latestTime ? timeNameByCode[latestTime] || null : null,
     indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
     areas: areaList,

@@ -193,7 +193,7 @@ const data = await getMuniMigrationData();
       }
 
       const RANKS = {
-        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。区・特別区部計は除いています。' },
+        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
         out: { dir: 'asc',  note: '社会増減率が低い＝人が出ていく市区町村ベスト5。マイナスが大きいほど流出しています。' },
       };
       const rankList = document.getElementById('rankList');

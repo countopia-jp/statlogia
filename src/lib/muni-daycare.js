@@ -50,6 +50,8 @@ function classifyArea(code, name) {
   if (/^\d{2}000$/.test(code)) return 'exclude';
   if (/（旧|\(旧/.test(nm)) return 'exclude';
   if (code === '13100') return 'x';
+  // 東京の特別区（13101〜13123）は政令市の行政区と違い独立した自治体なので、ランキングに含める
+  if (/^131\d\d$/.test(code)) return 'rank';
   if (/^\d{2}1\d\d$/.test(code) && !code.endsWith('100')) return 'x';
   return 'rank';
 }
@@ -159,7 +161,7 @@ export async function getMuniDaycareData() {
   _cache = {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020108）',
-    note: '最寄りの老人デイサービスセンターまでの距離帯別・普通世帯数から算出。「近い」は500m未満、「遠い」は1000m以上の世帯割合。区・特別区部計はランキング除外（選択には表示）。',
+    note: '最寄りの老人デイサービスセンターまでの距離帯別・普通世帯数から算出。「近い」は500m未満、「遠い」は1000m以上の世帯割合。政令指定都市の行政区と、特別区部計はランキング除外（選択には表示）。',
     year: overallLatestCompleteTime ? timeNameByCode[overallLatestCompleteTime] || null : null,
     indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
     areas: areaList,

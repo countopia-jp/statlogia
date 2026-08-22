@@ -116,7 +116,7 @@ function collectAreas(statData, areas) {
 // --- VALUEを走査して (地域×指標) の最新値と履歴を採取 ---
 function collectValues(statData, areas, latestTimeByCat) {
   const valueList = asArray(statData.DATA_INF.VALUE);
-  valueList.sort((a, b) => a['@time'].localeCompare(a['@time'])); // 昇順（古い→新しい）に変更
+  valueList.sort((a, b) => a['@time'].localeCompare(b['@time'])); // 昇順（古い→新しい）
 
   for (const rec of valueList) {
     const area = areas.get(rec['@area']);
