@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="100は、円ではない｜統計の歩き方 - Countopia Stats" description="全国平均を100とした指数の読み方。125と80の差「45」は何を表すのか。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1>100は、円ではない</h1>
+    </header>
+
+    <Talk speaker="touko">
+      ねえ京、物価の展示に「125.1」とありましたけれど。あれは何円のことなの？
+    </Talk>
+    <Talk speaker="kei">
+      円ではないのです。あれは「指数」といって、比べるためだけに作られた数字です。絵にしてみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 370" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="同じ品物の値段を、円で見た場合と、全国平均を100とした指数で見た場合を比べた図">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">同じ品物の値段</text>
+
+        <text x="100" y="55" text-anchor="end" font-size="13" fill="#1b4332">A県</text>
+        <rect x="110" y="35" width="380" height="28" rx="4" fill="#1b4332" fill-opacity="0.75"/>
+        <text x="500" y="55" font-size="13" font-weight="700" fill="#1b4332">1,250円</text>
+
+        <text x="100" y="100" text-anchor="end" font-size="13" fill="#1b4332">全国平均</text>
+        <rect x="110" y="80" width="304" height="28" rx="4" fill="#1b4332" fill-opacity="0.45"/>
+        <text x="424" y="100" font-size="13" font-weight="700" fill="#1b4332">1,000円</text>
+
+        <text x="100" y="145" text-anchor="end" font-size="13" fill="#1b4332">B県</text>
+        <rect x="110" y="125" width="243" height="28" rx="4" fill="#1b4332" fill-opacity="0.75"/>
+        <text x="363" y="145" font-size="13" font-weight="700" fill="#1b4332">800円</text>
+
+        <text x="0" y="180" font-size="12" fill="#777">→ 全国平均の1,000円を「100」と決めて、言いかえると</text>
+
+        <text x="0" y="215" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#b23a2f">全国平均＝100とした指数</text>
+
+        <text x="100" y="250" text-anchor="end" font-size="13" fill="#b23a2f">A県</text>
+        <rect x="110" y="230" width="380" height="28" rx="4" fill="#b23a2f" fill-opacity="0.75"/>
+        <text x="500" y="250" font-size="13" font-weight="700" fill="#b23a2f">125.0</text>
+
+        <text x="100" y="295" text-anchor="end" font-size="13" fill="#b23a2f">全国平均</text>
+        <rect x="110" y="275" width="304" height="28" rx="4" fill="#b23a2f" fill-opacity="0.45"/>
+        <text x="424" y="295" font-size="13" font-weight="700" fill="#b23a2f">100.0</text>
+
+        <text x="100" y="340" text-anchor="end" font-size="13" fill="#b23a2f">B県</text>
+        <rect x="110" y="320" width="243" height="28" rx="4" fill="#b23a2f" fill-opacity="0.75"/>
+        <text x="363" y="340" font-size="13" font-weight="700" fill="#b23a2f">80.0</text>
+
+        <text x="0" y="365" font-size="12" fill="#777">→ 形はまったく同じ。ちがうのは、ものさしの目盛りだけ</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <Talk speaker="touko">
+      あら、上と下でまるきり同じ形。
+    </Talk>
+    <Talk speaker="kei">
+      そうです。指数は、値段の並びを変えません。ただ、目盛りを「円」から「全国平均＝100」に張りかえただけです。
+    </Talk>
+    <Talk speaker="touko">
+      では、なぜわざわざ言いかえるの。円のままでよいではありませんか。
+    </Talk>
+    <Talk speaker="kei">
+      買うものが一つならそれでよいのです。けれど物価は、米も家賃も電気代も、まとめて測ります。単位のちがうものを足すことはできません。だから、いったん「全国を100とした位置」に直して、そろえるのです。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>100は「全国平均」であって、どこかの県ではない</h2>
+      <p>
+        100という目盛りは、日本のどこかにある基準ではありません。全国をならした地点です。
+        ですから「100の県」は必ずしも存在しませんし、100に近いことが「ふつう」を意味するわけでもありません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>差は「ポイント」であって、円ではない</h2>
+      <p>
+        125.0と80.0の差は45。この45は「ポイント」と呼びます。45円ではありません。
+      </p>
+      <p>
+        では45ポイントは何円ぶんか。それは、もとの値段がいくらだったかによります。
+        全国平均が1,000円なら450円ぶん、10万円なら4万5千円ぶん。
+        指数だけを見ていても、金額には戻せないのです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>費目がちがえば、別の指数</h2>
+      <p>
+        「総合の125」と「教育の125」は、同じ125でも中身が別です。
+        それぞれ、その費目の全国平均を100として測っています。
+      </p>
+      <p>
+        ですから、総合で1位の県が教育でも1位とはかぎりません。
+        <a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>と
+        <a href="/exhibits/education-price/">日本一「教育にお金がかかる」県はどこだ</a>を並べてご覧ください。
+        同じ県が、上と下を行ったり来たりします。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      指数が高い県は、暮らしが苦しいということかしら。
+    </Talk>
+    <Talk speaker="kei">
+      それは、この数字だけでは言えません。物の値段が高い土地は、たいてい賃金も高いからです。暮らしの手ごたえを見るなら、稼ぎのほうも一緒に並べる必要があります。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>似ているけれど、別のもの</h2>
+      <p>
+        この国には、100を基準にした数字がもうひとつあります。昼夜間人口比率です。
+        こちらは「夜にいる人の数を100としたとき、昼の人数は何％か」という割り算の答えなので、
+        パーセントで書いています。
+      </p>
+      <p>
+        物価の指数のほうは、割り算の答えというより「基準に対する位置」です。円でもパーセントでもありません。
+        どちらも100を基準にしていますが、説明の仕方がちがうので、この国では書き方を変えています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>Countopiaで指数を使っている展示</h2>
+      <p>
+        <a href="/exhibits/price/">総合</a>、
+        <a href="/exhibits/utility/">光熱・水道</a>、
+        <a href="/exhibits/education-price/">教育</a>の三つです。
+        いずれも消費者物価地域差指数といって、全国平均を100としています。
+        各ページの注記にも、金額そのものではないと書いてあります。
+      </p>
+    </section>
+
+    <p class="art-links">
+      <a href="/how-to-read/average-vs-national/">全国平均と単純平均はなぜ違うのか →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>
