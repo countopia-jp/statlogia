@@ -65,7 +65,7 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
       </ol>
 
       <h2>学ぶ時間が短い県 TOP5</h2>
-      <ol class="rank studylow">
+      <ol class="rank alt">
         {least.map((r, i) => (
           <li>
             <span class="pos">{i + 1}</span>
@@ -122,7 +122,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
 .rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
 .rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
-.rank.studylow .bar{background:#3a6b52}
+.rank.alt .bar{background:#3a6b52}
 .rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
 .all{margin:32px 0}
 .all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
