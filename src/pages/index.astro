@@ -5,9 +5,9 @@ import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
-import { getWasteData } from '../lib/waste.js';
 import { getClimateData } from '../lib/climate.js';
 import { getGyozaData } from '../lib/gyoza.js';
+import { getBoardGamesData } from '../lib/board-games.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -26,9 +26,10 @@ const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const gyozaTop = (await getGyozaData()).rows[0];
+const boardGames = await getBoardGamesData();
+const shogiTop = boardGames.rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
-const waste = await getWasteData();
 const climate = await getClimateData();
 
 const num = (v) => v.toFixed(1);
@@ -148,14 +149,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/waste/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>17</b></span>
-          <span class="pc-kind">全国平均</span>
-          <span class="pc-num">{Math.round(waste.national)}<small>g</small></span>
-          <h3>日本一「ごみを出す」県はどこだ</h3>
-          <p>1人が1日に出すごみの量を47都道府県で比較。全国の量は、この{waste.trend.length - 1}年でずいぶん減りました。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/sunshine/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>18</b></span>
           <span class="pc-kind">最長・{climate.sun.top.n}</span>
@@ -170,6 +163,14 @@ const prefectures = [
           <span class="pc-num">{gyozaTop.minutes.toLocaleString()}<small>円</small></span>
           <h3>日本一「餃子が好き」な市はどこだ</h3>
           <p>1世帯が1年間にぎょうざへ使ったお金を52市で比較。四半世紀の推移も折れ線で追えます。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/board-games/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>20</b></span>
+          <span class="pc-kind">最多・{shogiTop.n}</span>
+          <span class="pc-num">{shogiTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>日本一「将棋と囲碁」の県はどこだ</h3>
+          <p>将棋を指した人の割合を47都道府県で比較。囲碁を数えると、一番の県が入れかわります。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>

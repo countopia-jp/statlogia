@@ -63,7 +63,7 @@ export const exhibits = [
     title: '日本一「電気やガスが高い」県はどこだ',
     lead: '光熱・水道の消費者物価地域差指数を47都道府県で比較。上と下の開きは、総合の何倍もあります。' },
   { no: 15, href: '/exhibits/reading/', place: 'living',
-    title: '日本一「本を読む」県はどこだ',
+    title: '日本一「本とマンガを読む」県はどこだ',
     lead: '過去1年間に本を読んだ人の割合を47都道府県で比較。マンガを見ると、また別の景色が現れます。' },
   { no: 16, href: '/exhibits/education-price/', place: 'living',
     title: '日本一「教育にお金がかかる」県はどこだ',
@@ -77,6 +77,9 @@ export const exhibits = [
   { no: 19, href: '/exhibits/gyoza/', place: 'living',
     title: '日本一「餃子が好き」な市はどこだ',
     lead: '1世帯が1年間にぎょうざへ使ったお金を52市で比較。四半世紀の推移を折れ線で追います。' },
+  { no: 20, href: '/exhibits/board-games/', place: 'living',
+    title: '日本一「将棋と囲碁」の県はどこだ',
+    lead: '将棋を指した人の割合を47都道府県で比較。囲碁を数えると、一番の県が入れかわります。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書
