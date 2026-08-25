@@ -1,0 +1,169 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getGyozaData } from '../../../lib/gyoza.js';
+
+const data = await getGyozaData();
+const rows = data.rows;
+const most = rows.slice(0, 5);
+const top = rows[0];
+const second = rows[1];
+const avg = data.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${v.toLocaleString()}円`;
+
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+const ratio = (top.minutes / avg).toFixed(1);
+const gap = top.minutes - second.minutes;
+
+// 時系列（上位3市＋全国）
+const series = data.series;
+const years = [...new Set(series.flatMap((s) => s.points.map((p) => p.year)))].sort();
+const chartData = {
+  labels: years,
+  datasets: series.map((s, i) => ({
+    label: s.name,
+    data: years.map((y) => s.points.find((p) => p.year === y)?.value ?? null),
+    borderColor: ['#b23a2f', '#c98a3a', '#3a6b52', '#8a8a80'][i],
+    backgroundColor: 'transparent',
+    tension: 0.2,
+    spanGaps: false,
+    borderWidth: i === 3 ? 1.5 : 2,
+    borderDash: i === 3 ? [4, 3] : [],
+    pointRadius: 0,
+  })),
+};
+---
+<BaseLayout title="餃子にかけるお金｜Countopia Stats" description="都市別・1世帯当たりのぎょうざ年間支出額。日本一「餃子が好き」な市はどこか。" ogImage="/images/icon/gyoza-large.webp" backHref="/exhibits/" backLabel="展示一覧">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 19</span>
+        <h1>日本一「餃子が好き」な市はどこだ</h1>
+        <p class="sub">暮らしの広場｜1世帯当たりのぎょうざ年間支出額（{data.year}）</p>
+      </div>
+
+      <Talk speaker="kei">19番目の展示は「ぎょうざ」です。1世帯が1年間にぎょうざへ使ったお金を、市ごとに並べました。</Talk>
+      <Talk speaker="touko">まあ、餃子だけの統計があるの。お国は何でも数えているのねえ。</Talk>
+      <Talk speaker="kei">全国平均は{fmt(avg)}。ただしこの調査は、47の県庁所在市と5つの政令指定都市、あわせて{data.cityCount}市だけが対象です。都道府県では引けません。</Talk>
+      <Talk speaker="touko">好きかどうかまで、数字で分かるものなの。</Talk>
+      <Talk speaker="kei">正直に申し上げますと、分かりません。これは「餃子に使ったお金」の額です。好きな気持ちを測ったものではありませんし、同じ数を買っても、餃子が高い街なら金額は上がります。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">ぎょうざにいちばん使う</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>平均</b></span>
+          <span class="label">全国平均</span>
+          <strong>全国</strong>
+          <span class="num">{fmt(avg)}</span>
+        </div>
+      </div>
+
+      <Talk speaker="kei">首位は{top.n}で{fmt(top.minutes)}。全国平均の{ratio}倍です。2位の{second.n}とは{gap.toLocaleString()}円の差でした。</Talk>
+      <Talk speaker="touko">ずいぶん差がつくものね。餃子の街、というのは本当なのねえ。</Talk>
+
+      <h2>ぎょうざにお金を使う市 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>この{years.length}年の移り変わり</h2>
+      <div class="chart-wrap"><canvas id="gyozaChart"></canvas></div>
+
+      <Talk speaker="touko">線が抜きつ抜かれつしているわ。ずっと同じ街が一番だったわけではないのね。</Talk>
+      <Talk speaker="kei">その年ごとに順位は入れ替わっています。1年の数字だけを見て「昔からそうだった」と決めてしまわないことです。</Talk>
+      <Talk speaker="touko">あら、{series[0].name}の線だけ途中から始まっているわ。</Talk>
+      <Talk speaker="kei">{series[0].points[0].year}より前は、この調査の対象に入っていなかったんです。数字がないのと、ゼロだったのとは違います。</Talk>
+
+      <details class="all">
+        <summary>{data.cityCount}市すべてを見る（多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <p class="note">この数字は1世帯が1年間に使った金額です。人ひとり当たりではありません。同じ値の市が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/food/">日本一「外食の街」はどの県だ</a>｜<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}（{data.year}）</p>
+        <p>{data.note}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ chartData }}>
+  window.addEventListener('load', () => {
+    const el = document.getElementById('gyozaChart');
+    if (!el || typeof Chart === 'undefined') return;
+    new Chart(el.getContext('2d'), {
+      type: 'line',
+      data: chartData,
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } } },
+        scales: {
+          y: { ticks: { callback: (v) => v.toLocaleString() + '円' } },
+          x: { ticks: { maxTicksLimit: 9 } },
+        },
+      },
+    });
+  });
+</script>
+
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.chart-wrap{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>

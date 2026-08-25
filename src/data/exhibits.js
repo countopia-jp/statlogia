@@ -74,6 +74,9 @@ export const exhibits = [
   { no: 18, href: '/exhibits/sunshine/', place: 'living',
     title: '日本一「晴れる」県はどこだ',
     lead: '1年に日が差した時間を47都道府県で比較。「快晴の日」を数えると、順番は変わります。' },
+  { no: 19, href: '/exhibits/gyoza/', place: 'living',
+    title: '日本一「餃子が好き」な市はどこだ',
+    lead: '1世帯が1年間にぎょうざへ使ったお金を52市で比較。四半世紀の推移を折れ線で追います。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書

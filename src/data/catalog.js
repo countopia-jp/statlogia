@@ -835,6 +835,21 @@ export const catalog = [
     status: 'published',
     usedIn: ['/exhibits/food/'],
   },
+  {
+    key: 'gyoza-spending',
+    label: 'ぎょうざ年間支出額',
+    category: 'money',
+    system: '',
+    scope: 'city',
+    statsDataId: { city: '0004023605' },
+    fetchMode: 'code',
+    code: '010920070',
+    unit: '円',
+    direction: 'neutral',
+    points: 26,
+    status: 'published',
+    usedIn: ['/exhibits/gyoza/'],
+  },
 
   // ---------- M 生活時間（社会生活基本調査、estat.js） ----------
   {

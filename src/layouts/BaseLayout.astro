@@ -5,6 +5,7 @@ const {
   description = '都道府県・市区町村で引ける、暮らしの統計。日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
   backHref = '',
   backLabel = '',
+  ogImage = null,
 } = Astro.props;
 ---
 <!DOCTYPE html>
@@ -18,7 +19,7 @@ const {
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:url" content={new URL(Astro.url.pathname, 'https://countopia.com')} />
-  <meta property="og:image" content="https://countopia.com/images/ogp.png" />
+  <meta property="og:image" content={ogImage ? `https://countopia.com${ogImage}` : 'https://countopia.com/images/ogp.png'} />
   <meta property="og:site_name" content="Countopia Stats" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="canonical" href={new URL(Astro.url.pathname, 'https://countopia.com')} />
