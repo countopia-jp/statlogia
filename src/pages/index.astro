@@ -7,6 +7,7 @@ import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
 import { getWasteData } from '../lib/waste.js';
 import { getClimateData } from '../lib/climate.js';
+import { getGyozaData } from '../lib/gyoza.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -24,6 +25,7 @@ const priceTop = price.rows[0];
 const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
+const gyozaTop = (await getGyozaData()).rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 const waste = await getWasteData();
@@ -146,14 +148,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/education-price/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>16</b></span>
-          <span class="pc-kind">最高・{eduTop.n}</span>
-          <span class="pc-num">{num(eduTop.minutes)}</span>
-          <h3>日本一「教育にお金がかかる」県はどこだ</h3>
-          <p>教育の消費者物価地域差指数を47都道府県で比較。何の値段を見るかで、県の順番は入れかわります。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/waste/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>17</b></span>
           <span class="pc-kind">全国平均</span>
@@ -168,6 +162,14 @@ const prefectures = [
           <span class="pc-num">{Math.round(climate.sun.top.minutes).toLocaleString()}<small>時間</small></span>
           <h3>日本一「晴れる」県はどこだ</h3>
           <p>1年に日が差した時間を47都道府県で比較。「快晴の日」を数えると、順番は変わります。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/gyoza/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>19</b></span>
+          <span class="pc-kind">最多・{gyozaTop.n}</span>
+          <span class="pc-num">{gyozaTop.minutes.toLocaleString()}<small>円</small></span>
+          <h3>日本一「餃子が好き」な市はどこだ</h3>
+          <p>1世帯が1年間にぎょうざへ使ったお金を52市で比較。四半世紀の推移も折れ線で追えます。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>
