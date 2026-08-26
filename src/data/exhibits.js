@@ -42,7 +42,7 @@ export const exhibits = [
     title: '日本一の「クルマ社会」はどの県だ',
     lead: '二人以上の世帯の1世帯当たり自動車保有台数を47都道府県で比較。車は、地方の暮らしの必需品。' },
   { no: 8, href: '/exhibits/food/', place: 'living',
-    title: '日本一「外食の街」はどの県だ',
+    title: '日本一の「外食の街」はどの県だ',
     lead: '人口千人当たりの飲食店数を47都道府県で比較。いちばん大きな街が、いちばん多いとは限りません。' },
   { no: 9, href: '/exhibits/day-night-ratio/', place: 'time',
     title: '日本一「昼に人が集まる」県はどこだ',
