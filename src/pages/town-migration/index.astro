@@ -14,12 +14,12 @@ const data = await getMuniMigrationData();
       <h1>人が集まる町・出ていく町</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
-        増えているのか、減っているのか。町の「いま」の勢いを、数字で。
+        1年のあいだに、何人入って、何人出たか。町の人の動きを、数字で。
       </p>
     </header>
 
     <Talk speaker="kei">
-      こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、その町にいま人が集まっているかが分かります。
+      こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
     </Talk>
     <Talk speaker="touko">
       出ていく人と、入ってくる人……町にも、潮の満ち引きがあるのねえ。
@@ -180,16 +180,16 @@ const data = await getMuniMigrationData();
         const touko = document.getElementById('toukoLine');
         let k = '';
         if (delta !== null && pop !== null) {
-          if (delta > 0) k = `1年間で、転入が転出を${delta.toLocaleString('ja-JP')}人上回りました。人が集まっている町です。`;
-          else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。人が出ていく側の町です。`;
+          if (delta > 0) k = `1年間で、転入が転出を${delta.toLocaleString('ja-JP')}人上回りました。`;
+          else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。`;
           else k = '転入と転出が、ちょうど釣り合っています。';
         }
-        if (sr !== null && Math.abs(sr) >= 15) k += ' 人口のわりに、動きの大きな町です。';
+        if (sr !== null && Math.abs(sr) >= 15) k += ' 人口の規模に対して、動いた人数の多い年でした。';
         kei.textContent = k || `${a.n}の人の動きをお出ししました。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = (delta !== null && delta > 0)
-          ? ['にぎわっているのねえ。', '人が集まる町は、活気があるわ。'][seed % 2]
-          : ['寂しくなってしまうのかしら。', 'いつか、また戻ってくるといいわね。'][seed % 2];
+          ? ['入ってくる人のほうが多いのねえ。', '出た人より、来た人が多かったのね。'][seed % 2]
+          : ['出ていく人のほうが多いのねえ。', '来た人より、出た人が多かったのね。'][seed % 2];
       }
 
       const RANKS = {
