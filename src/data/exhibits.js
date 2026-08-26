@@ -36,7 +36,7 @@ export const exhibits = [
     title: '日本の大人は、1日何分学ぶのか',
     lead: '学習・自己啓発・訓練の時間を47都道府県で比較。趣味の時間とくらべると、その差は歴然。' },
   { no: 6, href: '/exhibits/vacancy/', place: 'housing',
-    title: '日本一「空き家だらけ」の県はどこだ',
+    title: '日本一「空き家が多い」県はどこだ',
     lead: '総住宅数に占める空き家の割合を47都道府県で比較。誰も住んでいない家は、どれくらいあるのか。' },
   { no: 7, href: '/exhibits/cars/', place: 'living',
     title: '日本一の「クルマ社会」はどの県だ',

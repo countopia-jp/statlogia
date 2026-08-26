@@ -18,12 +18,12 @@ const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
 // 「N軒に1軒」を割合から出す
 const perHouses = (v) => Math.round(100 / v);
 ---
-<BaseLayout title="空き家率｜Countopia Stats" description="都道府県別・総住宅数に占める空き家の割合。日本一「空き家だらけ」の県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="空き家率｜Countopia Stats" description="都道府県別・総住宅数に占める空き家の割合。日本一「空き家が多い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
         <span class="no">EXHIBIT 06</span>
-        <h1>日本一「空き家だらけ」の県はどこだ</h1>
+        <h1>日本一「空き家が多い」県はどこだ</h1>
         <p class="sub">住まいの広場｜総住宅数に占める空き家の割合（{data.year}）</p>
       </div>
 
