@@ -196,15 +196,15 @@ const data = await getMuniPopulationData();
           k = `いまの人口は${Math.round(now).toLocaleString('ja-JP')}人です。`;
         }
         if (aging !== null) {
-          k += aging >= 40 ? ' 住民の4割以上が高齢者、という土地です。'
-             : aging <= 22 ? ' 全国でも若いほうの町です。'
+          k += aging >= 40 ? ' 住民の4割以上が65歳以上です。'
+             : aging <= 22 ? ' 65歳以上の割合は、全国でも低いほうです。'
              : '';
         }
         kei.textContent = k || `${a.n}の数字をお出ししました。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = (future !== null && now !== null && future < now * 0.7)
-          ? ['ずいぶん、寂しくなってしまうのねえ。', 'この先が、心配だわ。'][seed % 2]
-          : ['これからも、にぎやかでいてほしいわ。', 'いいところなのねえ。'][seed % 2];
+          ? ['いまより、ずいぶん少ない数なのねえ。', '三割より多く減る、という見通しなのね。'][seed % 2]
+          : ['いまと、そう変わらない数なのねえ。', 'この先の数も、出ているのね。'][seed % 2];
       }
 
       const RANKS = {
