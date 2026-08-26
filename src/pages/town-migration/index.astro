@@ -4,14 +4,14 @@ import Talk from '../../components/Talk.astro';
 import { getMuniMigrationData } from '../../lib/muni-migration.js';
 const data = await getMuniMigrationData();
 ---
-<BaseLayout title="人が集まる町・出ていく町｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の人の出入り｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <header class="tp-hero">
     <img class="tp-hero-figure" src="/images/icon/town-migration-large.webp" alt="家族が家に帰り着く一方で、一人旅立つ人がいる田舎道の水彩画" width="1400" height="788" loading="lazy" />
       <p class="tp-kicker">閲覧室</p>
-      <h1>人が集まる町・出ていく町</h1>
+      <h1>わが町の人の出入り</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
         1年のあいだに、何人入って、何人出たか。町の人の動きを、数字で。
