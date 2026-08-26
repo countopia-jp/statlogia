@@ -185,8 +185,8 @@ const data = await getMuniCommuteData();
         kei.textContent = k || `${a.n}の数字をお出ししました。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = (transit !== null && transit >= 40)
-          ? ['駅までの道が、朝は賑わうのでしょうね。', '電車通勤とは、都会らしいこと。'][seed % 2]
-          : ['一家に一台、では足りない町もあるのねえ。', '車の窓から見る景色も、また通勤の楽しみね。'][seed % 2];
+          ? ['電車やバスで通う方が、多いのねえ。', '駅までの道が、朝は賑わうのでしょうね。'][seed % 2]
+          : ['車で通う方が、多いのねえ。', '車の窓から見る景色も、また通勤の楽しみね。'][seed % 2];
       }
 
       const RANKS = {
