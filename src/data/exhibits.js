@@ -63,7 +63,7 @@ export const exhibits = [
     title: '日本一「電気やガスが高い」県はどこだ',
     lead: '光熱・水道の消費者物価地域差指数を47都道府県で比較。上と下の開きは、総合の何倍もあります。' },
   { no: 15, href: '/exhibits/reading/', place: 'living',
-    title: '日本一「本とマンガを読む」県はどこだ',
+    title: '本とマンガ、日本一はどの県だ',
     lead: '過去1年間に本を読んだ人の割合を47都道府県で比較。マンガを見ると、また別の景色が現れます。' },
   { no: 16, href: '/exhibits/education-price/', place: 'living',
     title: '日本一「教育にお金がかかる」県はどこだ',
