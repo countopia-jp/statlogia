@@ -24,7 +24,7 @@ export const exhibits = [
     title: '日本一「眠らない県」はどこだ',
     lead: '睡眠時間の都道府県ランキング。1位と最下位の差は、1年でまる5日ぶん。' },
   { no: 2, href: '/exhibits/commute/', place: 'time',
-    title: '「通勤地獄」日本一はどの県だ',
+    title: '日本一「通勤に時間がかかる」県はどこだ',
     lead: '通勤・通学時間のランキング。1位は意外な、あの県。' },
   { no: 3, href: '/exhibits/housework/', place: 'time',
     title: '家事時間の男女差、いちばん大きい県は',

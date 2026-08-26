@@ -53,7 +53,6 @@ const data = await getMuniNurseryData();
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
         <button class="tp-tab is-active" data-rank="near" role="tab">保育所が近い町</button>
-        <button class="tp-tab" data-rank="far" role="tab">保育所が遠い町</button>
       </div>
       <ol class="tp-rank-list" id="rankList"></ol>
       <p class="tp-note" id="rankNote"></p>
@@ -186,13 +185,12 @@ const data = await getMuniNurseryData();
         kei.textContent = k || `${a.n}の数字をお出ししました。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = (far !== null && far >= 50)
-          ? ['遠いと、毎日はたいへんねえ。', '送り迎えだけで、ひと仕事だわ。'][seed % 2]
-          : ['近いと、安心して預けられるわねえ。', '子育てには、ありがたい町ね。'][seed % 2];
+          ? ['歩いていくには、遠いのねえ。', '車や送り迎えが要る距離なのね。'][seed % 2]
+          : ['歩いていける距離に、あるのねえ。', '近いところに、あるのね。'][seed % 2];
       }
 
       const RANKS = {
         near: { i: NEAR, dir: 'desc', note: '保育所まで500m未満の世帯割合が高い＝保育所が近い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
-        far:  { i: FAR,  dir: 'desc', note: '保育所まで1000m以上の世帯割合が高い＝保育所が遠い市区町村ベスト5。' },
       };
       const rankList = document.getElementById('rankList');
       const rankNote = document.getElementById('rankNote');

@@ -53,7 +53,6 @@ const data = await getMuniMigrationData();
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
         <button class="tp-tab is-active" data-rank="in" role="tab">人が集まる町</button>
-        <button class="tp-tab" data-rank="out" role="tab">人が出ていく町</button>
       </div>
       <ol class="tp-rank-list" id="rankList"></ol>
       <p class="tp-note" id="rankNote"></p>
@@ -194,7 +193,6 @@ const data = await getMuniMigrationData();
 
       const RANKS = {
         in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
-        out: { dir: 'asc',  note: '社会増減率が低い＝人が出ていく市区町村ベスト5。マイナスが大きいほど流出しています。' },
       };
       const rankList = document.getElementById('rankList');
       const rankNote = document.getElementById('rankNote');

@@ -18,12 +18,12 @@ const sleepRankOfTop = sleepRows.findIndex((r) => r.pref === top.pref) + 1;
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 const maxMin = top.minutes;
 ---
-<BaseLayout title={`通勤地獄ランキング｜Countopia Stats`} description="都道府県別・通勤通学時間ランキング。日本一通勤がつらい県はどこだ。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title={`通勤・通学時間ランキング｜Countopia Stats`} description="都道府県別・通勤通学時間ランキング。日本一「通勤に時間がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
         <span class="no">EXHIBIT 02</span>
-        <h1>「通勤地獄」日本一はどの県だ</h1>
+        <h1>日本一「通勤に時間がかかる」県はどこだ</h1>
         <p class="sub">時間の広場｜通勤・通学時間の都道府県ランキング（2021年）</p>
       </div>
 
@@ -33,13 +33,13 @@ const maxMin = top.minutes;
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
-          <span class="label">いちばん通勤がつらい</span>
+          <span class="label">いちばん長い</span>
           <strong>{top.pref}</strong>
           <span class="num">{fmt(top.minutes)}／日</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
-          <span class="label">いちばん通勤がらく</span>
+          <span class="label">いちばん短い</span>
           <strong>{bottom.pref}</strong>
           <span class="num">{fmt(bottom.minutes)}／日</span>
         </div>

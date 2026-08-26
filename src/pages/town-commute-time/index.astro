@@ -45,14 +45,13 @@ const data = await getMuniCommuteTimeData();
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
-        <button class="tp-tab is-active" data-rank="long" role="tab">遠くから通う町</button>
-        <button class="tp-tab" data-rank="short" role="tab">近くから通う町</button>
+        <button class="tp-tab is-active" data-rank="short" role="tab">近くから通う町</button>
       </div>
       <ol class="tp-rank-list" id="rankList"></ol>
       <p class="tp-note" id="rankNote"></p>
     </section>
 
-    <p class="tp-cross">あわせて見る：<a href="/town-commute/">通勤の足は、何か</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/exhibits/commute/">「通勤地獄」日本一はどの県だ</a></p>
+    <p class="tp-cross">あわせて見る：<a href="/town-commute/">通勤の足は、何か</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/exhibits/commute/">日本一「通勤に時間がかかる」県はどこだ</a></p>
 
     <footer class="tp-source">
       <p>
@@ -154,7 +153,6 @@ const data = await getMuniCommuteTimeData();
       }
 
       const RANKS = {
-        long:  { i: LONG,  dir: 'desc', note: '片道1時間以上かけて通う世帯の割合が高い市区町村ベスト5。区・特別区部計と、この統計に数字のない市区町村は除いています。' },
         short: { i: SHORT, dir: 'desc', note: '片道30分未満で通う世帯の割合が高い市区町村ベスト5。区・特別区部計と、この統計に数字のない市区町村は除いています。' },
       };
       const rankList = document.getElementById('rankList');
@@ -181,7 +179,7 @@ const data = await getMuniCommuteTimeData();
           showRank(btn.dataset.rank);
         });
       });
-      showRank('long');
+      showRank('short');
     })();
   </script>
 

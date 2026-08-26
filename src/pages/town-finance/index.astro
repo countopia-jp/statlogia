@@ -185,8 +185,8 @@ const data = await getMuniFinanceData();
         kei.textContent = k || `${a.n}の数字をお出ししました。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = (fin !== null && fin >= 0.8)
-          ? ['豊かな町なのねえ。', 'しっかりしたお財布だわ。'][seed % 2]
-          : ['やりくり、たいへんそうねえ。', '支え合いで成り立っているのね。'][seed % 2];
+          ? ['自分のところで、まかなえているのねえ。', '入るお金の割合が、高いほうなのね。'][seed % 2]
+          : ['国からの支えも入っているのねえ。', '足りない分は、別のところから来るのね。'][seed % 2];
       }
 
       const RANKS = {
