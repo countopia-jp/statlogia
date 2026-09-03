@@ -80,6 +80,9 @@ export const exhibits = [
   { no: 20, href: '/exhibits/board-games/', place: 'living',
     title: '将棋と囲碁、日本一はどの県だ',
     lead: '将棋を指した人の割合を47都道府県で比較。囲碁を数えると、一番の県が入れかわります。' },
+  { no: 21, href: '/exhibits/gardening/', place: 'living',
+    title: '庭いじりと日曜大工、日本一はどの県だ',
+    lead: '園芸と日曜大工の行動者率を47都道府県で比較。大きな街のある県が、どこにいるかも見えてきます。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書

@@ -5,9 +5,9 @@ import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
-import { getClimateData } from '../lib/climate.js';
 import { getGyozaData } from '../lib/gyoza.js';
 import { getBoardGamesData } from '../lib/board-games.js';
+import { getGardeningData } from '../lib/gardening.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -28,9 +28,9 @@ const eduTop = price.education.rows[0];
 const gyozaTop = (await getGyozaData()).rows[0];
 const boardGames = await getBoardGamesData();
 const shogiTop = boardGames.rows[0];
+const gardenTop = (await getGardeningData()).rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
-const climate = await getClimateData();
 
 const num = (v) => v.toFixed(1);
 
@@ -149,14 +149,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/sunshine/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>18</b></span>
-          <span class="pc-kind">最長・{climate.sun.top.n}</span>
-          <span class="pc-num">{Math.round(climate.sun.top.minutes).toLocaleString()}<small>時間</small></span>
-          <h3>日本一「晴れる」県はどこだ</h3>
-          <p>1年に日が差した時間を47都道府県で比較。「快晴の日」を数えると、順番は変わります。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/gyoza/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>19</b></span>
           <span class="pc-kind">最多・{gyozaTop.n}</span>
@@ -171,6 +163,14 @@ const prefectures = [
           <span class="pc-num">{shogiTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>将棋と囲碁、日本一はどの県だ</h3>
           <p>将棋を指した人の割合を47都道府県で比較。囲碁を数えると、一番の県が入れかわります。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/gardening/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>21</b></span>
+          <span class="pc-kind">最多・{gardenTop.n}</span>
+          <span class="pc-num">{gardenTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>庭いじりと日曜大工、日本一はどの県だ</h3>
+          <p>園芸と日曜大工の行動者率を47都道府県で比較。大きな街のある県が、どこにいるかも見えてきます。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>
@@ -553,11 +553,11 @@ h1 .num{color:var(--stamp)}
 @media(min-width:761px) and (max-width:1024px){
   .desk{padding:28px 0 48px}
   .sheet{padding:28px 4.5% 32px}
-  .hero{grid-template-columns:1fr .58fr;gap:24px;padding:4px 0 0}
+  .hero{grid-template-columns:1fr .72fr;gap:24px;padding:4px 0 0}
   .hero-side{margin-top:4px;min-height:280px}
   /* 円を縮めれば中の文字も em で追従する */
-  .stamp{width:min(240px,30vw);font-size:min(16px,2vw)}
-  .hero-chara{max-width:190px;left:-20%;bottom:-40px}
+  .stamp{width:min(300px,36vw);font-size:min(20px,2.4vw)}
+  .hero-chara{max-width:240px;left:-20%;bottom:-40px}
   .lead{font-size:.95rem;max-width:none;margin-top:14px}
   .hero-title-row{gap:20px}
   .hero-title-row .btn{margin-bottom:.3rem}
