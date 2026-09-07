@@ -83,6 +83,9 @@ export const exhibits = [
   { no: 21, href: '/exhibits/gardening/', place: 'living',
     title: '庭いじりと日曜大工、日本一はどの県だ',
     lead: '園芸と日曜大工の行動者率を47都道府県で比較。大きな街のある県が、どこにいるかも見えてきます。' },
+  { no: 22, href: '/exhibits/japanese-arts/', place: 'living',
+    title: '筆と花とお茶、日本一はどの県だ',
+    lead: '書道・華道・茶道の行動者率を47都道府県で比較。三つ並べると、人の多い土地とは限らないことが見えてきます。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書
