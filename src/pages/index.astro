@@ -5,9 +5,9 @@ import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
-import { getBoardGamesData } from '../lib/board-games.js';
 import { getGardeningData } from '../lib/gardening.js';
 import { getJapaneseArtsData } from '../lib/japanese-arts.js';
+import { getGamesCinemaData } from '../lib/games-cinema.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -25,10 +25,9 @@ const priceTop = price.rows[0];
 const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
-const boardGames = await getBoardGamesData();
-const shogiTop = boardGames.rows[0];
 const gardenTop = (await getGardeningData()).rows[0];
 const shodoTop = (await getJapaneseArtsData()).rows[0];
+const gameTop = (await getGamesCinemaData()).rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 
@@ -149,14 +148,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/board-games/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>20</b></span>
-          <span class="pc-kind">最多・{shogiTop.n}</span>
-          <span class="pc-num">{shogiTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>将棋と囲碁、日本一はどの県だ</h3>
-          <p>将棋を指した人の割合を47都道府県で比較。囲碁を数えると、一番の県が入れかわります。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/gardening/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>21</b></span>
           <span class="pc-kind">最多・{gardenTop.n}</span>
@@ -171,6 +162,14 @@ const prefectures = [
           <span class="pc-num">{shodoTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>筆と花とお茶、日本一はどの県だ</h3>
           <p>書道・華道・茶道の行動者率を47都道府県で比較。三つ並べると、人の多い土地とは限らないことが見えてきます。</p>
+          <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/games-cinema/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>23</b></span>
+          <span class="pc-kind">最多・{gameTop.n}</span>
+          <span class="pc-num">{gameTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>ゲームと映画、日本一はどの県だ</h3>
+          <p>テレビゲームと映画館の行動者率を47都道府県で比較。一方で一番の県が、もう一方では下のほうにいます。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>

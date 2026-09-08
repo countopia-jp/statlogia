@@ -86,6 +86,9 @@ export const exhibits = [
   { no: 22, href: '/exhibits/japanese-arts/', place: 'living',
     title: '筆と花とお茶、日本一はどの県だ',
     lead: '書道・華道・茶道の行動者率を47都道府県で比較。三つ並べると、人の多い土地とは限らないことが見えてきます。' },
+  { no: 23, href: '/exhibits/games-cinema/', place: 'living',
+    title: 'ゲームと映画、日本一はどの県だ',
+    lead: 'テレビゲームと映画館の行動者率を47都道府県で比較。一方で一番の県が、もう一方では下のほうにいます。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書
