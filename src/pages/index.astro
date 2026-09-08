@@ -7,7 +7,7 @@ import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
 import { getGardeningData } from '../lib/gardening.js';
 import { getJapaneseArtsData } from '../lib/japanese-arts.js';
-import { getGamesCinemaData } from '../lib/games-cinema.js';
+import { getGamesCraftsData } from '../lib/games-crafts.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -27,7 +27,7 @@ const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const gardenTop = (await getGardeningData()).rows[0];
 const shodoTop = (await getJapaneseArtsData()).rows[0];
-const gameTop = (await getGamesCinemaData()).rows[0];
+const gameTop = (await getGamesCraftsData()).rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 
@@ -164,12 +164,12 @@ const prefectures = [
           <p>書道・華道・茶道の行動者率を47都道府県で比較。三つ並べると、人の多い土地とは限らないことが見えてきます。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
-        <a class="card pc" href="/exhibits/games-cinema/">
+        <a class="card pc" href="/exhibits/games-crafts/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>23</b></span>
           <span class="pc-kind">最多・{gameTop.n}</span>
           <span class="pc-num">{gameTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>ゲームと映画、日本一はどの県だ</h3>
-          <p>テレビゲームと映画館の行動者率を47都道府県で比較。一方で一番の県が、もう一方では下のほうにいます。</p>
+          <h3>ゲームと編み物、日本一はどの県だ</h3>
+          <p>テレビゲームと編み物・手芸の行動者率を47都道府県で比較。遊びの場所が違うと、県の顔ぶれも変わります。</p>
           <span class="c-place">暮らしの広場</span>
         </a>
       </div>
