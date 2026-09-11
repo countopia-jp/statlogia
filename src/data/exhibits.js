@@ -89,6 +89,9 @@ export const exhibits = [
   { no: 23, href: '/exhibits/games-crafts/', place: 'living',
     title: 'ゲームと編み物、日本一はどの県だ',
     lead: 'テレビゲームと編み物・手芸の行動者率を47都道府県で比較。遊びの場所が違うと、県の顔ぶれも変わります。' },
+  { no: 24, href: '/exhibits/snow-ground/', place: 'living',
+    title: 'スキーとグラウンドゴルフ、日本一はどの県だ',
+    lead: 'スキーとグラウンドゴルフの行動者率を47都道府県で比較。どちらも、大きな街のある県は上に来ません。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書
