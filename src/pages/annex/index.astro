@@ -21,26 +21,116 @@ import Talk from '../../components/Talk.astro';
     </Talk>
 
     <section class="rr-group" aria-label="財政と人の動き">
-      <div class="rr-grid">
-        <a class="rr-card" href="/education-budget/">
+      <div class="ledger-grid">
+        <a class="ledger-card" href="/education-budget/">
+          <span class="lc-mark">教</span>
           <h3>教育の帳場</h3>
-          <p class="rr-card-desc">
+          <p class="lc-desc">
             都道府県ごとの財政力指数と、教育費のかけ方をまとめた帳場です。
           </p>
+          <span class="lc-foot">閲覧室・都道府県</span>
         </a>
-        <a class="rr-card" href="/town-finance/">
+        <a class="ledger-card" href="/town-finance/">
+          <span class="lc-mark">財</span>
           <h3>わが町の財政と教育費</h3>
-          <p class="rr-card-desc">
+          <p class="lc-desc">
             市区町村ごとの財政力指数、実質収支比率など、町の懐事情を映す数字です。
           </p>
+          <span class="lc-foot">閲覧室・市区町村</span>
         </a>
-        <a class="rr-card" href="/town-migration/">
+        <a class="ledger-card" href="/town-migration/">
+          <span class="lc-mark">人</span>
           <h3>人が集まる町・出ていく町</h3>
-          <p class="rr-card-desc">
+          <p class="lc-desc">
             転入・転出の数字から、町の人の動きを追います。
           </p>
+          <span class="lc-foot">閲覧室・市区町村</span>
         </a>
       </div>
     </section>
   </main>
+
+  <style>
+   .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
+    .rr-hero { text-align: center; padding: 28px 0 8px; }
+    .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
+    .rr-lead { color: #555; line-height: 1.9; }
+    .rr-group { margin: 32px 0 8px; }
+
+    .ledger-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    @media(max-width:900px){
+      .ledger-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:600px){
+      .ledger-grid{grid-template-columns:1fr}
+    }
+
+    .ledger-card {
+      position: relative;
+      display: block;
+      padding: 24px 20px 20px 26px;
+      border: 1px solid #B8C4B4;
+      border-left: 4px solid #B3402A;
+      border-radius: 4px;
+      background-color: #FBFAF5;
+      background-image: repeating-linear-gradient(
+        180deg,
+        transparent, transparent 27px,
+        #DCE4DB 28px
+      );
+      color: inherit;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .ledger-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
+    }
+    .lc-mark {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #B3402A;
+      border-radius: 50%;
+      color: #B3402A;
+      font-family: "Shippori Mincho", serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      opacity: 0.75;
+      transform: rotate(-8deg);
+      background: #FBFAF5;
+    }
+    .ledger-card h3 {
+      margin: 0 44px 10px 0;
+      font-size: 1.15rem;
+      font-family: "Shippori Mincho", serif;
+    }
+    .lc-desc {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: #444;
+      margin: 0 0 14px;
+    }
+    .lc-foot {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      color: #4A6355;
+      border-top: 1px dashed #B8C4B4;
+      padding-top: 8px;
+      width: 100%;
+    }
+  </style>
 </BaseLayout>
