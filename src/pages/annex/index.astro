@@ -5,6 +5,7 @@ import Talk from '../../components/Talk.astro';
 <BaseLayout title="町の出納帳 - Countopia Stats" description="財政や人口の出入りなど、町の内側に関わる数字をまとめた部屋です。">
   <main class="rr">
     <header class="rr-hero">
+      <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
       <p class="rr-kicker">別館</p>
       <h1>町の出納帳</h1>
       <p class="rr-lead">
@@ -53,6 +54,7 @@ import Talk from '../../components/Talk.astro';
   <style>
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
+    .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
     .rr-lead { color: #555; line-height: 1.9; }
