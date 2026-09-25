@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getBallGamesData } from '../../../lib/ball-games.js';
+
+const data = await getBallGamesData();
+const rows = data.rows;
+const most = rows.slice(0, 5);
+const least = rows.slice(-5).reverse();
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const avg = data.national;
+const maxMin = top.minutes;
+const fmt = (v) => `${v.toFixed(1)}％`;
+
+// 同値が多い指標なので順位は値から引く
+const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+
+const soccer = data.soccer;
+const scMost = soccer.rows.slice(0, 5);
+const scMax = soccer.rows[0].minutes;
+const scTop = soccer.rows[0];
+const scRankOf = (v) => soccer.rows.findIndex((r) => r.minutes === v) + 1;
+
+// 相互の順位（名前で引くので入れ替わっても壊れない）
+const scRankOfName = (name) => soccer.rows.findIndex((r) => r.n === name) + 1;
+const bbRankOfName = (name) => rows.findIndex((r) => r.n === name) + 1;
+const topScRank = scRankOfName(top.n);
+const scTopBbRank = bbRankOfName(scTop.n);
+const sameTop = top.n === scTop.n;
+
+// 全国の差（野球はサッカーより何ポイント多いか）
+const diff = avg - soccer.national;
+const baseballMore = diff > 0;
+
+// 両方の上位5に入る県
+const topNames = most.map((r) => r.n);
+const scTopNames = scMost.map((r) => r.n);
+const bothTop = topNames.filter((n) => scTopNames.includes(n));
+const hasBothTop = bothTop.length > 0;
+
+// 両方の下位5に入る県
+const lowNames = rows.slice(-5).map((r) => r.n);
+const scLowNames = soccer.rows.slice(-5).map((r) => r.n);
+const bothLow = lowNames.filter((n) => scLowNames.includes(n));
+const hasBothLow = bothLow.length > 0;
+
+// 野球では下位10、サッカーでは上位10に入る「入れかわる県」
+const bbLow10 = rows.slice(-10).map((r) => r.n);
+const scTop10 = soccer.rows.slice(0, 10).map((r) => r.n);
+const swapped = scTop10.filter((n) => bbLow10.includes(n));
+const hasSwapped = swapped.length > 0;
+const swapName = hasSwapped ? swapped[0] : '';
+const swapBbRank = hasSwapped ? bbRankOfName(swapName) : 0;
+const swapScRank = hasSwapped ? scRankOfName(swapName) : 0;
+---
+<BaseLayout title="野球とサッカーの行動者率｜Countopia Stats" description="都道府県別・野球とサッカーの行動者率。野球とサッカー、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 25</span>
+        <h1>野球とサッカー、日本一はどの県だ</h1>
+        <p class="sub">暮らしの広場｜野球・サッカーの行動者率（{data.year}）</p>
+      </div>
+
+      <Talk speaker="kei">25番目の展示は「野球」です。1年のあいだに野球をした人が、どのくらいいるか。キャッチボールも含めて、全国では{fmt(avg)}でした。</Talk>
+      <Talk speaker="touko">野球なら、わたくしの時代にもございましたわ。学生さんたちが、それはもう熱心で。</Talk>
+      <Talk speaker="kei">今も熱心です。ただ、県によって差があります。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">野球をする人がいちばん多い</span>
+          <strong>{top.n}</strong>
+          <span class="num">{fmt(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
+          <span class="label">野球をする人がいちばん少ない</span>
+          <strong>{bottom.n}</strong>
+          <span class="num">{fmt(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <h2>野球をする人が多い県 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>野球をする人が少ない県 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r, i) => (
+          <li>
+            <span class="pos">{i + 1}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <details class="all">
+        <summary>47都道府県すべてを見る（多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <h2>ところが、サッカーを数えると</h2>
+
+      <Talk speaker="touko">蹴球のほうは、どうなの。</Talk>
+      <Talk speaker="kei">フットサルも含めて、全国で{fmt(soccer.national)}。野球より{fmt(Math.abs(diff))}{baseballMore ? '少ない' : '多い'}数字です。そして、{sameTop ? 'いちばん多い県は同じでした。' : 'いちばん多い県が入れかわります。'}</Talk>
+
+      <ol class="rank sc">
+        {scMost.map((r) => (
+          <li>
+            <span class="pos">{scRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / scMax) * 100}%`}></span>
+            <span class="min">{fmt(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <Talk speaker="touko">野球で一番だった{top.n}は、蹴球では何番目なの。</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topScRank}番目です。かわりにサッカーで一番なのは${scTop.n}で、こちらは野球では${scTopBbRank}番目でした。`}</Talk>
+
+      <details class="all">
+        <summary>サッカーも47都道府県すべてを見る（多い順）</summary>
+        <ol>
+          {soccer.rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      {hasBothTop && (
+        <Talk speaker="kei">上位5県のうち、{bothTop.join('と')}は野球とサッカーの両方に入っています。</Talk>
+      )}
+      {hasSwapped && (
+        <Talk speaker="touko">あら、{swapName}は野球では{swapBbRank}番目なのに、蹴球では{swapScRank}番目まで上がるのね。</Talk>
+      )}
+      {hasSwapped && (
+        <Talk speaker="kei">はい。同じ球技でも、県ごとの顔ぶれは別ものです。</Talk>
+      )}
+      {hasBothLow && (
+        <Talk speaker="touko">下のほうには、{bothLow.join('と')}が両方に出てくるのねえ。</Talk>
+      )}
+
+      <p class="note">「行動者率」は、過去1年間にその活動をした人の割合です。野球にはキャッチボール、サッカーにはフットサルが含まれます。どちらも全国で1割に届かない数字で、県ごとの差もわずかな幅のなかにあります。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/snow-ground/">スキーとグラウンドゴルフ、日本一はどの県だ</a>｜<a href="/exhibits/hiking/">日本一「山を歩く」県はどこだ</a>｜<a href="/how-to-read/rate-and-count/">割合だけ見ると、消えるもの</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.sc .bar{background:#c08a3e}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>

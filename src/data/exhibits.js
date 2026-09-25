@@ -92,6 +92,9 @@ export const exhibits = [
   { no: 24, href: '/exhibits/snow-ground/', place: 'living',
     title: 'スキーとグラウンドゴルフ、日本一はどの県だ',
     lead: 'スキーとグラウンドゴルフの行動者率を47都道府県で比較。どちらも、大きな街のある県は上に来ません。' },
+  { no: 25, href: '/exhibits/ball-games/', place: 'living',
+    title: '野球とサッカー、日本一はどの県だ',
+    lead: '野球とサッカーの行動者率を47都道府県で比較。同じ球技でも、上に来る県の顔ぶれは別ものでした。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書

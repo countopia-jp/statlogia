@@ -1,0 +1,205 @@
+---
+import '../styles/global.css';
+const {
+  title = 'Countopia Stats｜都道府県・市区町村で引ける、暮らしの統計',
+  description = '都道府県・市区町村で引ける、暮らしの統計。日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
+  backHref = '',
+  backLabel = '',
+  ogImage = null,
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={new URL(Astro.url.pathname, 'https://countopia.com')} />
+  <meta property="og:image" content={ogImage ? `https://countopia.com${ogImage}` : 'https://countopia.com/images/ogp.png'} />
+  <meta property="og:site_name" content="Countopia Stats" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href={new URL(Astro.url.pathname, 'https://countopia.com')} />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header class="site">
+    <div class="nav">
+      <a class="logo" href="/">
+        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small></span>
+        <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
+      </a>
+      <nav aria-label="主要メニュー">
+        <ul>
+          <li><a href="/">玄関</a></li>
+          <li><a href="/exhibits/">展示</a></li>
+          <li><a href="/tower/">展望塔</a></li>
+          <li><a href="/dashboard/">閲覧室</a></li>
+          <li><a href="/how-to-read/">歩き方</a></li>
+          <li><a href="/guide/">案内人</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  {backHref && (
+    <div class="backbar">
+      <a href={backHref}>← {backLabel}へ戻る</a>
+    </div>
+  )}
+  <slot />
+  <footer class="site">
+    <div class="foot">
+      <div class="foot-brand">
+        <span class="mono">COUNTOPIA STATS</span>
+        <p class="tag">Japan in Numbers — 数字の国、カウントピア</p>
+      </div>
+
+      <nav class="foot-links" aria-label="サイト情報">
+        <span class="foot-heading">この国について</span>
+        <a class="foot-link" href="/about/">入国審査場</a>
+        <a class="foot-link" href="/editor/">編集室</a>
+      </nav>
+
+      <nav class="foot-links" aria-label="規約">
+        <span class="foot-heading">きまりごと</span>
+        <a class="foot-link" href="/privacy/">プライバシーポリシー</a>
+        <a class="foot-link" href="/terms/">利用規約・お問い合わせ</a>
+      </nav>
+
+      <a class="foot-source" href="/sources/">
+        <span class="fs-label">SOURCES</span>
+        <span class="fs-body">
+          <span class="fs-title">出典一覧</span>
+          <span class="fs-note">社会生活基本調査、住宅・土地統計調査、国勢調査ほか。どの数字がどの統計表から来ているか、表番号とe-Statへのリンクをまとめています。</span>
+        </span>
+        <span class="fs-arrow">→</span>
+      </a>
+
+      <a class="foot-source" href="/annex/">
+        <span class="fs-label">ANNEX</span>
+        <span class="fs-body">
+          <span class="fs-title">町の出納帳</span>
+          <span class="fs-note">財政や人口の出入りなど、町の内側に関わる数字をまとめています。</span>
+        </span>
+        <span class="fs-arrow">→</span>
+      </a>
+
+      <div class="foot-credit">
+        <p>本サイトの図表は政府統計（e-Stat等）を加工して作成しています。</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 Countopia Stats</span>
+    </div>
+  </footer>
+  <style>
+    .backbar { max-width: 860px; margin: 0 auto; padding: 14px 16px 0; }
+    .backbar a {
+      display: inline-block; font-size: 0.82rem; color: #2d6a4f;
+      border: 1px solid #2d6a4f; border-radius: 999px; padding: 5px 14px;
+      text-decoration: none; background: #fff8;
+    }
+    .backbar a:hover { background: #2d6a4f; color: #fff; }
+
+    /* ロゴをトップへのリンクに。色はリンク色に引っ張られないよう継承させる */
+    a.logo{display:flex;flex-direction:column;text-decoration:none;color:inherit}
+    a.logo:hover .mark b { opacity: .8; }
+
+    .mark .stats {
+      font-size: 0.9em; opacity: .85; letter-spacing: .05em;
+      margin-left: 2px; font-weight: 700;
+    }
+    .sub .tagline {
+      opacity: .8;
+    }
+    @media (max-width: 1024px) {
+      .sub .tagline { display: none; }
+    }
+
+    .foot {
+      max-width: 1280px; margin: 0 auto; padding: 40px 16px 24px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 32px 40px;
+      align-items: start;
+    }
+    .foot-brand .mono {
+      display: block; font-weight: 700; letter-spacing: .06em;
+      font-size: 1rem; margin-bottom: 8px;
+    }
+    .foot-brand .tag {
+      font-size: .82rem; line-height: 1.9; opacity: .75; margin: 0;
+      font-family: "Shippori Mincho", serif;
+    }
+
+    .foot-links { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+    .foot-heading {
+      font-size: .72rem; letter-spacing: .2em; opacity: .6;
+      margin-bottom: 2px; font-family: "IBM Plex Mono", monospace;
+    }
+    .foot-links .foot-link { font-size: .84rem; }
+    .foot-link {
+      color: #f4f1e6; text-decoration: underline;
+      text-underline-offset: 3px; text-decoration-color: #f4f1e650;
+    }
+    .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
+
+    /* 出典一覧：3カラムをまたいで横いっぱいに置く */
+    .foot-source {
+      grid-column: 1 / -1;
+      justify-self: stretch;
+      width: 100%;
+      display: flex; align-items: center; gap: 18px;
+      padding: 14px 20px;
+      border: 1px solid #f4f1e644; border-radius: 10px;
+      background: #ffffff0a; text-decoration: none; color: #f4f1e6;
+      transition: background .15s, border-color .15s;
+    }
+    .foot-source:hover { background: #ffffff14; border-color: #f0b78a88; }
+    .fs-label {
+      flex-shrink: 0; font-family: "IBM Plex Mono", monospace;
+      font-size: .62rem; letter-spacing: .24em; opacity: .6;
+    }
+    .fs-body { flex: 1; min-width: 0; }
+    .fs-title {
+      display: block; font-family: "Shippori Mincho", serif;
+      font-weight: 800; font-size: .95rem;
+    }
+    .fs-note { display: block; font-size: .75rem; opacity: .6; margin-top: 3px; line-height: 1.6; }
+    .fs-arrow { flex-shrink: 0; color: #f0b78a; font-size: 1.1rem; }
+
+    .foot-credit {
+      grid-column: 1 / -1;
+      padding-top: 24px; border-top: 1px solid #f4f1e622;
+    }
+    .foot-credit p {
+      font-size: .78rem; line-height: 1.9; opacity: .65; margin: 0 0 6px;
+      max-width: 68em;
+    }
+
+    .foot-bottom {
+      max-width: 1280px; margin: 0 auto; padding: 0 16px 28px;
+      font-size: .74rem; opacity: .55;
+      font-family: "IBM Plex Mono", monospace; letter-spacing: .06em;
+    }
+
+    @media (max-width: 860px) {
+      .foot { grid-template-columns: 1fr 1fr; }
+      .foot-brand { grid-column: 1 / -1; }
+    }
+    @media (max-width: 560px) {
+      .foot { grid-template-columns: 1fr; gap: 28px; padding: 32px 16px 20px; }
+      .foot-source { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .fs-arrow { align-self: flex-end; margin-top: -24px; }
+    }
+  </style>
+  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1929c443f3004e709b99ca6023f0f912"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
