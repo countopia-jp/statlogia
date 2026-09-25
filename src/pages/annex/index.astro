@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+---
+<BaseLayout title="町の出納帳 - Countopia Stats" description="財政や人口の出入りなど、町の内側に関わる数字をまとめた部屋です。">
+  <main class="rr">
+    <header class="rr-hero">
+      <p class="rr-kicker">別館</p>
+      <h1>町の出納帳</h1>
+      <p class="rr-lead">
+        財政や人口の出入りなど、町の内側に関わる数字です。<br />
+        本館とは別に、出納帳としてここにまとめました。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      ここは本館の奥、別館です。財政やひとの出入りなど、数字の裏に事情がある窓口を集めた出納帳です。
+    </Talk>
+    <Talk speaker="touko">
+      帳面には、町のいろんな事情が綴じてあるのねえ。
+    </Talk>
+
+    <section class="rr-group" aria-label="財政と人の動き">
+      <div class="rr-grid">
+        <a class="rr-card" href="/education-budget/">
+          <h3>教育の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県ごとの財政力指数と、教育費のかけ方をまとめた帳場です。
+          </p>
+        </a>
+        <a class="rr-card" href="/town-finance/">
+          <h3>わが町の財政と教育費</h3>
+          <p class="rr-card-desc">
+            市区町村ごとの財政力指数、実質収支比率など、町の懐事情を映す数字です。
+          </p>
+        </a>
+        <a class="rr-card" href="/town-migration/">
+          <h3>人が集まる町・出ていく町</h3>
+          <p class="rr-card-desc">
+            転入・転出の数字から、町の人の動きを追います。
+          </p>
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
