@@ -10,7 +10,7 @@
 // スキーマ:
 //   key         内部識別子（スラッグ）
 //   label       表示名
-//　　category    生活場面カテゴリ（population/education/work/housing/money/time/finance/nature）
+//　　category    生活場面カテゴリ（population/education/work/housing/money/time/finance/nature/health/culture）
 //   ※重要：categoryは指標そのものの性質で決める。使われているページ(usedIn)では決めない。
 //     1ページが複数カテゴリの指標を組み合わせて構成されることは多いが(例:暮らしの見積所=work+housing)、
 //     各指標のcategoryタグは常に単体で見た時の本来の分類を保つこと。今後カテゴリを追加する際も
@@ -1647,5 +1647,35 @@ export const catalog = [
     points: 1,
     status: 'published',
     usedIn: ['/town-medical/'],
+  },
+  {
+    key: 'muni-libraries',
+    label: '図書館数（市区町村）',
+    category: 'culture',
+    system: 'G',
+    scope: 'muni',
+    statsDataId: { muni: '0000020107' },
+    fetchMode: 'code',
+    code: 'G1401',
+    unit: '館',
+    direction: 'neutral',
+    points: 1,
+    status: 'published',
+    usedIn: ['/town-culture/'],
+  },
+  {
+    key: 'muni-community-centers',
+    label: '公民館数（市区町村）',
+    category: 'culture',
+    system: 'G',
+    scope: 'muni',
+    statsDataId: { muni: '0000020107' },
+    fetchMode: 'code',
+    code: 'G1201',
+    unit: '館',
+    direction: 'neutral',
+    points: 1,
+    status: 'published',
+    usedIn: ['/town-culture/'],
   },
 ];

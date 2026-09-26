@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getMuniCultureData } from '../../lib/muni-culture.js';
+const data = await getMuniCultureData();
+---
+<BaseLayout title="わが町の図書館と公民館｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+  <main class="tp">
+    <header class="tp-hero">
+      <p class="tp-kicker">閲覧室</p>
+      <h1>わが町の図書館と公民館</h1>
+      <p class="tp-lead">
+        市区町村を選んで、その町に図書館と公民館がいくつあるかをご覧ください。<br />
+        本を借りる場所と、人が集まる場所。その町にある数を、そのまま。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      こちらは図書館と公民館の窓口です。その町にいくつあるか、そのままの数と、図書館だけは「何人に1館あるか」もお出しします。
+    </Talk>
+    <Talk speaker="touko">
+      公民館は、人の数で割らないの。
+    </Talk>
+    <Talk speaker="kei">
+      割りません。公民館は、地区ごとの小さな館まで数える町と、大きな館だけを数える町があって、数え方がそろっていないんです。
+    </Talk>
+
+    <section class="tp-selector">
+      <label>
+        <span>都道府県</span>
+        <select id="prefSelect"><option value="">選んでください</option></select>
+      </label>
+      <label>
+        <span>市区町村</span>
+        <select id="townSelect" disabled><option value="">まず都道府県を選ぶ</option></select>
+      </label>
+    </section>
+
+    <section id="resultArea" class="tp-result" hidden aria-live="polite">
+      <h2 id="resultTitle"></h2>
+      <div id="cardArea" class="tp-cards"></div>
+
+      <div class="tp-chart-wrap" id="chartWrap">
+        <p class="tp-chart-title">公民館の数の移りかわり</p>
+        <canvas id="culChart" height="120"></canvas>
+      </div>
+
+      <Talk speaker="kei"><span id="keiLine"></span></Talk>
+      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+    </section>
+
+    <p class="tp-cross">あわせて見る：<a href="/exhibits/reading/">本とマンガ、日本一はどの県だ</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
+
+    <footer class="tp-source">
+      <p>
+        出典：{data.source}（施設は{data.culYear}、人口は{data.popYear}）<br />
+        {data.note}<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline define:vars={{ TP: data }}>
+    (function () {
+      const IND = TP.indicators;
+      const areas = TP.areas;
+      const LIB = 0, KOMIN = 1, LIB_PER = 2;
+
+      // 「およそ」と言うので端数を丸める（3桁目まで）
+      const roundPeople = (n) => {
+        if (n < 1000) return Math.round(n / 10) * 10;
+        const d = Math.pow(10, Math.floor(Math.log10(n)) - 2);
+        return Math.round(n / d) * d;
+      };
+      const fmt = (i, val) => {
+        if (val === null || val === undefined) return '—';
+        if (IND[i].decimal) return val.toFixed(1) + IND[i].unit;
+        return Math.round(val).toLocaleString('ja-JP') + IND[i].unit;
+      };
+
+      const prefSel = document.getElementById('prefSelect');
+      const sel = document.getElementById('townSelect');
+      const PREF_NAMES = {
+        '01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県',
+        '08':'茨城県','09':'栃木県','10':'群馬県','11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県',
+        '15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県','21':'岐阜県',
+        '22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県',
+        '29':'奈良県','30':'和歌山県','31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県',
+        '36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県','41':'佐賀県','42':'長崎県',
+        '43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'
+      };
+      const byPref = {};
+      for (const a of areas) { const p = a.c.slice(0, 2); (byPref[p] = byPref[p] || []).push(a); }
+      Object.keys(byPref).sort().forEach((p) => {
+        const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; prefSel.appendChild(o);
+      });
+      const shortName = (a) => {
+        const pref = PREF_NAMES[a.c.slice(0, 2)];
+        return pref && a.n.startsWith(pref) ? a.n.slice(pref.length).trim() : a.n;
+      };
+      prefSel.addEventListener('change', () => {
+        sel.innerHTML = '<option value="">選んでください</option>';
+        const list = byPref[prefSel.value] || [];
+        for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); sel.appendChild(o); }
+        sel.disabled = list.length === 0;
+        document.getElementById('resultArea').hidden = true;
+      });
+      sel.addEventListener('change', () => { const a = areas.find((x) => x.c === sel.value); if (a) render(a); });
+
+      let culChart = null;
+      function renderChart(a) {
+        const wrap = document.getElementById('chartWrap');
+        if (!a.series || a.series.length < 3) { wrap.hidden = true; return; }
+        wrap.hidden = false;
+        const ctx = document.getElementById('culChart');
+        if (culChart) culChart.destroy();
+        culChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: a.series.map((p) => p.year),
+            datasets: [{
+              label: '公民館の数',
+              data: a.series.map((p) => p.value),
+              borderColor: '#2d6a4f',
+              backgroundColor: '#2d6a4f22',
+              tension: 0.2,
+              fill: true,
+            }],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (v) => v.toLocaleString('ja-JP') + '館' } } },
+          },
+        });
+      }
+
+      function render(a) {
+        document.getElementById('resultArea').hidden = false;
+        document.getElementById('resultTitle').textContent = a.n + 'の図書館と公民館';
+        const wrap = document.getElementById('cardArea');
+        wrap.innerHTML = '';
+        IND.forEach((ind, i) => {
+          const card = document.createElement('div');
+          card.className = 'tp-card';
+          let meta = '';
+          if (a.v[i] === 0 && i !== LIB_PER) {
+            meta = '<div class="tp-card-meta">この町にはありません</div>';
+          } else if (i === LIB_PER) {
+            meta = a.v[i] === null
+              ? '<div class="tp-card-meta tp-card-meta--soft">図書館がないので出せません</div>'
+              : `<div class="tp-card-meta tp-card-meta--soft">人口${Math.round(a.pop).toLocaleString('ja-JP')}人 ÷ ${Math.round(a.v[LIB])}館</div>`;
+          }
+          card.innerHTML =
+            `<div class="tp-card-label">${ind.key}</div>` +
+            `<div class="tp-card-num">${fmt(i, a.v[i])}</div>` + meta;
+          wrap.appendChild(card);
+        });
+        renderChart(a);
+        updateLines(a);
+      }
+
+      function updateLines(a) {
+        const lib = a.v[LIB], komin = a.v[KOMIN], libPer = a.v[LIB_PER];
+        const kei = document.getElementById('keiLine');
+        const touko = document.getElementById('toukoLine');
+        let k = '';
+        if (lib !== null) k = lib === 0 ? '図書館は、この町にはありません。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`;
+        if (komin !== null) k += komin === 0 ? ' 公民館も、数字の上ではありません。' : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館です。`;
+        if (lib && libPer !== null) k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館です。`;
+        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        const seed = parseInt(a.c, 10) || 0;
+        const s = a.series || [];
+        const first = s.length ? s[0].value : null, last = s.length ? s[s.length - 1].value : null;
+        // 2割以上の増減だけを「減った」「増えた」と言う（17→16のような揺れは「同じくらい」）
+        const hasTrend = s.length >= 3 && first !== null && last !== null && first > 0;
+        const ratio = hasTrend ? last / first : 1;
+        let t;
+        if (hasTrend && ratio <= 0.8) {
+          t = ['公民館が、だんだん減っているのねえ。', 'むかしは、もっとたくさんあったのね。'][seed % 2];
+        } else if (hasTrend && ratio >= 1.2) {
+          t = ['公民館は、増えてきたのね。', 'いまのほうが多いのねえ。'][seed % 2];
+        } else if (hasTrend) {
+          t = ['公民館の数は、ずっと同じくらいなのね。', '長いあいだ、あまり変わっていないのねえ。'][seed % 2];
+        } else if (lib === 0 && komin === 0) {
+          t = 'この町には、どちらも無いのねえ。';
+        } else {
+          t = ['本を借りる場所は、町ごとに違うのねえ。', '数えられているのねえ。'][seed % 2];
+        }
+        touko.textContent = t;
+      }
+
+    })();
+  </script>
+
+  <style is:global>
+    .tp { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .tp-hero { text-align: center; padding: 28px 0 8px; }
+    .tp-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .tp-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+    .tp-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .tp-lead { color: #555; line-height: 1.9; }
+    .tp-selector { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .tp-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; align-items: flex-start; }
+    .tp-selector select { width: 280px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+    .tp-selector select:disabled { background: #f0f0ea; color: #999; }
+    .tp-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .tp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    @media (max-width: 560px) { .tp-cards { grid-template-columns: 1fr 1fr; } }
+    .tp-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
+    .tp-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .06em; }
+    .tp-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; margin: 6px 0 2px; color: #1b4332; }
+    .tp-card-meta { font-size: .72rem; color: #b23a2f; font-weight: 700; }
+    .tp-card-meta--soft { color: #888; font-weight: 400; }
+
+    .tp-chart-wrap {
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      border-radius: 8px; background: #fff;
+    }
+    .tp-chart-title {
+      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      margin: 0 0 10px; text-align: center;
+    }
+
+    .tp-ranking { margin-top: 44px; }
+    .tp-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .tp-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
+    .tp-tab { padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: .85rem; }
+    .tp-tab.is-active { background: #1b4332; color: #fff; }
+    .tp-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+    .tp-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .tp-rank-list li:last-child { border-bottom: none; }
+    .tp-rank-list li::before { content: counter(rank); font-weight: 700; color: #b23a2f; margin-right: 12px; min-width: 1.4em; text-align: center; }
+    .tp-rank-list li:hover { background: #f4f7f4; }
+    .tp-rank-name { flex: 1; }
+    .tp-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
+    .tp-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
+    .tp-cross { margin-top: 36px; font-size: .9rem; text-align: center; }
+    .tp-cross a { color: #b23a2f; }
+    .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
