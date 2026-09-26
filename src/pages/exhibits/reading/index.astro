@@ -45,6 +45,9 @@ const moves = rows
   .map((m) => ({ ...m, delta: m.book - m.manga }));
 const riser = [...moves].sort((a, b) => b.delta - a.delta)[0];
 const faller = [...moves].sort((a, b) => a.delta - b.delta)[0];
+const readSameTop = top.n === mangaRows[0].n;
+const readBothTop = most.map((r) => r.n).filter((n) => mangaMost.some((r) => r.n === n));
+const twist = !readSameTop && readBothTop.length <= 2;
 ---
 <BaseLayout title="本とマンガを読む人の割合｜Countopia Stats" description="都道府県別・過去1年間に読書またはマンガを読んだ人の割合。本とマンガ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -101,7 +104,7 @@ const faller = [...moves].sort((a, b) => a.delta - b.delta)[0];
       <Talk speaker="touko">上と下で、{bookSpread >= 1.8 ? '倍ほども' : 'ずいぶん'}違うのね。</Talk>
       <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{bookSpread.toFixed(2)}倍です。ここまでは、よくある形の展示でした。</Talk>
 
-      <h2>ところが、マンガを見ると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、マンガを見ると</h2>
 
       <Talk speaker="kei">同じ調査で、マンガを読んだ人の割合も数えられています。全国平均は{fmt(mangaAvg)}。</Talk>
       {mangaMore ? (

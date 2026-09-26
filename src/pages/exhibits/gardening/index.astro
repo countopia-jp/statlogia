@@ -54,6 +54,8 @@ const bigCityAvgRank = bigCityRanks.length
 const topRegions = regionsOf(most);
 const diyTopRegions = regionsOf(diyMost);
 const ratio = (avg / diy.national).toFixed(1);
+// 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
+const twist = !sameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="園芸と日曜大工の行動者率｜Countopia Stats" description="都道府県別・園芸と日曜大工の行動者率。庭いじりと日曜大工、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -116,10 +118,10 @@ const ratio = (avg / diy.national).toFixed(1);
         </ol>
       </details>
 
-      <h2>ところが、日曜大工を数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、日曜大工を数えると</h2>
 
       <Talk speaker="touko">こちらは、どうなの。</Talk>
-      <Talk speaker="kei">全国で{fmt(diy.national)}。庭いじりの{ratio}分の1です。そして、顔ぶれが入れかわります。</Talk>
+      <Talk speaker="kei">全国で{fmt(diy.national)}。庭いじりの{ratio}分の1です。そして、{twist ? "顔ぶれが入れかわります。" : "顔ぶれは、あまり変わりません。"}</Talk>
 
       <ol class="rank diy">
         {diyMost.map((r) => (

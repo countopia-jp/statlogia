@@ -95,6 +95,9 @@ export const exhibits = [
   { no: 25, href: '/exhibits/ball-games/', place: 'living',
     title: '野球とサッカー、日本一はどの県だ',
     lead: '野球とサッカーの行動者率を47都道府県で比較。同じ球技でも、上に来る県の顔ぶれは別ものでした。' },
+  { no: 26, href: '/exhibits/budo/', place: 'living',
+    title: '柔道と剣道、日本一はどの県だ',
+    lead: '柔道と剣道の行動者率を47都道府県で比較。どちらも1000人に数人の世界で、一県だけ飛び抜けた県があります。' },
 ];
 
 // 出典一覧などで使う「パス→表示名」の辞書

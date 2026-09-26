@@ -43,6 +43,8 @@ const topNames = most.map((r) => r.n);
 const goTopNames = goMost.map((r) => r.n);
 const bothTop = topNames.filter((n) => goTopNames.includes(n));
 const hasBothTop = bothTop.length > 0;
+// 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
+const twist = !sameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="将棋と囲碁の行動者率｜Countopia Stats" description="都道府県別・将棋と囲碁の行動者率。将棋と囲碁、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -103,10 +105,10 @@ const hasBothTop = bothTop.length > 0;
         </ol>
       </details>
 
-      <h2>ところが、囲碁を数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、囲碁を数えると</h2>
 
       <Talk speaker="touko">碁のほうは、どうなの。</Talk>
-      <Talk speaker="kei">全国で{fmt(go.national)}。将棋の{ratio}分の1です。そして、いちばん多い県が入れかわります。</Talk>
+      <Talk speaker="kei">全国で{fmt(go.national)}。将棋の{ratio}分の1です。そして、{twist ? "いちばん多い県が入れかわります。" : "顔ぶれは、あまり変わりません。"}</Talk>
 
       <ol class="rank go">
         {goMost.map((r) => (

@@ -35,6 +35,8 @@ const hasBothTop = bothTop.length > 0;
 const topRegions = regionsOf(most);
 const craftsRegions = regionsOf(craftsMost);
 const ratio = (avg / crafts.national).toFixed(0);
+// 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
+const twist = !sameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="テレビゲームと編み物の行動者率｜Countopia Stats" description="都道府県別・テレビゲームと編み物・手芸の行動者率。ゲームと編み物、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -97,10 +99,10 @@ const ratio = (avg / crafts.national).toFixed(0);
         </ol>
       </details>
 
-      <h2>ところが、編み物を数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、編み物を数えると</h2>
 
       <Talk speaker="touko">編み物なら、わたくしにも分かりますわ。冬になると、みなさん手を動かしていましたもの。</Talk>
-      <Talk speaker="kei">いまは全国で{fmt(crafts.national)}。ゲームのおよそ{ratio}分の1です。ただ、並びがまったく違います。</Talk>
+      <Talk speaker="kei">いまは全国で{fmt(crafts.national)}。ゲームのおよそ{ratio}分の1です。{twist ? "ただ、並びがまったく違います。" : "並びは、そう大きくは変わりません。"}</Talk>
 
       <ol class="rank crafts">
         {craftsMost.map((r) => (

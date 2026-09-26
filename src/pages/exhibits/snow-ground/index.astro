@@ -41,6 +41,8 @@ const hasBothTop = bothTop.length > 0;
 
 const topRegions = regionsOf(most);
 const groundRegions = regionsOf(groundMost);
+// 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
+const twist = !sameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="スキーとグラウンドゴルフの行動者率｜Countopia Stats" description="都道府県別・スキーとグラウンドゴルフの行動者率。雪の県と、そうでない県の話。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -105,7 +107,7 @@ const groundRegions = regionsOf(groundMost);
         </ol>
       </details>
 
-      <h2>ところが、グラウンドゴルフを数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、グラウンドゴルフを数えると</h2>
 
       <Talk speaker="touko">ぐらうんど……ごるふ。それは、どういうものかしら。</Talk>
       <Talk speaker="kei">芝の上でボールを打って、決められた場所に入れる遊びです。道具も場所も簡単で、年齢を問わず楽しめます。全国では{fmt(ground.national)}でした。</Talk>

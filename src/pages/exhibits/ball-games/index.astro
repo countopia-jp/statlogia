@@ -54,6 +54,8 @@ const hasSwapped = swapped.length > 0;
 const swapName = hasSwapped ? swapped[0] : '';
 const swapBbRank = hasSwapped ? bbRankOfName(swapName) : 0;
 const swapScRank = hasSwapped ? scRankOfName(swapName) : 0;
+// 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
+const twist = !sameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="野球とサッカーの行動者率｜Countopia Stats" description="都道府県別・野球とサッカーの行動者率。野球とサッカー、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -114,7 +116,7 @@ const swapScRank = hasSwapped ? scRankOfName(swapName) : 0;
         </ol>
       </details>
 
-      <h2>ところが、サッカーを数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、サッカーを数えると</h2>
 
       <Talk speaker="touko">蹴球のほうは、どうなの。</Talk>
       <Talk speaker="kei">フットサルも含めて、全国で{fmt(soccer.national)}。野球より{Math.abs(diff).toFixed(1)}ポイント{baseballMore ? '少ない' : '多い'}数字です。そして、{sameTop ? 'いちばん多い県は同じでした。' : 'いちばん多い県が入れかわります。'}</Talk>

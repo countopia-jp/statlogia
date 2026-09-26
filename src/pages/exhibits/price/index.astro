@@ -39,6 +39,8 @@ const foodTopTotalRank = totalRank(foodTop.n);
 const foodTopTotal = rows.find((r) => r.n === foodTop.n);
 const topChanged = foodTop.n !== top.n;
 const foodJump = foodTopTotalRank >= 10;
+const foodBothTop = most.map((r) => r.n).filter((n) => foodMost.some((r) => r.n === n));
+const twist = topChanged && foodBothTop.length <= 2;
 ---
 <BaseLayout title="物価の高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数。日本一「物価が高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -112,9 +114,9 @@ const foodJump = foodTopTotalRank >= 10;
         <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。大きな都市を抱える県ばかりが上に来るわけでもありません。</Talk>
       )}
 
-      <h2>ところが、食べものだけを見ると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、食べものだけを見ると</h2>
 
-      <Talk speaker="kei">同じ調査は、費目ごとの数字も出しています。食料だけを取り出すと、順番が変わるんです。</Talk>
+      <Talk speaker="kei">同じ調査は、費目ごとの数字も出しています。食料だけを取り出すと、{twist ? "順番が変わるんです。" : "順番は少しだけ動きます。"}</Talk>
 
       <ol class="rank food">
         {foodMost.map((r) => (

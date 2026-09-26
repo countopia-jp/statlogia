@@ -53,6 +53,8 @@ const trendUp = diff > 0;
 const trendMax = Math.max(...trend.map((t) => t.minutes));
 const step = Math.max(1, Math.round((trend.length - 1) / 4));
 const trendShown = trend.filter((_, i) => i % step === 0 || i === trend.length - 1);
+const sunSameTop = top.n === clearTop.n;
+const twist = !sunSameTop && bothTop.length <= 2;
 ---
 <BaseLayout title="日照時間と快晴日数｜Countopia Stats" description="都道府県別の年間日照時間と快晴日数。日本でいちばん日が差す県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -109,7 +111,7 @@ const trendShown = trend.filter((_, i) => i % step === 0 || i === trend.length -
       <Talk speaker="touko">上と下で、{spreadWide ? 'ずいぶん' : 'そこそこ'}違うのね。</Talk>
       <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread}倍です。</Talk>
 
-      <h2>ところが、「快晴の日」を数えると</h2>
+      <h2>{twist ? "ところが" : "こんどは"}、「快晴の日」を数えると</h2>
 
       <Talk speaker="kei">同じ調査に、雲がほとんど出なかった日を数えた記録もあります。{clear.year}年で、47県の平均は{clearFmt(clear.national)}。</Talk>
       <Talk speaker="touko">こちらも、さっきと同じ順番かしら。</Talk>
