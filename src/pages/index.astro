@@ -251,38 +251,9 @@ const prefectures = [
       <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
     </section>
 
-    <a class="annex-banner" href="/annex/">
-      <span class="ab-label">別館</span>
-      <span class="ab-body">
-        <span class="ab-title">町の出納帳</span>
-        <span class="ab-note">財政や人口の出入りなど、町の内側に関わる数字をまとめています。</span>
-      </span>
-      <span class="ab-arrow">→</span>
-    </a>
   </main>
 </BaseLayout>
 <style>
-.annex-banner{
-  display:flex;align-items:center;gap:16px;
-  max-width:1280px;margin:0 auto 40px;padding:18px 24px;
-  border:1px solid var(--line);border-radius:10px;
-  background:#fdfdf8;text-decoration:none;color:inherit;
-  transition:transform .15s ease, box-shadow .15s ease;
-}
-.annex-banner:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(27,67,50,.15);}
-.ab-label{
-  flex:0 0 auto;font-family:"Shippori Mincho",serif;font-weight:800;
-  font-size:.85rem;letter-spacing:.1em;color:var(--ink-soft);
-  border-right:1px solid var(--line);padding-right:16px;
-}
-.ab-body{flex:1;display:flex;flex-direction:column;gap:2px;}
-.ab-title{font-family:"Shippori Mincho",serif;font-weight:700;font-size:1rem;}
-.ab-note{font-size:.8rem;color:var(--ink-soft);line-height:1.6;}
-.ab-arrow{flex:0 0 auto;font-size:1.1rem;color:var(--stamp);}
-@media(max-width:640px){
-  .annex-banner{flex-direction:column;align-items:flex-start;gap:8px;}
-  .ab-label{border-right:none;padding-right:0;}
-}
 /* ── 製図台と白紙 ───────────────────── */
 .desk{
   position:relative;
