@@ -6,6 +6,9 @@ import { getPriceData } from '../../lib/price.js';
 import { getReadingData } from '../../lib/reading.js';
 import { getHikingData } from '../../lib/hiking.js';
 import { getWasteData } from '../../lib/waste.js';
+import { getBallGamesData } from '../../lib/ball-games.js';
+import { getHousingTypeData } from '../../lib/housing-type.js';
+import { getSolarData } from '../../lib/solar.js';
 
 const sleep = await fetchSleepByPrefecture();
 const sleepTop = sleep[0];
@@ -23,6 +26,12 @@ const vacancyAvg = vacancy.national;
 const reading = await getReadingData();
 const hiking = await getHikingData();
 const waste = await getWasteData();
+const ball = await getBallGamesData();
+
+const housing = await getHousingTypeData();
+const woodLeast = housing.wood.rows[housing.wood.rows.length - 1];
+const solar = await getSolarData();
+const solarFirst = solar.series[0];
 
 const price = await getPriceData();
 const priceTop = price.rows[0];
@@ -73,10 +82,10 @@ const pct = (v) => v.toFixed(1);
 
       <h2 class="board-head">暮らしの計器</h2>
       <div class="board">
-        <a class="gauge" href="/exhibits/vacancy/">
-          <span class="g-label">空き家率（全国平均）</span>
-          <span class="g-value">{vacancyAvg}<small>％</small></span>
-          <span class="g-unit">総住宅数に占める割合</span>
+        <a class="gauge" href="/exhibits/ball-games/">
+          <span class="g-label">野球をする人（全国平均）</span>
+          <span class="g-value">{pct(ball.national)}<small>％</small></span>
+          <span class="g-unit">サッカーは{pct(ball.soccer.national)}％</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/reading/">
@@ -101,6 +110,34 @@ const pct = (v) => v.toFixed(1);
           <span class="g-label">1人1日のごみ（全国平均）</span>
           <span class="g-value">{Math.round(waste.national)}<small>g</small></span>
           <span class="g-unit">{waste.trend[0].year}年度は{Math.round(waste.trend[0].waste)}g</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+      </div>
+
+      <h2 class="board-head">住まいの計器</h2>
+      <div class="board">
+        <a class="gauge" href="/exhibits/vacancy/">
+          <span class="g-label">空き家率（全国平均）</span>
+          <span class="g-value">{vacancyAvg}<small>％</small></span>
+          <span class="g-unit">総住宅数に占める割合</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/housing-type/">
+          <span class="g-label">一戸建ての割合（全国）</span>
+          <span class="g-value">{pct(housing.national)}<small>％</small></span>
+          <span class="g-unit">人の住む家に占める割合</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/housing-type/">
+          <span class="g-label">一戸建てに木造がいちばん少ない</span>
+          <span class="g-value small">{woodLeast.n}</span>
+          <span class="g-unit">{pct(woodLeast.minutes)}％（全国は{pct(housing.wood.national)}％）</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
+        <a class="gauge" href="/exhibits/solar/">
+          <span class="g-label">太陽光発電のある家（全国）</span>
+          <span class="g-value">{pct(solar.national)}<small>％</small></span>
+          <span class="g-unit">{solarFirst.year}年は{pct(solarFirst.value)}％</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
       </div>
@@ -134,7 +171,7 @@ const pct = (v) => v.toFixed(1);
       </div>
 
       <p class="note">出典：総務省統計局「令和3年社会生活基本調査」を加工して作成（2021年・週全体・10歳以上）</p>
-      <p class="note">物価・空き家率・ごみ：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）</p>
+      <p class="note">物価・住まい・ごみ：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ・山歩き・野球・サッカー：社会生活基本調査（2021年・行動者率）</p>
     </section>
   </main>
 </BaseLayout>
@@ -150,7 +187,7 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4v
 }
 .board-head:first-of-type{margin-top:0}
 .board{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:2px;
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;
   background:var(--line);border:2px solid var(--line);border-radius:14px;overflow:hidden;
 }
 .gauge{
@@ -158,6 +195,7 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4v
   text-decoration:none;color:inherit;position:relative;transition:background .15s;
 }
 a.gauge:hover{background:#f7f4e9}
+@media(max-width:600px){.board{grid-template-columns:1fr}}
 .g-label{font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding-bottom:8px}
 .g-value{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:2.4rem;color:var(--stamp);line-height:1.1}
 .g-value.small{font-family:"Shippori Mincho",serif;font-size:1.7rem;color:inherit}

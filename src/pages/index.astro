@@ -5,7 +5,7 @@ import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
-import { getBallGamesData } from '../lib/ball-games.js';
+import { getSolarData } from '../lib/solar.js';
 import { getBudoData } from '../lib/budo.js';
 import { getHousingTypeData } from '../lib/housing-type.js';
 
@@ -25,7 +25,7 @@ const priceTop = price.rows[0];
 const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
-const ballTop = (await getBallGamesData()).rows[0];
+const solarTop = (await getSolarData()).rows[0];
 const judoTop = (await getBudoData()).rows[0];
 const houseTop = (await getHousingTypeData()).rows[0];
 const reading = await getReadingData();
@@ -148,14 +148,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/ball-games/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>25</b></span>
-          <span class="pc-kind">最多・{ballTop.n}</span>
-          <span class="pc-num">{ballTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>野球とサッカー、日本一はどの県だ</h3>
-          <p>野球とサッカーの行動者率を47都道府県で比較。同じ球技でも、上に来る県の顔ぶれは別ものでした。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/budo/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>26</b></span>
           <span class="pc-kind">最多・{judoTop.n}</span>
@@ -170,6 +162,14 @@ const prefectures = [
           <span class="pc-num">{houseTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>一戸建てと木の家、日本一はどの県だ</h3>
           <p>住まいに占める一戸建ての割合と、一戸建てのうち木造の割合を47都道府県で比較。木の家の割合は、一県だけ大きく離れています。</p>
+          <span class="c-place">住まいの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/solar/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>28</b></span>
+          <span class="pc-kind">最多・{solarTop.n}</span>
+          <span class="pc-num">{solarTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>日本一「太陽光発電の家」県はどこだ</h3>
+          <p>人の住む家のうち、太陽光発電機器のある家の割合を47都道府県で比較。いちばん多い県と少ない県で、数倍の開きがあります。</p>
           <span class="c-place">住まいの広場</span>
         </a>
       </div>
