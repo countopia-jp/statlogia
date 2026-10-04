@@ -7,6 +7,7 @@ import { getReadingData } from '../../lib/reading.js';
 import { getHikingData } from '../../lib/hiking.js';
 import { getWasteData } from '../../lib/waste.js';
 import { getBallGamesData } from '../../lib/ball-games.js';
+import { getFishingData } from '../../lib/fishing.js';
 import { getHousingTypeData } from '../../lib/housing-type.js';
 import { getSolarData } from '../../lib/solar.js';
 
@@ -27,6 +28,8 @@ const reading = await getReadingData();
 const hiking = await getHikingData();
 const waste = await getWasteData();
 const ball = await getBallGamesData();
+const fishing = await getFishingData();
+const fishingTop = fishing.rows[0];
 
 const housing = await getHousingTypeData();
 const woodLeast = housing.wood.rows[housing.wood.rows.length - 1];
@@ -112,6 +115,12 @@ const pct = (v) => v.toFixed(1);
           <span class="g-unit">{waste.trend[0].year}年度は{Math.round(waste.trend[0].waste)}g</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
+        <a class="gauge" href="/exhibits/fishing/">
+          <span class="g-label">つりをする人（全国平均）</span>
+          <span class="g-value">{pct(fishing.national)}<small>％</small></span>
+          <span class="g-unit">いちばん多いのは{fishingTop.n}・{pct(fishingTop.minutes)}％</span>
+          <span class="g-link">→ 展示を見る</span>
+        </a>
       </div>
 
       <h2 class="board-head">住まいの計器</h2>
@@ -171,7 +180,7 @@ const pct = (v) => v.toFixed(1);
       </div>
 
       <p class="note">出典：総務省統計局「令和3年社会生活基本調査」を加工して作成（2021年・週全体・10歳以上）</p>
-      <p class="note">物価・住まい・ごみ：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ・山歩き・野球・サッカー：社会生活基本調査（2021年・行動者率）</p>
+      <p class="note">物価・住まい・ごみ：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ・山歩き・野球・サッカー・つり：社会生活基本調査（2021年・行動者率）</p>
     </section>
   </main>
 </BaseLayout>
