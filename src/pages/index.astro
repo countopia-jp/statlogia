@@ -7,7 +7,7 @@ import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
 import { getBallGamesData } from '../lib/ball-games.js';
 import { getBudoData } from '../lib/budo.js';
-import { getSnowGroundData } from '../lib/snow-ground.js';
+import { getHousingTypeData } from '../lib/housing-type.js';
 
 const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -27,7 +27,7 @@ const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const ballTop = (await getBallGamesData()).rows[0];
 const judoTop = (await getBudoData()).rows[0];
-const skiTop = (await getSnowGroundData()).rows[0];
+const houseTop = (await getHousingTypeData()).rows[0];
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 
@@ -148,14 +148,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/snow-ground/">
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>24</b></span>
-          <span class="pc-kind">最多・{skiTop.n}</span>
-          <span class="pc-num">{skiTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>スキーとグラウンドゴルフ、日本一はどの県だ</h3>
-          <p>スキーとグラウンドゴルフの行動者率を47都道府県で比較。どちらも、大きな街のある県は上に来ません。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/ball-games/">
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>25</b></span>
           <span class="pc-kind">最多・{ballTop.n}</span>
@@ -171,6 +163,14 @@ const prefectures = [
           <h3>柔道と剣道、日本一はどの県だ</h3>
           <p>柔道と剣道の行動者率を47都道府県で比較。どちらも1000人に数人の世界で、一県だけ飛び抜けた県があります。</p>
           <span class="c-place">暮らしの広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/housing-type/">
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>27</b></span>
+          <span class="pc-kind">最多・{houseTop.n}</span>
+          <span class="pc-num">{houseTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>一戸建てと木の家、日本一はどの県だ</h3>
+          <p>住まいに占める一戸建ての割合と、一戸建てのうち木造の割合を47都道府県で比較。木の家の割合は、一県だけ大きく離れています。</p>
+          <span class="c-place">住まいの広場</span>
         </a>
       </div>
       <div class="more-actions">
