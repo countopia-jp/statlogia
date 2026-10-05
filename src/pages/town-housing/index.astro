@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniHousingData } from '../../lib/muni-housing.js';
 const data = await getMuniHousingData();
 ---
-<BaseLayout title="わが町の住まい｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の住まい｜Countopia Stats" description="市区町村を選んで、空き家率・持ち家率・共同住宅の割合・1軒あたりの広さ・家賃をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -175,21 +175,26 @@ const data = await getMuniHousingData();
         const vacant = a.v[VACANT], own = a.v[OWN], flat = a.v[FLAT], rent = a.v[RENT];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasVacant = typeof vacant === 'number';
+        const hasOwn = typeof own === 'number';
+        const hasFlat = typeof flat === 'number';
         let k = '';
-        if (vacant !== null) {
-          k = `住宅のうち${vacant.toFixed(1)}％が空き家です。`;
+        k += hasVacant ? `住宅のうち${vacant.toFixed(1)}％が空き家です。` : '空き家率は、この町の値がありません。';
+        if (hasOwn) {
+          k += ` 持ち家は${own.toFixed(1)}％、共同住宅は${hasFlat ? flat.toFixed(1) + '％' : 'この町の値がありません'}。`;
+        } else {
+          k += ' 持ち家率は、この町の値がありません。';
         }
-        if (own !== null) {
-          k += ` 持ち家は${own.toFixed(1)}％、共同住宅は${flat !== null ? flat.toFixed(1) + '％' : '—'}。`;
-        }
-        if (rent === null) {
+        if (typeof rent !== 'number') {
           k += ' 1畳当たり家賃は、市と区にのみ数字があります。';
         }
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (own !== null && own >= 60)
-          ? ['家を持っている方が、半分を超えているのねえ。', '借りるより、持つほうが多いのね。'][seed % 2]
-          : ['借りて住んでいる方も、多いのねえ。', '持ち家と借家、どちらもあるのね。'][seed % 2];
+        touko.textContent = !hasOwn
+          ? '値のない欄もあるのね。'
+          : own > 50
+            ? ['家を持っている方が、半分を超えているのねえ。', '借りるより、持つほうが多いのね。'][seed % 2]
+            : ['家を持っている方は、半分以下なのねえ。', '持ち家と借家、どちらもあるのね。'][seed % 2];
       }
 
       const RANKS = {

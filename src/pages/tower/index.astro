@@ -44,8 +44,9 @@ const eduTop = price.education.rows[0];
 
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 const pct = (v) => v.toFixed(1);
+const mangaMore = reading.manga.national > reading.national;
 ---
-<BaseLayout title="展望塔｜Countopia" description="日本の数字を一望する、Countopiaの展望塔。" backHref="/" backLabel="玄関">
+<BaseLayout title="展望塔｜Countopia Stats" description="日本の数字を一望する、Countopia Statsの展望塔。睡眠・通勤・物価・住まいなどの全国の数字を、計器の形で並べています。" backHref="/" backLabel="玄関">
   <main>
     <section class="tower">
       <img class="tw-figure" src="/images/icon/tower-large.webp" alt="アーチ窓から広がる川と町を、指さす橙子と見つめる京の水彩画" width="1400" height="788" loading="lazy" />
@@ -100,7 +101,7 @@ const pct = (v) => v.toFixed(1);
         <a class="gauge" href="/exhibits/reading/">
           <span class="g-label">マンガを読む人（全国平均）</span>
           <span class="g-value">{pct(reading.manga.national)}<small>％</small></span>
-          <span class="g-unit">本より多いという結果</span>
+          <span class="g-unit">{mangaMore ? `本（${pct(reading.national)}％）より多い` : `本は${pct(reading.national)}％`}</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/hiking/">
@@ -179,8 +180,8 @@ const pct = (v) => v.toFixed(1);
         </a>
       </div>
 
-      <p class="note">出典：総務省統計局「令和3年社会生活基本調査」を加工して作成（2021年・週全体・10歳以上）</p>
-      <p class="note">物価・住まい・ごみ：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ・山歩き・野球・サッカー・つり：社会生活基本調査（2021年・行動者率）</p>
+      <p class="note">出典：睡眠・通勤・家事：総務省統計局「社会生活基本調査」を加工して作成（週全体・10歳以上。年次は各展示の出典をご覧ください）</p>
+      <p class="note">物価（{price.year}）・住まい（{vacancy.year}、{housing.year}、{solar.year}）・ごみ（{waste.year}年度）：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ（{reading.year}）・山歩き（{hiking.year}）・野球・サッカー（{ball.year}）・つり（{fishing.year}）：社会生活基本調査（行動者率）</p>
     </section>
   </main>
 </BaseLayout>

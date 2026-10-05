@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniCommuteData } from '../../lib/muni-commute.js';
 const data = await getMuniCommuteData();
 ---
-<BaseLayout title="通勤の足は何か｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="通勤の足は、何か｜Countopia Stats" description="市区町村を選んで、自宅の外へ通う人のうち自家用車で通う人・公共交通で通う人の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -14,7 +14,7 @@ const data = await getMuniCommuteData();
       <h1>通勤の足は、何か</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の人が主に何で通うのかをご覧ください。<br />
-        車の町か、鉄道・バスの町か。通勤の足もとを、割合という数字で。
+        自家用車で通う人の割合と、鉄道・バスで通う人の割合を、数字で。
       </p>
     </header>
 
@@ -22,7 +22,7 @@ const data = await getMuniCommuteData();
       こちらは通勤の足の窓口です。自宅の外へ通う人が、主に何を使って移動しているか。その割合で、その町の「足」の姿が見えてきます。
     </Talk>
     <Talk speaker="touko">
-      車で通う町もあれば、汽車や電車で通う町もある。土地柄が出るものねえ。
+      車で通う町もあれば、汽車や電車で通う町もあるのね。
     </Talk>
 
     <section class="tp-selector">
@@ -175,23 +175,33 @@ const data = await getMuniCommuteData();
         const car = a.v[CAR], transit = a.v[TRANSIT];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasCar = typeof car === 'number';
+        const hasTransit = typeof transit === 'number';
         let k = '';
-        if (car !== null) {
+        if (hasCar) {
           k = `自家用車で通う人は${car.toFixed(1)}％。`;
-          k += car >= 60 ? ' 車がなければ始まらない、典型的な車社会の町です。'
-             : car <= 20 ? ' 車に頼る人は少数派。鉄道やバスが通勤の主役です。'
+          k += car >= 60 ? ' 通う人の6割以上が自家用車です。'
+             : car <= 20 ? ' 自家用車は、通う人の2割以下です。'
              : '';
+        } else {
+          k = '自家用車で通う人の割合は、この町の値がありません。';
         }
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        if (hasTransit) k += ` 鉄道やバスで通う人は${transit.toFixed(1)}％です。`;
+        else k += ' 鉄道やバスで通う人の割合は、この町の値がありません。';
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (transit !== null && transit >= 40)
-          ? ['電車やバスで通う方が、多いのねえ。', '駅までの道が、朝は賑わうのでしょうね。'][seed % 2]
-          : ['車で通う方が、多いのねえ。', '車の窓から見る景色も、また通勤の楽しみね。'][seed % 2];
+        touko.textContent = !hasCar || !hasTransit
+          ? '値のない欄もあるのね。'
+          : transit > car
+            ? ['電車やバスで通う方が、多いのねえ。', '駅までの道が、朝は賑わうのでしょうね。'][seed % 2]
+            : car > transit
+              ? ['車で通う方が、多いのねえ。', '車の窓から見る景色も、また通勤の楽しみね。'][seed % 2]
+              : '車と、電車やバスが、同じ割合なのね。';
       }
 
       const RANKS = {
-        car:     { i: CAR,     dir: 'desc', note: '自宅外通勤・通学者に占める自家用車利用者の割合が高い＝車で通う市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
-        transit: { i: TRANSIT, dir: 'desc', note: '鉄道・電車＋乗合バスの利用者割合が高い＝公共交通で通う市区町村ベスト5。' },
+        car:     { i: CAR,     dir: 'desc', note: '自宅外通勤・通学者に占める自家用車利用者の割合が高い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
+        transit: { i: TRANSIT, dir: 'desc', note: '鉄道・電車＋乗合バスの利用者割合が高い市区町村ベスト5。' },
       };
       const rankList = document.getElementById('rankList');
       const rankNote = document.getElementById('rankNote');

@@ -15,8 +15,12 @@ const fmt = (v) => `${v.toFixed(1)}％`;
 // 100軒のうち何軒か（数％の指標なので）
 const per100 = (v) => Math.round(v);
 
+const r1 = (v) => Number(v.toFixed(1));
+
 // 同値の順位は値から引く
 const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+// 最多も同値の県を連名にする
+const topNames = rows.filter((r) => r.minutes.toFixed(1) === top.minutes.toFixed(1)).map((r) => r.n);
 
 // 最下位が同率で並んでいるか
 const bottomVal = bottom.minutes.toFixed(1);
@@ -25,10 +29,12 @@ const bottomNames = least.filter((r) => r.minutes.toFixed(1) === bottomVal).map(
 const lowRankOf = (v) => least.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
 const bottomTie = bottomNames.length >= 2;
 
-// トップの独走ぶり（2位との差）
+// トップの独走ぶり（2位との差。表示値の差）
 const secondVal = rows[1].minutes;
-const topLead = top.minutes - secondVal;
+const topLead = r1(top.minutes) - r1(secondVal);
 const topRuns = topLead >= 0.8;
+// 最多と最少の倍率（表示値で割る。最少が0なら出さない）
+const topBottomRatio = r1(bottom.minutes) > 0 ? (r1(top.minutes) / r1(bottom.minutes)).toFixed(1) : null;
 
 // 全国値の推移
 const series = data.series;
@@ -50,14 +56,14 @@ const seriesMax = Math.max(...series.map((s) => s.value));
       </div>
 
       <Talk speaker="kei">28番目の展示は「太陽光発電のある家」です。人の住んでいる家のうち、太陽光で電気をつくる機器のある家がどのくらいあるか。全国では{fmt(avg)}、100軒に{per100(avg)}軒です。</Talk>
-      <Talk speaker="touko">屋根で電気をつくるの。わたくしの頃は、電燈が引かれたばかりという家も多かったのに。</Talk>
-      <Talk speaker="kei">まだ100軒に{per100(avg)}軒ですが、{hasTrend ? `${first.year}年の${fmt(first.value)}から${trendWord}。` : ''}そして、県によってかなり開きがあります。</Talk>
+      <Talk speaker="touko">屋根で電気をつくるの？　わたくしの頃は、電燈が引かれたばかりという家も多かったのに。</Talk>
+      <Talk speaker="kei">{hasTrend ? `${first.year}年の${fmt(first.value)}から${trendWord}。そして、県によってかなり開きがあります。` : '県によってかなり開きがあります。'}</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">太陽光発電のある家がいちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
@@ -87,7 +93,7 @@ const seriesMax = Math.max(...series.map((s) => s.value));
         <Talk speaker="kei">はい。{top.n}が{fmt(top.minutes)}で、2番目との差は{topLead.toFixed(1)}ポイントあります。</Talk>
       )}
       {!topRuns && (
-        <Talk speaker="touko">{top.n}は100軒のうち{per100(top.minutes)}軒ほどなのね。</Talk>
+        <Talk speaker="touko">{topNames.join('と')}は100軒のうち{per100(top.minutes)}軒ほどなのね。</Talk>
       )}
       {!topRuns && (
         <Talk speaker="kei">はい。上位の県は、どこも100軒に{per100(most[4].minutes)}軒から{per100(top.minutes)}軒のあいだに並んでいます。</Talk>
@@ -95,7 +101,7 @@ const seriesMax = Math.max(...series.map((s) => s.value));
 
       <h2>太陽光発電のある家が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
             <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
@@ -106,7 +112,7 @@ const seriesMax = Math.max(...series.map((s) => s.value));
       </ol>
 
       <Talk speaker="touko">{bottomTie ? `いちばん少ないのは${bottomNames.join('と')}、同じ数字で並んでいるわ。` : `いちばん少ないのは${bottom.n}なのね。`}</Talk>
-      <Talk speaker="kei">{fmt(bottom.minutes)}、100軒に{per100(bottom.minutes)}軒ほどです。いちばん多い{top.n}とは{(top.minutes / bottom.minutes).toFixed(1)}倍の開きがあります。</Talk>
+      <Talk speaker="kei">{fmt(bottom.minutes)}、100軒に{per100(bottom.minutes)}軒ほどです。{topBottomRatio ? `いちばん多い${topNames.join('と')}とは${topBottomRatio}倍の開きがあります。` : ''}</Talk>
 
       <details class="all">
         <summary>47都道府県すべてを見る（多い順）</summary>
@@ -137,7 +143,7 @@ const seriesMax = Math.max(...series.map((s) => s.value));
         <Talk speaker="kei">{first.year}年に{fmt(first.value)}だったものが、{last.year}年には{fmt(last.value)}。数字はこの先、5年ごとに更新されます。</Talk>
       )}
 
-      <p class="note">「太陽光発電のある家の割合」は、人の住んでいる住宅（居住世帯のある住宅。空き家や建築中の家は含みません）のうち、太陽光を利用した発電機器のある住宅が占める割合です。この項目は2008年の調査から数えられています。住宅・土地統計調査は5年ごとに行われ、戸数は百戸単位に丸められているため、小数第1位の差は丸めの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「太陽光発電のある家の割合」は、人の住んでいる住宅（居住世帯のある住宅。空き家や建築中の家は含みません）のうち、太陽光を利用した発電機器のある住宅が占める割合です。この項目は2008年の調査から数えられています。総務省統計局「住宅・土地統計調査」（5年ごと）の値で、戸数は百戸単位に丸められています。そのため、小数第1位の差は丸めの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/sunshine/">日本一「晴れる」県はどこだ</a>｜<a href="/exhibits/housing-type/">一戸建てと木の家、日本一はどの県だ</a>｜<a href="/exhibits/utility/">光熱・水道、日本一はどの県だ</a></p>
 

@@ -10,10 +10,17 @@ const least = rows.slice(-5).reverse();
 const top = rows[0];
 const bottom = rows[rows.length - 1];
 // 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+// 低い側（低い順）も値から引く
+const lowRankOf = (v) => least.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+// 最多・最少のカードは同値の県を連名にする
+const topNames = rows.filter((r) => r.minutes.toFixed(1) === top.minutes.toFixed(1)).map((r) => r.n);
+const bottomNames = rows.filter((r) => r.minutes.toFixed(1) === bottom.minutes.toFixed(1)).map((r) => r.n);
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v}％`;
+// 1位の県で、昼間人口が夜間人口より何％多いか（比率−100）
+const topExcess = (top.minutes - 100).toFixed(1);
 ---
 <BaseLayout title="昼夜間人口比率｜Countopia Stats" description="都道府県別・昼夜間人口比率。日本一「昼に人が集まる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -32,22 +39,22 @@ const fmt = (v) => `${v}％`;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">昼間、いちばん人が集まる</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">昼間、いちばん人が出ていく</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん高い{top.n}は{fmt(top.minutes)}。夜間人口より昼間人口の方がずっと多く、まわりの県から通勤・通学で多くの人が集まってくる土地です。</Talk>
-      <Talk speaker="touko">逆に少ない県は、昼間はみんな県の外へ出ていってしまう、ということね。</Talk>
-      <Talk speaker="kei">はい。大きな都市に隣接した、いわゆる「ベッドタウン」の県ほど、比率は低くなる傾向があります。</Talk>
+      <Talk speaker="kei">いちばん高い{topNames.join('と')}は{fmt(top.minutes)}。昼間の人口が、住んでいる人の数より{topExcess}％多い計算です。</Talk>
+      <Talk speaker="touko">逆に低い県は、昼間は県の外へ出ていく人のほうが多い、ということね。</Talk>
+      <Talk speaker="kei">はい。100を下回る県は、昼間に出ていく人のほうが、入ってくる人より多い県です。どこへ向かうのかまでは、この数字だけでは分かりません。</Talk>
 
-      <h2>昼間人口が多い県 TOP5</h2>
+      <h2>昼夜間人口比率が高い県 TOP5</h2>
       <ol class="rank">
         {most.map((r) => (
           <li>
@@ -59,11 +66,11 @@ const fmt = (v) => `${v}％`;
         ))}
       </ol>
 
-      <h2>昼間人口が少ない県 TOP5</h2>
+      <h2>昼夜間人口比率が低い県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -72,11 +79,13 @@ const fmt = (v) => `${v}％`;
       </ol>
 
       <details class="all">
-        <summary>47都道府県すべてを見る（多い順）</summary>
+        <summary>47都道府県すべてを見る（高い順）</summary>
         <ol>
           {rows.map((r) => <li>{r.n}　{fmt(r.minutes)}</li>)}
         </ol>
       </details>
+
+      <p class="note">昼夜間人口比率は、昼間人口を夜間人口（住んでいる人）で割って100をかけた指数で、総務省統計局「国勢調査」（5年ごと）の値です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/commute/">日本一「通勤に時間がかかる」県はどこだ</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
 
@@ -122,6 +131,7 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 .all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
 .all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
 @media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
 .cross{margin-top:36px;font-size:.9rem}
 .cross a{color:var(--stamp)}
 .source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}

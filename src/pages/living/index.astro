@@ -17,7 +17,7 @@ const years = [...new Set(liv.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="暮らしの見積所｜稼ぎと住まい - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="暮らしの見積所｜稼ぎと住まい｜Countopia Stats" description="都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書にまとめてご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="liv-dash">
     <header class="liv-hero">
       <img class="liv-hero-figure" src="/images/icon/living-large.webp" alt="窓辺の机に広げられた家の間取り図、物差しと虫眼鏡、算盤と帳簿" width="1400" height="788" loading="lazy" />
@@ -84,10 +84,10 @@ const yearNote = years.join('・');
     </section>
 
     <Talk speaker="kei">
-      稼ぎの多い県は、たいてい住まいの費用も高くつきます。数字を二つ並べて、はじめて暮らしの手触りが見えてきますね。
+      給与の順位と、家賃や家の広さの順位は、同じ並びにはなりません。数字を二つ並べて見るのが、この見積所の流儀です。
     </Talk>
     <Talk speaker="touko">
-      広い家に住めるのは、案外お給金の高い県ではないのねえ。
+      お給金の順位と、お家の広さの順位は、別なのねえ。
     </Talk>
 
     <p class="liv-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/exhibits/housework/">家事時間の男女差</a>｜<a href="/how-to-read/median-vs-mean/">平均のところに、誰もいない</a></p>
@@ -172,7 +172,8 @@ const yearNote = years.join('・');
           const v = val(area, c.code);
           const st = stats[c.code];
           const rank = st.rank[area.c];
-          const diff = v === null ? null : ((v - st.avg) / st.avg) * 100;
+          const hasV = typeof v === 'number' && typeof rank === 'number';
+          const diff = !hasV ? null : ((v - st.avg) / st.avg) * 100;
           const sign = diff === null ? '' : diff >= 0 ? '+' : '';
           const dirLabel = c.dir === 'desc' ? '高い順' : '安い順';
 
@@ -182,7 +183,7 @@ const yearNote = years.join('・');
             `<div class="liv-card-label">${c.short}</div>` +
             `<div class="liv-card-num">${fmtValue(c.code, v)}</div>` +
             `<div class="liv-card-sub">${c.note}・${meta[c.code].year || ''}</div>` +
-            (v === null
+            (!hasV
               ? ''
               : `<div class="liv-card-meta"><span class="liv-rank">${st.total}県中 ${rank}位</span>` +
                 `<span class="liv-diff">平均比 ${sign}${diff.toFixed(1)}％</span></div>` +
@@ -206,29 +207,37 @@ const yearNote = years.join('・');
         const total = stats['F620215'].total;
         const seed = parseInt(area.c, 10) || 0;
 
-        let k = `給与は${total}県中${wageRank}位、家賃の安さは${rentRank}位、家の広さは${areaRank}位です。`;
+        const hasWage = typeof wageRank === 'number';
+        const hasRent = typeof rentRank === 'number';
+        const hasArea = typeof areaRank === 'number';
+        const hasOwn = typeof ownRank === 'number';
+
+        let k = hasWage && hasRent && hasArea
+          ? `給与は${total}県中${wageRank}位、家賃の安さは${rentRank}位、家の広さは${areaRank}位です。`
+          : `${hasWage ? `給与は${total}県中${wageRank}位です。` : '給与は、この県の値がありません。'} ${hasRent ? `家賃の安さは${rentRank}位です。` : '家賃は、この県の値がありません。'} ${hasArea ? `家の広さは${areaRank}位です。` : '家の広さは、この県の値がありません。'}`;
         let t = '';
 
-        const gap = rentRank - wageRank; // 大きいほど「稼げるが家賃も高い」
-        if (wageRank <= 10 && rentRank >= 38) {
-          k += ' 稼ぎは上位ですが、住まいの負担も相応に重い県ですね。';
-          t = ['たくさん稼いでも、その分お家に消えてしまうのね。', 'お給金が高いのに、暮らしは楽とは限らないのねえ。'][seed % 2];
+        if (!hasWage || !hasRent || !hasArea) {
+          t = '値のない欄もあるのね。';
+        } else if (wageRank <= 10 && rentRank >= 38) {
+          k += ' 給与は上位で、家賃の安さは下位です。';
+          t = ['お給金は上のほう、家賃の安さは下のほうなのね。', '二つの順位が、反対のところにあるのねえ。'][seed % 2];
         } else if (wageRank >= 38 && rentRank <= 10) {
-          k += ' 稼ぎは控えめでも、住まいの負担は全国でも軽いほうです。';
-          t = ['お給金は少なくても、広いお家に住めるのならいいわねえ。', 'つましくても、ゆったり暮らせるということかしら。'][seed % 2];
+          k += ' 給与は下位で、家賃の安さは上位です。';
+          t = ['お給金は下のほう、家賃の安さは上のほうなのね。', '二つの順位が、反対のところにあるのねえ。'][seed % 2];
         } else if (areaRank <= 5) {
-          k += ' 特に家の広さが全国有数です。';
+          k += ' 家の広さは全国の5位以内です。';
           t = ['まあ、そんなに広いお家に！　走り回れそうだわ。', '広いお家は掃除も大変でしょうねえ。'][seed % 2];
-        } else if (gap > 15) {
-          k += ' 稼ぎの順位に比べて、住まいの負担が重めに出ています。';
-          t = ['帳尻は合っているのかしら……。', 'お財布の中身は、見た目ほど増えないのねえ。'][seed % 2];
+        } else if (Math.abs(rentRank - wageRank) >= 15) {
+          k += ' 給与の順位と、家賃の安さの順位は、15以上離れています。';
+          t = ['二つの順位が、離れているのね。', '順位の差が、大きいのねえ。'][seed % 2];
         } else {
-          k += ' 稼ぎと住まいの釣り合いは、全国の中ほどというところです。';
-          t = ['どちらも、まん中あたりなのねえ。', '二つの順位が、近いところにあるのね。'][seed % 2];
+          k += ' 給与の順位と、家賃の安さの順位は、15未満の差です。';
+          t = ['二つの順位が、近いところにあるのね。', '順位がそろっているのねえ。'][seed % 2];
         }
 
-        if (ownRank <= 5) k += ` 持ち家率は${ownRank}位で、家を持つ人の多い県でもあります。`;
-        if (ownRank >= 43) k += ` 持ち家率は${ownRank}位。借りて住む人が多い県です。`;
+        if (hasOwn && ownRank <= 5) k += ` 持ち家率は${ownRank}位です。`;
+        if (hasOwn && ownRank >= 43) k += ` 持ち家率は${ownRank}位です。`;
 
         kei.textContent = k;
         touko.textContent = t;
@@ -322,7 +331,7 @@ const yearNote = years.join('・');
       // ---- ランキング ----
       const RANKS = {
         wage: { code: 'F620215', dir: 'desc', note: '給与（男）が高い県ベスト5。' },
-        rent: { code: 'H410431', dir: 'asc', note: '1畳当たり家賃が安い県ベスト5。住まいの負担が軽い顔ぶれです。' },
+        rent: { code: 'H410431', dir: 'asc', note: '1畳当たり家賃が安い県ベスト5。' },
         area: { code: 'H2130', dir: 'desc', note: '1住宅当たり延べ面積が広い県ベスト5。' },
       };
 

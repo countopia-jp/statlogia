@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniLanduseData } from '../../lib/muni-landuse.js';
 const data = await getMuniLanduseData();
 ---
-<BaseLayout title="わが町の土地の使われ方｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の土地の使われ方｜Countopia Stats" description="市区町村を選んで、都市計画の用途地域のうち住まい・商い・工場の土地がそれぞれどれだけあるかをご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -181,20 +181,24 @@ const data = await getMuniLanduseData();
         const houseOnly = a.v[HOUSE_ONLY], house = a.v[HOUSE], shop = a.v[SHOP], factory = a.v[FACTORY];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
-        if (a.v[ZONE_AREA] === null) {
+        if (typeof a.v[ZONE_AREA] !== 'number') {
           kei.textContent = `${a.n}の用途地域の数字は、この統計にはありません。`;
           touko.textContent = '町によって、定めのないところもあるのねえ。';
           return;
         }
-        const living = (houseOnly || 0) + (house || 0);
-        let k = `用途地域のうち、住まいのための土地が${living.toFixed(1)}％。`;
-        if (shop !== null) k += ` 商いの土地が${shop.toFixed(1)}％、`;
-        if (factory !== null) k += `工場の土地が${factory.toFixed(1)}％です。`;
-        kei.textContent = k;
+        const hasLiving = typeof houseOnly === 'number' || typeof house === 'number';
+        const living = (typeof houseOnly === 'number' ? houseOnly : 0) + (typeof house === 'number' ? house : 0);
+        const parts = [];
+        parts.push(hasLiving ? `住まいのための土地が${living.toFixed(1)}％` : '住まいのための土地は、この町の値がありません');
+        parts.push(typeof shop === 'number' ? `商いの土地が${shop.toFixed(1)}％` : '商いの土地は、この町の値がありません');
+        parts.push(typeof factory === 'number' ? `工場の土地が${factory.toFixed(1)}％` : '工場の土地は、この町の値がありません');
+        kei.textContent = `用途地域のうち、${parts.join('、')}です。`;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = living >= 60
-          ? ['半分より多くが、住まいのための土地なのねえ。', '住むための土地が、広いのね。'][seed % 2]
-          : ['住まい以外の土地も、多いのねえ。', 'いろいろな使い方が、混ざっているのね。'][seed % 2];
+        touko.textContent = !hasLiving
+          ? '値のない欄もあるのね。'
+          : living > 50
+            ? ['半分より多くが、住まいのための土地なのねえ。', '住むための土地が、広いのね。'][seed % 2]
+            : ['住まいのための土地は、半分以下なのねえ。', 'いろいろな使い方が、混ざっているのね。'][seed % 2];
       }
 
       const RANKS = {

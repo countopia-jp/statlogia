@@ -4,13 +4,13 @@ import Talk from '../../components/Talk.astro';
 import { getMuniMigrationData } from '../../lib/muni-migration.js';
 const data = await getMuniMigrationData();
 ---
-<BaseLayout title="わが町の人の出入り｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の人の出入り｜Countopia Stats" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/annex/" backLabel="町の出納帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <header class="tp-hero">
     <img class="tp-hero-figure" src="/images/icon/town-migration-large.webp" alt="家族が家に帰り着く一方で、一人旅立つ人がいる田舎道の水彩画" width="1400" height="788" loading="lazy" />
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">別館・町の出納帳</p>
       <h1>わが町の人の出入り</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
@@ -71,7 +71,6 @@ const data = await getMuniMigrationData();
 
   <script is:inline define:vars={{ TP: data }}>
     (function () {
-      console.log('areas総数:', TP.areas.length, 'サンプル:', TP.areas.slice(0, 10).map(a => a.n));
       const IND = TP.indicators;
       const areas = TP.areas;
       const SR_I = 4;
@@ -174,25 +173,32 @@ const data = await getMuniMigrationData();
       }
 
       function updateLines(a) {
-        const delta = a.v[3], sr = a.v[SR_I], pop = a.v[0];
+        const delta = a.v[3], sr = a.v[SR_I];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasDelta = typeof delta === 'number';
         let k = '';
-        if (delta !== null && pop !== null) {
+        if (hasDelta) {
           if (delta > 0) k = `1年間で、転入が転出を${delta.toLocaleString('ja-JP')}人上回りました。`;
           else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。`;
           else k = '転入と転出が、ちょうど釣り合っています。';
+        } else {
+          k = '社会増減は、この町の値がありません。';
         }
-        if (sr !== null && Math.abs(sr) >= 15) k += ' 人口の規模に対して、動いた人数の多い年でした。';
-        kei.textContent = k || `${a.n}の人の動きをお出ししました。`;
+        if (typeof sr === 'number' && Math.abs(sr) >= 15) k += ' 人口千人あたりの増減でみると、動いた人数の多い年でした。';
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (delta !== null && delta > 0)
-          ? ['入ってくる人のほうが多いのねえ。', '出た人より、来た人が多かったのね。'][seed % 2]
-          : ['出ていく人のほうが多いのねえ。', '来た人より、出た人が多かったのね。'][seed % 2];
+        touko.textContent = !hasDelta
+          ? '値のない欄もあるのね。'
+          : delta > 0
+            ? ['入ってくる人のほうが多いのねえ。', '出た人より、来た人が多かったのね。'][seed % 2]
+            : delta < 0
+              ? ['出ていく人のほうが多いのねえ。', '来た人より、出た人が多かったのね。'][seed % 2]
+              : '出た人と来た人が、同じ数だったのね。';
       }
 
       const RANKS = {
-        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い＝人が集まる市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
+        in:  { dir: 'desc', note: '社会増減率（人口千人あたりの増減）が高い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
       };
       const rankList = document.getElementById('rankList');
       const rankNote = document.getElementById('rankNote');

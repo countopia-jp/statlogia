@@ -15,36 +15,54 @@ const fmt = (v) => `${v.toFixed(1)}％`;
 // 1000人あたり何人か（1％未満の指標なので）
 const per1000 = (v) => Math.round(v * 10);
 
-// 同値が多い指標なので順位は値から引く
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
-// 2位以下が同値で並ぶ数（トップの独走ぶりを示す）
+const r1 = (v) => Number(v.toFixed(1));
+const same = (a, b) => a.toFixed(1) === b.toFixed(1);
+
+// 同値が多い指標なので順位は値から引く（下位側も同じ）
+const rankOf = (v) => rows.findIndex((r) => same(r.minutes, v)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => same(r.minutes, v)) + 1;
+// 最多・最少のカードは同値の県を連名にする
+const topNames = rows.filter((r) => same(r.minutes, top.minutes)).map((r) => r.n);
+const bottomNames = least.filter((r) => same(r.minutes, bottom.minutes)).map((r) => r.n);
+// 2位以下が同値で並ぶ数（表には4県までしか見えない）
 const secondVal = rows[1].minutes;
-const secondCount = rows.filter((r) => r.minutes === secondVal).length;
-const topLead = top.minutes - secondVal;
+const secondCount = rows.filter((r) => same(r.minutes, secondVal)).length;
+const secondShown = Math.min(secondCount, 4);
+const topLead = (r1(top.minutes) - r1(secondVal)).toFixed(1);
+const topRuns = secondCount >= 3 && Number(topLead) >= 0.3;
+// 全国で1％に届くか（固定文にしない）
+const judoUnder1 = avg < 1;
+const bothUnder1 = avg < 1 && data.kendo.national < 1;
 
 const kendo = data.kendo;
 const kdMost = kendo.rows.slice(0, 5);
 const kdLeast = kendo.rows.slice(-5).reverse();
 const kdMax = kendo.rows[0].minutes;
 const kdTop = kendo.rows[0];
-const kdRankOf = (v) => kendo.rows.findIndex((r) => r.minutes === v) + 1;
+const kdRankOf = (v) => kendo.rows.findIndex((r) => same(r.minutes, v)) + 1;
+const kdLowRankOf = (v) => kdLeast.findIndex((r) => same(r.minutes, v)) + 1;
+const kdTopNames = kendo.rows.filter((r) => same(r.minutes, kdTop.minutes)).map((r) => r.n);
 
-// 相互の順位（名前で引くので入れ替わっても壊れない）
-const kdRankOfName = (name) => kendo.rows.findIndex((r) => r.n === name) + 1;
-const jdRankOfName = (name) => rows.findIndex((r) => r.n === name) + 1;
-const topKdRank = kdRankOfName(top.n);
-const kdTopJdRank = jdRankOfName(kdTop.n);
-const sameTop = top.n === kdTop.n;
+// 相互の順位（名前から値を引き、同じ値は同じ順位にする）
+const rankOfName = (list, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+const kdRankOfName = (name) => rankOfName(kendo.rows, name);
+const jdRankOfName = (name) => rankOfName(rows, name);
+const sameTop = topNames.length === 1 && kdTopNames.length === 1 && top.n === kdTop.n;
+const topInKd = topNames.map((n) => `${n}は${kdRankOfName(n)}番目`).join('、');
+const kdTopInJd = kdTopNames.map((n) => `${n}は${jdRankOfName(n)}番目`).join('、');
 
-// 全国の差
-const diff = avg - kendo.national;
+// 全国の差（表示値の差）
+const diff = r1(avg) - r1(kendo.national);
 const judoMore = diff > 0;
 const sameNational = Math.abs(diff) < 0.05;
 
 // 両方の上位5に入る県
-const topNames = most.map((r) => r.n);
-const kdTopNames = kdMost.map((r) => r.n);
-const bothTop = topNames.filter((n) => kdTopNames.includes(n));
+const mostNames = most.map((r) => r.n);
+const kdMostNames = kdMost.map((r) => r.n);
+const bothTop = mostNames.filter((n) => kdMostNames.includes(n));
 const hasBothTop = bothTop.length > 0;
 
 // 片方では上位10、もう片方では下位10に入る「入れかわる県」（柔道上位→剣道下位を先に探し、無ければ逆）
@@ -73,19 +91,19 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <Talk speaker="kei">26番目の展示は「柔道」です。1年のあいだに柔道をした人が、どのくらいいるか。全国では{fmt(avg)}、1000人に{per1000(avg)}人ほどです。</Talk>
       <Talk speaker="touko">柔道なら、わたくしの時代には学校でも教えておりましたわ。男の子たちが道場で。</Talk>
-      <Talk speaker="kei">今は数字としては小さくなりました。ただ、県によって差があります。</Talk>
+      <Talk speaker="kei">{judoUnder1 ? '今は、全国で1％に届かない数字です。それでも、県によって差があります。' : '県によって差があります。'}</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">柔道をする人がいちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">柔道をする人がいちばん少ない</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
@@ -102,18 +120,18 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      {secondCount >= 3 && topLead >= 0.3 && (
-        <Talk speaker="touko">{top.n}だけ、ずいぶん飛び抜けているのねえ。2番目は{secondCount}つの県が同じ数字で並んでいるわ。</Talk>
+      {topRuns && (
+        <Talk speaker="touko">{top.n}だけ、ずいぶん飛び抜けているのねえ。2番目は、同じ数字の県が並んでいるわ。</Talk>
       )}
-      {secondCount >= 3 && topLead >= 0.3 && (
-        <Talk speaker="kei">はい。{top.n}が{fmt(top.minutes)}で、次が{fmt(secondVal)}。この数字の世界では大きな差です。</Talk>
+      {topRuns && (
+        <Talk speaker="kei">はい。{top.n}が{fmt(top.minutes)}で、次が{fmt(secondVal)}。差は{topLead}ポイントです。{fmt(secondVal)}の県は{secondCount}県あり、表には{secondShown}県までを載せています。</Talk>
       )}
 
       <h2>柔道をする人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -147,9 +165,9 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>剣道をする人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {kdLeast.map((r, i) => (
+        {kdLeast.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{kdLowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / kdMax) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -157,8 +175,8 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="touko">柔道で一番だった{top.n}は、剣道では何番目なの。</Talk>
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topKdRank}番目です。かわりに剣道で一番なのは${kdTop.n}で、こちらは柔道では${kdTopJdRank}番目でした。`}</Talk>
+      <Talk speaker="touko">柔道で一番だった{topNames.join('と')}は、剣道では何番目なの。</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInKd}です。かわりに剣道で一番なのは${kdTopNames.join('と')}で、柔道では${kdTopInJd}でした。`}</Talk>
 
       <details class="all">
         <summary>剣道も47都道府県すべてを見る（多い順）</summary>
@@ -177,7 +195,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <Talk speaker="kei">はい。同じ武道でも、県ごとの顔ぶれは別ものです。</Talk>
       )}
 
-      <p class="note">「行動者率」は、過去1年間にその活動をした人の割合です。柔道も剣道も全国で1％に届かない数字で、県ごとの差は0.1ポイント刻みのわずかな幅にあります。小数第1位までの数字なので、0.1の差は調査のゆれの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。{bothUnder1 ? '柔道も剣道も全国で1％に届かない数字で、県ごとの差は0.1ポイント刻みのわずかな幅にあります。' : ''}同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/japanese-arts/">筆と花とお茶、日本一はどの県だ</a>｜<a href="/exhibits/ball-games/">野球とサッカー、日本一はどの県だ</a>｜<a href="/how-to-read/rate-and-count/">割合だけ見ると、消えるもの</a></p>
 

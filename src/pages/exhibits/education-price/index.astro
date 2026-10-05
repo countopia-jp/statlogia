@@ -11,17 +11,22 @@ const top = rows[0];
 const bottom = rows[rows.length - 1];
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}`;
+const r1 = (v) => Number(v.toFixed(1));
 
 // 同じ値の県があるときに備えて順位は値から引く
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
-// 総合・光熱水道での順位を引く
-const totalRank = (name) => data.rows.findIndex((r) => r.n === name) + 1;
-const heatRank = (name) => data.heat.rows.findIndex((r) => r.n === name) + 1;
+const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const topNames = rows.filter((r) => r.minutes.toFixed(1) === top.minutes.toFixed(1)).map((r) => r.n);
+const bottomNames = least.filter((r) => r.minutes.toFixed(1) === bottom.minutes.toFixed(1)).map((r) => r.n);
+// 総合・光熱水道での順位を値から引く
+const rankOfName = (list, name) => { const v = list.find((r) => r.n === name)?.minutes; return v === undefined ? 0 : list.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1; };
+const totalRank = (name) => rankOfName(data.rows, name);
+const heatRank = (name) => rankOfName(data.heat.rows, name);
 const topHeatRank = heatRank(top.n);
 const topTotalRank = totalRank(top.n);
 
-// 費目ごとの「上と下の開き」を実測して比べる
-const spreadOf = (list) => list[0].minutes - list[list.length - 1].minutes;
+// 費目ごとの「上と下の開き」を表示と同じ丸めで比べる
+const spreadOf = (list) => r1(list[0].minutes) - r1(list[list.length - 1].minutes);
 const eduSpread = spreadOf(rows);
 const totalSpread = spreadOf(data.rows);
 const heatSpread = spreadOf(data.heat.rows);
@@ -30,12 +35,12 @@ const isWidest = eduSpread >= totalSpread && eduSpread >= heatSpread && eduSprea
 // 教育1位の県が光熱・水道では下位にいるか（反転ネタが成立するかの判定）
 const isFlipped = topHeatRank >= 38;
 ---
-<BaseLayout title="教育の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（教育）。日本一「教育にお金がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="教育の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（教育）。日本一「教育の値段が高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
         <span class="no">EXHIBIT 16</span>
-        <h1>日本一「教育にお金がかかる」県はどこだ</h1>
+        <h1>日本一「教育の値段が高い」県はどこだ</h1>
         <p class="sub">値段の広場｜消費者物価地域差指数・教育（{data.education.year}）</p>
       </div>
 
@@ -47,19 +52,19 @@ const isFlipped = topHeatRank >= 38;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最高</b></span>
           <span class="label">教育がいちばん高い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最低</b></span>
           <span class="label">教育がいちばん安い</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
       <Talk speaker="touko">上と下で、これほど違うものなの。</Talk>
-      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}で、差は{eduSpread.toFixed(1)}。総合で見たときの差は{totalSpread.toFixed(1)}、電気やガスでも{heatSpread.toFixed(1)}でした。</Talk>
+      <Talk speaker="kei">{topNames.join('と')}が{fmt(top.minutes)}、{bottomNames.join('と')}が{fmt(bottom.minutes)}で、差は{eduSpread.toFixed(1)}ポイント。総合で見たときの差は{totalSpread.toFixed(1)}ポイント、電気やガスでも{heatSpread.toFixed(1)}ポイントでした。</Talk>
 
       <h2>教育が高い県 TOP5</h2>
       <ol class="rank">
@@ -75,9 +80,9 @@ const isFlipped = topHeatRank >= 38;
 
       <h2>教育が安い県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -87,9 +92,9 @@ const isFlipped = topHeatRank >= 38;
 
       {isFlipped ? (
         <>
-          <Talk speaker="touko">この{top.n}、電気やガスの展示では、下のほうにいませんでした？</Talk>
+          <Talk speaker="touko">この{top.n}、電気やガスの展示では、下のほうにいなかったかしら？</Talk>
           <Talk speaker="kei">よく覚えていましたね。{top.n}は光熱・水道では{topHeatRank}番目、総合では{topTotalRank}番目です。</Talk>
-          <Talk speaker="touko">同じ県なのに、見るものを変えると、いちばん上といちばん下を行ったり来たりするのねえ。</Talk>
+          <Talk speaker="touko">同じ県なのに、見るものを変えると、上のほうと下のほうを行ったり来たりするのねえ。</Talk>
         </>
       ) : (
         <>
@@ -107,7 +112,7 @@ const isFlipped = topHeatRank >= 38;
         </ol>
       </details>
 
-      <p class="note">この数字は「全国平均＝100」とした指数で、教育に関わるものを買うときの値段の水準を表しています。各家庭が実際に支払った金額や、教育にかける熱心さを表すものではありません。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">この数字は「全国平均＝100」とした指数で、教育に関わるものを買うときの値段の水準を表しています。各家庭が実際に支払った金額や、教育にかける熱心さを表すものではありません。消費者物価地域差指数は、全国平均を100としたときの「価格の水準」で、使う量や支出の額ではありません。総務省統計局「小売物価統計調査（構造編）」から毎年作られます。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/utility/">日本一「電気やガスが高い」県はどこだ</a>｜<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/education-budget/">教育の帳場</a></p>
 

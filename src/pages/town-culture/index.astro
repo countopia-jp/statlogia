@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniCultureData } from '../../lib/muni-culture.js';
 const data = await getMuniCultureData();
 ---
-<BaseLayout title="わが町の図書館と公民館｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の図書館と公民館｜Countopia Stats" description="市区町村を選んで、図書館と公民館の数、図書館は「何人に1館か」をご覧いただける窓口。公民館の数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -21,7 +21,7 @@ const data = await getMuniCultureData();
       こちらは図書館と公民館の窓口です。その町にいくつあるか、そのままの数と、図書館だけは「何人に1館あるか」もお出しします。
     </Talk>
     <Talk speaker="touko">
-      公民館は、人の数で割らないの。
+      公民館は、人の数で割らないの？
     </Talk>
     <Talk speaker="kei">
       割りません。公民館は、地区ごとの小さな館まで数える町と、大きな館だけを数える町があって、数え方がそろっていないんです。
@@ -166,16 +166,19 @@ const data = await getMuniCultureData();
         const lib = a.v[LIB], komin = a.v[KOMIN], libPer = a.v[LIB_PER];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasLib = typeof lib === 'number';
+        const hasKomin = typeof komin === 'number';
         let k = '';
-        if (lib !== null) k = lib === 0 ? '図書館は、この町にはありません。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`;
-        if (komin !== null) k += komin === 0 ? ' 公民館も、数字の上ではありません。' : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館です。`;
-        if (lib && libPer !== null) k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館です。`;
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        k += hasLib ? (lib === 0 ? '図書館は、この町にはありません。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`) : '図書館の数は、この町の値がありません。';
+        if (hasKomin) k += komin === 0 ? (hasLib && lib === 0 ? ' 公民館も、数字の上ではありません。' : ' 公民館は、数字の上ではありません。') : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館です。`;
+        else k += ' 公民館の数は、この町の値がありません。';
+        if (hasLib && lib > 0 && typeof libPer === 'number') k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館です。`;
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
         const s = a.series || [];
         const first = s.length ? s[0].value : null, last = s.length ? s[s.length - 1].value : null;
         // 2割以上の増減だけを「減った」「増えた」と言う（17→16のような揺れは「同じくらい」）
-        const hasTrend = s.length >= 3 && first !== null && last !== null && first > 0;
+        const hasTrend = s.length >= 3 && typeof first === 'number' && typeof last === 'number' && first > 0;
         const ratio = hasTrend ? last / first : 1;
         let t;
         if (hasTrend && ratio <= 0.8) {

@@ -13,27 +13,40 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
+const r1 = (v) => Number(v.toFixed(1));
+const same = (a, b) => a.toFixed(1) === b.toFixed(1);
+// 全国では何人にひとりか（値から計算する）
+const perPerson = avg > 0 ? Math.round(100 / avg) : 0;
 
-// 同値があるので順位は値から引く
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 同値があるので順位は値から引く（下位側も同じ）
+const rankOf = (v) => rows.findIndex((r) => same(r.minutes, v)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => same(r.minutes, v)) + 1;
+// 最多・最少のカードは同値の県を連名にする
+const topNames = rows.filter((r) => same(r.minutes, top.minutes)).map((r) => r.n);
+const bottomNames = least.filter((r) => same(r.minutes, bottom.minutes)).map((r) => r.n);
 
 const diy = data.diy;
 const diyMost = diy.rows.slice(0, 5);
 const diyMax = diy.rows[0].minutes;
 const diyTop = diy.rows[0];
-const diyRankOf = (v) => diy.rows.findIndex((r) => r.minutes === v) + 1;
+const diyRankOf = (v) => diy.rows.findIndex((r) => same(r.minutes, v)) + 1;
+const diyTopNames = diy.rows.filter((r) => same(r.minutes, diyTop.minutes)).map((r) => r.n);
 
-// 相互の順位（名前で引くので入れ替わっても壊れない）
-const diyRankOfName = (name) => diy.rows.findIndex((r) => r.n === name) + 1;
-const gardenRankOfName = (name) => rows.findIndex((r) => r.n === name) + 1;
-const topDiyRank = diyRankOfName(top.n);
-const diyTopGardenRank = gardenRankOfName(diyTop.n);
-const sameTop = top.n === diyTop.n;
+// 相互の順位（名前から値を引き、同じ値は同じ順位にする）
+const rankOfName = (list, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+const diyRankOfName = (name) => rankOfName(diy.rows, name);
+const gardenRankOfName = (name) => rankOfName(rows, name);
+const sameTop = topNames.length === 1 && diyTopNames.length === 1 && top.n === diyTop.n;
+const topInDiy = topNames.map((n) => `${n}は${diyRankOfName(n)}番目`).join('、');
+const diyTopInGarden = diyTopNames.map((n) => `${n}は${gardenRankOfName(n)}番目`).join('、');
 
 // 両方の上位5・下位5に入る県
-const topNames = most.map((r) => r.n);
-const diyTopNames = diyMost.map((r) => r.n);
-const bothTop = topNames.filter((n) => diyTopNames.includes(n));
+const mostNames = most.map((r) => r.n);
+const diyMostNames = diyMost.map((r) => r.n);
+const bothTop = mostNames.filter((n) => diyMostNames.includes(n));
 const hasBothTop = bothTop.length > 0;
 
 const lowNames = rows.slice(-5).map((r) => r.n);
@@ -53,7 +66,9 @@ const bigCityAvgRank = bigCityRanks.length
 
 const topRegions = regionsOf(most);
 const diyTopRegions = regionsOf(diyMost);
-const ratio = (avg / diy.national).toFixed(1);
+// 全国の比（表示値で割り、整数に丸める）
+const ratio = diy.national > 0 ? Math.round(r1(avg) / r1(diy.national)) : 0;
+const ratioText = ratio >= 2 ? `庭いじりのおよそ${ratio}分の1です。` : '庭いじりと同じくらいの数字です。';
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
 ---
@@ -67,20 +82,20 @@ const twist = !sameTop && bothTop.length <= 2;
       </div>
 
       <Talk speaker="kei">21番目の展示は「園芸・庭いじり・ガーデニング」です。1年のあいだに土をいじった人が、どのくらいいるか。全国では{fmt(avg)}でした。</Talk>
-      <Talk speaker="touko">4人に1人。思ったより多いのねえ。</Talk>
+      <Talk speaker="touko">{perPerson}人にひとり。思ったより多いのねえ。</Talk>
       <Talk speaker="kei">この数字は、県によってずいぶん違います。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">庭いじりをする人がいちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">庭いじりをする人がいちばん少ない</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
@@ -101,9 +116,9 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>庭いじりをする人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -121,7 +136,7 @@ const twist = !sameTop && bothTop.length <= 2;
       <h2>{twist ? "ところが" : "こんどは"}、日曜大工を数えると</h2>
 
       <Talk speaker="touko">こちらは、どうなの。</Talk>
-      <Talk speaker="kei">全国で{fmt(diy.national)}。庭いじりの{ratio}分の1です。そして、{twist ? "顔ぶれが入れかわります。" : "顔ぶれは、あまり変わりません。"}</Talk>
+      <Talk speaker="kei">全国で{fmt(diy.national)}。{ratioText}そして、{twist ? "顔ぶれが入れかわります。" : "顔ぶれは、あまり変わりません。"}</Talk>
 
       <ol class="rank diy">
         {diyMost.map((r) => (
@@ -134,8 +149,8 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="touko">庭いじりで一番だった{top.n}は、こちらでは何番目なの。</Talk>
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topDiyRank}番目です。かわりに一番なのは${diyTop.n}で、こちらは庭いじりでは${diyTopGardenRank}番目でした。`}</Talk>
+      <Talk speaker="touko">庭いじりで一番だった{topNames.join('と')}は、こちらでは何番目なの。</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInDiy}です。かわりに一番なのは${diyTopNames.join('と')}で、庭いじりでは${diyTopInGarden}でした。`}</Talk>
 
       <details class="all">
         <summary>日曜大工も47都道府県すべてを見る（多い順）</summary>
@@ -158,9 +173,9 @@ const twist = !sameTop && bothTop.length <= 2;
       ) : (
         <Talk speaker="kei">人口の多い都府県8つの順位を平均すると、47県のうち{bigCityAvgRank}番目あたりです。</Talk>
       )}
-      <Talk speaker="touko">土をいじるにも、板を切るにも、場所が要るものね。</Talk>
+      <Talk speaker="touko">{hasBigCityLowBoth ? 'どちらでも、下のほうに並んでいるのねえ。' : '数字で見ると、そういう並びなのね。'}</Talk>
 
-      <p class="note">「行動者率」は、過去1年間にその活動をした人の割合です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/board-games/">将棋と囲碁、日本一はどの県だ</a>｜<a href="/exhibits/reading/">本とマンガ、日本一はどの県だ</a>｜<a href="/town-housing/">わが町の住まい</a></p>
 

@@ -15,11 +15,20 @@ const fmt = (v) => `${v.toFixed(1)}％`;
 // 10軒のうち何軒か
 const per10 = (v) => Math.round(v / 10);
 
-// 同値の順位は値から引く
-const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const r1 = (v) => Number(v.toFixed(1));
+const same = (a, b) => a.toFixed(1) === b.toFixed(1);
 
-// 全国の一戸建率が半分を超えているか
-const overHalf = avg >= 50;
+// 同値の順位は値から引く（下位側も同じ）
+const rankOf = (v) => rows.findIndex((r) => same(r.minutes, v)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => same(r.minutes, v)) + 1;
+// 最多・最少のカードは同値の県を連名にする
+const topNames = rows.filter((r) => same(r.minutes, top.minutes)).map((r) => r.n);
+const bottomNames = least.filter((r) => same(r.minutes, bottom.minutes)).map((r) => r.n);
+// 上下の開き（表示値の差）
+const spread = (r1(top.minutes) - r1(bottom.minutes)).toFixed(1);
+
+// 全国の一戸建率が半分からどのくらい離れているか（値で言い分ける）
+const halfWord = avg >= 60 ? '半分よりかなり多い' : avg >= 50 ? '半分より少し多いくらい' : avg >= 40 ? '半分を少し切るくらい' : '半分よりかなり少ない';
 
 // --- 後半：一戸建のうち木造の割合 ---
 const wood = data.wood;
@@ -30,19 +39,25 @@ const wdMax = wdRows[0].minutes;
 const wdTop = wdRows[0];
 const wdBottom = wdRows[wdRows.length - 1];
 const wdSecondLast = wdRows[wdRows.length - 2];
-const wdRankOf = (v) => wdRows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const wdRankOf = (v) => wdRows.findIndex((r) => same(r.minutes, v)) + 1;
+const wdLowRankOf = (v) => wdLeast.findIndex((r) => same(r.minutes, v)) + 1;
+const wdTopNames = wdRows.filter((r) => same(r.minutes, wdTop.minutes)).map((r) => r.n);
 
-// 相互の順位（名前で引くので入れ替わっても壊れない）
-const wdRankOfName = (name) => wdRows.findIndex((r) => r.n === name) + 1;
-const dtRankOfName = (name) => rows.findIndex((r) => r.n === name) + 1;
-const topWdRank = wdRankOfName(top.n);
-const wdTopDtRank = dtRankOfName(wdTop.n);
-const sameTop = top.n === wdTop.n;
+// 相互の順位（名前から値を引き、同じ値は同じ順位にする）
+const rankOfName = (list, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+const wdRankOfName = (name) => rankOfName(wdRows, name);
+const dtRankOfName = (name) => rankOfName(rows, name);
+const sameTop = topNames.length === 1 && wdTopNames.length === 1 && top.n === wdTop.n;
+const topInWd = topNames.map((n) => `${n}は${wdRankOfName(n)}番目`).join('、');
+const wdTopInDt = wdTopNames.map((n) => `${n}は${dtRankOfName(n)}番目`).join('、');
 
 // 両方の上位5に入る県
-const topNames = most.map((r) => r.n);
-const wdTopNames = wdMost.map((r) => r.n);
-const bothTop = topNames.filter((n) => wdTopNames.includes(n));
+const mostNames = most.map((r) => r.n);
+const wdMostNames = wdMost.map((r) => r.n);
+const bothTop = mostNames.filter((n) => wdMostNames.includes(n));
 const hasBothTop = bothTop.length > 0;
 
 // 片方では上位10、もう片方では下位10に入る「入れかわる県」
@@ -58,11 +73,11 @@ const swapName = swapDtHigh ? swapA[0] : (swapB[0] || '');
 const swapDtRank = hasSwap ? dtRankOfName(swapName) : 0;
 const swapWdRank = hasSwap ? wdRankOfName(swapName) : 0;
 
-// 最下位ひとり旅：最下位と46位の差が極端に大きいときだけ出す
-const lonerGap = wdSecondLast.minutes - wdBottom.minutes;
+// 最下位ひとり旅：最下位と46位の差が極端に大きいときだけ出す（表示値の差）
+const lonerGap = r1(wdSecondLast.minutes) - r1(wdBottom.minutes);
 const loner = lonerGap >= 30;
-// 46県が収まる幅（最下位を除く）
-const wdSpread = wdTop.minutes - wdSecondLast.minutes;
+// 46県が収まる幅（最下位を除く。表示値の差）
+const wdSpread = (r1(wdTop.minutes) - r1(wdSecondLast.minutes)).toFixed(1);
 
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
@@ -78,19 +93,19 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <Talk speaker="kei">27番目の展示は「住まいの建て方」です。人の住んでいる家のうち、一戸建てがどのくらいあるか。全国では{fmt(avg)}、10軒に{per10(avg)}軒ほどです。</Talk>
       <Talk speaker="touko">わたくしの頃は、家といえばたいてい一戸建てでしたわ。長屋もありましたけれど。</Talk>
-      <Talk speaker="kei">今は{overHalf ? '半分より少し多いくらい' : '半分を切るくらい'}です。そして、県によって開きがあります。</Talk>
+      <Talk speaker="kei">今は{halfWord}です。そして、県によって開きがあります。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最多</b></span>
           <span class="label">一戸建ての割合がいちばん高い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">一戸建ての割合がいちばん低い</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
@@ -107,14 +122,14 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="touko">{top.n}は10軒のうち{per10(top.minutes)}軒が一戸建てなのね。{bottom.n}は{per10(bottom.minutes)}軒ほど。</Talk>
-      <Talk speaker="kei">はい。いちばん高い県と低い県で、{(top.minutes - bottom.minutes).toFixed(1)}ポイントの開きがあります。</Talk>
+      <Talk speaker="touko">{topNames.join('と')}は10軒のうち{per10(top.minutes)}軒が一戸建てなのね。{bottomNames.join('と')}は{per10(bottom.minutes)}軒ほど。</Talk>
+      <Talk speaker="kei">はい。いちばん高い県と低い県で、{spread}ポイントの開きがあります。</Talk>
 
       <h2>一戸建ての割合が低い県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -148,9 +163,9 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>木造の割合が低い県 TOP5</h2>
       <ol class="rank low">
-        {wdLeast.map((r, i) => (
+        {wdLeast.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{wdLowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / wdMax) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -162,11 +177,11 @@ const twist = !sameTop && bothTop.length <= 2;
         <Talk speaker="touko">あら、{wdBottom.n}だけ、まるで別の数字ねえ。</Talk>
       )}
       {loner && (
-        <Talk speaker="kei">はい。{wdBottom.n}の一戸建ては、木造が100軒に{Math.round(wdBottom.minutes)}軒。次に低い{wdSecondLast.n}でも{fmt(wdSecondLast.minutes)}ですから、一つだけ大きく離れています。残りの46県は{fmt(wdSecondLast.minutes)}から{fmt(wdTop.minutes)}まで、{wdSpread.toFixed(1)}ポイントの幅に収まっています。</Talk>
+        <Talk speaker="kei">はい。{wdBottom.n}の一戸建ては、木造が100軒に{Math.round(wdBottom.minutes)}軒。次に低い{wdSecondLast.n}でも{fmt(wdSecondLast.minutes)}ですから、一つだけ大きく離れています。残りの46県は{fmt(wdSecondLast.minutes)}から{fmt(wdTop.minutes)}まで、{wdSpread}ポイントの幅に収まっています。</Talk>
       )}
 
-      <Talk speaker="touko">一戸建てで一番だった{top.n}は、木造では何番目なの。</Talk>
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topWdRank}番目です。かわりに木造で一番なのは${wdTop.n}で、こちらは一戸建ての割合では${wdTopDtRank}番目でした。`}</Talk>
+      <Talk speaker="touko">一戸建てで一番だった{topNames.join('と')}は、木造では何番目なの。</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInWd}です。かわりに木造で一番なのは${wdTopNames.join('と')}で、一戸建ての割合では${wdTopInDt}でした。`}</Talk>
 
       <details class="all">
         <summary>木造の割合も47都道府県すべてを見る（高い順）</summary>
@@ -185,7 +200,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <Talk speaker="kei">はい。一戸建てが多いことと、その一戸建てが木でできていることは、別の数字です。</Talk>
       )}
 
-      <p class="note">「一戸建ての割合」は、人の住んでいる住宅（居住世帯のある住宅。空き家や建築中の家は含みません）のうち、一戸建てが占める割合です。残りは共同住宅（アパート・マンション）と長屋建などで、共同住宅の割合はおおむね一戸建ての裏返しになります。「木造の割合」は、一戸建てのうち木造（防火木造を含む）が占める割合です。住宅・土地統計調査は5年ごとに行われ、戸数は百戸単位に丸められているため、小数第1位の差は丸めの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「一戸建ての割合」は、人の住んでいる住宅（居住世帯のある住宅。空き家や建築中の家は含みません）のうち、一戸建てが占める割合です。残りは共同住宅（アパート・マンション）と長屋建などで、共同住宅の割合はおおむね一戸建ての裏返しになります。「木造の割合」は、一戸建てのうち木造（防火木造を含む）が占める割合です。総務省統計局「住宅・土地統計調査」（5年ごと）の値で、戸数は百戸単位に丸められています。そのため、小数第1位の差は丸めの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/vacancy/">日本一「空き家」県はどこだ</a>｜<a href="/exhibits/utility/">光熱・水道、日本一はどの県だ</a>｜<a href="/how-to-read/rate-and-count/">割合だけ見ると、消えるもの</a></p>
 

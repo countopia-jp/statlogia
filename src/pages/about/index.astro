@@ -7,10 +7,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
 
-<BaseLayout title="入国審査場｜このサイトについて - Countopia Stats" backHref="/" backLabel="玄関">
+<BaseLayout title="入国審査場｜このサイトについて｜Countopia Stats" description="Countopia Statsの成り立ちと決まりごと。数字の出どころ（e-Stat）、案内人、運営についてご案内します。" backHref="/" backLabel="玄関">
   <main class="imm">
     <header class="imm-hero">
-      <img class="imm-seal" src="/images/icon/stamp-immigration-large.webp" alt="" width="520" height="520" loading="lazy" />
+      <img class="imm-seal" src="/images/icon/stamp-immigration-large.webp" alt="" aria-hidden="true" width="520" height="520" loading="lazy" />
       <p class="imm-kicker">IMMIGRATION</p>
       <h1>入国審査場</h1>
       <p class="imm-lead">
@@ -27,7 +27,7 @@ import Talk from '../../components/Talk.astro';
       <p>
         Countopia Stats（カウントピア・スタッツ）は、日本の公的統計を「へぇ」と眺めて遊ぶ架空の国です。
         睡眠時間、通勤時間、学校の数——ふだんは表の中で眠っている数字を、
-        展示や展望塔や閲覧室という「景色」に仕立て直してお見せしています。
+        展示や展望塔や閲覧室、別館「町の出納帳」という「景色」に仕立て直してお見せしています。
         難しい分析はしません。数字の向こうにある暮らしを、案内人と一緒にのんびり眺める国です。
       </p>
     </section>
@@ -39,8 +39,7 @@ import Talk from '../../components/Talk.astro';
         各展示・各窓口には出典（統計名・表番号・年度）を明記しています。
       </p>
       <p>
-        本サイトは、政府統計総合窓口(e-Stat)のAPI機能を使用して情報を取得していますが、
-        サービスの内容は国によって保証されたものではありません。
+        このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。
         数字の集計・加工はCountopia Statsが独自に行っており、その責任は当国にあります。
       </p>
     </section>

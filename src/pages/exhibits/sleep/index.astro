@@ -16,6 +16,11 @@ const fmt = (m) => `${Math.floor(m / 60)}時間${m % 60}分`;
 
 // 同じ値の県があるときに備えて順位は値から引く（短い順）
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// よく眠る側（長い順）も値から引く
+const lowRankOf = (v) => longest.findIndex((r) => r.minutes === v) + 1;
+// 最短・最長のカードは同値の県を連名にする
+const topNames = rows.filter((r) => r.minutes === top.minutes).map((r) => r.pref);
+const bottomNames = rows.filter((r) => r.minutes === bottom.minutes).map((r) => r.pref);
 
 // バーの幅は実データの範囲から出す（固定値だと範囲外で崩れる）
 const minV = rows[0].minutes;
@@ -59,27 +64,27 @@ const corrPositive = corr !== null && corr >= 0.3;
       </div>
 
       <Talk speaker="kei">最初の展示です。日本人が1日にどれだけ眠っているか、47都道府県で比べました。</Talk>
-      <Talk speaker="touko">へぇ……そんなの調べてる人がいるの？</Talk>
+      <Talk speaker="touko">あら……そんなことを調べている人がいるの？</Talk>
       <Talk speaker="kei">国が5年に1度、全国規模で調べています。社会生活基本調査という立派な統計です。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
           <span class="label">いちばん眠らない</span>
-          <strong>{top.pref}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
           <span class="label">いちばんよく眠る</span>
-          <strong>{bottom.pref}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
-      <Talk speaker="touko">その差、たった{diff}分でしょ？　大したことなくない？</Talk>
-      <Talk speaker="kei">1日{diff}分でも、1年つもれば約{yearlyHours}時間。まる{yearlyDays}日ぶん、{bottom.pref}の人は{top.pref}より長く眠っている計算です。</Talk>
-      <Talk speaker="touko">まる{yearlyDays}日！？　へぇ……！</Talk>
+      <Talk speaker="touko">その差、たった{diff}分でしょう？　大したことではなくて？</Talk>
+      <Talk speaker="kei">1日{diff}分でも、1年つもれば約{yearlyHours}時間。まる{yearlyDays}日ぶん、{bottomNames.join('と')}の人は{topNames.join('や')}より長く眠っている計算です。</Talk>
+      <Talk speaker="touko">まる{yearlyDays}日！？　まあ……！</Talk>
 
       <h2>眠らない県 TOP5</h2>
       <ol class="rank">
@@ -95,9 +100,9 @@ const corrPositive = corr !== null && corr >= 0.3;
 
       <h2>よく眠る県 TOP5</h2>
       <ol class="rank alt">
-        {longest.map((r, i) => (
+        {longest.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.pref}</span>
             <span class="bar" style={`--w:${barW(r.minutes)}`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -120,9 +125,11 @@ const corrPositive = corr !== null && corr >= 0.3;
       ) : (
         <Talk speaker="kei">上位5県は{shortestRegions}の県です。通勤時間と並べてみても、はっきりした関係は見えませんでした。</Talk>
       )}
-      <Talk speaker="touko">わたしの時代は日が暮れたら寝るしかなかったけど……今の人は忙しいのねぇ。</Talk>
+      <Talk speaker="touko">わたくしの時代は、電燈はあっても夜更かしする人は少なかったわ……今の人は忙しいのねえ。</Talk>
 
-      <p class="note">バーの長さは、いちばん短い県を起点に描いています。差を見やすくするためで、実際の開きより大きく見えます。同じ値の県が複数あるときは、同じ順位として並べています。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。</p>
+      <p class="note">「総平均時間」は、その行動をしなかった人の0分も含めた、1日あたりの平均（週全体、10歳以上）です。総務省統計局「社会生活基本調査」（5年ごと）の値です。バーの長さは、いちばん短い県を起点に描いています。差を見やすくするためで、実際の開きより大きく見えます。相関は、ふたつの数字がどれだけ同じ向きに動くかを表す目安で、原因と結果を示すものではありません。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/commute/">日本一「通勤に時間がかかる」県はどこだ</a>｜<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/housework/">家事時間の男女差、いちばん大きい県は</a></p>
 
       <div class="source">
         <p>出典：総務省統計局「令和3年社会生活基本調査」（生活時間編・週全体・10歳以上・総平均時間）を加工して作成</p>
@@ -169,4 +176,6 @@ h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;bord
 @media(max-width:560px){.all ol{columns:1}}
 .note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
 .source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
 </style>

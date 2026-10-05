@@ -4,25 +4,25 @@ import Talk from '../../components/Talk.astro';
 import { getMuniFinanceData } from '../../lib/muni-finance.js';
 const data = await getMuniFinanceData();
 ---
-<BaseLayout title="わが町の財政と教育費｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の財政と教育費｜Countopia Stats" description="市区町村を選んで、財政力指数と住民1人あたりの教育費をご覧いただける窓口。財政力指数の推移と全国ベスト5つき。" backHref="/annex/" backLabel="町の出納帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <header class="tp-hero">
     <img class="tp-hero-figure" src="/images/icon/town-finance-large.webp" alt="算盤と帳簿、赤いランドセルが並ぶ窓辺の水彩画" width="1400" height="788" loading="lazy" />
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">別館・町の出納帳</p>
       <h1>わが町の財政と教育費</h1>
       <p class="tp-lead">
-        市区町村を選んで、町の財政力と、教育へのお金のかけ方をご覧ください。<br />
-        「教育の帳場」の市区町村版。あなたの町の懐具合を、数字で。
+        市区町村を選んで、町の財政力指数と、住民1人あたりの教育費をご覧ください。<br />
+        「教育の帳場」の市区町村版。あなたの町の数字を、全国の並びと一緒に。
       </p>
     </header>
 
     <Talk speaker="kei">
-      こちらは市区町村の財政窓口です。財政力指数は、その町がどれだけ自前で財政をまかなえるか。1に近いほど余裕があります。
+      こちらは市区町村の財政窓口です。財政力指数は、町の標準的な収入を標準的な支出で割った指数で、1を超えると収入が支出を上回る計算になります。
     </Talk>
     <Talk speaker="touko">
-      町のお財布事情……のぞいてもいいのかしら。
+      町の帳面を、わたくしが見てもよいのかしら。
     </Talk>
 
     <section class="tp-selector">
@@ -53,7 +53,7 @@ const data = await getMuniFinanceData();
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
         <button class="tp-tab is-active" data-rank="fin" role="tab">財政力が高い町</button>
-        <button class="tp-tab" data-rank="edu" role="tab">教育費をかける町</button>
+        <button class="tp-tab" data-rank="edu" role="tab">1人あたり教育費が多い町</button>
       </div>
       <ol class="tp-rank-list" id="rankList"></ol>
       <p class="tp-note" id="rankNote"></p>
@@ -175,22 +175,25 @@ const data = await getMuniFinanceData();
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
         let k = '';
-        if (fin !== null) {
+        const hasFin = typeof fin === 'number';
+        const hasEdu = typeof edu === 'number';
+        if (hasFin) {
           k = `財政力指数は${fin.toFixed(2)}。`;
-          k += fin >= 0.8 ? ' 自前で財政をまかなえる、余裕のある町です。'
-             : fin <= 0.3 ? ' 国からの仕送り（地方交付税）に支えられている町です。'
-             : '';
+          const r = rankMap[FIN][a.c];
+          if (r) k += ` ${rankMap[FIN]._total}市区町村中${r}位です。`;
+        } else {
+          k = '財政力指数は、この町の値がありません。';
         }
-        if (edu !== null) k += ` 住民1人あたりの教育費は${Math.round(edu).toLocaleString('ja-JP')}円です。`;
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
-        const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (fin !== null && fin >= 0.8)
-          ? ['自分のところで、まかなえているのねえ。', '入るお金の割合が、高いほうなのね。'][seed % 2]
-          : ['国からの支えも入っているのねえ。', '足りない分は、別のところから来るのね。'][seed % 2];
+        if (hasEdu) k += ` 住民1人あたりの教育費は${Math.round(edu).toLocaleString('ja-JP')}円です。`;
+        else k += ' 住民1人あたりの教育費は、この町の値がありません。';
+        kei.textContent = k;
+        touko.textContent = hasFin
+          ? (fin >= 1 ? '1を超えているのね。' : '1より小さいのね。')
+          : '値のない欄もあるのね。';
       }
 
       const RANKS = {
-        fin: { i: FIN, note: '財政力指数が高い＝自前で財政をまかなえる市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。1を超える町もあります。' },
+        fin: { i: FIN, note: '財政力指数が高い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。1を超える町もあります。' },
         edu: { i: EDU, note: '住民1人あたり教育費が多い市区町村ベスト5。人口の少ない町ほど1人あたりは高く出やすい点に注意。' },
       };
       const rankList = document.getElementById('rankList');

@@ -19,7 +19,7 @@ const years = [...new Set(pop.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="国勢の間｜人口と世帯 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="国勢の間｜人口と世帯｜Countopia Stats" description="都道府県を選んで、総人口・高齢化率・年少人口率・世帯数・出生率・婚姻率を一枚の台帳でご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="pop-dash">
@@ -77,10 +77,10 @@ const yearNote = years.join('・');
     </section>
 
     <Talk speaker="kei">
-      人口が多い県ほど高齢化率が低いとは限りません。数字を並べてみると、土地ごとの事情が見えてきます。
+      人口の順位と高齢化率の順位は、同じ並びにはなりません。数字を並べてみると、県ごとの違いが見えてきます。
     </Talk>
     <Talk speaker="touko">
-      人が多い国、少ない国。それぞれに、暮らしがあるのねえ。
+      人が多い県、少ない県。それぞれに、暮らしがあるのねえ。
     </Talk>
 
     <p class="pop-cross">あわせて見る：<a href="/living/">暮らしの見積所</a>｜<a href="/education/">学びの登記所</a></p>
@@ -88,7 +88,9 @@ const yearNote = years.join('・');
     <footer class="pop-source">
       <p>
         出典：{pop.source}（{yearNote}）<br />
-        「平均」は47都道府県の単純平均であり、全国値とは一致しません。<br />
+        高齢化率は65歳以上人口の割合（％）、年少人口率は15歳未満人口の割合（％）、婚姻率は人口千人あたりの婚姻件数（‰）、合計特殊出生率は一人の女性が一生のあいだに産む子どもの数にあたる指標です。<br />
+        年次は指標ごとに異なり、各カードに記しています（国勢調査にもとづく値は5年ごと、人口動態統計にもとづく値は毎年の値です）。<br />
+        「平均」は47都道府県の単純平均であり、全国値とは一致しません。割合（％・‰）の平均との差は「ポイント」で、それ以外は平均に対する比（％）で示しています。<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
       </p>
     </footer>
@@ -185,8 +187,12 @@ const yearNote = years.join('・');
           const v = val(area, c.code);
           const st = stats[c.code];
           const rank = st.rank[area.c];
-          const diff = v === null ? null : ((v - st.avg) / st.avg) * 100;
+          const unit = meta[c.code].unit || '';
+          const isRate = unit === '％' || unit === '‰';
+          const hasV = typeof v === 'number';
+          const diff = !hasV ? null : isRate ? v - st.avg : ((v - st.avg) / st.avg) * 100;
           const sign = diff === null ? '' : diff >= 0 ? '+' : '';
+          const diffText = diff === null ? '' : isRate ? `平均との差 ${sign}${diff.toFixed(1)}ポイント` : `平均比 ${sign}${diff.toFixed(1)}％`;
 
           const card = document.createElement('div');
           card.className = 'pop-card';
@@ -194,10 +200,10 @@ const yearNote = years.join('・');
             `<div class="pop-card-label">${c.short}</div>` +
             `<div class="pop-card-num">${fmtValue(c.code, v)}</div>` +
             `<div class="pop-card-sub">${meta[c.code].year || ''}</div>` +
-            (v === null
+            (!hasV || !rank
               ? ''
               : `<div class="pop-card-meta"><span class="pop-rank">${st.total}県中 ${rank}位</span>` +
-                `<span class="pop-diff">平均比 ${sign}${diff.toFixed(1)}％</span></div>`);
+                `<span class="pop-diff">${diffText}</span></div>`);
           grid.appendChild(card);
         }
 
@@ -212,11 +218,17 @@ const yearNote = years.join('・');
         const agingRank = stats['A1306'].rank[area.c];
         const total = stats['A1101'].total;
         const seed = parseInt(area.c, 10) || 0;
+        const hasPop = typeof popRank === 'number';
+        const hasAging = typeof agingRank === 'number';
 
-        let k = `総人口は${total}県中${popRank}位、高齢化率は${agingRank}位です。`;
+        let k = hasPop && hasAging
+          ? `総人口は${total}県中${popRank}位、高齢化率は${agingRank}位です。`
+          : `${hasPop ? `総人口は${total}県中${popRank}位です。` : '総人口は、この県の値がありません。'} ${hasAging ? `高齢化率は${agingRank}位です。` : '高齢化率は、この県の値がありません。'}`;
         let t = '';
 
-        if (popRank <= 5 && agingRank >= 38) {
+        if (!hasPop || !hasAging) {
+          t = '値のない欄もあるのね。';
+        } else if (popRank <= 5 && agingRank >= 38) {
           k += ' 人口が多く、高齢化率は低いほうの県です。';
           t = ['人口の順位と、高齢化の順位は、そろわないのねえ。', '二つの数字を並べると、見え方が変わるのね。'][seed % 2];
         } else if (popRank >= 38 && agingRank <= 10) {
@@ -229,8 +241,8 @@ const yearNote = years.join('・');
           k += ' 高齢化率は全国でも低いほうです。';
           t = ['65歳以上の方の割合が、低いほうなのねえ。'][0];
         } else {
-          k += ' 人口・高齢化ともに、全国の中ほどというところです。';
-          t = ['どちらも、まん中あたりなのねえ。'][0];
+          k += ' 高齢化率は、全国の中ほどです。';
+          t = ['高齢化率は、まん中あたりなのねえ。'][0];
         }
 
         kei.textContent = k;
@@ -240,7 +252,7 @@ const yearNote = years.join('・');
       const RANKS = {
         pop: { code: 'A1101', dir: 'desc', note: '総人口が多い県ベスト5。' },
         aging: { code: 'A1306', dir: 'desc', note: '高齢化率が高い県ベスト5。' },
-        young: { code: 'A1306', dir: 'asc', note: '高齢化率が低い県ベスト5。若い世代の多い顔ぶれです。' },
+        young: { code: 'A1306', dir: 'asc', note: '高齢化率が低い県ベスト5。' },
       };
 
       const rankList = document.getElementById('rankList');

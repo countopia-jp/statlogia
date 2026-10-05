@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniMedicalData } from '../../lib/muni-medical.js';
 const data = await getMuniMedicalData();
 ---
-<BaseLayout title="わが町の医療｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の医療｜Countopia Stats" description="市区町村を選んで、病院・診療所・歯科・お医者さん・薬剤師・病床の数をそのままご覧いただける窓口。お医者さんの数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -21,7 +21,7 @@ const data = await getMuniMedicalData();
       こちらは医療の窓口です。病院や診療所がいくつあるか、お医者さんや薬剤師さんが何人いるか。その町にある数を、そのままお出しします。
     </Talk>
     <Talk speaker="touko">
-      人の数で割ったりはしないの。
+      人の数で割ったりはしないの？
     </Talk>
     <Talk speaker="kei">
       しません。お医者さんにかかるとき、となりの町まで行くこともありますから。割ってしまうと、かえって分かりにくくなります。
@@ -155,15 +155,24 @@ const data = await getMuniMedicalData();
         const doctor = a.v[DOCTOR], hospital = a.v[HOSPITAL], beds = a.v[BEDS];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
-        let k = '';
-        if (hospital !== null) k = `病院が${Math.round(hospital).toLocaleString('ja-JP')}施設。`;
-        if (doctor !== null) k += ` お医者さんは${Math.round(doctor).toLocaleString('ja-JP')}人です。`;
-        if (beds !== null) k += ` 病床は${Math.round(beds).toLocaleString('ja-JP')}床あります。`;
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        const num = (v) => Math.round(v).toLocaleString('ja-JP');
+        const parts = [];
+        if (typeof hospital === 'number') parts.push(hospital === 0 ? '病院はありません（0施設）。' : `病院が${num(hospital)}施設。`);
+        else parts.push('病院の数は、この町の値がありません。');
+        if (typeof doctor === 'number') parts.push(doctor === 0 ? 'お医者さんは0人と記されています。' : `お医者さんは${num(doctor)}人です。`);
+        else parts.push('お医者さんの数は、この町の値がありません。');
+        if (typeof beds === 'number') parts.push(beds === 0 ? '病床はありません（0床）。' : `病床は${num(beds)}床あります。`);
+        else parts.push('病床の数は、この町の値がありません。');
+        kei.textContent = parts.join(' ');
         const seed = parseInt(a.c, 10) || 0;
         const hasSeries = a.series && a.series.length >= 3;
+        const first = hasSeries ? a.series[0].value : null;
+        const last = hasSeries ? a.series[a.series.length - 1].value : null;
+        const changed = typeof first === 'number' && typeof last === 'number' && first > 0 && Math.abs(last - first) / first >= 0.2;
         touko.textContent = hasSeries
-          ? ['むかしと今とで、ずいぶん数が変わっているのねえ。', '長いあいだの数が、残っているのね。'][seed % 2]
+          ? (changed
+              ? ['むかしと今とで、ずいぶん数が変わっているのねえ。', '長いあいだの数が、残っているのね。'][seed % 2]
+              : ['むかしと今とで、数はそう変わらないのねえ。', '長いあいだの数が、残っているのね。'][seed % 2])
           : ['お医者さんの数も、町ごとに違うのねえ。', '数えられているのねえ。'][seed % 2];
       }
 

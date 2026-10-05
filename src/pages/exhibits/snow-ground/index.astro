@@ -13,27 +13,41 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
+const r1 = (v) => Number(v.toFixed(1));
+const same = (a, b) => a.toFixed(1) === b.toFixed(1);
 
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 同値に備えて順位は値から引く（下位側も同じ）
+const rankOf = (v) => rows.findIndex((r) => same(r.minutes, v)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => same(r.minutes, v)) + 1;
+// 最多・最少は同値の県を連名にする
+const topNames = rows.filter((r) => same(r.minutes, top.minutes)).map((r) => r.n);
+const bottomNames = least.filter((r) => same(r.minutes, bottom.minutes)).map((r) => r.n);
 
 const ground = data.ground;
 const groundMost = ground.rows.slice(0, 5);
 const groundMax = ground.rows[0].minutes;
 const groundTop = ground.rows[0];
 const groundSecond = ground.rows[1];
-const groundRankOf = (v) => ground.rows.findIndex((r) => r.minutes === v) + 1;
+const groundRankOf = (v) => ground.rows.findIndex((r) => same(r.minutes, v)) + 1;
+const groundTopNames = ground.rows.filter((r) => same(r.minutes, groundTop.minutes)).map((r) => r.n);
+const groundTopTie = groundTopNames.length > 1;
+// 2番目の県（同値なら連名）
+const groundSecondNames = ground.rows.filter((r) => same(r.minutes, groundSecond.minutes)).map((r) => r.n);
 
-// 名前で順位を引く（入れ替わっても壊れない）
-const rankIn = (list, name) => list.findIndex((r) => r.n === name) + 1;
-const topGroundRank = rankIn(ground.rows, top.n);
-const groundTopSkiRank = rankIn(rows, groundTop.n);
-const sameTop = top.n === groundTop.n;
+// 名前から値を引き、同じ値は同じ順位にする
+const rankIn = (list, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+const sameTop = topNames.length === 1 && groundTopNames.length === 1 && top.n === groundTop.n;
+const topInGround = topNames.map((n) => `${n}は、こちらでは${rankIn(ground.rows, n)}番目`).join('、');
+const groundTopInSki = groundTopNames.map((n) => `${n}は、スキーでは${rankIn(rows, n)}番目`).join('、');
 
-// スキーの上下の開き
-const skiRatio = (top.minutes / bottom.minutes).toFixed(0);
+// スキーの上下の開き（表示値で割る。最少が0なら倍率は出さない）
+const skiRatio = r1(bottom.minutes) > 0 ? (r1(top.minutes) / r1(bottom.minutes)).toFixed(1) : null;
 
-// グラウンドゴルフの1位と2位の開き
-const groundGap = (groundTop.minutes - groundSecond.minutes).toFixed(1);
+// グラウンドゴルフの1位と2位の開き（表示値の差）
+const groundGap = (r1(groundTop.minutes) - r1(groundSecond.minutes)).toFixed(1);
 
 // 両方の上位5に入る県
 const bothTop = most.map((r) => r.n).filter((n) => groundMost.some((r) => r.n === n));
@@ -44,7 +58,7 @@ const groundRegions = regionsOf(groundMost);
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
 ---
-<BaseLayout title="スキーとグラウンドゴルフの行動者率｜Countopia Stats" description="都道府県別・スキーとグラウンドゴルフの行動者率。雪の県と、そうでない県の話。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="スキーとグラウンドゴルフの行動者率｜Countopia Stats" description="都道府県別・スキーとグラウンドゴルフの行動者率。スキーとグラウンドゴルフ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
@@ -55,19 +69,19 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <Talk speaker="kei">24番目の展示は「スキーとグラウンドゴルフ」です。まずはスキー・スノーボードから。1年のあいだに滑った人は、全国で{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">雪の上を、板で滑るのでしょう。それなら、行ける土地は決まっていそうねえ。</Talk>
-      <Talk speaker="kei">そのとおりです。この展示では、そのとおりの数字が出ます。</Talk>
+      <Talk speaker="kei">この数字だけでは、そこまでは分かりません。分かるのは、県ごとの並びだけです。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>雪</b></span>
           <span class="label">いちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>芝</b></span>
           <span class="label">いちばん多い</span>
-          <strong>{groundTop.n}</strong>
+          <strong>{groundTopNames.join('・')}</strong>
           <span class="num">{fmt(groundTop.minutes)}</span>
         </div>
       </div>
@@ -88,9 +102,9 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>スキーをする人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -98,7 +112,7 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="kei">{top.n}の{fmt(top.minutes)}に対して、{bottom.n}は{fmt(bottom.minutes)}。{skiRatio}倍以上の開きがあります。</Talk>
+      <Talk speaker="kei">{topNames.join('と')}の{fmt(top.minutes)}に対して、{bottomNames.join('・')}は{fmt(bottom.minutes)}。{skiRatio ? `${skiRatio}倍の開きがあります。` : ''}</Talk>
 
       <details class="all">
         <summary>スキーの47都道府県すべてを見る（多い順）</summary>
@@ -124,7 +138,7 @@ const twist = !sameTop && bothTop.length <= 2;
       </ol>
 
       <Talk speaker="touko">{groundRegions.length > 1 ? `こちらは${groundRegions.join('と')}なのねえ。` : `こちらは${groundRegions[0]}ばかりなのねえ。`}</Talk>
-      <Talk speaker="kei">{groundTop.n}が{fmt(groundTop.minutes)}。2番目の{groundSecond.n}に{groundGap}ポイントの差をつけています。</Talk>
+      <Talk speaker="kei">{groundTopTie ? `${groundTopNames.join('と')}が${fmt(groundTop.minutes)}で並んでいます。` : `${groundTop.n}が${fmt(groundTop.minutes)}。2番目の${groundSecondNames.join('・')}に${groundGap}ポイントの差をつけています。`}</Talk>
 
       <details class="all">
         <summary>グラウンドゴルフの47都道府県すべてを見る（多い順）</summary>
@@ -136,10 +150,10 @@ const twist = !sameTop && bothTop.length <= 2;
       {hasBothTop && (
         <Talk speaker="kei">上位5県のうち、{bothTop.join('と')}は両方に入っています。</Talk>
       )}
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `スキーで一番だった${top.n}は、こちらでは${topGroundRank}番目。一番の${groundTop.n}は、スキーでは${groundTopSkiRank}番目でした。`}</Talk>
-      <Talk speaker="touko">雪の上と、芝の上。どちらも、大きな街の名前は出てこないのねえ。</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `スキーで一番だった${topInGround}。グラウンドゴルフで一番だった${groundTopInSki}でした。`}</Talk>
+      <Talk speaker="touko">{twist ? '雪の上と、芝の上。顔ぶれが、すっかり違うのねえ。' : '雪の上と、芝の上。顔ぶれは、案外かさなるのねえ。'}</Talk>
 
-      <p class="note">「行動者率」は、過去1年間にその活動をした人の割合です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/hiking/">日本一「山を歩く」県はどこだ</a>｜<a href="/exhibits/games-crafts/">ゲームと編み物、日本一はどの県だ</a>｜<a href="/how-to-read/rate-and-count/">割合だけ見ると、消えるもの</a></p>
 

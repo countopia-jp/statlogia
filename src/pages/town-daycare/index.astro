@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniDaycareData } from '../../lib/muni-daycare.js';
 const data = await getMuniDaycareData();
 ---
-<BaseLayout title="介護は近いか｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="介護は、近いか｜Countopia Stats" description="市区町村を選んで、最寄りの老人デイサービスセンターまで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -19,10 +19,10 @@ const data = await getMuniDaycareData();
     </header>
 
     <Talk speaker="kei">
-      こちらは老人デイサービスの窓口です。最寄りのデイサービスセンターまで500m未満の世帯の割合で、その町の「介護の近さ」が分かります。
+      こちらは老人デイサービスの窓口です。デイサービスセンターは、お年寄りが日中に通って、食事や入浴、運動などの世話を受けるところです。最寄りのセンターまで500m未満の世帯の割合で、その町の「介護の近さ」が分かります。
     </Talk>
     <Talk speaker="touko">
-      通うにも、送り迎えするにも、近いに越したことはないものねえ。
+      お年寄りが、昼のあいだ通うところがあるのね。それは近いほうがよいでしょうねえ。
     </Talk>
 
     <section class="tp-selector">
@@ -175,22 +175,32 @@ const data = await getMuniDaycareData();
         const near = a.v[NEAR], far = a.v[FAR];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasNear = typeof near === 'number';
+        const hasFar = typeof far === 'number';
         let k = '';
-        if (near !== null) {
+        if (hasNear) {
           k = `デイサービスまで500m未満の世帯は${near.toFixed(1)}％。`;
-          k += near >= 40 ? ' 多くの家庭で、デイサービスが徒歩圏にあります。'
-             : near <= 15 ? ' デイサービスが近い世帯は少なめ。送迎サービスが頼りかもしれません。'
+          k += near >= 40 ? ' 4割以上の世帯で、デイサービスが500m未満にあります。'
+             : near <= 15 ? ' 500m未満の世帯は、15％以下です。'
              : '';
+        } else {
+          k = 'デイサービスまで500m未満の世帯の割合は、この町の値がありません。';
         }
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        if (hasFar) k += ` 1000m以上の世帯は${far.toFixed(1)}％です。`;
+        else k += ' 1000m以上の世帯の割合は、この町の値がありません。';
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (far !== null && far >= 50)
-          ? ['歩いていくには、遠いのねえ。', '車や送迎が要る距離なのね。'][seed % 2]
-          : ['歩いていける距離に、あるのねえ。', '近いところに、あるのね。'][seed % 2];
+        touko.textContent = !hasFar
+          ? '値のない欄もあるのね。'
+          : far >= 50
+            ? ['半分より多くの家が、千メートルより遠いのねえ。', '遠い家のほうが多いのね。'][seed % 2]
+            : far >= 20
+              ? ['遠い家も、少なくないのね。', '五軒に一軒より多くが、千メートルより遠いのねえ。'][seed % 2]
+              : ['千メートルより遠い家は、少ないのねえ。', '近いところに、ある家が多いのね。'][seed % 2];
       }
 
       const RANKS = {
-        near: { i: NEAR, dir: 'desc', note: 'デイサービスまで500m未満の世帯割合が高い＝デイサービスが近い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
+        near: { i: NEAR, dir: 'desc', note: 'デイサービスまで500m未満の世帯割合が高い市区町村ベスト5。政令指定都市の行政区と、特別区部計は除いています。' },
       };
       const rankList = document.getElementById('rankList');
       const rankNote = document.getElementById('rankNote');

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Talk from '../components/Talk.astro';
-import { news } from '../data/news.js';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
@@ -9,7 +8,6 @@ import { getSolarData } from '../lib/solar.js';
 import { getBudoData } from '../lib/budo.js';
 import { getHousingTypeData } from '../lib/housing-type.js';
 
-const latestNews = news.slice(0, 3);
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
 
 // 展示の本数は catalog の usedIn から数える（手で直さなくてよいように）
@@ -60,7 +58,7 @@ const prefectures = [
   ['46','鹿児島県'],['47','沖縄県'],
 ];
 ---
-<BaseLayout>
+<BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
   <main>
     <!-- 製図台の上に、白紙を1枚広げている -->
     <div class="desk">
@@ -105,7 +103,7 @@ const prefectures = [
       </div>
     </div>
 
-    <!-- 県選択（左）＋ 瓦版（右）：紙の外、方眼の上に置く -->
+    <!-- 県選択：紙の外、方眼の上に置く -->
     <div class="hero-row">
       <form class="hero-search" action="/population/" method="get">
         <label for="hero-pref">あなたの県は、どんな数字？</label>
@@ -120,28 +118,12 @@ const prefectures = [
         </div>
         <p class="hero-search-note">「国勢の間」で、人口・世帯の数字をご覧いただけます。</p>
       </form>
-
-      <aside class="gazette" aria-label="更新のお知らせ">
-        <span class="gz-label">
-          <img class="gz-icon" src="/images/icon/icon-news.webp" alt="" width="160" height="160" loading="lazy" />
-          瓦版
-        </span>
-        <ul class="gz-list">
-          {latestNews.map((n) => (
-            <li>
-              <time datetime={n.date}>{n.date.slice(5).replace('-', '.')}</time>
-              {n.href ? <a href={n.href}>{n.title}</a> : <span>{n.title}</span>}
-            </li>
-          ))}
-        </ul>
-        <a class="gz-more" href="/news/">一覧 →</a>
-      </aside>
     </div>
 
     <!-- 展示 -->
     <section id="exhibits">
       <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/icon-exhibit.webp" alt="" width="160" height="160" loading="lazy" />
+        <img class="sec-icon" src="/images/icon/icon-exhibit.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
         <div class="sec-text">
           <span class="no">EXHIBITS</span>
           <h2>いまの展示</h2>
@@ -153,7 +135,7 @@ const prefectures = [
           <span class="pc-kind">最多・{judoTop.n}</span>
           <span class="pc-num">{judoTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>柔道と剣道、日本一はどの県だ</h3>
-          <p>柔道と剣道の行動者率を47都道府県で比較。どちらも1000人に数人の世界で、一県だけ飛び抜けた県があります。</p>
+          <p>柔道と剣道の行動者率を47都道府県で比較。どちらも1000人に数人の世界です。県ごとの並びをご覧ください。</p>
           <span class="c-place">スポーツの広場</span>
         </a>
         <a class="card pc" href="/exhibits/housing-type/">
@@ -161,7 +143,7 @@ const prefectures = [
           <span class="pc-kind">最多・{houseTop.n}</span>
           <span class="pc-num">{houseTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>一戸建てと木の家、日本一はどの県だ</h3>
-          <p>住まいに占める一戸建ての割合と、一戸建てのうち木造の割合を47都道府県で比較。木の家の割合は、一県だけ大きく離れています。</p>
+          <p>住まいに占める一戸建ての割合と、一戸建てのうち木造の割合を47都道府県で比較。木の家の割合も、県ごとに並べています。</p>
           <span class="c-place">住まいの広場</span>
         </a>
         <a class="card pc" href="/exhibits/solar/">
@@ -169,7 +151,7 @@ const prefectures = [
           <span class="pc-kind">最多・{solarTop.n}</span>
           <span class="pc-num">{solarTop.minutes.toFixed(1)}<small>％</small></span>
           <h3>日本一「太陽光発電の家」県はどこだ</h3>
-          <p>人の住む家のうち、太陽光発電機器のある家の割合を47都道府県で比較。いちばん多い県と少ない県で、数倍の開きがあります。</p>
+          <p>人の住む家のうち、太陽光発電機器のある家の割合を47都道府県で比較。いちばん多い県と少ない県の開きをご覧ください。</p>
           <span class="c-place">住まいの広場</span>
         </a>
       </div>
@@ -188,7 +170,7 @@ const prefectures = [
           <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
           <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
           <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
-          <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えているので、いつ来ても、いちばん新しい数字が並んでいます。</p>
+          <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えています。どの年の数字かは、台帳ごとの出典に書いてあります。</p>
         </div>
       </div>
     </section>
@@ -196,7 +178,7 @@ const prefectures = [
     <!-- 閲覧室 -->
     <section id="reading-room">
       <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/icon-reading.webp" alt="" width="160" height="160" loading="lazy" />
+        <img class="sec-icon" src="/images/icon/icon-reading.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
         <div class="sec-text">
           <span class="no">READING ROOM</span>
           <h2>閲覧室</h2>
@@ -220,7 +202,7 @@ const prefectures = [
         </a>
       </div>
       <div class="more-actions">
-        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全16窓口）→</a>
+        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全13窓口）→</a>
       </div>
     </section>
 
@@ -247,7 +229,7 @@ const prefectures = [
         </a>
       </div>
       <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
-      <Talk speaker="touko">へぇ……で、まず何を見ればいいの？</Talk>
+      <Talk speaker="touko">まあ……それで、まず何を見ればいいの？</Talk>
       <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本一眠らない県の話をしましょう。</Talk>
     </section>
 
@@ -373,13 +355,13 @@ h1 .num{color:var(--stamp)}
   .today{flex-direction:column;align-items:flex-start;gap:8px;margin-top:22px}
   .today-more{align-self:flex-end;margin-top:-24px}
 }
-/* 県選択（左）＋瓦版（右）：紙の外、方眼の上 */
+/* 県選択：紙の外、方眼の上（単独で中央に置く） */
 .hero-row{
   display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;justify-content:center;
   max-width:1140px;margin:0 auto 8px;
 }
 .hero-search{
-  width:340px;flex-shrink:0;
+  width:100%;max-width:520px;flex-shrink:0;
   padding:14px 16px;border:1px solid var(--line);
   border-radius:12px;background:#fff9;
 }
@@ -422,26 +404,6 @@ h1 .num{color:var(--stamp)}
 .stamp .big2{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.95em;letter-spacing:.14em;margin-top:-.1em}
 .stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8em;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:.1em .6em;margin-top:.22em}
 .stamp .bottom{font-size:.6em;letter-spacing:.28em;margin-top:.1em}
-.gazette{
-  flex:1;min-width:340px;max-width:700px;
-  display:flex;gap:12px;align-items:center;
-  border:1px solid var(--line);border-radius:12px;
-  padding:12px 16px;margin:0;background:#fff8;
-}
-.gz-label{
-  display:inline-flex;align-items:center;gap:6px;
-  font-family:"Shippori Mincho",serif;font-weight:800;font-size:.78rem;
-  color:#b23a2f;border:1.5px solid #b23a2f;border-radius:4px;
-  padding:3px 8px;flex-shrink:0;
-}
-.gz-icon{width:34px;height:34px;object-fit:contain;mix-blend-mode:multiply}
-.gz-list{list-style:none;margin:0;padding:0;flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
-.gz-list li{display:flex;gap:10px;align-items:baseline;font-size:.78rem;line-height:1.6}
-.gz-list time{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--ink-soft);flex-shrink:0}
-.gz-list a{color:inherit}
-.gz-list a:hover{color:#b23a2f}
-.gz-more{font-size:.76rem;color:#b23a2f;flex-shrink:0;align-self:center}
-@media(max-width:600px){.gazette{flex-direction:column;align-items:flex-start;gap:10px}.gz-more{align-self:flex-end}}
 .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
 .sec-text{display:flex;flex-direction:column}
 .sec-icon{width:56px;height:56px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply}
@@ -568,7 +530,7 @@ h1 .num{color:var(--stamp)}
 
   /* 県選択：縦幅を詰める */
   .hero-search{
-    width:44%;min-width:290px;
+    width:100%;max-width:520px;min-width:290px;
     padding:12px 14px;
     align-self:flex-start;
   }
@@ -576,17 +538,6 @@ h1 .num{color:var(--stamp)}
   .hero-search-note{margin-top:6px;font-size:.7rem;line-height:1.6}
   .hero-search select{padding:6px 8px}
   .hero-search button{padding:6px 12px}
-
-  /* 瓦版：アイコンを左上に、本文は横長のまま */
-  .gazette{
-    min-width:0;max-width:none;gap:14px;
-    align-items:flex-start;
-    padding:12px 16px;
-  }
-  .gz-label{align-self:flex-start}
-  .gz-list{gap:6px}
-  .gz-list li{flex-direction:row;align-items:baseline;gap:10px;font-size:.78rem;line-height:1.7}
-  .gz-list time{font-size:.7rem}
 
   /* 橙子の高札：文字を少し大きく */
   .notice-overlay p{font-size:clamp(.82rem,1.9vw,1.06rem)}
@@ -612,17 +563,11 @@ h1 .num{color:var(--stamp)}
   .hero-title-row{gap:14px}
   .hero-title-row .btn{margin-bottom:0}
 
-  /* 県選択・瓦版の行 */
+  /* 県選択の行 */
   .hero-row{gap:14px}
 }
 
 @media(max-width:600px){
-  /* 瓦版：日付とタイトルを縦に、行間を確保 */
-  .gz-list{gap:10px}
-  .gz-list li{flex-direction:column;gap:2px;font-size:.82rem;line-height:1.75}
-  .gz-list time{font-size:.7rem}
-  .gz-label{align-self:flex-start}
-
   /* 県選択：ボタンを下に回して横幅を確保 */
   .hero-search-row{flex-direction:column;align-items:stretch}
   .hero-search select{width:100%}

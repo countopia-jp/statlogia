@@ -10,6 +10,11 @@ const top = rows[0];
 const bottom = rows[rows.length - 1];
 // 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 短い側（短い順）も値から引く
+const lowRankOf = (v) => least.findIndex((r) => r.minutes === v) + 1;
+// 最長・最短のカードは同値の県を連名にする
+const topNames = rows.filter((r) => r.minutes === top.minutes).map((r) => r.pref);
+const bottomNames = rows.filter((r) => r.minutes === bottom.minutes).map((r) => r.pref);
 const avg = Math.round(rows.reduce((s, r) => s + r.minutes, 0) / rows.length);
 const maxMin = top.minutes;
 
@@ -19,17 +24,17 @@ const hobbyAvg = Math.round(hobbyRows.reduce((s, r) => s + r.minutes, 0) / hobby
 const ratio = avg > 0 ? (hobbyAvg / avg).toFixed(1) : '—';
 const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`);
 ---
-<BaseLayout title="大人の勉強時間｜Countopia Stats" description="都道府県別・学習や自己啓発にあてる時間。日本の大人は1日何分学んでいるか。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title="学習・自己啓発の時間｜Countopia Stats" description="都道府県別・学習や自己啓発にあてる時間。日本人（10歳以上）は1日何分学んでいるか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
         <span class="no">EXHIBIT 05</span>
-        <h1>日本の大人は、1日何分学ぶのか</h1>
+        <h1>日本人は、1日何分学ぶのか</h1>
         <p class="sub">時間の広場｜学習・自己啓発・訓練の時間（2021年）</p>
       </div>
 
-      <Talk speaker="kei">5つめの展示は「学習・自己啓発・訓練」の時間です。学校の授業は含みません。大人が自分の意思で学ぶ時間です。</Talk>
-      <Talk speaker="touko">大人になっても、勉強するの？</Talk>
+      <Talk speaker="kei">5つめの展示は「学習・自己啓発・訓練」の時間です。学校の授業は含みません。10歳以上の人が、授業とは別に自分で学ぶ時間です。</Talk>
+      <Talk speaker="touko">学校を出てからも、勉強するの？</Talk>
       <Talk speaker="kei">全国平均は1日{fmt(avg)}。ちなみに前の展示、趣味・娯楽の平均は{fmt(hobbyAvg)}でした。</Talk>
       <Talk speaker="touko">……遊ぶほうが{ratio}倍も長いのねえ。</Talk>
 
@@ -37,18 +42,18 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
           <span class="label">学ぶ時間がいちばん長い</span>
-          <strong>{top.pref}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}／日</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
           <span class="label">学ぶ時間がいちばん短い</span>
-          <strong>{bottom.pref}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}／日</span>
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん学ぶ{top.pref}でも、1日{fmt(top.minutes)}。1日は1440分ありますから、そのうちのごくわずかです。</Talk>
+      <Talk speaker="kei">いちばん学ぶ{topNames.join('と')}でも、1日{fmt(top.minutes)}。1日は1440分ありますから、そのうちのごくわずかです。</Talk>
       <Talk speaker="touko">寺子屋の子どもたちのほうが、よほど机に向かっていたかもしれないわ。</Talk>
       <Talk speaker="kei">この数字は「その日に学ばなかった人」も含めた平均です。学ぶ人はしっかり学び、そうでない人は0分。その均しの姿だと思ってください。</Talk>
 
@@ -66,9 +71,9 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
 
       <h2>学ぶ時間が短い県 TOP5</h2>
       <ol class="rank alt">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.pref}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -83,7 +88,7 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
         </ol>
       </details>
 
-      <p class="note">同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「総平均時間」は、その行動をしなかった人の0分も含めた、1日あたりの平均（週全体、10歳以上）です。総務省統計局「社会生活基本調査」（5年ごと）の値です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
       <p class="cross">あわせて読む：<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/sleep/">日本一「眠らない県」はどこだ</a></p>
 
       <div class="source">

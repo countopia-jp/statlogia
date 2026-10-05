@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
-<BaseLayout title="町の出納帳 - Countopia Stats" description="財政や人口の出入りなど、町の内側に関わる数字をまとめた部屋です。">
+<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人口の出入りなど、町の内側に関わる数字をまとめた別館です。教育の帳場・わが町の財政と教育費・わが町の人の出入りの3窓口。">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
@@ -15,10 +15,10 @@ import Talk from '../../components/Talk.astro';
     </header>
 
     <Talk speaker="kei">
-      ここは本館の奥、別館です。財政やひとの出入りなど、数字の裏に事情がある窓口を集めた出納帳です。
+      ここは本館の奥、別館です。財政やひとの出入りなど、町の内側の数字を扱う窓口を集めた出納帳です。
     </Talk>
     <Talk speaker="touko">
-      帳面には、町のいろんな事情が綴じてあるのねえ。
+      帳面には、町のいろんな数字が綴じてあるのねえ。
     </Talk>
 
     <section class="rr-group" aria-label="財政と人の動き">
@@ -29,23 +29,23 @@ import Talk from '../../components/Talk.astro';
           <p class="lc-desc">
             都道府県ごとの財政力指数と、教育費のかけ方をまとめた帳場です。
           </p>
-          <span class="lc-foot">閲覧室・都道府県</span>
+          <span class="lc-foot">別館・都道府県</span>
         </a>
         <a class="ledger-card" href="/town-finance/">
           <span class="lc-mark">財</span>
           <h3>わが町の財政と教育費</h3>
           <p class="lc-desc">
-            市区町村ごとの財政力指数、実質収支比率など、町の懐事情を映す数字です。
+            市区町村ごとの財政力指数と、教育費のかけ方をまとめた数字です。
           </p>
-          <span class="lc-foot">閲覧室・市区町村</span>
+          <span class="lc-foot">別館・市区町村</span>
         </a>
         <a class="ledger-card" href="/town-migration/">
           <span class="lc-mark">人</span>
-          <h3>人が集まる町・出ていく町</h3>
+          <h3>わが町の人の出入り</h3>
           <p class="lc-desc">
             転入・転出の数字から、町の人の動きを追います。
           </p>
-          <span class="lc-foot">閲覧室・市区町村</span>
+          <span class="lc-foot">別館・市区町村</span>
         </a>
       </div>
     </section>

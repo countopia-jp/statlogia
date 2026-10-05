@@ -12,11 +12,15 @@ const top = rows[0];
 const bottom = rows[rows.length - 1];
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}`;
+const r1 = (v) => Number(v.toFixed(1));
 
 // 同じ値の県が出たときに備えて順位は値から引く
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
-const gap = (top.minutes - bottom.minutes).toFixed(1);
-const ratio = top.minutes / bottom.minutes;
+const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const topNames = rows.filter((r) => r.minutes.toFixed(1) === top.minutes.toFixed(1)).map((r) => r.n);
+const bottomNames = least.filter((r) => r.minutes.toFixed(1) === bottom.minutes.toFixed(1)).map((r) => r.n);
+const gap = (r1(top.minutes) - r1(bottom.minutes)).toFixed(1);
+const ratio = r1(top.minutes) / r1(bottom.minutes);
 // 比較はここで真偽値にしておく（テンプレート内に生の < を書くとAstroが壊れる）
 const ratioSmall = ratio < 1.2;
 function bigInMostCount() {
@@ -27,14 +31,15 @@ const bigCityLead = bigInMostCount() >= 3;
 // 上位・下位に並ぶ地方を実データから拾う
 const mostRegions = regionsOf(most).join('・');
 const leastRegions = regionsOf(least).join('・');
+const regionsOverlap = regionsOf(most).some((g) => regionsOf(least).includes(g));
 
 const foodRows = data.food.rows;
 const foodMost = foodRows.slice(0, 5);
 const foodTop = foodRows[0];
 const foodMaxMin = foodTop.minutes;
-const foodRankOf = (v) => foodRows.findIndex((r) => r.minutes === v) + 1;
+const foodRankOf = (v) => foodRows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
 // 総合での順位を引いて、食料との落差を見せる
-const totalRank = (name) => rows.findIndex((r) => r.n === name) + 1;
+const totalRank = (name) => { const v = rows.find((r) => r.n === name)?.minutes; return v === undefined ? 0 : rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1; };
 const foodTopTotalRank = totalRank(foodTop.n);
 const foodTopTotal = rows.find((r) => r.n === foodTop.n);
 const topChanged = foodTop.n !== top.n;
@@ -59,27 +64,27 @@ const twist = topChanged && foodBothTop.length <= 2;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最高</b></span>
           <span class="label">いちばん物価が高い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最低</b></span>
           <span class="label">いちばん物価が安い</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん高い{top.n}が{fmt(top.minutes)}、いちばん安い{bottom.n}が{fmt(bottom.minutes)}。その差は{gap}ポイントです。</Talk>
+      <Talk speaker="kei">いちばん高い{topNames.join('と')}が{fmt(top.minutes)}、いちばん安い{bottomNames.join('と')}が{fmt(bottom.minutes)}。その差は{gap}ポイントです。</Talk>
       {ratioSmall ? (
         <>
-          <Talk speaker="touko">思ったより、差は小さいのねえ。倍もちがうのかと思っていました。</Talk>
-          <Talk speaker="kei">全国どこでも同じものが同じように届く国ですから。ただ、この数ポイントが毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
+          <Talk speaker="touko">思ったより、差は小さいのねえ。倍もちがうのかと思ったわ。</Talk>
+          <Talk speaker="kei">倍率にすると{ratio.toFixed(2)}倍です。なぜこの開きなのかは、この数字だけでは分かりません。分かるのは、上と下で{gap}ポイントという並びだけです。</Talk>
         </>
       ) : (
         <>
           <Talk speaker="touko">ずいぶん開きがあるのねえ。</Talk>
-          <Talk speaker="kei">上と下で{ratio.toFixed(2)}倍。毎日の買い物に積み重なると、暮らしの手ごたえはずいぶん変わります。</Talk>
+          <Talk speaker="kei">倍率にすると{ratio.toFixed(2)}倍です。なぜこの開きなのかは、この数字だけでは分かりません。分かるのは、上と下で{gap}ポイントという並びだけです。</Talk>
         </>
       )}
 
@@ -97,9 +102,9 @@ const twist = topChanged && foodBothTop.length <= 2;
 
       <h2>物価が安い県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -107,7 +112,11 @@ const twist = topChanged && foodBothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="touko">上と下では、顔ぶれがまるで違うのねえ。</Talk>
+      {regionsOverlap ? (
+        <Talk speaker="touko">上と下で、どんな顔ぶれかしら。</Talk>
+      ) : (
+        <Talk speaker="touko">上と下では、顔ぶれがまるで違うのねえ。</Talk>
+      )}
       {bigCityLead ? (
         <Talk speaker="kei">高いほうの5県は{mostRegions}、安いほうの5県は{leastRegions}の県です。上位には大きな都市を抱える県が目立ちます。</Talk>
       ) : (
@@ -149,12 +158,12 @@ const twist = topChanged && foodBothTop.length <= 2;
         </ol>
       </details>
 
-      <p class="note">この数字は「全国平均＝100」とした指数です。金額そのものではなく、全国とくらべてどのくらいか、を表しています。総合には家賃や光熱・水道なども含まれます。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">この数字は「全国平均＝100」とした指数です。金額そのものではなく、全国とくらべてどのくらいか、を表しています。総合には家賃や光熱・水道なども含まれます。消費者物価地域差指数は、全国平均を100としたときの「価格の水準」で、使う量や支出の額ではありません。総務省統計局「小売物価統計調査（構造編）」から毎年作られます。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/living/">暮らしの見積所</a>｜<a href="/how-to-read/average-vs-national/">全国平均と単純平均はなぜ違うのか</a></p>
 
       <div class="source">
-        <p>出典：{data.source}（{data.year}）</p>
+        <p>出典：{data.source}、{data.year}</p>
         <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
       </div>
     </section>

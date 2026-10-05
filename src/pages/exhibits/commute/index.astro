@@ -10,15 +10,24 @@ const top = rows[0];
 const bottom = rows[rows.length - 1];
 // 同値があるので順位は並び順ではなく値から引く（1・1・3・3・5と出る）
 const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 短い側（短い順）も値から引く
+const lowRankOf = (v) => shortest.findIndex((r) => r.minutes === v) + 1;
+// 最長・最短のカードは同値の県を連名にする
+const topNames = rows.filter((r) => r.minutes === top.minutes).map((r) => r.pref);
+const bottomNames = rows.filter((r) => r.minutes === bottom.minutes).map((r) => r.pref);
 const diff = top.minutes - bottom.minutes;
 
-// 睡眠との突き合わせ：通勤1位の県は眠らないランキング何位？
+// 睡眠との突き合わせ：通勤1位の県は眠らないランキング何位？（同値を考えて値から引く）
 const sleepRows = await fetchSleepByPrefecture();
-const sleepRankOfTop = sleepRows.findIndex((r) => r.pref === top.pref) + 1;
+const rankOfName = (list, name) => {
+  const v = list.find((r) => r.pref === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => r.minutes === v) + 1;
+};
+const sleepRanksOfTop = topNames.map((n) => `${n}が${rankOfName(sleepRows, n)}位`).join('、');
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 const maxMin = top.minutes;
 ---
-<BaseLayout title={`通勤・通学時間ランキング｜Countopia Stats`} description="都道府県別・通勤通学時間ランキング。日本一「通勤に時間がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
+<BaseLayout title={`通勤・通学時間ランキング｜Countopia Stats`} description="都道府県別・通勤・通学時間ランキング。日本一「通勤に時間がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
       <div class="sec-head">
@@ -34,20 +43,20 @@ const maxMin = top.minutes;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
           <span class="label">いちばん長い</span>
-          <strong>{top.pref}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}／日</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
           <span class="label">いちばん短い</span>
-          <strong>{bottom.pref}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}／日</span>
         </div>
       </div>
 
-      <Talk speaker="kei">{top.pref}と{bottom.pref}の差は1日{diff}分。ちなみに{top.pref}は、「眠らない県ランキング」では{sleepRankOfTop}位です。</Talk>
-      <Talk speaker="touko">……つまり、通勤で時間を取られて、眠る時間が削れてる？</Talk>
-      <Talk speaker="kei">この2つは、並べると同じ向きに動いています。ただ、片方がもう片方を削っているかどうかまでは、この並びからは決められません。</Talk>
+      <Talk speaker="kei">いちばん長い{topNames.join('・')}と、いちばん短い{bottomNames.join('・')}の差は1日{diff}分。ちなみに「眠らない県ランキング」では、{sleepRanksOfTop}です。</Talk>
+      <Talk speaker="touko">……つまり、通勤で時間を取られて、眠る時間が削れているの？</Talk>
+      <Talk speaker="kei">この数字だけでは、そこまでは分かりません。分かるのは、通勤・通学の長さと睡眠の長さの、それぞれの並びだけです。片方がもう片方を削っているかどうかは、この並びからは決められません。</Talk>
 
       <h2>通勤・通学が長い県 TOP5</h2>
       <ol class="rank">
@@ -63,9 +72,9 @@ const maxMin = top.minutes;
 
       <h2>通勤・通学が短い県 TOP5</h2>
       <ol class="rank alt">
-        {shortest.map((r, i) => (
+        {shortest.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.pref}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -80,7 +89,7 @@ const maxMin = top.minutes;
         </ol>
       </details>
 
-      <p class="note">「総平均時間」は、その行動をしなかった人の0分も含めた平均です。実際にその行動をした人だけで見ると、時間はもっと長くなります。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「総平均時間」は、その行動をしなかった人の0分も含めた、1日あたりの平均（週全体、10歳以上）です。実際にその行動をした人だけで見ると、時間はもっと長くなります。総務省統計局「社会生活基本調査」（5年ごと）の値です。同じ値の県が複数あるときは、同じ順位として並べています。</p>
       <p class="cross">あわせて読む：<a href="/exhibits/sleep/">日本一「眠らない県」はどこだ</a></p>
 
       <div class="source">

@@ -21,7 +21,11 @@ const clearMost = clearRows.slice(0, 5);
 const clearTop = clearRows[0];
 const clearFmt = (v) => `${Math.round(v)}日`;
 
-const rankOf = (list, v) => list.findIndex((r) => r.minutes === v) + 1;
+// 同じ値の県があるときに備えて順位は表示と同じ丸め（整数）の値から引く
+const rankOf = (list, v) => list.findIndex((r) => Math.round(r.minutes) === Math.round(v)) + 1;
+const lowRankOf = (v) => rankOf(least, v);
+const topNames = rows.filter((r) => Math.round(r.minutes) === Math.round(top.minutes)).map((r) => r.n);
+const bottomNames = least.filter((r) => Math.round(r.minutes) === Math.round(bottom.minutes)).map((r) => r.n);
 const spread = sun.spread;
 const clearSpread = clear.spread;
 const spreadWide = spread >= 1.5;
@@ -46,8 +50,8 @@ const trend = sun.trend;
 const first = trend[0];
 const last = trend[trend.length - 1];
 const spanYears = last.year - first.year;
-const diff = last.minutes - first.minutes;
-const diffPct = ((diff / first.minutes) * 100).toFixed(1);
+const diff = Math.round(last.minutes) - Math.round(first.minutes);
+const diffPct = ((Math.abs(diff) / Math.round(first.minutes)) * 100).toFixed(1);
 const trendFlat = Math.abs(diff / first.minutes) <= 0.05;
 const trendUp = diff > 0;
 const trendMax = Math.max(...trend.map((t) => t.minutes));
@@ -73,13 +77,13 @@ const twist = !sunSameTop && bothTop.length <= 2;
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>最長</b></span>
           <span class="label">いちばん日が差す</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最短</b></span>
           <span class="label">いちばん日が差さない</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames.join('・')}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
@@ -98,9 +102,9 @@ const twist = !sunSameTop && bothTop.length <= 2;
 
       <h2>日が差す時間が短い県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -109,7 +113,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
       </ol>
 
       <Talk speaker="touko">上と下で、{spreadWide ? 'ずいぶん' : 'そこそこ'}違うのね。</Talk>
-      <Talk speaker="kei">{top.n}が{fmt(top.minutes)}、{bottom.n}が{fmt(bottom.minutes)}。{spread}倍です。</Talk>
+      <Talk speaker="kei">{topNames.join('と')}が{fmt(top.minutes)}、{bottomNames.join('と')}が{fmt(bottom.minutes)}。{spread}倍です。</Talk>
 
       <h2>{twist ? "ところが" : "こんどは"}、「快晴の日」を数えると</h2>
 
@@ -136,7 +140,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
         </>
       )}
       {hasBothTop ? (
-        <Talk speaker="kei">{onlyTwoTop ? '両方の上位5に残るのは' : '両方の上位5に残るのは'}{bothTopNames}です。</Talk>
+        <Talk speaker="kei">両方の上位5に残るのは{bothTopNames}{onlyTwoTop ? 'だけ' : ''}です。</Talk>
       ) : (
         <Talk speaker="kei">両方の上位5に残る県は、ひとつもありません。</Talk>
       )}
@@ -147,7 +151,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
         <Talk speaker="kei">下のほうは、二つの数え方で顔ぶれが揃いません。</Talk>
       )}
 
-      <Talk speaker="touko">同じ「晴れ」を数えているのに、ずいぶん違うのねえ。</Talk>
+      <Talk speaker="touko">同じ「晴れ」を数えているのに、{clearSpreadWider ? 'ずいぶん' : '少し'}違うのねえ。</Talk>
       <Talk speaker="kei">開きかたも違います。日が差す時間は上と下で{spread}倍でしたが、快晴の日数は{clearSpread}倍。{clearSpreadWider ? '桁がひとつ変わります。' : '同じ空を、別のものさしで測っているからです。'}</Talk>
       {corrStrong ? (
         <Talk speaker="kei">二つの数字はよく似た動きをします。それでも、上位の顔ぶれはこのとおり入れ替わります。</Talk>
@@ -175,14 +179,14 @@ const twist = !sunSameTop && bothTop.length <= 2;
       {trendFlat ? (
         <>
           <Talk speaker="touko">……あまり、変わらないのねえ。</Talk>
-          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％です。伸びも縮みもしていません。</Talk>
-          <Talk speaker="touko">半世紀ちかく、同じだけお日さまが出ていたの。</Talk>
+          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％の{trendUp ? '増' : '減'}です。ほとんど伸びも縮みもしていません。</Talk>
+          <Talk speaker="touko">{spanYears}年ものあいだ、同じだけお日さまが出ていたの。</Talk>
           <Talk speaker="kei">少なくとも、この数字はそう言っています。年ごとの上下はありますが、長い目で見ると同じところに戻ってきます。</Talk>
         </>
       ) : (
         <>
           <Talk speaker="touko">だんだん{trendUp ? '長く' : '短く'}なっているみたい。</Talk>
-          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％です。</Talk>
+          <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％の{trendUp ? '増' : '減'}です。</Talk>
         </>
       )}
 
@@ -214,9 +218,9 @@ const twist = !sunSameTop && bothTop.length <= 2;
         </ol>
       </details>
 
-      <p class="note">この数字は、各県にある気象台などの観測所で測ったものです。観測所はおおむね県庁所在地に置かれているので、県のなかでも場所によって空模様は違います。日照時間は、日ざしが一定の強さ以上あった時間の合計。快晴日数は、1日を通して雲がほとんどなかった日の数で、{clear.year}年の値です。快晴の判定に必要な雲の目視観測は各地の気象台で終了しており、この数字は今後更新されません。全国の値は公表されていないため、47都道府県の単純平均を「平均」として載せています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">この数字は、各県にある気象台などの観測所で測ったものです。観測所はおおむね県庁所在地に置かれているので、県のなかでも場所によって空模様は違います。日照時間は、日ざしが一定の強さ以上あった時間の合計。快晴日数は、1日を通して雲がほとんどなかった日の数で、{clear.year}年の値です。快晴の判定に必要な雲の目視観測は各地の気象台で終了しており、この数字は今後更新されません。全国の値は公表されていないため、47都道府県の単純平均を「平均」として載せています。気象庁の観測値で、各県の気象官署（おおむね県庁所在地）の数字です。県全体の値ではありません。日照時間は1時間単位、快晴日数は1日単位に丸めています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
-      <p class="cross">あわせて読む：<a href="/exhibits/hiking/">日本一「山に登る」県はどこだ</a>｜<a href="/exhibits/waste/">日本一「ごみを出す」県はどこだ</a></p>
+      <p class="cross">あわせて読む：<a href="/exhibits/hiking/">日本一「山を歩く」県はどこだ</a>｜<a href="/exhibits/waste/">日本一「ごみを出す」県はどこだ</a></p>
 
       <div class="source">
         <p>出典：{data.source}</p>

@@ -13,20 +13,32 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
+const r1 = (v) => Number(v.toFixed(1));
+const same = (a, b) => a.toFixed(1) === b.toFixed(1);
+// 全国では10人に何人か（値から計算する）
+const per10 = Math.round(avg / 10);
 
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
+// 同値に備えて順位は値から引く（下位側も同じ）
+const rankOf = (v) => rows.findIndex((r) => same(r.minutes, v)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => same(r.minutes, v)) + 1;
+// いちばん多い県が複数あれば連名にする
+const topNames = rows.filter((r) => same(r.minutes, top.minutes)).map((r) => r.n);
 
 const crafts = data.crafts;
 const craftsMost = crafts.rows.slice(0, 5);
 const craftsMax = crafts.rows[0].minutes;
 const craftsTop = crafts.rows[0];
-const craftsRankOf = (v) => crafts.rows.findIndex((r) => r.minutes === v) + 1;
+const craftsRankOf = (v) => crafts.rows.findIndex((r) => same(r.minutes, v)) + 1;
+const craftsTopNames = crafts.rows.filter((r) => same(r.minutes, craftsTop.minutes)).map((r) => r.n);
 
-// 名前で順位を引く（入れ替わっても壊れない）
-const rankIn = (list, name) => list.findIndex((r) => r.n === name) + 1;
-const topCraftsRank = rankIn(crafts.rows, top.n);
-const craftsTopGameRank = rankIn(rows, craftsTop.n);
-const sameTop = top.n === craftsTop.n;
+// 名前から値を引き、同じ値は同じ順位にする
+const rankIn = (list, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+const sameTop = topNames.length === 1 && craftsTopNames.length === 1 && top.n === craftsTop.n;
+const topInCrafts = topNames.map((n) => `${n}は、編み物では${rankIn(crafts.rows, n)}番目`).join('、');
+const craftsTopInGame = craftsTopNames.map((n) => `${n}は、ゲームでは${rankIn(rows, n)}番目`).join('、');
 
 // 両方の上位5に入る県
 const bothTop = most.map((r) => r.n).filter((n) => craftsMost.some((r) => r.n === n));
@@ -34,7 +46,9 @@ const hasBothTop = bothTop.length > 0;
 
 const topRegions = regionsOf(most);
 const craftsRegions = regionsOf(craftsMost);
-const ratio = (avg / crafts.national).toFixed(0);
+// 全国の比（表示値で割り、整数に丸める）
+const ratio = crafts.national > 0 ? Math.round(r1(avg) / r1(crafts.national)) : 0;
+const ratioText = ratio >= 2 ? `ゲームのおよそ${ratio}分の1です。` : 'ゲームと同じくらいの数字です。';
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
 ---
@@ -49,19 +63,19 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <Talk speaker="kei">23番目の展示は「ゲームと編み物」です。まずはテレビゲームやパソコンゲーム。1年のあいだに遊んだ人は、全国で{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">てれびげえむ……それは、どういう遊びなのかしら。</Talk>
-      <Talk speaker="kei">画面のなかで遊ぶものです。家から出る必要がありません。それを四人にひとり以上がしている、ということになります。</Talk>
+      <Talk speaker="kei">画面のなかで遊ぶものです。それを10人に{per10}人ほどがしている、ということになります。</Talk>
 
       <div class="highlight">
         <div class="card card--hot">
           <span class="seal" aria-hidden="true"><b>ゲーム</b></span>
           <span class="label">いちばん多い</span>
-          <strong>{top.n}</strong>
+          <strong>{topNames.join('・')}</strong>
           <span class="num">{fmt(top.minutes)}</span>
         </div>
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>編み物</b></span>
           <span class="label">いちばん多い</span>
-          <strong>{craftsTop.n}</strong>
+          <strong>{craftsTopNames.join('・')}</strong>
           <span class="num">{fmt(craftsTop.minutes)}</span>
         </div>
       </div>
@@ -82,9 +96,9 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>ゲームをする人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -102,7 +116,7 @@ const twist = !sameTop && bothTop.length <= 2;
       <h2>{twist ? "ところが" : "こんどは"}、編み物を数えると</h2>
 
       <Talk speaker="touko">編み物なら、わたくしにも分かりますわ。冬になると、みなさん手を動かしていましたもの。</Talk>
-      <Talk speaker="kei">いまは全国で{fmt(crafts.national)}。ゲームのおよそ{ratio}分の1です。{twist ? "ただ、並びがまったく違います。" : "並びは、そう大きくは変わりません。"}</Talk>
+      <Talk speaker="kei">いまは全国で{fmt(crafts.national)}。{ratioText}{twist ? (hasBothTop ? "ただ、並びはだいぶ違います。" : "ただ、並びがまったく違います。") : "並びは、そう大きくは変わりません。"}</Talk>
 
       <ol class="rank crafts">
         {craftsMost.map((r) => (
@@ -116,7 +130,7 @@ const twist = !sameTop && bothTop.length <= 2;
       </ol>
 
       <Talk speaker="touko">{craftsRegions.length > 1 ? `こちらは${craftsRegions.join('と')}なのねえ。` : `こちらは${craftsRegions[0]}ばかりなのねえ。`}</Talk>
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `ゲームで一番だった${top.n}は、編み物では${topCraftsRank}番目。一番の${craftsTop.n}は、ゲームでは${craftsTopGameRank}番目でした。`}</Talk>
+      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `ゲームで一番だった${topInCrafts}。編み物で一番だった${craftsTopInGame}でした。`}</Talk>
 
       <details class="all">
         <summary>編み物の47都道府県すべてを見る（多い順）</summary>
@@ -128,9 +142,9 @@ const twist = !sameTop && bothTop.length <= 2;
       {hasBothTop && (
         <Talk speaker="kei">上位5県のうち、{bothTop.join('と')}は両方に入っています。</Talk>
       )}
-      <Talk speaker="touko">画面のなかと、手のなか。遊びの場所が違うと、県の顔ぶれも変わるのねえ。</Talk>
+      <Talk speaker="touko">{twist ? '画面のなかと、手のなか。県の顔ぶれが、ずいぶん違うのねえ。' : '画面のなかと、手のなか。顔ぶれは、そう変わらないのねえ。'}</Talk>
 
-      <p class="note">「行動者率」は、過去1年間にその活動をした人の割合です。編み物・手芸は全国で{fmt(crafts.national)}と数字そのものが小さく、県ごとの差もわずかな幅のなかにあります。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。編み物・手芸は全国で{fmt(crafts.national)}と数字そのものが小さく、県ごとの差もわずかな幅のなかにあります。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/japanese-arts/">筆と花とお茶、日本一はどの県だ</a>｜<a href="/exhibits/reading/">本とマンガ、日本一はどの県だ</a>｜<a href="/how-to-read/rate-and-count/">割合だけ見ると、消えるもの</a></p>
 

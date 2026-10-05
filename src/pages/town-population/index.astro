@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 import { getMuniPopulationData } from '../../lib/muni-population.js';
 const data = await getMuniPopulationData();
 ---
-<BaseLayout title="わが町の人口｜Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の人口｜Countopia Stats" description="市区町村を選んで、総人口・高齢化率・年少人口率・世帯数と将来の推計人口をご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
@@ -14,7 +14,7 @@ const data = await getMuniPopulationData();
       <h1>わが町の人口</h1>
       <p class="tp-lead">
         市区町村を選んで、あなたの町の「人のかたち」をご覧ください。<br />
-        いまの人口と、30年後の見通し。数字で、町の来し方行く末を。
+        いまの人口と、将来の推計。数字で、町の来し方行く末を。
       </p>
     </header>
 
@@ -22,7 +22,7 @@ const data = await getMuniPopulationData();
       こちらは市区町村の窓口です。県よりもう一段細かく、あなたの町そのものの人口を引き出せます。
     </Talk>
     <Talk speaker="touko">
-      わたしの村も、あるかしら……。
+      わたくしの村も、あるかしら……。
     </Talk>
 
     <section class="tp-selector">
@@ -188,23 +188,39 @@ const data = await getMuniPopulationData();
         const now = a.v[0], future = a.v[5], aging = a.v[1];
         const kei = document.getElementById('keiLine');
         const touko = document.getElementById('toukoLine');
+        const hasNow = typeof now === 'number' && now > 0;
+        const hasFuture = typeof future === 'number';
+        const hasAging = typeof aging === 'number';
+        const futureKey = (IND[5] && IND[5].key) || '';
+        const futureYearMatch = futureKey.match(/(\d{4})年/);
+        const futureLabel = futureYearMatch ? `${futureYearMatch[1]}年` : '将来推計';
         let k = '';
-        if (now !== null && future !== null && now > 0) {
-          const ratio = Math.round((future / now) * 100);
-          k = `いまの人口は${Math.round(now).toLocaleString('ja-JP')}人。2050年には${ratio}％の${Math.round(future).toLocaleString('ja-JP')}人になる見通しです。`;
-        } else if (now !== null) {
-          k = `いまの人口は${Math.round(now).toLocaleString('ja-JP')}人です。`;
+        let ratio = null;
+        if (hasNow && hasFuture) {
+          ratio = Math.round((future / now) * 100);
+          k = `いまの人口は${Math.round(now).toLocaleString('ja-JP')}人。${futureLabel}の推計人口は${Math.round(future).toLocaleString('ja-JP')}人で、いまの${ratio}％にあたります。`;
+        } else if (hasNow) {
+          k = `いまの人口は${Math.round(now).toLocaleString('ja-JP')}人です。${futureLabel}の推計人口は、この町の値がありません。`;
+        } else {
+          k = '総人口は、この町の値がありません。';
         }
-        if (aging !== null) {
-          k += aging >= 40 ? ' 住民の4割以上が65歳以上です。'
-             : aging <= 22 ? ' 65歳以上の割合は、全国でも低いほうです。'
-             : '';
+        if (hasAging) {
+          const r = rankOf[1] && rankOf[1][a.c];
+          k += ` 高齢化率（65歳以上の割合）は${aging.toFixed(1)}％${r ? `で、${rankOf[1]._total}市区町村中${r}位` : ''}です。`;
+        } else {
+          k += ' 高齢化率は、この町の値がありません。';
         }
-        kei.textContent = k || `${a.n}の数字をお出ししました。`;
+        kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
-        touko.textContent = (future !== null && now !== null && future < now * 0.7)
-          ? ['いまより、ずいぶん少ない数なのねえ。', '三割より多く減る、という見通しなのね。'][seed % 2]
-          : ['いまと、そう変わらない数なのねえ。', 'この先の数も、出ているのね。'][seed % 2];
+        touko.textContent = ratio === null
+          ? (hasNow ? 'この先の数は、まだ出ていないのね。' : '値のない欄もあるのね。')
+          : ratio < 70
+            ? ['いまより、ずいぶん少ない数なのねえ。', '三割より多く減る、という見通しなのね。'][seed % 2]
+            : ratio < 95
+              ? ['いまより、少し減る見通しなのね。', 'この先の数も、出ているのね。'][seed % 2]
+              : ratio > 105
+                ? ['いまより、増える見通しなのね。', 'この先の数も、出ているのね。'][seed % 2]
+                : ['いまと、そう変わらない数なのねえ。', 'この先の数も、出ているのね。'][seed % 2];
       }
 
       const RANKS = {

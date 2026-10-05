@@ -4,7 +4,7 @@ import Talk from '../../components/Talk.astro';
 
 // 重いe-Stat取得は /data/education.json.js（ビルド時生成）に集約。
 // このページはフッター表示用の定数だけ持つ（budgetページと同じ流儀）。
-// 年度更新時（統計が新年度版に更新されたら）は下の yearNote も手で直すこと。
+// yearNote は表示の初期値。データ側（/data/education.json）に年次があれば、読み込み後に書き換える。
 const edu = {
   source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020105）',
   note: '学校数・児童生徒数・教員数は統計表の値をそのまま使っています。「小学校1校あたりの児童数」は、児童数を学校数で割ってこちらで計算したものです。学校が1校もない町では計算していません。',
@@ -12,7 +12,7 @@ const edu = {
 const yearNote = '2024年度';
 ---
 
-<BaseLayout title="教育ダッシュボード｜学びの登記所 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="学びの登記所｜幼稚園から高校までの数字｜Countopia Stats" description="全国の市区町村を選んで、幼稚園から高校までの学校数・児童生徒数・教員数をご覧いただける窓口。小学校児童数の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <main class="edu-dash">
@@ -30,7 +30,7 @@ const yearNote = '2024年度';
       当登記所には全国の市区町村の学校数が記録されています。まずは調べたい町を選んでください。
     </Talk>
     <Talk speaker="touko">
-      わたしの通っていた学校も、もう数字になっているのかしら……。
+      わたくしの通っていた学校も、もう数字になっているのかしら……。
     </Talk>
 
     <section class="edu-selector" aria-label="自治体の選択">
@@ -77,13 +77,14 @@ const yearNote = '2024年度';
     </section>
 
     <Talk speaker="kei">
-      数の多さは町の大きさを、1校あたりの少なさは学びの届き方を映します。二つの物差しで、まるで違う顔ぶれが並ぶのです。
+      学校の数と、1校あたりの児童数。二つの物差しで、並ぶ顔ぶれは変わります。
     </Talk>
 
     <footer class="edu-source">
       <p>
-        出典：{edu.source}（{yearNote}時点）<br />
+        出典：{edu.source}（<span id="yearNote">{yearNote}</span>時点）<br />
         {edu.note}<br />
+        統計表は毎年度更新されます。値のない町は「—」で示し、学校が1校もない町は0校と記しています。<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
         政令指定都市の区は選択できますが、ランキング集計からは除外しています（市単位で集計）。
       </p>
@@ -98,6 +99,8 @@ const yearNote = '2024年度';
       const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
       const val = (a, code) => a.v[idx[code]];
       const fmt = (n) => (n == null ? '—' : n.toLocaleString('ja-JP'));
+      const dataYear = data.year || (IND.find((ind) => ind.year) || {}).year;
+      if (dataYear) document.getElementById('yearNote').textContent = dataYear;
 
       const GROUPS = [
         { key: 'kindergarten', label: '幼稚園', count: 'E1101', students: 'E1501', studentLabel: '在園者' },
@@ -145,12 +148,15 @@ const yearNote = '2024年度';
         const seed = parseInt(area.c, 10) || 0;
         let kei = '', touko = '';
 
-        if (elCount >= 1 && elStudents !== null && medianRatio) {
+        const hasEl = typeof elCount === 'number';
+        const hasHs = typeof hsCount === 'number';
+        const hasKg = typeof kgCount === 'number';
+        if (hasEl && elCount >= 1 && typeof elStudents === 'number' && medianRatio) {
           const ratio = elStudents / elCount;
           const r = Math.round(ratio);
           if (ratio < medianRatio * 0.4) {
-            kei = `小学校1校あたり約${r}人。全国でも指折りの、小さな学び舎の町です。`;
-            touko = ['わたしの学校も、教室はひとつきりでしたのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
+            kei = `小学校1校あたり約${r}人。全国の中央値（約${Math.round(medianRatio)}人）の半分より少ない町です。`;
+            touko = ['わたくしの学校も、教室はひとつきりでしたのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
           } else if (ratio > medianRatio * 2) {
             kei = `小学校1校あたり約${r}人。全国の中央値の2倍を超えています。`;
             touko = ['一校にこんなに大勢……運動会は壮観でしょうねえ。', 'お昼の給食を配るだけで、ひと仕事になりそうだわ。'][seed % 2];
@@ -158,12 +164,16 @@ const yearNote = '2024年度';
             kei = `小学校1校あたり約${r}人。全国の真ん中どころ（中央値は約${Math.round(medianRatio)}人）です。`;
             touko = ['ちょうど、まん中あたりなのねえ。', '教室の窓から、どんな景色が見えるのでしょうね。'][seed % 2];
           }
+        } else if (hasEl && elCount === 0) {
+          kei = 'この町の小学校は、0校と記されています。';
+          touko = '小学校のない町もあるのね。';
         } else {
-          kei = 'この町の小学校は、台帳に記載が見当たりません。';
-          touko = '数字にならない学び舎も、きっとあるのだわ。';
+          kei = 'この町の小学校は、この町の値がありません。';
+          touko = '値のない欄もあるのね。';
         }
-        if (hsCount === 0 || hsCount === null) kei += ' 高校の記載はなく、卒業後は町の外の学校へ通うことになります。';
-        if (kgCount === 0) touko += ' 幼稚園はないのねえ。';
+        if (hasHs && hsCount === 0) kei += ' 高校は0校です。';
+        else if (!hasHs) kei += ' 高校は、この町の値がありません。';
+        if (hasKg && kgCount === 0) touko += ' 幼稚園はないのねえ。';
 
         keiEl.textContent = kei;
         toukoEl.textContent = touko;
@@ -243,7 +253,7 @@ const yearNote = '2024年度';
       const rankNote = document.getElementById('rankNote');
       const rankable = data.areas.filter((a) => !a.x);
       const RANK_CONFIG = {
-        count:  { code: 'E2101', label: '校', note: '小学校の数ベスト5。町の規模がそのまま数字に表れます。' },
+        count:  { code: 'E2101', label: '校', note: '小学校の数ベスト5。' },
         kg:     { code: 'E1101', label: '園', note: '幼稚園の数ベスト5。' },
         junior: { code: 'E3101', label: '校', note: '中学校の数ベスト5。' },
         high:   { code: 'E4101', label: '校', note: '高校の数ベスト5。' },
@@ -259,7 +269,7 @@ const yearNote = '2024年度';
             .sort((x, y) => x.ratio - y.ratio)
             .slice(0, 5)
             .map((r) => ({ a: r.a, main: `1校あたり約${Math.round(r.ratio)}人` }));
-          noteText = '小学校1校あたりの児童数が少ないベスト5。小さな学校を守る町の顔ぶれです。';
+          noteText = '小学校1校あたりの児童数が少ないベスト5。';
         } else {
           const cfg = RANK_CONFIG[mode];
           rows = rankable

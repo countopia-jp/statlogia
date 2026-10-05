@@ -12,12 +12,17 @@ const bottom = rows[rows.length - 1];
 const avg = data.national;
 const maxMin = top.minutes;
 const fmt = (v) => `${v.toFixed(1)}％`;
+const r1 = (v) => Number(v.toFixed(1));
 
 // 同じ値の県があるので順位は値から引く（1・1・3…と正しく出る）
-const rankOf = (v) => rows.findIndex((r) => r.minutes === v) + 1;
-const topTies = rows.filter((r) => r.minutes === top.minutes);
+const rankOf = (v) => rows.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const lowRankOf = (v) => least.findIndex((r) => r.minutes.toFixed(1) === v.toFixed(1)) + 1;
+const topTies = rows.filter((r) => r.minutes.toFixed(1) === top.minutes.toFixed(1));
 const topNames = topTies.map((r) => r.n).join('と');
-const diff = (top.minutes - bottom.minutes).toFixed(1);
+const bottomTies = least.filter((r) => r.minutes.toFixed(1) === bottom.minutes.toFixed(1));
+const bottomNames = bottomTies.map((r) => r.n).join('と');
+const diff = (r1(top.minutes) - r1(bottom.minutes)).toFixed(1);
+const ratio = (r1(top.minutes) / r1(bottom.minutes)).toFixed(1);
 // 下位の顔ぶれは実データから拾う
 const leastNames = least.slice(0, 3).map((r) => r.n).join('・');
 const bigCities = ['東京都', '大阪府', '神奈川県', '愛知県', '福岡県'];
@@ -48,13 +53,13 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
         <div class="card card--cool">
           <span class="seal" aria-hidden="true"><b>最少</b></span>
           <span class="label">する人がいちばん少ない</span>
-          <strong>{bottom.n}</strong>
+          <strong>{bottomNames}</strong>
           <span class="num">{fmt(bottom.minutes)}</span>
         </div>
       </div>
 
       <Talk speaker="touko">上と下では、ずいぶん違うのねえ。</Talk>
-      <Talk speaker="kei">いちばん高いのは{topNames}で{fmt(top.minutes)}{topTies.length > 1 ? '、同じ値で並びました' : ''}。いちばん低い{bottom.n}は{fmt(bottom.minutes)}で、その差は{diff}ポイントです。</Talk>
+      <Talk speaker="kei">いちばん多いのは{topNames}で{fmt(top.minutes)}{topTies.length > 1 ? '、同じ値で並びました' : ''}。いちばん少ない{bottomNames}は{fmt(bottom.minutes)}{bottomTies.length > 1 ? '、こちらも同じ値で並びました' : ''}。その差は{diff}ポイントです。</Talk>
 
       <h2>する人が多い県 TOP5</h2>
       <ol class="rank">
@@ -70,9 +75,9 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
 
       <h2>する人が少ない県 TOP5</h2>
       <ol class="rank low">
-        {least.map((r, i) => (
+        {least.map((r) => (
           <li>
-            <span class="pos">{i + 1}</span>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
             <span class="pref">{r.n}</span>
             <span class="bar" style={`--w:${(r.minutes / maxMin) * 100}%`}></span>
             <span class="min">{fmt(r.minutes)}</span>
@@ -88,7 +93,7 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
       ) : (
         <>
           <Talk speaker="touko">下のほうは、どんな顔ぶれかしら。</Talk>
-          <Talk speaker="kei">{leastNames}が並びます。上位とは、まったく別の並びです。</Talk>
+          <Talk speaker="kei">{leastNames}が下位に並びます。いちばん多い{topNames}と、いちばん少ない{bottomNames}の開きは{ratio}倍です。</Talk>
         </>
       )}
 
@@ -99,7 +104,7 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
         </ol>
       </details>
 
-      <p class="note">この数字は「過去1年間に1回でも行った人」の割合です。毎週通う人も、一度きりの人も、同じ1人として数えられています。同じ値の県が複数あるときは、同じ順位として並べています。</p>
+      <p class="note">この数字は「過去1年間に1回でも行った人」の割合です。毎週通う人も、一度きりの人も、同じ1人として数えられています。「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。同じ値の県が複数あるときは、同じ順位として並べています。</p>
 
       <p class="cross">あわせて読む：<a href="/exhibits/hobby/">いちばん「趣味に生きる」県はどこだ</a>｜<a href="/exhibits/fishing/">日本一「釣りをする」県はどこだ</a></p>
 

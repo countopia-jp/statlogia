@@ -17,25 +17,25 @@ const years = [...new Set(edb.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="教育の帳場｜財政力と教育費 - Countopia Stats" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="教育の帳場｜財政力と教育費｜Countopia Stats" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/annex/" backLabel="町の出納帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="edb-dash">
     <header class="edb-hero">
     <img class="edb-hero-figure" src="/images/icon/education-budget-large.webp" alt="天秤の一方に硬貨、もう一方に本とランドセルを載せた静物" width="1400" height="788" loading="lazy" />
-      <p class="edb-kicker">ダッシュボード</p>
+      <p class="edb-kicker">別館・町の出納帳</p>
       <h1>教育の帳場</h1>
       <p class="edb-lead">
-        財政力指数、教育費、小・中・高それぞれの1人当たり予算。<br />
-        あなたの県が「教育にどれだけ本気か」、帳簿からご覧ください。
+        財政力指数、教育費、小・中・高それぞれの1人当たり経費。<br />
+        あなたの県の数字を、全国の並びと一緒に帳簿からご覧ください。
       </p>
     </header>
 
     <Talk speaker="kei">
-      当所では、県の懐具合と、そこから教育にどれだけ回しているかを、並べて見ていただけます。
+      当所では、県の財政力指数と、人口や児童生徒1人当たりの教育費を、並べて見ていただけます。
     </Talk>
     <Talk speaker="touko">
-      お金の余裕と、子どもへの掛け方は、また別のお話なのねえ。
+      財政力指数というのは、どういう物差しなの？
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -75,10 +75,10 @@ const yearNote = years.join('・');
     </section>
 
     <Talk speaker="kei">
-      財政に余裕のある県が、必ずしも教育にお金をかけているとは限りません。数字を並べると、県ごとの姿勢が見えてきます。
+      財政力指数の順位と、教育費の順位は、同じ並びにはなりません。この数字だけでは理由までは分かりません。分かるのは、県ごとの並びだけです。
     </Talk>
     <Talk speaker="touko">
-      裕福でも、子どもにかけるとは限らない。……大人の世界ねえ。
+      二つの順位を並べて見る、ということね。
     </Talk>
 
     <p class="edb-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/population/">国勢の間</a></p>
@@ -207,23 +207,25 @@ const yearNote = years.join('・');
         const financeRank = stats['#D0110101'].rank[area.c];
         const eduRank = stats['#D0331403'].rank[area.c];
         const total = stats['#D0110101'].total;
-        const seed = parseInt(area.c, 10) || 0;
+        const eduTotal = stats['#D0331403'].total;
+        const hasFin = typeof financeRank === 'number';
+        const hasEdu = typeof eduRank === 'number';
 
-        let k = `財政力指数は${total}県中${financeRank}位、人口1人当たり教育費は${eduRank}位です。`;
+        const finText = hasFin ? `財政力指数は${total}県中${financeRank}位です。` : '財政力指数は、この県の値がありません。';
+        const eduText = hasEdu ? `人口1人当たり教育費は${eduTotal}県中${eduRank}位です。` : '人口1人当たり教育費は、この県の値がありません。';
+        let k = hasFin && hasEdu ? `財政力指数は${total}県中${financeRank}位、人口1人当たり教育費は${eduRank}位です。` : `${finText} ${eduText}`;
         let t = '';
 
-        if (financeRank <= 10 && eduRank >= 38) {
-          k += ' 財政に余裕がある割に、教育費への配分は控えめです。';
-          t = ['お金があっても、使い道は色々あるものねえ。', '財布は厚くても、子どもへは薄いのかしら。'][seed % 2];
-        } else if (financeRank >= 38 && eduRank <= 10) {
-          k += ' 財政は厳しめでも、教育には手厚く配分している県です。';
-          t = ['懐が厳しくても、子どものためには惜しまないのねえ。', '心意気を感じるわねえ。'][seed % 2];
-        } else if (eduRank <= 5) {
-          k += ' 教育費は全国でも上位です。';
-          t = ['ずいぶんと、子どもにかけている県なのねえ。'][0];
+        const band = (r, n) => (r <= 10 ? '上位' : r >= n - 9 ? '下位' : '中ほど');
+        if (!hasFin || !hasEdu) {
+          k += ' 二つを並べて見ることはできません。';
+          t = '値のない欄もあるのね。';
+        } else if (band(financeRank, total) === band(eduRank, eduTotal)) {
+          k += ` 二つの順位は、どちらも全国の${band(financeRank, total)}です。`;
+          t = '二つの順位が、同じあたりに並んでいるのね。';
         } else {
-          k += ' 財政力と教育費のかけ方は、全国の中ほどというところです。';
-          t = ['どちらも、まん中あたりなのねえ。'][0];
+          k += ` 財政力指数は全国の${band(financeRank, total)}、教育費は${band(eduRank, eduTotal)}です。`;
+          t = '二つの順位が、別のところにあるのね。';
         }
 
         kei.textContent = k;

@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
-<BaseLayout title="閲覧室 - Countopia Stats" backHref="/" backLabel="玄関">
+<BaseLayout title="閲覧室｜Countopia Stats" description="都道府県・市区町村を選んで、学校・人口・住まい・医療・通勤などの数字を自分の手で引き出す閲覧室。各窓口の案内一覧です。" backHref="/" backLabel="玄関">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/reading-room-large.webp" alt="木造の書庫で、開いた台帳を指さす橙子と、のぞきこむ京の水彩画" width="1400" height="788" loading="lazy" />
@@ -25,7 +25,7 @@ import Talk from '../../components/Talk.astro';
           <h3>学びの登記所</h3>
           <p class="rr-card-desc">
             全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
-            学校の数と、1校あたりの児童数——二つの物差しの全国ベスト5つき。
+            学校の数と、1校あたりの児童数を、校種ごとに並べて見られます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
         </a>
@@ -35,7 +35,7 @@ import Talk from '../../components/Talk.astro';
             都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
             端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2017〜2023年度）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
         </a>
       </div>
     </section>
@@ -47,14 +47,14 @@ import Talk from '../../components/Talk.astro';
           <h3>国勢の間</h3>
           <p class="rr-card-desc">
             都道府県を選んで、総人口・高齢化率・世帯数・出生率・婚姻率をまとめた台帳をご覧いただけます。
-            人口の多さと高齢化の進み方——重ねてみると、土地ごとの事情が浮かび上がります。
+            人口の多さと高齢化の進み方を、全国平均と並べて見られます。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2020・2023・2024年度）</p>
         </a>
         <a class="rr-card" href="/town-population/">
           <h3>わが町の人口</h3>
           <p class="rr-card-desc">
-            市区町村を選んで、あなたの町の総人口・高齢化率・年少人口率・世帯数と、2050年の推計人口をご覧いただけます。
+            市区町村を選んで、あなたの町の総人口・高齢化率・年少人口率・世帯数と、将来の推計人口をご覧いただけます。
             県より一段細かく、町の来し方行く末が数字で見えてきます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
@@ -65,23 +65,23 @@ import Talk from '../../components/Talk.astro';
             市区町村を選んで、空き家率・持ち家率・1軒あたりの広さ・家賃をご覧いただけます。
             住むところを探すとき、その町の住まいがどんな様子かを、数字で。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2023年）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
         </a>
         <a class="rr-card" href="/town-medical/">
           <h3>わが町の医療</h3>
           <p class="rr-card-desc">
             市区町村を選んで、病院・診療所・お医者さん・薬剤師の数をご覧いただけます。
-            人口では割らず、その町にある数をそのまま。お医者さんの数は40年ぶんの移りかわりも。
+            人口では割らず、その町にある数をそのまま。お医者さんの数は長い年月の移りかわりも。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2022年）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
         </a>
         <a class="rr-card" href="/town-culture/">
           <h3>わが町の図書館と公民館</h3>
           <p class="rr-card-desc">
             市区町村を選んで、図書館と公民館の数をご覧いただけます。
-            図書館は「何人に1館か」も。公民館は1995年からの移りかわりも。
+            図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2021年度）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
         </a>
         <a class="rr-card" href="/town-landuse/">
           <h3>わが町の土地の使われ方</h3>
@@ -89,7 +89,7 @@ import Talk from '../../components/Talk.astro';
             市区町村を選んで、住まい・商い・工場それぞれの土地がどれだけあるかをご覧いただけます。
             都市計画で定められた、町のかたちを数字で。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2023年）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
         </a>
         <a class="rr-card" href="/town-nursery/">
           <h3>保育所は、近いか</h3>
@@ -111,7 +111,7 @@ import Talk from '../../components/Talk.astro';
           <h3>通勤の足は、何か</h3>
           <p class="rr-card-desc">
             市区町村を選んで、その町の人が主に何で通うのか（自家用車・公共交通の割合）をご覧いただけます。
-            車の町か、鉄道・バスの町か。土地柄が、数字にはっきり表れます。
+            自家用車で通う人と、鉄道・バスで通う人の割合を、数字で。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2020年度）</p>
         </a>
@@ -132,6 +132,14 @@ import Talk from '../../components/Talk.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（2023・2024年度）</p>
         </a>
       </div>
+    </section>
+
+    <section class="rr-group" aria-label="別館のご案内">
+      <h2 class="rr-group-title">別館のご案内</h2>
+      <p class="rr-lead">
+        「教育の帳場」「わが町の財政と教育費」「わが町の人の出入り」の3つの窓口は、別館「町の出納帳」へ移りました。<br />
+        <a href="/annex/">別館 町の出納帳へ →</a>
+      </p>
     </section>
 
     <Talk speaker="touko">
