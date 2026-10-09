@@ -20,7 +20,7 @@ import Talk from '../../components/Talk.astro';
 
     <section class="rr-group" aria-label="学びのしらべ">
       <h2 class="rr-group-title">学びのしらべ</h2>
-      <div class="rr-grid">
+      <div class="rr-grid rr-grid--2">
         <a class="rr-card" href="/education/">
           <h3>学びの登記所</h3>
           <p class="rr-card-desc">
@@ -40,8 +40,8 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
-    <section class="rr-group" aria-label="人と暮らしのしらべ">
-      <h2 class="rr-group-title">人と暮らしのしらべ</h2>
+    <section class="rr-group" aria-label="人と住まい">
+      <h2 class="rr-group-title">人と住まい</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/population/">
           <h3>国勢の間</h3>
@@ -67,6 +67,20 @@ import Talk from '../../components/Talk.astro';
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
         </a>
+        <a class="rr-card" href="/town-landuse/">
+          <h3>わが町の土地の使われ方</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、住まい・商い・工場それぞれの土地がどれだけあるかをご覧いただけます。
+            都市計画で定められた、町のかたちを数字で。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="近くにあるもの">
+      <h2 class="rr-group-title">近くにあるもの</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/town-medical/">
           <h3>わが町の医療</h3>
           <p class="rr-card-desc">
@@ -82,14 +96,6 @@ import Talk from '../../components/Talk.astro';
             図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
-        </a>
-        <a class="rr-card" href="/town-landuse/">
-          <h3>わが町の土地の使われ方</h3>
-          <p class="rr-card-desc">
-            市区町村を選んで、住まい・商い・工場それぞれの土地がどれだけあるかをご覧いただけます。
-            都市計画で定められた、町のかたちを数字で。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
         </a>
         <a class="rr-card" href="/town-nursery/">
           <h3>保育所は、近いか</h3>
@@ -107,6 +113,12 @@ import Talk from '../../components/Talk.astro';
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2018年度）</p>
         </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="働く・通う・暮らす">
+      <h2 class="rr-group-title">働く・通う・暮らす</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/town-commute/">
           <h3>通勤の足は、何か</h3>
           <p class="rr-card-desc">
@@ -167,19 +179,11 @@ import Talk from '../../components/Talk.astro';
       font-family: "Shippori Mincho", serif; font-size: 1.15rem;
       border-left: 4px solid #2d6a4f; padding-left: 12px; margin: 0 0 16px;
     }
-    .rr-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  max-width: 1280px;
-  margin: 0 auto;
-}
-@media(max-width:900px){
-  .rr-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
-  .rr-grid{grid-template-columns:1fr}
-}
+    /* 4枚の棚は横4列、2枚の棚は横2列で、どの棚も1段に収める（空きを出さない） */
+    .rr-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; max-width: 1280px; margin: 0 auto; }
+    .rr-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media (max-width: 1100px) { .rr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 600px) { .rr-grid, .rr-grid--2 { grid-template-columns: 1fr; } }
     .rr-card {
       display: block;
       border: 1px solid #1b4332;

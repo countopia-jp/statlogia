@@ -52,7 +52,7 @@ const lastYear = pl.years[pl.years.length - 1];
       <div class="pl-cards" id="plCards"></div>
 
       <h3 class="pl-sub">分類ごとの値段の水準</h3>
-      <p class="pl-note">まんなかの線が全国平均（100）です。右へのびるほど全国より高く、左へのびるほど安い分類です。</p>
+      <p class="pl-note">まんなかの線が全国平均（100）です。右へのびるほど全国より高く、左へのびるほど安い分類です。<br />棒の目盛りは、県ごとに見やすい幅に合わせています（下の数字が両端の値）。</p>
       <ol class="pl-bars" id="plBars"></ol>
 
       <Talk speaker="kei"><span id="plKei">県を選ぶと、帳面をお出しします。</span></Talk>
@@ -140,7 +140,8 @@ const lastYear = pl.years[pl.years.length - 1];
       });
 
       // ---- 帳面 ----
-      const SCALE = 30; // 全国平均から±30を棒の端とする（それより外は端で止める）
+      // 棒の目盛り：その県の10分類のうち、100からいちばん離れたものが端近くに来るよう5刻みで決める
+      const scaleOf = (a) => Math.max(5, Math.ceil(Math.max(...SUB.map((c) => Math.abs(Number(latest(a, c.code).toFixed(1)) - 100))) / 5) * 5);
       let current = null;
       function render(a) {
         current = a;
@@ -162,6 +163,7 @@ const lastYear = pl.years[pl.years.length - 1];
 
         const bars = document.getElementById('plBars');
         bars.innerHTML = '';
+        const SCALE = scaleOf(a);
         for (const c of SUB) {
           const v = latest(a, c.code);
           const diff = Number(v.toFixed(1)) - 100;
@@ -175,6 +177,10 @@ const lastYear = pl.years[pl.years.length - 1];
             `<span class="pl-bar-val">${f1(v)}<small>${rankHi(c.code, a)}位</small></span>`;
           bars.appendChild(li);
         }
+        const axis = document.createElement('li');
+        axis.className = 'pl-bar pl-bar--axis';
+        axis.innerHTML = `<span></span><span class="pl-axis"><span>${100 - SCALE}</span><span>100</span><span>${100 + SCALE}</span></span><span class="pl-axis-note">順位は<br />高い順</span>`;
+        bars.appendChild(axis);
 
         lines(a);
         drawLine();
@@ -309,16 +315,22 @@ const lastYear = pl.years[pl.years.length - 1];
     .pl-note { font-size: 0.8rem; color: #666; text-align: center; line-height: 1.8; }
 
     .pl-bars { list-style: none; padding: 16px; margin: 12px 0 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
-    .pl-bar { display: grid; grid-template-columns: 7.5em 1fr 5.5em; align-items: center; gap: 10px; font-size: 0.88rem; }
+    .pl-bar { display: grid; grid-template-columns: 7.5em 1fr 7em; align-items: center; gap: 10px; font-size: 0.88rem; }
     .pl-bar-name { color: #1b4332; }
     .pl-bar-track { position: relative; height: 12px; background: linear-gradient(90deg, transparent calc(50% - 1px), #4A6355 calc(50% - 1px), #4A6355 calc(50% + 1px), transparent calc(50% + 1px)); }
     .pl-bar-fill { position: absolute; top: 1px; bottom: 1px; border-radius: 99px; min-width: 3px; }
     .pl-bar--up .pl-bar-fill { left: 50%; background: #b23a2f; }
     .pl-bar--down .pl-bar-fill { right: 50%; background: #3a6b52; }
     .pl-bar--even .pl-bar-fill { left: calc(50% - 1.5px); background: #4A6355; }
-    .pl-bar-val { font-family: "IBM Plex Mono", monospace; text-align: right; }
+    .pl-bar--axis { margin-top: 2px; padding-top: 8px; border-top: 1px dashed #e0e0d8; }
+    .pl-axis { display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: #888; }
+    .pl-axis-note { font-size: 0.7rem; color: #888; text-align: right; }
+    .pl-bar-val { font-family: "IBM Plex Mono", monospace; text-align: right; white-space: nowrap; }
     .pl-bar-val small { display: inline-block; margin-left: 6px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.7rem; color: #888; min-width: 2.6em; text-align: right; }
-    @media (max-width: 560px) { .pl-bar { grid-template-columns: 6em 1fr 4.8em; font-size: 0.8rem; } }
+    @media (max-width: 560px) {
+      .pl-bar { grid-template-columns: 6.6em 1fr 3.8em; font-size: 0.78rem; gap: 8px; }
+      .pl-bar-val small { display: block; margin: 0; min-width: 0; }
+    }
 
     .pl-line-sec { margin-top: 44px; }
     .pl-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
