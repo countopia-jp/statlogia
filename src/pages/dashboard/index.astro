@@ -18,28 +18,6 @@ import Talk from '../../components/Talk.astro';
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
     </Talk>
 
-    <section class="rr-group" aria-label="学びのしらべ">
-      <h2 class="rr-group-title">学びのしらべ</h2>
-      <div class="rr-grid">
-        <a class="rr-card" href="/education/">
-          <h3>学びの登記所</h3>
-          <p class="rr-card-desc">
-            全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
-            学校の数と、1校あたりの児童数を、校種ごとに並べて見られます。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
-        </a>
-        <a class="rr-card" href="/ict/">
-          <h3>情報化の帳場</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
-            端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
-        </a>
-      </div>
-    </section>
-
     <section class="rr-group" aria-label="人と住まい">
       <h2 class="rr-group-title">人と住まい</h2>
       <div class="rr-grid">
@@ -154,6 +132,28 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
+    <section class="rr-group" aria-label="学びのしらべ">
+      <h2 class="rr-group-title">学びのしらべ</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/education/">
+          <h3>学びの登記所</h3>
+          <p class="rr-card-desc">
+            全国の市区町村から選んで、幼稚園から高校までの学校数・児童生徒数・教員数を確認できます。
+            学校の数と、1校あたりの児童数を、校種ごとに並べて見られます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
+        </a>
+        <a class="rr-card" href="/ict/">
+          <h3>情報化の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
+            端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
+        </a>
+      </div>
+    </section>
+
     <section class="rr-group" aria-label="別館のご案内">
       <h2 class="rr-group-title">別館のご案内</h2>
       <p class="rr-lead">
@@ -174,7 +174,7 @@ import Talk from '../../components/Talk.astro';
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
     .rr-note { font-size: 0.78rem; color: #888; margin-top: 8px; }
-    .rr-group { margin: 32px 0 8px; }
+    .rr-group { margin: 0; padding: 20px 0 12px; }
     .rr-group-title {
       font-family: "Shippori Mincho", serif; font-size: 1.15rem;
       border-left: 4px solid #2d6a4f; padding-left: 12px; margin: 0 0 16px;
