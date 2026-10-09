@@ -1,0 +1,349 @@
+---
+// =====================================================
+// Countopia Stats - 物価の帳場
+// src/pages/prices/index.astro
+//
+// 都道府県を選んで、消費者物価地域差指数の全分類（総合・家賃を除く総合・10大費目）を
+// 「全国平均＝100からのずれ」として並べる窓口。分類ごとの推移と全国の上下5県つき。
+// データは /data/price-ledger.json（ビルド時生成）から取得。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。
+//   誤爆防止で全セレクタを .pl- 接頭辞で統一している。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { getPriceLedgerData } from '../../lib/price-ledger.js';
+
+const pl = await getPriceLedgerData();
+const lastYear = pl.years[pl.years.length - 1];
+---
+
+<BaseLayout title="物価の帳場｜Countopia Stats" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="pl-dash">
+    <header class="pl-hero">
+      <p class="pl-kicker">閲覧室</p>
+      <h1>物価の帳場</h1>
+      <p class="pl-lead">
+        食料、住居、光熱・水道、教育……。<br />
+        あなたの県の値段の水準を、分類ごとに一枚の帳面に並べます。
+      </p>
+    </header>
+
+    <Talk speaker="kei">
+      当所では、値段の水準を分類ごとに並べます。全国平均を100として、100より大きければ全国より高く、小さければ安い、という見方です。
+    </Talk>
+    <Talk speaker="touko">
+      百がまんなかなのね。それなら、わたくしにも読めそうだわ。
+    </Talk>
+    <Talk speaker="kei">
+      はい。使う量や払ったお金ではなく、同じような品物の「値段」をくらべた数字です。
+    </Talk>
+
+    <section class="pl-selector" aria-label="都道府県の選択">
+      <label>
+        <span>都道府県</span>
+        <select id="plPref">
+          <option value="">選んでください</option>
+        </select>
+      </label>
+    </section>
+
+    <section id="plResult" class="pl-result" hidden aria-live="polite">
+      <h2 id="plTitle"></h2>
+      <div class="pl-cards" id="plCards"></div>
+
+      <h3 class="pl-sub">分類ごとの値段の水準</h3>
+      <p class="pl-note">まんなかの線が全国平均（100）です。右へのびるほど全国より高く、左へのびるほど安い分類です。</p>
+      <ol class="pl-bars" id="plBars"></ol>
+
+      <Talk speaker="kei"><span id="plKei">県を選ぶと、帳面をお出しします。</span></Talk>
+      <Talk speaker="touko"><span id="plTouko">どんな値段の県かしら。</span></Talk>
+    </section>
+
+    <section id="plLineSec" class="pl-line-sec" hidden aria-label="分類ごとの移りかわり">
+      <h2 id="plLineTitle">移りかわり</h2>
+      <div class="pl-tabs" id="plLineTabs" role="tablist"></div>
+      <div class="pl-line-wrap">
+        <canvas id="plLine" height="140"></canvas>
+      </div>
+      <p class="pl-note">点線は全国平均（100）です。</p>
+    </section>
+
+    <section class="pl-ranking" aria-label="全国の高い県・安い県">
+      <h2>全国の高い県・安い県</h2>
+      <div class="pl-selector pl-selector--small">
+        <label>
+          <span>分類</span>
+          <select id="plRankCat"></select>
+        </label>
+      </div>
+      <div class="pl-rank-cols">
+        <div>
+          <h3 class="pl-rank-head pl-rank-head--hi">高い県 TOP5</h3>
+          <ol class="pl-rank-list" id="plRankHi"></ol>
+        </div>
+        <div>
+          <h3 class="pl-rank-head pl-rank-head--lo">安い県 TOP5</h3>
+          <ol class="pl-rank-list" id="plRankLo"></ol>
+        </div>
+      </div>
+      <p class="pl-note">県名を押すと、その県の帳面を開きます。5番目と同じ値の県は、表にいっしょに載せています。</p>
+    </section>
+
+    <Talk speaker="touko">
+      同じ県でも、分類によって高かったり安かったりするのねえ。
+    </Talk>
+    <Talk speaker="kei">
+      はい。総合の数字ひとつでは見えない並びが、分類ごとに分けると見えてきます。
+    </Talk>
+
+    <p class="pl-cross">あわせて見る：<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/exhibits/utility/">日本一「電気やガスが高い」県はどこだ</a>｜<a href="/living/">暮らしの見積所</a>｜<a href="/how-to-read/base-100/">100は、円ではない</a></p>
+
+    <footer class="pl-source">
+      <p>
+        出典：{pl.source}（{pl.firstYear}〜{lastYear}年）<br />
+        消費者物価地域差指数は、全国平均を100としたときの各県の「物価の水準」で、総務省統計局「小売物価統計調査（構造編）」から毎年作られます。使う量や支出の額をくらべた数字ではありません。<br />
+        「家賃を除く総合」は、総合から家賃を除いて計算した値です。順位は値の高い順で、同じ値の県が複数あるときは、同じ順位として並べています。<br />
+        このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+      </p>
+    </footer>
+  </main>
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script is:inline>
+    (async function () {
+      const res = await fetch('/data/price-ledger.json');
+      const data = await res.json();
+      const YEARS = data.years;
+      const L = YEARS.length - 1;
+      const CATS = data.categories;
+      const MAIN = CATS.slice(0, 2);
+      const SUB = CATS.slice(2);
+      const label = Object.fromEntries(CATS.map((c) => [c.code, c.label]));
+      const latest = (a, code) => a.v[code][L];
+      const f1 = (v) => (typeof v === 'number' ? v.toFixed(1) : '—');
+      const same = (a, b) => a.toFixed(1) === b.toFixed(1);
+
+      // 分類ごとに、最新年の高い順の並び
+      const sorted = {};
+      for (const c of CATS) sorted[c.code] = [...data.areas].sort((x, y) => latest(y, c.code) - latest(x, c.code));
+      const rankHi = (code, a) => { const v = latest(a, code); return sorted[code].findIndex((r) => same(latest(r, code), v)) + 1; };
+
+      // ---- 県セレクタ ----
+      const sel = document.getElementById('plPref');
+      for (const a of data.areas) {
+        const o = document.createElement('option');
+        o.value = a.c; o.textContent = a.n; sel.appendChild(o);
+      }
+      sel.addEventListener('change', () => {
+        const a = data.areas.find((x) => x.c === sel.value);
+        if (a) render(a);
+      });
+
+      // ---- 帳面 ----
+      const SCALE = 30; // 全国平均から±30を棒の端とする（それより外は端で止める）
+      let current = null;
+      function render(a) {
+        current = a;
+        document.getElementById('plResult').hidden = false;
+        document.getElementById('plTitle').textContent = `${a.n}の物価の帳面（${data.yearLabel}）`;
+
+        const cards = document.getElementById('plCards');
+        cards.innerHTML = '';
+        for (const c of MAIN) {
+          const v = latest(a, c.code);
+          const d = document.createElement('div');
+          d.className = 'pl-card';
+          d.innerHTML =
+            `<div class="pl-card-label">${c.label}</div>` +
+            `<div class="pl-card-num">${f1(v)}</div>` +
+            `<div class="pl-card-meta">47県中 ${rankHi(c.code, a)}位（高い順）</div>`;
+          cards.appendChild(d);
+        }
+
+        const bars = document.getElementById('plBars');
+        bars.innerHTML = '';
+        for (const c of SUB) {
+          const v = latest(a, c.code);
+          const diff = Number(v.toFixed(1)) - 100;
+          const w = Math.min(Math.abs(diff) / SCALE, 1) * 50;
+          const side = diff > 0 ? 'up' : diff < 0 ? 'down' : 'even';
+          const li = document.createElement('li');
+          li.className = `pl-bar pl-bar--${side}`;
+          li.innerHTML =
+            `<span class="pl-bar-name">${c.label}</span>` +
+            `<span class="pl-bar-track"><span class="pl-bar-fill" style="width:${w}%"></span></span>` +
+            `<span class="pl-bar-val">${f1(v)}<small>${rankHi(c.code, a)}位</small></span>`;
+          bars.appendChild(li);
+        }
+
+        lines(a);
+        drawLine();
+      }
+
+      // ---- 案内人のことば（数字だけを言う） ----
+      function lines(a) {
+        const vals = SUB.map((c) => ({ c, v: Number(latest(a, c.code).toFixed(1)) }));
+        const hi = [...vals].sort((x, y) => y.v - x.v)[0];
+        const lo = [...vals].sort((x, y) => x.v - y.v)[0];
+        const above = vals.filter((x) => x.v > 100).length;
+        const below = vals.filter((x) => x.v < 100).length;
+        const even = vals.length - above - below;
+        const total = latest(a, 'C5701');
+
+        document.getElementById('plKei').textContent =
+          `${a.n}の総合は${f1(total)}です。10の分類のうち、いちばん高いのは「${hi.c.label}」で${hi.v.toFixed(1)}、いちばん低いのは「${lo.c.label}」で${lo.v.toFixed(1)}です。`;
+
+        let t;
+        if (above === vals.length) t = 'まあ、どの分類も100より上なのね。';
+        else if (below === vals.length) t = 'どの分類も、100より下なのね。';
+        else t = `100より上が${above}つ、下が${below}つ${even ? `、ちょうど100が${even}つ` : ''}。分類によって分かれるのねえ。`;
+        document.getElementById('plTouko').textContent = t;
+      }
+
+      // ---- 移りかわり ----
+      let lineCat = 'C5701';
+      let chart = null;
+      const tabs = document.getElementById('plLineTabs');
+      for (const c of CATS) {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'pl-tab' + (c.code === lineCat ? ' is-active' : '');
+        b.textContent = c.label;
+        b.setAttribute('role', 'tab');
+        b.addEventListener('click', () => {
+          lineCat = c.code;
+          tabs.querySelectorAll('.pl-tab').forEach((x) => x.classList.remove('is-active'));
+          b.classList.add('is-active');
+          drawLine();
+        });
+        tabs.appendChild(b);
+      }
+      function drawLine() {
+        if (!current) return;
+        const a = current;
+        document.getElementById('plLineSec').hidden = false;
+        document.getElementById('plLineTitle').textContent = `${a.n}の「${label[lineCat]}」の移りかわり（${YEARS[0]}〜${YEARS[L]}年）`;
+        const series = a.v[lineCat];
+        if (chart) chart.destroy();
+        chart = new Chart(document.getElementById('plLine'), {
+          type: 'line',
+          data: {
+            labels: YEARS,
+            datasets: [
+              { label: a.n, data: series, borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 3 },
+              { label: '全国平均', data: YEARS.map(() => 100), borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${Number(c.raw).toFixed(1)}` } },
+            },
+            scales: { y: { suggestedMin: 95, suggestedMax: 105 } },
+          },
+        });
+      }
+
+      // ---- 全国の高い県・安い県 ----
+      const rankSel = document.getElementById('plRankCat');
+      for (const c of CATS) {
+        const o = document.createElement('option');
+        o.value = c.code; o.textContent = c.label; rankSel.appendChild(o);
+      }
+      // 5番目と同じ値の県まで残す（desc=高い順のリスト、false=安い順のリスト）
+      function cutTop(list, code, desc) { const v = latest(list[4], code); return list.filter((r) => same(latest(r, code), v) || (desc ? latest(r, code) > v : latest(r, code) < v)); }
+      function showRank() {
+        const code = rankSel.value;
+        const hiList = cutTop(sorted[code], code, true);
+        const asc = [...sorted[code]].reverse();
+        const loList = cutTop(asc, code, false);
+        const loRank = (a) => { const v = latest(a, code); return asc.findIndex((r) => same(latest(r, code), v)) + 1; };
+        const fill = (el, list, rk) => {
+          el.innerHTML = '';
+          for (const a of list) {
+            const li = document.createElement('li');
+            li.innerHTML = `<span class="pl-rank-pos">${rk(a)}</span><span class="pl-rank-name">${a.n}</span><span class="pl-rank-val">${f1(latest(a, code))}</span>`;
+            li.addEventListener('click', () => { sel.value = a.c; render(a); document.getElementById('plResult').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+            el.appendChild(li);
+          }
+        };
+        fill(document.getElementById('plRankHi'), hiList, (a) => rankHi(code, a));
+        fill(document.getElementById('plRankLo'), loList, loRank);
+      }
+      rankSel.addEventListener('change', showRank);
+      showRank();
+
+      // ?pref=東京都 または ?pref=13000 で開いたら、その県を出す
+      const q = new URLSearchParams(location.search).get('pref');
+      if (q) {
+        const a = data.areas.find((x) => x.n === q || x.c === q);
+        if (a) { sel.value = a.c; render(a); }
+      }
+    })();
+  </script>
+
+  <style is:global>
+    .pl-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+    .pl-hero { text-align: center; padding: 40px 0 8px; }
+    .pl-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .pl-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .pl-lead { color: #555; line-height: 1.9; }
+
+    .pl-selector { margin: 24px 0; display: flex; justify-content: center; }
+    .pl-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
+    .pl-selector select {
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      border-radius: 6px; background: #fff; font-size: 1rem;
+    }
+    .pl-selector--small { margin: 12px 0 20px; }
+
+    .pl-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+    .pl-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 520px; margin: 0 auto; }
+    .pl-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px; background: #fff; text-align: center; }
+    .pl-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .pl-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.6rem; font-weight: 600; margin: 6px 0 2px; color: #1b4332; }
+    .pl-card-meta { font-size: 0.75rem; color: #b23a2f; font-weight: 700; }
+
+    .pl-sub { text-align: center; margin: 32px 0 6px; font-family: "Shippori Mincho", serif; font-size: 1.05rem; }
+    .pl-note { font-size: 0.8rem; color: #666; text-align: center; line-height: 1.8; }
+
+    .pl-bars { list-style: none; padding: 16px; margin: 12px 0 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+    .pl-bar { display: grid; grid-template-columns: 7.5em 1fr 5.5em; align-items: center; gap: 10px; font-size: 0.88rem; }
+    .pl-bar-name { color: #1b4332; }
+    .pl-bar-track { position: relative; height: 12px; background: linear-gradient(90deg, transparent calc(50% - 1px), #4A6355 calc(50% - 1px), #4A6355 calc(50% + 1px), transparent calc(50% + 1px)); }
+    .pl-bar-fill { position: absolute; top: 1px; bottom: 1px; border-radius: 99px; min-width: 3px; }
+    .pl-bar--up .pl-bar-fill { left: 50%; background: #b23a2f; }
+    .pl-bar--down .pl-bar-fill { right: 50%; background: #3a6b52; }
+    .pl-bar--even .pl-bar-fill { left: calc(50% - 1.5px); background: #4A6355; }
+    .pl-bar-val { font-family: "IBM Plex Mono", monospace; text-align: right; }
+    .pl-bar-val small { display: inline-block; margin-left: 6px; font-family: "Zen Kaku Gothic New", sans-serif; font-size: 0.7rem; color: #888; min-width: 2.6em; text-align: right; }
+    @media (max-width: 560px) { .pl-bar { grid-template-columns: 6em 1fr 4.8em; font-size: 0.8rem; } }
+
+    .pl-line-sec { margin-top: 44px; }
+    .pl-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
+    .pl-line-wrap { padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+    .pl-tabs { display: flex; gap: 6px; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; }
+    .pl-tab { padding: 6px 12px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: 0.8rem; }
+    .pl-tab.is-active { background: #1b4332; color: #fff; }
+
+    .pl-ranking { margin-top: 44px; }
+    .pl-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+    .pl-rank-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    @media (max-width: 600px) { .pl-rank-cols { grid-template-columns: 1fr; } }
+    .pl-rank-head { text-align: center; font-size: 0.95rem; margin: 0 0 8px; font-family: "Shippori Mincho", serif; }
+    .pl-rank-head--hi { color: #b23a2f; }
+    .pl-rank-head--lo { color: #3a6b52; }
+    .pl-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+    .pl-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .pl-rank-list li:last-child { border-bottom: none; }
+    .pl-rank-list li:hover { background: #f4f7f4; }
+    .pl-rank-pos { font-weight: 700; color: #b23a2f; min-width: 1.4em; text-align: center; }
+    .pl-rank-name { flex: 1; }
+    .pl-rank-val { font-weight: 600; font-family: "IBM Plex Mono", monospace; }
+
+    .pl-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; line-height: 1.9; }
+    .pl-cross a { color: #b23a2f; }
+    .pl-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
