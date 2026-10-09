@@ -6,6 +6,7 @@ import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
 import { getSolarData } from '../lib/solar.js';
 import { getKaraokeData } from '../lib/karaoke.js';
+import { news } from '../data/news.js';
 import { getHousingTypeData } from '../lib/housing-type.js';
 
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -31,8 +32,14 @@ const readingTop = reading.rows[0];
 
 const num = (v) => v.toFixed(1);
 
+// ビルドは日本時間で日付を取る（月初03:00 JSTのビルドはUTCだと前月末になるため）
+const buildJst = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 // 入国印の日付はビルド時のもの（月初の再ビルドで押し直される）
-const stampDate = new Date().toISOString().slice(0, 7).replace('-', '.');
+const stampDate = buildJst.slice(0, 7).replace('-', '.');
+// 最終更新＝展示・窓口を足した日（news.js の先頭）／数字の取得＝ビルドした日
+const dot = (d) => d.replaceAll('-', '.');
+const updatedDate = news.length ? dot(news[0].date) : '';
+const fetchedDate = dot(buildJst);
 
 // 今月の一数字：読み込み済みのデータから、月ごとに1つ選ぶ
 const monthlyFacts = [
@@ -77,6 +84,7 @@ const prefectures = [
               <span>Countopia Stats（カウントピア・スタッツ）は、</span><span>都道府県・市区町村で引ける、暮らしの統計サイト。</span><span>難しい話はしません。</span><span>数字の景色を、案内人と一緒に歩いてください。</span>
             </p>
             <span class="api-count">現在 e-Stat の {publishedCount} 指標をご覧になれます</span>
+            <span class="site-dates">{updatedDate && <span>最終更新 <time datetime={updatedDate.replaceAll('.', '-')}>{updatedDate}</time></span>}<span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></span>
           </div>
           <div class="hero-side">
             <div class="stamp-area" aria-hidden="true">
@@ -300,6 +308,11 @@ const prefectures = [
 .api-count{
   display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
   color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
+}
+/* 最終更新日と、数字を取りに行った日 */
+.site-dates{
+  display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0 0;
+  font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.04em;color:var(--ink-soft);
 }
 /* タイトルの右下にボタンを置く */
 .hero-title-row{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
