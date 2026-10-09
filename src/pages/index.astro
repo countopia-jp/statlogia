@@ -84,7 +84,6 @@ const prefectures = [
               <span>Countopia Stats（カウントピア・スタッツ）は、</span><span>都道府県・市区町村で引ける、暮らしの統計サイト。</span><span>難しい話はしません。</span><span>数字の景色を、案内人と一緒に歩いてください。</span>
             </p>
             <span class="api-count">現在 e-Stat の {publishedCount} 指標をご覧になれます</span>
-            <span class="site-dates">{updatedDate && <span>最終更新 <time datetime={updatedDate.replaceAll('.', '-')}>{updatedDate}</time></span>}<span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></span>
           </div>
           <div class="hero-side">
             <div class="stamp-area" aria-hidden="true">
@@ -108,6 +107,7 @@ const prefectures = [
           <span class="today-text">{monthlyFact.text}</span>
           <span class="today-more">→</span>
         </a>
+        <p class="site-dates">{updatedDate && <span>最終更新 <time datetime={updatedDate.replaceAll('.', '-')}>{updatedDate}</time></span>}<span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></p>
       </div>
     </div>
 
@@ -309,11 +309,12 @@ const prefectures = [
   display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
   color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
 }
-/* 最終更新日と、数字を取りに行った日 */
+/* 最終更新日と、数字を取りに行った日（紙の右下） */
 .site-dates{
-  display:flex;flex-wrap:wrap;gap:4px 14px;margin:4px 0 0;
-  font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.04em;color:var(--ink-soft);
+  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 16px;margin:14px 0 0;
+  font-family:"IBM Plex Mono",monospace;font-size:.76rem;letter-spacing:.04em;color:var(--ink-soft);
 }
+.site-dates time{color:var(--ink);font-weight:600}
 /* タイトルの右下にボタンを置く */
 .hero-title-row{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
 .hero-title-row .btn{flex-shrink:0;margin-bottom:.5rem}
