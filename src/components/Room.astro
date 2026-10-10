@@ -51,7 +51,7 @@ const isPref = room.scope === 'pref';
       <canvas id="rmLine" height="140"></canvas>
       <p class="rm-note" id="rmLineEmpty" hidden></p>
     </div>
-    {isPref && <p class="rm-note" id="rmLineNote"></p>}
+    <p class="rm-note" id="rmLineNote"></p>
   </section>
 
   <section class="rm-ranking" aria-label="上位と下位">
@@ -168,7 +168,9 @@ const isPref = room.scope === 'pref';
         if (isPref) {
           const nat = D.national[ind.key][L(ind)];
           meta = `<div class="rm-card-meta">47都道府県中 ${rk}位<span>（${ind.rankWord}）</span></div>` +
-            (nat !== null ? `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} ${fmtText(ind, nat)}</div>` : '');
+            (nat === null ? '' : D.nationalIsTotal && D.nationalIsTotal[ind.key]
+              ? `<div class="rm-card-meta rm-card-meta--soft">全国の合計 ${fmtText(ind, nat)}</div><div class="rm-card-meta rm-card-meta--soft">47都道府県の平均 ${fmtText(ind, D.prefAverage[ind.key][L(ind)])}</div>`
+              : `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} ${fmtText(ind, nat)}</div>`);
         } else {
           const pp = poolOf(ind, prefOf(a));
           meta = `<div class="rm-card-meta">全国 ${rk}位／${all.length}<span>（${ind.rankWord}）</span></div>` +
@@ -215,11 +217,22 @@ const isPref = room.scope === 'pref';
     const top = [...pos].sort((x, y) => x.p - y.p)[0];
     const bot = [...pos].sort((x, y) => y.p - x.p)[0];
     const unitWord = isPref ? '都道府県' : 'の市区町村';
-    kei.textContent = `${name}の項目のうち、順位がいちばん上にあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下にあるのは「${bot.ind.label}」で、${bot.rk}番目（${bot.ind.rankWord}）です。`;
+    const minRk = Math.min(...pos.map((x) => x.rk));
+    const maxRk = Math.max(...pos.map((x) => x.rk));
+    const sameN = pos.every((x) => x.n === pos[0].n);
+    const among = sameN ? `${pos[0].n}${unitWord}` : (isPref ? '47都道府県' : '全国の市区町村');
+    const sameWord = pos.every((x) => x.ind.rankWord === pos[0].ind.rankWord) ? `（${pos[0].ind.rankWord}）` : '';
     const allMiddle = pos.every((x) => x.p >= 0.2 && x.p <= 0.8);
+    if (allMiddle) {
+      kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${minRk}〜${maxRk}番目${sameWord}にあります。`;
+    } else if (pos.every((x) => x.p >= 0.5)) {
+      kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${minRk}〜${maxRk}番目${sameWord}にあります。`;
+    } else if (pos.every((x) => x.p <= 0.5)) {
+      kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${minRk}〜${maxRk}番目${sameWord}にあります。`;
+    } else kei.textContent = `${name}の項目のうち、上のほうにあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。下のほうにあるのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
     const seed = parseInt(a.c, 10) || 0;
     let t;
-    if (allMiddle) t = ['どれも、まんなかあたりなのね。', '目立って上や下にあるものは、ないのねえ。'][seed % 2];
+    if (allMiddle) t = ['とびぬけたところのない、ほどよい土地なのね。', '上にも下にも寄らない、ちょうどいいところなのね。'][seed % 2];
     else if (top.p <= 0.1 && bot.p >= 0.9) t = ['上のほうにも下のほうにも、ある土地なのね。', '項目によって、ずいぶん順位が違うのねえ。'][seed % 2];
     else if (top.p <= 0.1) t = `「${top.ind.label}」は、上から数えたほうが早いのね。`;
     else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下から数えたほうが早いのね。`;
@@ -229,6 +242,7 @@ const isPref = room.scope === 'pref';
 
   // ---- 移りかわり ----
   let lineKey = IND[0] ? IND[0].key : null;
+  let userPicked = false; // タブを押すまでは、その土地で動きのある項目を最初に見せる
   let chart = null;
   const tabs = document.getElementById('rmLineTabs');
   for (const ind of IND) {
@@ -239,6 +253,7 @@ const isPref = room.scope === 'pref';
     b.setAttribute('role', 'tab');
     b.addEventListener('click', () => {
       lineKey = ind.key;
+      userPicked = true;
       tabs.querySelectorAll('.rm-tab').forEach((x) => x.classList.remove('is-active'));
       b.classList.add('is-active');
       drawLine();
@@ -248,6 +263,15 @@ const isPref = room.scope === 'pref';
   function drawLine() {
     if (!current) return;
     const a = current;
+    if (!userPicked) {
+      const moves = (i) => {
+        const vs = (a.v[i.key] || []).filter((v) => v !== null && v !== undefined);
+        return vs.length >= 3 && vs.some((v) => v !== vs[0]);
+      };
+      const first = IND.find(moves) || IND[0];
+      lineKey = first.key;
+      tabs.querySelectorAll('.rm-tab').forEach((x, k) => x.classList.toggle('is-active', IND[k].key === lineKey));
+    }
     const ind = IND.find((i) => i.key === lineKey);
     const sec = document.getElementById('rmLineSec');
     sec.hidden = false;
@@ -266,16 +290,27 @@ const isPref = room.scope === 'pref';
     }
     canvas.hidden = false;
     empty.hidden = true;
-    const sets = [{ label: name, data: series, borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 2, spanGaps: true }];
+    // 毎年の統計は、欠けた年も目盛りに残す（詰めると年の間隔がずれて見えるため）。欠けた年は線を切る
+    const ys = ind.years.map(Number);
+    const steps = ys.slice(1).map((y, i) => y - ys[i]);
+    const yearly = steps.length > 0 && steps.filter((d) => d === 1).length >= steps.length * 0.7;
+    const labels = yearly ? Array.from({ length: ys[ys.length - 1] - ys[0] + 1 }, (_, i) => String(ys[0] + i)) : ind.years;
+    const spread = (arr) => (yearly ? labels.map((y) => { const k = ind.years.indexOf(y); return k < 0 ? null : arr[k]; }) : arr);
+    const gaps = yearly && labels.length > ind.years.length;
+    const sets = [{ label: name, data: spread(series), borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 2, spanGaps: false }];
+    const noteParts = [];
     if (isPref) {
-      const natLabel = D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国';
-      sets.push({ label: natLabel, data: D.national[ind.key], borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: true });
-      const note = document.getElementById('rmLineNote');
-      if (note) note.textContent = `点線は${natLabel}です。`;
+      const useAvg = D.nationalIsAvg[ind.key] || (D.nationalIsTotal && D.nationalIsTotal[ind.key]);
+      const natLabel = useAvg ? '47都道府県の平均' : '全国';
+      sets.push({ label: natLabel, data: spread(useAvg && D.prefAverage ? D.prefAverage[ind.key] : D.national[ind.key]), borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: false });
+      noteParts.push(`点線は${natLabel}です。`);
     }
+    if (gaps) noteParts.push(isPref ? '線が途切れている年は、どこかの県の値が欠けていて、くらべられない年です。' : '線が途切れている年は、値のそろわない年です。');
+    const note = document.getElementById('rmLineNote');
+    if (note) note.textContent = noteParts.join('');
     chart = new Chart(canvas, {
       type: 'line',
-      data: { labels: ind.years, datasets: sets },
+      data: { labels, datasets: sets },
       options: {
         responsive: true,
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${fmtText(ind, Number(c.raw))}` } } },
@@ -382,7 +417,7 @@ const isPref = room.scope === 'pref';
   .rm-card-num small { font-family: "Zen Kaku Gothic New", sans-serif; font-size: .75rem; margin-left: 3px; font-weight: 500; }
   .rm-card-year { font-size: .7rem; color: #999; margin-bottom: 6px; }
   .rm-card-meta { font-size: .74rem; color: #b23a2f; font-weight: 700; margin-top: auto; }
-  .rm-card-meta span { font-weight: 400; }
+  .rm-card-meta span { font-weight: 400; display: inline-block; }
   .rm-card-meta--soft { color: #777; font-weight: 400; margin-top: 2px; }
   .rm-card-note { font-size: .66rem; color: #999; margin-top: 4px; line-height: 1.5; }
 

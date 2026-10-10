@@ -57,18 +57,31 @@ const rawCache = new Map();
 async function fetchRaw(table, code) {
   const k = `${table}:${code}`;
   if (rawCache.has(k)) return rawCache.get(k);
-  const json = await apiGet('getStatsData', {
-    statsDataId: table,
-    cdCat01: code,
-    metaGetFlg: 'Y',
-    cntGetFlg: 'N',
-    annotationGetFlg: 'N',
-    explanationGetFlg: 'N',
-    replaceSpChars: '0',
-  });
-  const root = json.GET_STATS_DATA;
-  if (!root || root.RESULT.STATUS !== 0) {
-    throw new Error(`[room-engine] getStatsData失敗(${table} ${code}): ${root?.RESULT?.ERROR_MSG || '不明'}`);
+  // 1回の応答は10万件まで。市区町村×長い年数だと溢れるので、NEXT_KEY で続きを取る
+  const values = [];
+  let root;
+  let start = 1;
+  for (let page = 0; page < 20; page++) {
+    const params = {
+      statsDataId: table,
+      cdCat01: code,
+      metaGetFlg: page === 0 ? 'Y' : 'N',
+      cntGetFlg: 'N',
+      annotationGetFlg: 'N',
+      explanationGetFlg: 'N',
+      replaceSpChars: '0',
+    };
+    if (start > 1) params.startPosition = String(start);
+    const json = await apiGet('getStatsData', params);
+    const r = json.GET_STATS_DATA;
+    if (!r || r.RESULT.STATUS !== 0) {
+      throw new Error(`[room-engine] getStatsData失敗(${table} ${code}): ${r?.RESULT?.ERROR_MSG || '不明'}`);
+    }
+    if (page === 0) root = r;
+    values.push(...asArray(r.STATISTICAL_DATA?.DATA_INF?.VALUE));
+    const next = r.STATISTICAL_DATA?.RESULT_INF?.NEXT_KEY;
+    if (!next) break;
+    start = Number(next);
   }
   const sd = root.STATISTICAL_DATA;
   const objs = asArray(sd.CLASS_INF?.CLASS_OBJ);
@@ -79,7 +92,7 @@ async function fetchRaw(table, code) {
   const cat = asArray(objs.find((o) => o['@id'] === 'cat01')?.CLASS).find((c) => c['@code'] === code);
   const byTime = {};
   const dash = {}; // 「-」（該当なし）だった欄。窓口の設定 dashAsZero:true のときだけ0として扱う
-  for (const v of asArray(sd.DATA_INF?.VALUE)) {
+  for (const v of values) {
     if (v['@cat01'] && v['@cat01'] !== code) continue;
     const raw = v['$'];
     if (raw === '-') { (dash[v['@time']] ??= {})[v['@area']] = true; continue; }
@@ -148,6 +161,8 @@ export async function getRoomData(room) {
   const values = {}; // key -> { areaCode: [..] }
   const national = {};
   const nationalIsAvg = {};
+  const nationalIsTotal = {};
+  const prefAverage = {};
 
   for (const ind of inds) {
     const ownCodes = ind.needs.map(([, c]) => c).filter((c) => !ind.carry.includes(c));
@@ -179,8 +194,8 @@ export async function getRoomData(room) {
       }
     };
 
-    // 揃っている時点だけを使う（県＝47すべて、町＝順位対象の半分以上）
-    const need = scope === 'pref' ? 47 : Math.ceil(rankCount * 0.5);
+    // 揃っている時点だけを使う（県＝47すべて、町＝順位対象の8割以上）
+    const need = scope === 'pref' ? 47 : Math.ceil(rankCount * 0.8);
     let useTimes = times.filter((t) => areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length >= need);
     useTimes = useTimes.slice(-maxYears);
     if (useTimes.length === 0) {
@@ -194,14 +209,19 @@ export async function getRoomData(room) {
 
     if (scope === 'pref') {
       const nat = useTimes.map((t) => calcAt('00000', t));
+      const avg = useTimes.map((t) => {
+        const vs = areaList.map((a) => calcAt(a.c, t)).filter((v) => v !== null);
+        return vs.length ? vs.reduce((s, v) => s + v, 0) / vs.length : null;
+      });
       const isAvg = nat[nat.length - 1] === null || ind.nationalAverage === true;
       nationalIsAvg[ind.key] = isAvg;
-      national[ind.key] = isAvg
-        ? useTimes.map((t) => {
-            const vs = areaList.map((a) => calcAt(a.c, t)).filter((v) => v !== null);
-            return vs.length ? roundTo(vs.reduce((s, v) => s + v, 0) / vs.length, d) : null;
-          })
-        : nat.map((v) => roundTo(v, d));
+      national[ind.key] = isAvg ? avg.map((v) => roundTo(v, d)) : nat.map((v) => roundTo(v, d));
+      // 全国の値が47県の合計（件数・面積など）なら、グラフでは47県の平均とくらべる
+      const lastNat = nat[nat.length - 1];
+      const lastSum = avg[avg.length - 1] === null ? null : avg[avg.length - 1] * areaList.length;
+      const isTotal = !isAvg && lastNat !== null && lastSum !== null && lastNat > 0 && Math.abs(lastNat - lastSum) / lastNat < 0.02;
+      nationalIsTotal[ind.key] = isTotal;
+      prefAverage[ind.key] = avg.map((v) => roundTo(v, d));
     }
 
     const unit = ind.unit ?? raws[baseCodes[0]].unit;
@@ -227,6 +247,8 @@ export async function getRoomData(room) {
     indicators: indicatorsOut,
     national: scope === 'pref' ? national : undefined,
     nationalIsAvg: scope === 'pref' ? nationalIsAvg : undefined,
+    nationalIsTotal: scope === 'pref' ? nationalIsTotal : undefined,
+    prefAverage: scope === 'pref' ? prefAverage : undefined,
     areas: areaList.map((a) => ({ c: a.c, n: a.n, ...(a.x ? { x: 1 } : {}), v: Object.fromEntries(indicatorsOut.map((i) => [i.key, values[i.key][a.c]])) })),
   };
   cache.set(room.id, out);
