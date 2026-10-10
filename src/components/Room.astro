@@ -24,7 +24,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 <main class="rm">
   <header class="rm-hero">
     {hasHero && <img class="rm-hero-figure" src={heroImage} alt={room.imageAlt || ''} width="1400" height="788" loading="lazy" />}
-    <p class="rm-kicker">閲覧室{room.shelf ? `｜${room.shelf}` : ''}</p>
+    <p class="rm-kicker">{room.annex ? '別館' : '閲覧室'}{room.shelf ? `｜${room.shelf}` : ''}</p>
     <h1>{room.title}</h1>
     <p class="rm-lead" set:html={room.lead} />
   </header>

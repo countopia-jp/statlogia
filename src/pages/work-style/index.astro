@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Room from '../../components/Room.astro';
+import { WORK_STYLE } from '../../data/rooms/work-style.js';
+const room = WORK_STYLE;
+---
+<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/annex/" backLabel="町の出納帳">
+  <Room room={room} />
+</BaseLayout>

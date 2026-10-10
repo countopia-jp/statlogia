@@ -195,7 +195,7 @@ export async function getRoomData(room) {
     };
 
     // 揃っている時点だけを使う（県＝47すべて、町＝順位対象の8割以上）
-    const need = scope === 'pref' ? 47 : Math.ceil(rankCount * 0.8);
+    const need = scope === 'pref' ? 47 : Math.ceil(rankCount * (ind.minCoverage ?? room.minCoverage ?? 0.8)); // 地価の商業地・工業地のように、もともと一部の町にしか無い項目は minCoverage で下げる
     let useTimes = times.filter((t) => areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length >= need);
     useTimes = useTimes.slice(-maxYears);
     if (useTimes.length === 0) {

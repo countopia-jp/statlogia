@@ -24,7 +24,7 @@ const p = profiles[speaker] ?? profiles.kei;
 .say.right{margin-left:auto;flex-direction:row-reverse}
 .face{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--paper)}
 /* セリフは枠線なしの色面。白地に枠線のカード（最多・最少など）と見分けがつくように */
-.bubble{position:relative;background:#fff;border-radius:12px;padding:12px 16px;font-size:.9rem}
+.bubble{position:relative;background:#fff;border-radius:12px;padding:12px 16px;font-size:.95rem;font-weight:500;line-height:1.8}
 .bubble::before{content:"";position:absolute;top:14px;left:-7px;border:7px solid transparent;border-left:0;border-right-color:var(--bubble-bg)}
 .say.right .bubble::before{left:auto;right:-7px;border-right:0;border-left:7px solid var(--bubble-bg)}
 .name{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--ink-soft);display:block;margin-bottom:4px}
@@ -32,8 +32,8 @@ const p = profiles[speaker] ?? profiles.kei;
 .say.kei{--bubble-bg:#e4eee7}
 .say.touko{--bubble-bg:#f8e5df}
 .say .bubble{background:var(--bubble-bg)}
-.say.kei .bubble{color:#1f4a37}
+.say.kei .bubble{color:#173b2b}
 .say.kei .name{color:#2d6a4f}
-.say.touko .bubble{color:#a33227}
+.say.touko .bubble{color:#7f261d}
 .say.touko .name{color:#a33227}
 </style>

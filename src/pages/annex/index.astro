@@ -2,14 +2,14 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
-<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人口の出入りなど、町の内側に関わる数字をまとめた別館です。教育の帳場・わが町の財政と教育費・わが町の人の出入りの3窓口。">
+<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。7つの窓口があります。">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
       <p class="rr-kicker">別館</p>
       <h1>町の出納帳</h1>
       <p class="rr-lead">
-        財政や人口の出入りなど、町の内側に関わる数字です。<br />
+        財政や人の出入り、所得や家計、土地の値段や働き方など、<br />お金と暮らしの内側に関わる数字です。<br />
         本館とは別に、出納帳としてここにまとめました。
       </p>
     </header>
@@ -22,6 +22,7 @@ import Talk from '../../components/Talk.astro';
     </Talk>
 
     <section class="rr-group" aria-label="財政と人の動き">
+      <h2 class="ledger-shelf">財政と人の動き</h2>
       <div class="ledger-grid">
         <a class="ledger-card" href="/education-budget/">
           <span class="lc-mark">教</span>
@@ -49,6 +50,44 @@ import Talk from '../../components/Talk.astro';
         </a>
       </div>
     </section>
+
+    <section class="rr-group" aria-label="お金と暮らし">
+      <h2 class="ledger-shelf">お金と暮らし</h2>
+      <div class="ledger-grid ledger-grid--4">
+        <a class="ledger-card" href="/pref-economy/">
+          <span class="lc-mark">県</span>
+          <h3>県のふところ</h3>
+          <p class="lc-desc">
+            県内総生産と県民所得、1人当たり県民所得と、その内訳をまとめた帳場です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+        </a>
+        <a class="ledger-card" href="/household/">
+          <span class="lc-mark">家</span>
+          <h3>家計の帳場</h3>
+          <p class="lc-desc">
+            県庁所在市の世帯の、1か月の収入と支出の内訳、貯蓄の額です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+        </a>
+        <a class="ledger-card" href="/work-style/">
+          <span class="lc-mark">働</span>
+          <h3>働き方の帳場</h3>
+          <p class="lc-desc">
+            完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+        </a>
+        <a class="ledger-card" href="/land-price/">
+          <span class="lc-mark">地</span>
+          <h3>土地の値段</h3>
+          <p class="lc-desc">
+            住宅地・商業地・工業地の、1平方メートルあたりの値段の移りかわりです。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+        </a>
+      </div>
+    </section>
   </main>
 
   <style>
@@ -58,7 +97,7 @@ import Talk from '../../components/Talk.astro';
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
     .rr-lead { color: #555; line-height: 1.9; }
-    .rr-group { margin: 32px 0 8px; }
+    .rr-group { margin: 0; padding: 20px 0 8px; }
 
     .ledger-grid {
       display: grid;
@@ -94,6 +133,13 @@ import Talk from '../../components/Talk.astro';
     .ledger-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
+    }
+    .ledger-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media(max-width:1100px){ .ledger-grid--4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+    @media(max-width:600px){ .ledger-grid--4{grid-template-columns:1fr} }
+    .ledger-shelf {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin: 0 0 14px;
     }
     .lc-mark {
       position: absolute;

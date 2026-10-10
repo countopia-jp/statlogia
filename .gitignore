@@ -13,3 +13,5 @@ housing-codes.txt
 housing-both.txt
 
 scripts/out/
+
+.fuse_hidden*
