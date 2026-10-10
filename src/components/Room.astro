@@ -1,4 +1,6 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 // =====================================================
 // Countopia Stats - 閲覧室の共通ページ部品
 // src/components/Room.astro
@@ -15,10 +17,13 @@ const { room } = Astro.props;
 const data = await getRoomData(room);
 const years = yearSummary(data);
 const isPref = room.scope === 'pref';
+// 扉絵：public/images/icon/<窓口id>-large.webp を置けば出る（無いあいだは出さない）
+const heroImage = room.image ?? `/images/icon/${room.id}-large.webp`;
+const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 ---
 <main class="rm">
   <header class="rm-hero">
-    {room.image && <img class="rm-hero-figure" src={room.image} alt={room.imageAlt || ''} width="1400" height="788" loading="lazy" />}
+    {hasHero && <img class="rm-hero-figure" src={heroImage} alt={room.imageAlt || ''} width="1400" height="788" loading="lazy" />}
     <p class="rm-kicker">閲覧室{room.shelf ? `｜${room.shelf}` : ''}</p>
     <h1>{room.title}</h1>
     <p class="rm-lead" set:html={room.lead} />

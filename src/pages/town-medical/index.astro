@@ -1,4 +1,7 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/town-medical-large.webp'));
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { getMuniMedicalData } from '../../lib/muni-medical.js';
@@ -9,6 +12,7 @@ const data = await getMuniMedicalData();
 
   <main class="tp">
     <header class="tp-hero">
+      {hasHero && <img class="tp-hero-figure" src="/images/icon/town-medical-large.webp" alt="診療所の前の通りを、看護師や近所の人、子どもたちが行き交う水彩画" width="1400" height="788" loading="lazy" />}
       <p class="tp-kicker">閲覧室</p>
       <h1>わが町の医療</h1>
       <p class="tp-lead">

@@ -1,4 +1,7 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/prices-large.webp'));
 // =====================================================
 // Countopia Stats - 物価の帳場
 // src/pages/prices/index.astro
@@ -20,6 +23,7 @@ const lastYear = pl.years[pl.years.length - 1];
 <BaseLayout title="物価の帳場｜Countopia Stats" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="pl-dash">
     <header class="pl-hero">
+      {hasHero && <img class="pl-hero-figure" src="/images/icon/prices-large.webp" alt="商店街の八百屋と魚屋で、買い物かごを手に品物を選ぶ人々の水彩画" width="1400" height="788" loading="lazy" />}
       <p class="pl-kicker">閲覧室</p>
       <h1>物価の帳場</h1>
       <p class="pl-lead">
@@ -292,6 +296,7 @@ const lastYear = pl.years[pl.years.length - 1];
   <style is:global>
     .pl-dash { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
     .pl-hero { text-align: center; padding: 40px 0 8px; }
+    .pl-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .pl-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .pl-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
     .pl-lead { color: #555; line-height: 1.9; }

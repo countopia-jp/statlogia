@@ -1,4 +1,7 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/town-culture-large.webp'));
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { getMuniCultureData } from '../../lib/muni-culture.js';
@@ -9,6 +12,7 @@ const data = await getMuniCultureData();
 
   <main class="tp">
     <header class="tp-hero">
+      {hasHero && <img class="tp-hero-figure" src="/images/icon/town-culture-large.webp" alt="木の床と本棚の並ぶ図書館の窓辺で本を読む人々と、窓の外の公民館で寄り合いの支度をする住民の水彩画" width="1400" height="788" loading="lazy" />}
       <p class="tp-kicker">閲覧室</p>
       <h1>わが町の図書館と公民館</h1>
       <p class="tp-lead">
