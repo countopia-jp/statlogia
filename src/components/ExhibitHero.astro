@@ -2,7 +2,16 @@
 // 展示の扉絵：public/images/exhibits/<slug>-large.webp を置けば出る（無いあいだは出さない）
 import fs from 'node:fs';
 import path from 'node:path';
-const { slug, alt = '' } = Astro.props;
+// 絵の説明（代替テキスト）。絵を足したらここにも1行足す
+const ALTS = {
+  sleep: '夜更けの住宅地と、窓の灯りの下で布団に入ろうとする子どもの水彩画',
+  commute: '朝の郊外の駅のホームで、到着する電車を待つ学生や勤め人の水彩画',
+  housework: '家の断面図のなかで、料理・洗濯・掃除・子どもの身支度をする家族の水彩画',
+  hobby: '休日の居間と縁側で、絵を描く・音楽を聴く・模型を作る・盆栽を手入れする人々の水彩画',
+  study: '夕暮れの学習室で、参考書やノートパソコンを広げて学ぶ大人たちの水彩画',
+};
+const { slug } = Astro.props;
+const alt = Astro.props.alt ?? ALTS[slug] ?? '';
 const src = `/images/exhibits/${slug}-large.webp`;
 const has = fs.existsSync(path.join(process.cwd(), 'public', src));
 ---
