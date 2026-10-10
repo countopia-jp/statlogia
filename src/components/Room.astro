@@ -1,0 +1,417 @@
+---
+// =====================================================
+// Countopia Stats - 閲覧室の共通ページ部品
+// src/components/Room.astro
+//
+// <Room room={設定} /> だけで、県（scope:'pref'）か町（scope:'town'）の窓口ができる。
+// 設定は src/data/rooms/*.js。データは /data/room-<id>.json（ビルド時生成）をブラウザが読む。
+// 案内人のことばは「数字だけを言う」決まり（理由づけ・良し悪しは言わない）。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。全セレクタ .rm- 接頭辞。
+// =====================================================
+import Talk from './Talk.astro';
+import { getRoomData, yearSummary } from '../lib/room-engine.js';
+
+const { room } = Astro.props;
+const data = await getRoomData(room);
+const years = yearSummary(data);
+const isPref = room.scope === 'pref';
+---
+<main class="rm">
+  <header class="rm-hero">
+    {room.image && <img class="rm-hero-figure" src={room.image} alt={room.imageAlt || ''} width="1400" height="788" loading="lazy" />}
+    <p class="rm-kicker">閲覧室{room.shelf ? `｜${room.shelf}` : ''}</p>
+    <h1>{room.title}</h1>
+    <p class="rm-lead" set:html={room.lead} />
+  </header>
+
+  {room.intro.map(([who, text]) => <Talk speaker={who}>{text}</Talk>)}
+
+  <section class="rm-selector" aria-label="地域の選択">
+    {isPref ? (
+      <label><span>都道府県</span><select id="rmPref"><option value="">選んでください</option></select></label>
+    ) : (
+      <>
+        <label><span>都道府県</span><select id="rmPref"><option value="">選んでください</option></select></label>
+        <label><span>市区町村</span><select id="rmTown" disabled><option value="">まず都道府県を選ぶ</option></select></label>
+      </>
+    )}
+  </section>
+
+  <section id="rmResult" class="rm-result" hidden aria-live="polite">
+    <h2 id="rmTitle"></h2>
+    <div class="rm-cards" id="rmCards"></div>
+    <Talk speaker="kei"><span id="rmKei"></span></Talk>
+    <Talk speaker="touko"><span id="rmTouko"></span></Talk>
+  </section>
+
+  <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">
+    <h2 id="rmLineTitle">移りかわり</h2>
+    <div class="rm-tabs" id="rmLineTabs" role="tablist"></div>
+    <div class="rm-line-wrap">
+      <canvas id="rmLine" height="140"></canvas>
+      <p class="rm-note" id="rmLineEmpty" hidden></p>
+    </div>
+    {isPref && <p class="rm-note" id="rmLineNote"></p>}
+  </section>
+
+  <section class="rm-ranking" aria-label="上位と下位">
+    <h2>{isPref ? '全国の上位と下位' : '上位と下位'}</h2>
+    <div class="rm-selector rm-selector--small">
+      <label><span>項目</span><select id="rmRankInd"></select></label>
+      {!isPref && <label><span>くらべる範囲</span><select id="rmRankScope"><option value="all">全国の市区町村</option></select></label>}
+    </div>
+    <div class="rm-rank-cols">
+      <div><h3 class="rm-rank-head rm-rank-head--hi" id="rmHiHead">上位</h3><ol class="rm-rank-list" id="rmHi"></ol></div>
+      <div><h3 class="rm-rank-head rm-rank-head--lo" id="rmLoHead">下位</h3><ol class="rm-rank-list" id="rmLo"></ol></div>
+    </div>
+    <p class="rm-note">名前を押すと、その{isPref ? '県' : '町'}の帳面を開きます。同じ値は同じ順位として並べています。</p>
+  </section>
+
+  {room.outro && room.outro.map(([who, text]) => <Talk speaker={who}>{text}</Talk>)}
+
+  {room.cross && room.cross.length > 0 && (
+    <p class="rm-cross">あわせて見る：{room.cross.map(([href, label], i) => <>{i > 0 && '｜'}<a href={href}>{label}</a></>)}</p>
+  )}
+
+  <footer class="rm-source">
+    <p>
+      出典：{data.source}（{years}）<br />
+      {room.notes.map((n) => <>{n}<br /></>)}
+      このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
+    </p>
+  </footer>
+</main>
+
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script is:inline define:vars={{ ROOM_ID: room.id }}>
+(async function () {
+  const res = await fetch(`/data/room-${ROOM_ID}.json`);
+  const D = await res.json();
+  const IND = D.indicators;
+  const AREAS = D.areas;
+  const isPref = D.scope === 'pref';
+  const PREF_NAMES = {
+    '01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県','08':'茨城県','09':'栃木県','10':'群馬県',
+    '11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県','15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県',
+    '21':'岐阜県','22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県','29':'奈良県','30':'和歌山県',
+    '31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県','36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県',
+    '41':'佐賀県','42':'長崎県','43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'
+  };
+  const L = (ind) => ind.years.length - 1;
+  const at = (a, ind) => { const s = a.v[ind.key]; return s ? s[L(ind)] : null; };
+  const lastKnown = (a, ind) => {
+    const s = a.v[ind.key] || [];
+    for (let i = s.length - 1; i >= 0; i--) if (s[i] !== null && s[i] !== undefined) return { v: s[i], i };
+    return null;
+  };
+  const r = (ind, v) => Number(v.toFixed(ind.decimals));
+  const fmtNum = (ind, v) => {
+    if (v === null || v === undefined) return '—';
+    const n = r(ind, v);
+    return ind.decimals > 0 ? n.toLocaleString('ja-JP', { minimumFractionDigits: ind.decimals, maximumFractionDigits: ind.decimals }) : Math.round(n).toLocaleString('ja-JP');
+  };
+  const fmt = (ind, v) => (v === null || v === undefined ? '—' : fmtNum(ind, v) + (ind.unit ? `<small>${ind.unit}</small>` : ''));
+  const fmtText = (ind, v) => fmtNum(ind, v) + (ind.unit || '');
+  const prefOf = (a) => a.c.slice(0, 2);
+  const shortName = (a) => { const p = PREF_NAMES[prefOf(a)]; return !isPref && p && a.n.startsWith(p) ? a.n.slice(p.length).trim() : a.n; };
+
+  // 同じ値は同じ順位（表示の桁でそろえる）
+  const poolOf = (ind, pref) => AREAS.filter((a) => !a.x && at(a, ind) !== null && (!pref || prefOf(a) === pref));
+  const rankIn = (ind, a, pool) => {
+    const v = at(a, ind);
+    if (v === null || a.x) return null;
+    const rv = r(ind, v);
+    return pool.filter((b) => r(ind, at(b, ind)) > rv).length + 1;
+  };
+
+  // ---- 選択 ----
+  const prefSel = document.getElementById('rmPref');
+  const townSel = document.getElementById('rmTown');
+  if (isPref) {
+    for (const a of AREAS) { const o = document.createElement('option'); o.value = a.c; o.textContent = a.n; prefSel.appendChild(o); }
+    prefSel.addEventListener('change', () => { const a = AREAS.find((x) => x.c === prefSel.value); if (a) render(a); });
+  } else {
+    const prefs = [...new Set(AREAS.map(prefOf))].sort();
+    for (const p of prefs) { const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; prefSel.appendChild(o); }
+    const fillTowns = (p) => {
+      townSel.innerHTML = '<option value="">選んでください</option>';
+      const list = AREAS.filter((a) => prefOf(a) === p);
+      for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); townSel.appendChild(o); }
+      townSel.disabled = list.length === 0;
+    };
+    prefSel.addEventListener('change', () => { fillTowns(prefSel.value); document.getElementById('rmResult').hidden = true; updateScopeOptions(); });
+    townSel.addEventListener('change', () => { const a = AREAS.find((x) => x.c === townSel.value); if (a) render(a); });
+    window.__rmFillTowns = fillTowns;
+  }
+
+  // ---- 帳面 ----
+  let current = null;
+  function render(a) {
+    current = a;
+    document.getElementById('rmResult').hidden = false;
+    document.getElementById('rmTitle').textContent = `${a.n}の帳面`;
+    const cards = document.getElementById('rmCards');
+    cards.innerHTML = '';
+    const ranks = [];
+    for (const ind of IND) {
+      const lk = lastKnown(a, ind);
+      const isLatest = lk && lk.i === L(ind);
+      let meta = '';
+      if (!lk) {
+        meta = '<div class="rm-card-meta rm-card-meta--soft">この' + (isPref ? '県' : '町') + 'の値はありません</div>';
+      } else if (a.x) {
+        meta = '<div class="rm-card-meta rm-card-meta--soft">政令市の区のため順位は出しません</div>';
+      } else if (isLatest) {
+        const all = poolOf(ind);
+        const rk = rankIn(ind, a, all);
+        ranks.push({ ind, rk, n: all.length });
+        if (isPref) {
+          const nat = D.national[ind.key][L(ind)];
+          meta = `<div class="rm-card-meta">47都道府県中 ${rk}位<span>（${ind.rankWord}）</span></div>` +
+            (nat !== null ? `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} ${fmtText(ind, nat)}</div>` : '');
+        } else {
+          const pp = poolOf(ind, prefOf(a));
+          meta = `<div class="rm-card-meta">全国 ${rk}位／${all.length}<span>（${ind.rankWord}）</span></div>` +
+            `<div class="rm-card-meta rm-card-meta--soft">${PREF_NAMES[prefOf(a)]}内 ${rankIn(ind, a, pp)}位／${pp.length}</div>`;
+        }
+      } else {
+        meta = '<div class="rm-card-meta rm-card-meta--soft">最新の年の値がないため順位は出しません</div>';
+      }
+      const d = document.createElement('div');
+      d.className = 'rm-card';
+      d.innerHTML =
+        `<div class="rm-card-label">${ind.label}</div>` +
+        `<div class="rm-card-num">${lk ? fmt(ind, lk.v) : '—'}</div>` +
+        `<div class="rm-card-year">${lk ? ind.yearLabels[lk.i] : ''}</div>` + meta +
+        (ind.note ? `<div class="rm-card-note">${ind.note}</div>` : '');
+      cards.appendChild(d);
+    }
+    // カードの列数：最後の段の空きがいちばん少ない列数（2〜4、同じなら3）
+    const n = IND.length;
+    const empty = (c) => (c - (n % c)) % c;
+    const cols = [3, 4, 2].reduce((best, c) => (empty(c) < empty(best) ? c : best), 3);
+    cards.style.setProperty('--cols', cols);
+    lines(a, ranks);
+    drawLine();
+  }
+
+  function lines(a, ranks) {
+    const kei = document.getElementById('rmKei');
+    const touko = document.getElementById('rmTouko');
+    const name = isPref ? a.n : shortName(a);
+    if (ranks.length === 0) {
+      kei.textContent = a.x ? `${name}は政令指定都市の区なので、数字だけをお出しして、順位はつけていません。` : `${name}は、最新の年の値がそろっていません。`;
+      touko.textContent = a.x ? '区ごとの数字も、見られるのね。' : '値のない欄もあるのね。';
+      return;
+    }
+    if (ranks.length === 1) {
+      const x = ranks[0];
+      kei.textContent = `${name}の「${x.ind.label}」は、${x.n}${isPref ? '都道府県' : 'の市区町村'}のなかで${x.rk}番目（${x.ind.rankWord}）です。`;
+      touko.textContent = 'ほかの土地とくらべると、よく分かるのね。';
+      return;
+    }
+    // 比べやすいよう、順位を「上からの割合」にそろえる
+    const pos = ranks.map((x) => ({ ...x, p: (x.rk - 1) / Math.max(1, x.n - 1) }));
+    const top = [...pos].sort((x, y) => x.p - y.p)[0];
+    const bot = [...pos].sort((x, y) => y.p - x.p)[0];
+    const unitWord = isPref ? '都道府県' : 'の市区町村';
+    kei.textContent = `${name}の項目のうち、順位がいちばん上にあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下にあるのは「${bot.ind.label}」で、${bot.rk}番目（${bot.ind.rankWord}）です。`;
+    const allMiddle = pos.every((x) => x.p >= 0.2 && x.p <= 0.8);
+    const seed = parseInt(a.c, 10) || 0;
+    let t;
+    if (allMiddle) t = ['どれも、まんなかあたりなのね。', '目立って上や下にあるものは、ないのねえ。'][seed % 2];
+    else if (top.p <= 0.1 && bot.p >= 0.9) t = ['上のほうにも下のほうにも、ある土地なのね。', '項目によって、ずいぶん順位が違うのねえ。'][seed % 2];
+    else if (top.p <= 0.1) t = `「${top.ind.label}」は、上から数えたほうが早いのね。`;
+    else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下から数えたほうが早いのね。`;
+    else t = ['項目によって、順位が違うのねえ。', 'ならべてみると、いろいろなのね。'][seed % 2];
+    touko.textContent = t;
+  }
+
+  // ---- 移りかわり ----
+  let lineKey = IND[0] ? IND[0].key : null;
+  let chart = null;
+  const tabs = document.getElementById('rmLineTabs');
+  for (const ind of IND) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'rm-tab' + (ind.key === lineKey ? ' is-active' : '');
+    b.textContent = ind.label;
+    b.setAttribute('role', 'tab');
+    b.addEventListener('click', () => {
+      lineKey = ind.key;
+      tabs.querySelectorAll('.rm-tab').forEach((x) => x.classList.remove('is-active'));
+      b.classList.add('is-active');
+      drawLine();
+    });
+    tabs.appendChild(b);
+  }
+  function drawLine() {
+    if (!current) return;
+    const a = current;
+    const ind = IND.find((i) => i.key === lineKey);
+    const sec = document.getElementById('rmLineSec');
+    sec.hidden = false;
+    const name = isPref ? a.n : shortName(a);
+    const canvas = document.getElementById('rmLine');
+    const empty = document.getElementById('rmLineEmpty');
+    const series = a.v[ind.key] || [];
+    const pts = series.filter((v) => v !== null && v !== undefined).length;
+    document.getElementById('rmLineTitle').textContent = `${name}の「${ind.label}」の移りかわり`;
+    if (chart) { chart.destroy(); chart = null; }
+    if (pts < 3) {
+      canvas.hidden = true;
+      empty.hidden = false;
+      empty.textContent = `この項目は、移りかわりを描けるほどの年の数がありません（${ind.years.length}時点）。`;
+      return;
+    }
+    canvas.hidden = false;
+    empty.hidden = true;
+    const sets = [{ label: name, data: series, borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 2, spanGaps: true }];
+    if (isPref) {
+      const natLabel = D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国';
+      sets.push({ label: natLabel, data: D.national[ind.key], borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: true });
+      const note = document.getElementById('rmLineNote');
+      if (note) note.textContent = `点線は${natLabel}です。`;
+    }
+    chart = new Chart(canvas, {
+      type: 'line',
+      data: { labels: ind.years, datasets: sets },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${fmtText(ind, Number(c.raw))}` } } },
+        scales: { y: { ticks: { callback: (v) => Number(v).toLocaleString('ja-JP') } } },
+      },
+    });
+  }
+
+  // ---- 上位と下位 ----
+  const indSel = document.getElementById('rmRankInd');
+  for (const ind of IND) { const o = document.createElement('option'); o.value = ind.key; o.textContent = ind.label; indSel.appendChild(o); }
+  const scopeSel = document.getElementById('rmRankScope');
+  function updateScopeOptions() {
+    if (!scopeSel) return;
+    const p = prefSel.value;
+    scopeSel.innerHTML = '<option value="all">全国の市区町村</option>' + (p ? `<option value="${p}">${PREF_NAMES[p]}の市区町村</option>` : '');
+    if (p) scopeSel.value = p;
+    showRank();
+  }
+  const CAP = 10; // 同じ値が長く続くときは、ここで切って「ほかN」と添える
+  function cut(list, ind, desc) {
+    if (list.length === 0) return { shown: [], rest: 0 };
+    const v5 = r(ind, at(list[Math.min(4, list.length - 1)], ind));
+    const keep = list.filter((b) => { const x = r(ind, at(b, ind)); return desc ? x >= v5 : x <= v5; });
+    return keep.length > CAP ? { shown: keep.slice(0, 5), rest: keep.length - 5 } : { shown: keep, rest: 0 };
+  }
+  function showRank() {
+    const ind = IND.find((i) => i.key === indSel.value) || IND[0];
+    if (!ind) return;
+    const pref = scopeSel && scopeSel.value !== 'all' ? scopeSel.value : null;
+    const pool = poolOf(ind, pref);
+    const desc = [...pool].sort((x, y) => at(y, ind) - at(x, ind));
+    const asc = [...desc].reverse();
+    const hi = cut(desc, ind, true);
+    const lo = cut(asc, ind, false);
+    const loRank = (b) => { const v = r(ind, at(b, ind)); return asc.filter((c) => r(ind, at(c, ind)) < v).length + 1; };
+    const OPP = { '多い': '少ない', '高い': '低い', '長い': '短い', '深い': '浅い', '広い': '狭い', '大きい': '小さい' };
+    const w = ind.rankWord.replace('順', '');
+    document.getElementById('rmHiHead').textContent = `${w}ほう TOP5`;
+    document.getElementById('rmLoHead').textContent = `${OPP[w] || '反対の'}ほう TOP5`;
+    const fill = (el, part, rk) => {
+      el.innerHTML = '';
+      for (const b of part.shown) {
+        const li = document.createElement('li');
+        li.innerHTML = `<span class="rm-rank-pos">${rk(b)}</span><span class="rm-rank-name">${isPref ? b.n : `${shortName(b)}<small>（${PREF_NAMES[prefOf(b)]}）</small>`}</span><span class="rm-rank-val">${fmtText(ind, at(b, ind))}</span>`;
+        li.addEventListener('click', () => {
+          if (isPref) { prefSel.value = b.c; }
+          else { prefSel.value = prefOf(b); window.__rmFillTowns(prefOf(b)); townSel.value = b.c; }
+          render(b);
+          document.getElementById('rmResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        el.appendChild(li);
+      }
+      if (part.rest > 0) {
+        const li = document.createElement('li');
+        li.className = 'rm-rank-more';
+        li.textContent = `ほかに同じ値が${part.rest}`;
+        el.appendChild(li);
+      }
+    };
+    fill(document.getElementById('rmHi'), hi, (b) => rankIn(ind, b, pool));
+    fill(document.getElementById('rmLo'), lo, loRank);
+  }
+  indSel.addEventListener('change', showRank);
+  if (scopeSel) scopeSel.addEventListener('change', showRank);
+  showRank();
+
+  // ?pref=県名 または ?code=地域コード で開いたら、その地域を出す
+  const q = new URLSearchParams(location.search);
+  const want = q.get('code') || q.get('pref');
+  if (want) {
+    const a = AREAS.find((x) => x.c === want || x.n === want);
+    if (a) {
+      if (isPref) { prefSel.value = a.c; }
+      else { prefSel.value = prefOf(a); window.__rmFillTowns(prefOf(a)); townSel.value = a.c; updateScopeOptions(); }
+      render(a);
+    }
+  }
+})();
+</script>
+
+<style is:global>
+  .rm { max-width: 860px; margin: 0 auto; padding: 0 16px 48px; }
+  /* サイト全体の section{padding:56px 0} を打ち消す（段の間が空きすぎるため） */
+  .rm > section { padding: 0; }
+  .rm-hero { text-align: center; padding: 32px 0 8px; }
+  .rm-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+  .rm-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+  .rm-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+  .rm-lead { color: #555; line-height: 1.9; }
+
+  .rm-selector { margin: 24px 0; display: flex; gap: 12px 20px; justify-content: center; flex-wrap: wrap; }
+  .rm-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; }
+  .rm-selector select { width: 260px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+  .rm-selector select:disabled { background: #f0f0ea; color: #999; }
+  .rm-selector--small { margin: 12px 0 20px; }
+
+  .rm-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
+  .rm-cards { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 12px; }
+  @media (max-width: 720px) { .rm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .rm-card { display: flex; flex-direction: column; border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
+  .rm-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .04em; line-height: 1.5; }
+  .rm-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; margin: 6px 0 0; color: #1b4332; }
+  .rm-card-num small { font-family: "Zen Kaku Gothic New", sans-serif; font-size: .75rem; margin-left: 3px; font-weight: 500; }
+  .rm-card-year { font-size: .7rem; color: #999; margin-bottom: 6px; }
+  .rm-card-meta { font-size: .74rem; color: #b23a2f; font-weight: 700; margin-top: auto; }
+  .rm-card-meta span { font-weight: 400; }
+  .rm-card-meta--soft { color: #777; font-weight: 400; margin-top: 2px; }
+  .rm-card-note { font-size: .66rem; color: #999; margin-top: 4px; line-height: 1.5; }
+
+  .rm-line-sec { margin-top: 44px; }
+  .rm-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
+  .rm-line-wrap { padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .rm-tabs { display: flex; gap: 6px; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; }
+  .rm-tab { padding: 6px 12px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: .8rem; }
+  .rm-tab.is-active { background: #1b4332; color: #fff; }
+  .rm-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
+
+  .rm-ranking { margin-top: 44px; }
+  .rm-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+  .rm-rank-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  @media (max-width: 600px) { .rm-rank-cols { grid-template-columns: 1fr; } }
+  .rm-rank-head { text-align: center; font-size: .95rem; margin: 0 0 8px; font-family: "Shippori Mincho", serif; }
+  .rm-rank-head--hi { color: #b23a2f; }
+  .rm-rank-head--lo { color: #3a6b52; }
+  .rm-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+  .rm-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+  .rm-rank-list li:last-child { border-bottom: none; }
+  .rm-rank-list li:hover { background: #f4f7f4; }
+  .rm-rank-list li.rm-rank-more { cursor: default; color: #888; font-size: .8rem; justify-content: center; }
+  .rm-rank-pos { font-weight: 700; color: #b23a2f; min-width: 1.6em; text-align: center; }
+  .rm-rank-name { flex: 1; }
+  .rm-rank-name small { color: #888; font-size: .72rem; margin-left: 4px; }
+  .rm-rank-val { font-weight: 600; font-family: "IBM Plex Mono", monospace; white-space: nowrap; }
+
+  .rm-cross { margin-top: 36px; font-size: .9rem; text-align: center; line-height: 1.9; }
+  .rm-cross a { color: #b23a2f; }
+  .rm-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
+</style>
