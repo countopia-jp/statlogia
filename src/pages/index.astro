@@ -66,7 +66,7 @@ const prefectures = [
 ];
 ---
 <BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
-  <main class="entrance">
+  <main>
     <!-- 製図台の上に、白紙を1枚広げている -->
     <div class="desk">
       <div class="sheet">
@@ -242,15 +242,23 @@ const prefectures = [
     </section>
 
   </main>
+  <script is:inline>
+    (function () {
+      var set = function () { document.documentElement.style.setProperty('--sbw', (window.innerWidth - document.documentElement.clientWidth) + 'px'); };
+      set();
+      window.addEventListener('resize', set);
+    })();
+  </script>
 </BaseLayout>
 <style>
-  /* 製図台（.desk）は100vwで全幅に広げているため、縦のスクロールバーがある環境ではその幅だけ横にはみ出す。玄関の main で切る */
-  .entrance { overflow-x: clip; }
 /* ── 製図台と白紙 ───────────────────── */
 .desk{
   position:relative;
-  width:100vw;
-  margin-left:calc(50% - 50vw);
+  /* 全幅に広げる。100vwは縦のスクロールバーの幅も含むので、その分（--sbw、下のスクリプトで測る）を引く。
+     傾けた白紙の角がはみ出さないよう、横だけ切る */
+  width:calc(100vw - var(--sbw, 0px));
+  margin-left:calc(50% - 50vw + var(--sbw, 0px) / 2);
+  overflow-x:clip;
   padding:40px 0 56px;
   margin-bottom:34px;
   background:
