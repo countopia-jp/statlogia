@@ -62,6 +62,30 @@ import Talk from '../../../components/Talk.astro';
     </section>
 
     <section class="art-sec">
+      <h2>国は、なぜ統計を公開しているのか</h2>
+      <p>
+        統計のおおもとの決まりである統計法（平成19年法律第53号）は、第1条で、公的統計を「国民にとって合理的な意思決定を行うための基盤となる重要な情報」と位置づけています。
+        そして第3条では、公的統計は「広く国民が容易に入手し、効果的に利用できるものとして提供されなければならない」と定めています。
+        国の統計は、役所のためだけのものではなく、暮らす人それぞれが物事を判断するための材料として公開されているのです。
+      </p>
+      <p>
+        e-Statは、それまで各府省のホームページに分かれていた統計を一か所で引けるように、平成20年（2008年）に運用が始まった窓口です。
+        表やファイルでの提供のほか、グラフや地図で見る機能、地域どうしをくらべる機能、プログラムから数字を取り寄せるAPIなど、使い方に合わせた入口が用意されています。
+      </p>
+      <p>
+        Countopiaの閲覧室が多く使っている「社会・人口統計体系」は、国民生活全般の実態を地域ごとに示す統計を体系的にまとめたものです。
+        暮らしの実態をつかみ、生活の水準をはかり、施策を考えることや、地域の特性を明らかにする地域分析に役立てることが、その目的とされています。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      お国の数字を、わたくしたちが勝手に使ってもいいの？
+    </Talk>
+    <Talk speaker="kei">
+      はい。もともと、広く使ってもらうために公開されている数字です。Countopiaも、そのひとつの使い方というわけです。
+    </Talk>
+
+    <section class="art-sec">
       <h2>データの取得方法について</h2>
       <p>
         Countopiaでは、e-Statが提供するAPI（プログラムから統計データを取得できる仕組み）を利用しています。
@@ -98,12 +122,18 @@ import Talk from '../../../components/Talk.astro';
       </p>
     </section>
 
+    <p class="art-refs">
+      参考：<a href="https://laws.e-gov.go.jp/law/419AC0000000053" rel="noopener">統計法（平成19年法律第53号）</a>／<a href="https://www.e-stat.go.jp/help/e-Stat-1-2" rel="noopener">e-Stat「e-Statとは」</a>／<a href="https://www.stat.go.jp/data/ssds/1-01.html" rel="noopener">総務省統計局「社会・人口統計体系 統計の目的」</a>
+    </p>
+
     <p class="art-links">
       <a href="/how-to-read/">歩き方の一覧へ →</a>
     </p>
   </main>
 
   <style>
+    .art-refs { font-size: .78rem; color: #777; line-height: 1.8; margin: 24px 0 0; }
+    .art-refs a { color: #777; }
     .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
