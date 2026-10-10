@@ -22,7 +22,7 @@ export const TOWN_WORK = {
   ],
   notes: [
     '産業別の就業者は国勢調査によるもので、その町に住んでいる人を、働いている産業で分けています（町の外へ働きに出ている人も含みます）。割合は、第1次・第2次・第3次産業の就業者の合計に対するものです（分類できない人を除きます）。',
-    '事業所数と従業者数は経済センサスによるもので、その町にある事業所と、そこで働く人の数です（町の外から通う人も含みます）。',
+    '事業所数と従業者数は経済センサスによるもので、その町にある民営の事業所と、そこで働く人の数です（町の外から通う人も含みます。国や自治体の事業所は入りません）。',
     '政令指定都市の区は、表には出しますが、順位には入れていません。',
   ],
   cross: [['/town-shops/', '工場とお店'], ['/town-commute/', '通勤の足は何か'], ['/town-population/', 'わが町の人口']],
@@ -31,7 +31,7 @@ export const TOWN_WORK = {
     { key: 'secondary', label: '第2次産業で働く人の割合', unit: '％', decimals: 1, rankWord: '高い順', needs: SECTORS, calc: share('F2211') },
     { key: 'tertiary', label: '第3次産業で働く人の割合', unit: '％', decimals: 1, rankWord: '高い順', needs: SECTORS, calc: share('F2221') },
     { key: 'workers', label: '働いている人（町に住む人）', table: F, code: 'F1102', decimals: 0, rankWord: '多い順' },
-    { key: 'offices', label: '町にある事業所', table: C, code: 'C2107', decimals: 0, rankWord: '多い順' },
-    { key: 'employees', label: '町の事業所で働く人', table: C, code: 'C2207', decimals: 0, rankWord: '多い順' },
+    { key: 'offices', label: '町にある事業所（民営）', table: C, code: 'C2108', decimals: 0, rankWord: '多い順' },
+    { key: 'employees', label: '町の事業所で働く人（民営）', table: C, code: 'C2208', decimals: 0, rankWord: '多い順' },
   ],
 };
