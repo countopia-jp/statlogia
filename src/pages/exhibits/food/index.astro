@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getFoodData } from '../../../lib/food.js';
@@ -36,6 +37,7 @@ const bigInMost = most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
         <h1>日本一の「外食の街」はどの県だ</h1>
         <p class="sub">暮らしの広場｜人口千人当たりの飲食店数（{data.year}）</p>
       </div>
+      <ExhibitHero slug="food" />
 
       <Talk speaker="kei">8つめの展示は「飲食店の多さ」です。人口千人あたり、街に何軒の飲食店があるかという数字です。</Talk>
       <Talk speaker="touko">お店が多いと、外で食べるのが楽しそうねえ。</Talk>

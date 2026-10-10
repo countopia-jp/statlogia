@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getJapaneseArtsData } from '../../../lib/japanese-arts.js';
@@ -83,6 +84,7 @@ const sadoRegions = regionsOf(sadoMost);
         <h1>筆と花とお茶、日本一はどの県だ</h1>
         <p class="sub">趣味の広場｜書道・華道・茶道の行動者率（{data.year}）</p>
       </div>
+      <ExhibitHero slug="japanese-arts" />
 
       <Talk speaker="kei">22番目の展示は「筆と花とお茶」です。書道、華道、茶道の三つを並べます。まずは書道から。1年のあいだに筆を持った人は、全国で{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">わたくしの時代なら、筆はみなさん毎日持っていましたけれど。</Talk>

@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getVacancyData } from '../../../lib/vacancy.js';
@@ -31,6 +32,7 @@ const perHouses = (v) => Math.round(100 / v);
         <h1>日本一「空き家が多い」県はどこだ</h1>
         <p class="sub">住まいの広場｜総住宅数に占める空き家の割合（{data.year}）</p>
       </div>
+      <ExhibitHero slug="vacancy" />
 
       <Talk speaker="kei">6つめの展示は「空き家率」です。誰も住んでいない住宅が、全体の何％を占めるかという数字です。</Talk>
       <Talk speaker="touko">お家が余っているということ？　もったいないわねえ。</Talk>

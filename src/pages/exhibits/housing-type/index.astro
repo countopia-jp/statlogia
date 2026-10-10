@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getHousingTypeData } from '../../../lib/housing-type.js';
@@ -90,6 +91,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <h1>一戸建てと木の家、日本一はどの県だ</h1>
         <p class="sub">住まいの広場｜住まいの建て方（{data.year}）</p>
       </div>
+      <ExhibitHero slug="housing-type" />
 
       <Talk speaker="kei">27番目の展示は「住まいの建て方」です。人の住んでいる家のうち、一戸建てがどのくらいあるか。全国では{fmt(avg)}、10軒に{per10(avg)}軒ほどです。</Talk>
       <Talk speaker="touko">わたくしの頃は、家といえばたいてい一戸建てでしたわ。長屋もありましたけれど。</Talk>

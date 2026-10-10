@@ -1,6 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+// 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
+const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
 <BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。7つの窓口があります。">
   <main class="rr">
@@ -24,29 +28,38 @@ import Talk from '../../components/Talk.astro';
     <section class="rr-group" aria-label="財政と人の動き">
       <h2 class="ledger-shelf">財政と人の動き</h2>
       <div class="ledger-grid">
-        <a class="ledger-card" href="/education-budget/">
+        <a class={`ledger-card${thumbOf('education-budget') ? ' ledger-card--img' : ''}`} href="/education-budget/">
+          {thumbOf('education-budget') && <img class="lc-img" src={thumbOf('education-budget')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">教</span>
           <h3>教育の帳場</h3>
           <p class="lc-desc">
             都道府県ごとの財政力指数と、教育費のかけ方をまとめた帳場です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
         </a>
-        <a class="ledger-card" href="/town-finance/">
+        <a class={`ledger-card${thumbOf('town-finance') ? ' ledger-card--img' : ''}`} href="/town-finance/">
+          {thumbOf('town-finance') && <img class="lc-img" src={thumbOf('town-finance')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">財</span>
           <h3>わが町の財政と教育費</h3>
           <p class="lc-desc">
             市区町村ごとの財政力指数と、教育費のかけ方をまとめた数字です。
           </p>
           <span class="lc-foot">別館・市区町村</span>
+          </div>
         </a>
-        <a class="ledger-card" href="/town-migration/">
+        <a class={`ledger-card${thumbOf('town-migration') ? ' ledger-card--img' : ''}`} href="/town-migration/">
+          {thumbOf('town-migration') && <img class="lc-img" src={thumbOf('town-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">人</span>
           <h3>わが町の人の出入り</h3>
           <p class="lc-desc">
             転入・転出の数字から、町の人の動きを追います。
           </p>
           <span class="lc-foot">別館・市区町村</span>
+          </div>
         </a>
       </div>
     </section>
@@ -54,37 +67,49 @@ import Talk from '../../components/Talk.astro';
     <section class="rr-group" aria-label="お金と暮らし">
       <h2 class="ledger-shelf">お金と暮らし</h2>
       <div class="ledger-grid ledger-grid--4">
-        <a class="ledger-card" href="/pref-economy/">
+        <a class={`ledger-card${thumbOf('pref-economy') ? ' ledger-card--img' : ''}`} href="/pref-economy/">
+          {thumbOf('pref-economy') && <img class="lc-img" src={thumbOf('pref-economy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">県</span>
           <h3>県のふところ</h3>
           <p class="lc-desc">
             県内総生産と県民所得、1人当たり県民所得と、その内訳をまとめた帳場です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
         </a>
-        <a class="ledger-card" href="/household/">
+        <a class={`ledger-card${thumbOf('household') ? ' ledger-card--img' : ''}`} href="/household/">
+          {thumbOf('household') && <img class="lc-img" src={thumbOf('household')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">家</span>
           <h3>家計の帳場</h3>
           <p class="lc-desc">
             県庁所在市の世帯の、1か月の収入と支出の内訳、貯蓄の額です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
         </a>
-        <a class="ledger-card" href="/work-style/">
+        <a class={`ledger-card${thumbOf('work-style') ? ' ledger-card--img' : ''}`} href="/work-style/">
+          {thumbOf('work-style') && <img class="lc-img" src={thumbOf('work-style')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">働</span>
           <h3>働き方の帳場</h3>
           <p class="lc-desc">
             完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
         </a>
-        <a class="ledger-card" href="/land-price/">
+        <a class={`ledger-card${thumbOf('land-price') ? ' ledger-card--img' : ''}`} href="/land-price/">
+          {thumbOf('land-price') && <img class="lc-img" src={thumbOf('land-price')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
           <span class="lc-mark">地</span>
           <h3>土地の値段</h3>
           <p class="lc-desc">
             住宅地・商業地・工業地の、1平方メートルあたりの値段の移りかわりです。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
         </a>
       </div>
     </section>
@@ -101,16 +126,10 @@ import Talk from '../../components/Talk.astro';
 
     .ledger-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 22px;
       max-width: 1280px;
       margin: 0 auto;
-    }
-    @media(max-width:900px){
-      .ledger-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-    }
-    @media(max-width:600px){
-      .ledger-grid{grid-template-columns:1fr}
     }
 
     .ledger-card {
@@ -134,9 +153,15 @@ import Talk from '../../components/Talk.astro';
       transform: translateY(-2px);
       box-shadow: 0 4px 14px rgba(27, 67, 50, 0.15);
     }
-    .ledger-grid--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    @media(max-width:1100px){ .ledger-grid--4{grid-template-columns:repeat(2,minmax(0,1fr))} }
-    @media(max-width:600px){ .ledger-grid--4{grid-template-columns:1fr} }
+    /* 閲覧室一覧と同じ仕様：横長カード1段2枚、左に絵38%・右に文。1100px以下1列、600px以下は絵を上に */
+    .ledger-grid, .ledger-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @media(max-width:1100px){ .ledger-grid, .ledger-grid--4{grid-template-columns:1fr} }
+    @media(min-width:1101px){ .ledger-card{min-height:15.5rem} }
+    .ledger-card--img { display: flex; gap: 18px; align-items: stretch; }
+    .lc-img { flex: 0 0 38%; width: 38%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 4px; align-self: flex-start; }
+    .lc-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+    .lc-body .lc-foot { margin-top: auto; }
+    @media(max-width:600px){ .ledger-card--img{flex-direction:column} .lc-img{width:100%;flex-basis:auto} }
     .ledger-shelf {
       font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
       border-left: 4px solid #1b4332; padding-left: 10px; margin: 0 0 14px;

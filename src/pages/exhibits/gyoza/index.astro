@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getGyozaData } from '../../../lib/gyoza.js';
@@ -50,6 +51,7 @@ const chartData = {
         <h1>日本一「餃子が好き」な市はどこだ</h1>
         <p class="sub">暮らしの広場｜1世帯当たりの餃子年間支出額（{data.year}）</p>
       </div>
+      <ExhibitHero slug="gyoza" />
 
       <Talk speaker="kei">19番目の展示は「餃子」です。1世帯が1年間に餃子へ使ったお金を、市ごとに並べました。</Talk>
       <Talk speaker="touko">ぎょうざ？　それは、どういう食べものなの？</Talk>

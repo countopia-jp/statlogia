@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getBoardGamesData } from '../../../lib/board-games.js';
@@ -65,6 +66,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <h1>将棋と囲碁、日本一はどの県だ</h1>
         <p class="sub">趣味の広場｜将棋・囲碁の行動者率（{data.year}）</p>
       </div>
+      <ExhibitHero slug="board-games" />
 
       <Talk speaker="kei">20番目の展示は「将棋」です。1年のあいだに将棋を指した人が、どのくらいいるか。全国では{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">将棋なら、わたくしの時代にもありましたわ。縁台で、おじさまたちが。</Talk>

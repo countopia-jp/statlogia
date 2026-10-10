@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getHikingData } from '../../../lib/hiking.js';
@@ -50,6 +51,7 @@ const topIsMountain = topTies.some((r) => MOUNTAIN_PREFS.includes(r.n));
         <h1>日本一「山を歩く」県はどこだ</h1>
         <p class="sub">スポーツの広場｜過去1年間に登山・ハイキングをした人の割合（{data.year}）</p>
       </div>
+      <ExhibitHero slug="hiking" />
 
       <Talk speaker="kei">13番目の展示は「登山・ハイキング」です。過去1年のあいだに、一度でも山を歩いた人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">それなら、山の深い県が上に来るのでしょうね。</Talk>

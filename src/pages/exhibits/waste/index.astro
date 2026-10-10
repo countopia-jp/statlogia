@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getWasteData } from '../../../lib/waste.js';
@@ -73,6 +74,7 @@ const bothHigh = rows
         <h1>日本一「ごみを出す」県はどこだ</h1>
         <p class="sub">暮らしの広場｜1人が1日に出すごみの量（{data.year}年度）</p>
       </div>
+      <ExhibitHero slug="waste" />
 
       <Talk speaker="kei">17番目の展示は「ごみ」です。1人が1日に出すごみの量を、県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">{fmt(avg)}……{avg >= 900 ? 'かなりの' : avg >= 700 ? 'それなりの' : 'ちょっとした'}重さねえ。毎日それだけ捨てているの。</Talk>

@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { fetchStudyByPrefecture, fetchHobbyByPrefecture } from '../../../lib/estat.js';
@@ -32,6 +33,7 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
         <h1>日本人は、1日何分学ぶのか</h1>
         <p class="sub">時間の広場｜学習・自己啓発・訓練の時間（2021年）</p>
       </div>
+      <ExhibitHero slug="study" />
 
       <Talk speaker="kei">5つめの展示は「学習・自己啓発・訓練」の時間です。学校の授業は含みません。10歳以上の人が、授業とは別に自分で学ぶ時間です。</Talk>
       <Talk speaker="touko">学校を出てからも、勉強するの？</Talk>

@@ -1,0 +1,12 @@
+---
+// 展示の扉絵：public/images/exhibits/<slug>-large.webp を置けば出る（無いあいだは出さない）
+import fs from 'node:fs';
+import path from 'node:path';
+const { slug, alt = '' } = Astro.props;
+const src = `/images/exhibits/${slug}-large.webp`;
+const has = fs.existsSync(path.join(process.cwd(), 'public', src));
+---
+{has && <img class="exhibit-hero" src={src} alt={alt} width="1400" height="788" loading="lazy" />}
+<style>
+.exhibit-hero{display:block;width:100%;max-width:780px;height:auto;border-radius:6px;margin:4px auto 28px}
+</style>

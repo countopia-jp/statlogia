@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getPachinkoData } from '../../../lib/pachinko.js';
@@ -36,6 +37,7 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
         <h1>日本一「パチンコをする」県はどこだ</h1>
         <p class="sub">趣味の広場｜過去1年間にパチンコをした人の割合（{data.year}）</p>
       </div>
+      <ExhibitHero slug="pachinko" />
 
       <Talk speaker="kei">11番目の展示は「パチンコ」です。過去1年のあいだに一度でもパチンコをした人の割合を、県ごとに並べました。</Talk>
       <Talk speaker="touko">ぱちんこ？　あの、ゴムで石を飛ばす……。</Talk>

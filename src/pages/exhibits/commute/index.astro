@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { fetchCommuteByPrefecture, fetchSleepByPrefecture } from '../../../lib/estat.js';
@@ -35,6 +36,7 @@ const maxMin = top.minutes;
         <h1>日本一「通勤に時間がかかる」県はどこだ</h1>
         <p class="sub">時間の広場｜通勤・通学時間の都道府県ランキング（2021年）</p>
       </div>
+      <ExhibitHero slug="commute" />
 
       <Talk speaker="kei">2つめの展示です。1日にどれだけ通勤・通学に使っているか。前の展示と同じ調査から取りました。</Talk>
       <Talk speaker="touko">歩けばいいのに……あ、今の人は遠くまで働きに行くのか。</Talk>

@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getDayNightRatioData } from '../../../lib/day-night-ratio.js';
@@ -30,6 +31,7 @@ const topExcess = (top.minutes - 100).toFixed(1);
         <h1>日本一「昼に人が集まる」県はどこだ</h1>
         <p class="sub">暮らしの広場｜昼夜間人口比率（{data.year}）</p>
       </div>
+      <ExhibitHero slug="day-night-ratio" />
 
       <Talk speaker="kei">9つめの展示は「昼夜間人口比率」です。夜間（住んでいる人）の数を100としたとき、昼間（通勤・通学で来る人も含む）の人口が何％になるかという数字です。</Talk>
       <Talk speaker="touko">100より多いと、昼間に人が集まってくる県、ということかしら。</Talk>

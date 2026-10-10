@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getPriceData } from '../../../lib/price.js';
@@ -43,6 +44,7 @@ const isFlipped = topHeatRank >= 38;
         <h1>日本一「教育の値段が高い」県はどこだ</h1>
         <p class="sub">値段の広場｜消費者物価地域差指数・教育（{data.education.year}）</p>
       </div>
+      <ExhibitHero slug="education-price" />
 
       <Talk speaker="kei">16番目の展示は「教育」です。授業料や入学金といった、学びにかかる値段の水準を県ごとに並べました。</Talk>
       <Talk speaker="touko">こちらも、全国の平均が100なのね。</Talk>

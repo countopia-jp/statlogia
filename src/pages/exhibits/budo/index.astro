@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getBudoData } from '../../../lib/budo.js';
@@ -88,6 +89,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <h1>柔道と剣道、日本一はどの県だ</h1>
         <p class="sub">スポーツの広場｜柔道・剣道の行動者率（{data.year}）</p>
       </div>
+      <ExhibitHero slug="budo" />
 
       <Talk speaker="kei">26番目の展示は「柔道」です。1年のあいだに柔道をした人が、どのくらいいるか。全国では{fmt(avg)}、1000人に{per1000(avg)}人ほどです。</Talk>
       <Talk speaker="touko">柔道なら、わたくしの時代には学校でも教えておりましたわ。男の子たちが道場で。</Talk>

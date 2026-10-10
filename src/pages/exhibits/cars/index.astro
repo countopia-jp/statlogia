@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getCarData } from '../../../lib/cars.js';
@@ -55,6 +56,7 @@ const corrNegative = corr !== null && corr <= -0.3;
         <h1>日本一の「クルマ社会」はどの県だ</h1>
         <p class="sub">暮らしの広場｜二人以上の世帯・1世帯当たりの自動車保有台数（{data.year}）</p>
       </div>
+      <ExhibitHero slug="cars" />
 
       <Talk speaker="kei">7つめの展示は「自動車の保有台数」です。ひと世帯が、車を何台持っているかという数字です。</Talk>
       <Talk speaker="touko">一家に一台、あるのが当たり前なのかしら？</Talk>

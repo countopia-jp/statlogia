@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getBallGamesData } from '../../../lib/ball-games.js';
@@ -80,6 +81,7 @@ const twist = !sameTop && bothTop.length <= 2;
         <h1>野球とサッカー、日本一はどの県だ</h1>
         <p class="sub">スポーツの広場｜野球・サッカーの行動者率（{data.year}）</p>
       </div>
+      <ExhibitHero slug="ball-games" />
 
       <Talk speaker="kei">25番目の展示は「野球」です。1年のあいだに野球をした人が、どのくらいいるか。キャッチボールも含めて、全国では{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">野球なら、わたくしの時代にもございましたわ。学生さんたちが、それはもう熱心で。</Talk>

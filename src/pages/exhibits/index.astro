@@ -1,6 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { exhibits, PLACES } from '../../data/exhibits.js';
+import fs from 'node:fs';
+import path from 'node:path';
+// 展示の扉絵の縮小版（public/images/exhibits/<slug>-thumb.webp）。置いてあればカードに出す
+const thumbOf = (href) => {
+  const src = `/images/exhibits/${href.split('/').filter(Boolean).pop()}-thumb.webp`;
+  return fs.existsSync(path.join(process.cwd(), 'public', src)) ? src : null;
+};
 
 // 広場ごとにまとめる。PLACESの並び順がそのままページの並び順になる
 const groups = Object.entries(PLACES).map(([key, name]) => ({
@@ -28,9 +35,12 @@ const groups = Object.entries(PLACES).map(([key, name]) => ({
           <h2 class="ex-group-title">{g.name}</h2>
           <div class="cards">
             {g.items.map((e) => (
-              <a class="card" href={e.href}>
-                <h3>{e.title}</h3>
-                <p>{e.lead}</p>
+              <a class={`card${thumbOf(e.href) ? ' card--img' : ''}`} href={e.href}>
+                {thumbOf(e.href) && <img class="card-img" src={thumbOf(e.href)} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+                <div class="card-body">
+                  <h3>{e.title}</h3>
+                  <p>{e.lead}</p>
+                </div>
               </a>
             ))}
           </div>
@@ -54,19 +64,25 @@ h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4v
   font-family:"Shippori Mincho",serif;font-size:1.15rem;
   border-left:4px solid var(--stamp);padding-left:12px;margin:0 0 16px;
 }
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;max-width:1280px;margin:0 auto}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:1280px;margin:0 auto}
 .card{
   border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff8;
   display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;
   transition:transform .15s,box-shadow .15s;
 }
 a.card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
+/* 閲覧室一覧と同じ仕様：左に絵38%、右に文。2列は1101px以上、600px以下は絵を上に */
+.card--img{flex-direction:row;gap:20px}
+.card-img{flex:0 0 38%;width:38%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:8px;align-self:flex-start}
+.card-body{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+@media(min-width:1101px){.card{min-height:13rem}}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.3rem;line-height:1.5}
 .card p{font-size:1rem;color:var(--ink-soft);line-height:1.7}
-@media(max-width:900px){
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:1100px){
+  .cards{grid-template-columns:1fr}
 }
 @media(max-width:600px){
-  .cards{grid-template-columns:1fr}
+  .card--img{flex-direction:column}
+  .card-img{width:100%;flex-basis:auto}
 }
 </style>

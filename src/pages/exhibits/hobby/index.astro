@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { fetchHobbyByPrefecture, fetchCommuteByPrefecture } from '../../../lib/estat.js';
@@ -36,6 +37,7 @@ const maxMin = top.minutes;
         <h1>いちばん「趣味に生きる」県はどこだ</h1>
         <p class="sub">時間の広場｜趣味・娯楽時間の都道府県ランキング（2021年）</p>
       </div>
+      <ExhibitHero slug="hobby" />
 
       <Talk speaker="kei">4つめの展示です。1日にどれだけ趣味や娯楽に時間を使っているか。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">わたくしの時代の娯楽といえば活動写真に雑誌に……今は何をして遊ぶの？</Talk>

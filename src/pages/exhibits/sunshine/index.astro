@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getClimateData } from '../../../lib/climate.js';
@@ -68,6 +69,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
         <h1>日本一「晴れる」県はどこだ</h1>
         <p class="sub">暮らしの広場｜1年間に日が差した時間（{sun.year}年）</p>
       </div>
+      <ExhibitHero slug="sunshine" />
 
       <Talk speaker="kei">18番目の展示は「晴れ」です。1年のあいだに日が差した時間を、県ごとに並べました。47県の平均は{fmt(avg)}。</Talk>
       <Talk speaker="touko">お日さまの出ている時間を、一年ぶん足すのねえ。</Talk>

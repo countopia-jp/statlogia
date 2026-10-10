@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getPriceData } from '../../../lib/price.js';
@@ -37,6 +38,7 @@ const sameTop = most.filter((r) => totalMost.some((t) => t.n === r.n)).map((r) =
         <h1>日本一「電気やガスが高い」県はどこだ</h1>
         <p class="sub">値段の広場｜消費者物価地域差指数・光熱・水道（{data.heat.year}）</p>
       </div>
+      <ExhibitHero slug="utility" />
 
       <Talk speaker="kei">14番目の展示は「光熱・水道」です。電気、ガス、水道、灯油。同じものを買うのに、県によって値段の水準がどれだけ違うかを並べました。</Talk>
       <Talk speaker="touko">同じ電気なのに、値段が違うの？</Talk>

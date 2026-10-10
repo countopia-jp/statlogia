@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { fetchSleepByPrefecture, fetchCommuteByPrefecture } from '../../../lib/estat.js';
@@ -62,6 +63,7 @@ const corrPositive = corr !== null && corr >= 0.3;
         <h1>日本一「眠らない県」はどこだ</h1>
         <p class="sub">時間の広場｜睡眠時間の都道府県ランキング（2021年）</p>
       </div>
+      <ExhibitHero slug="sleep" />
 
       <Talk speaker="kei">最初の展示です。日本人が1日にどれだけ眠っているか、47都道府県で比べました。</Talk>
       <Talk speaker="touko">あら……そんなことを調べている人がいるの？</Talk>

@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getFishingData } from '../../../lib/fishing.js';
@@ -38,6 +39,7 @@ const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
         <h1>日本一「釣りをする」県はどこだ</h1>
         <p class="sub">スポーツの広場｜過去1年間に釣りをした人の割合（{data.year}）</p>
       </div>
+      <ExhibitHero slug="fishing" />
 
       <Talk speaker="kei">10番目の展示は「釣り」です。過去1年のあいだに、一度でも釣りをした人の割合を県ごとに並べました。</Talk>
       <Talk speaker="touko">釣り？　海の近くに住んでいたら、みんなやるものじゃないの？</Talk>

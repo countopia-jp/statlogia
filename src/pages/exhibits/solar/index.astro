@@ -1,4 +1,5 @@
 ---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { getSolarData } from '../../../lib/solar.js';
@@ -54,6 +55,7 @@ const seriesMax = Math.max(...series.map((s) => s.value));
         <h1>日本一「太陽光発電の家」県はどこだ</h1>
         <p class="sub">住まいの広場｜太陽光発電機器のある住宅の割合（{data.year}）</p>
       </div>
+      <ExhibitHero slug="solar" />
 
       <Talk speaker="kei">28番目の展示は「太陽光発電のある家」です。人の住んでいる家のうち、太陽光で電気をつくる機器のある家がどのくらいあるか。全国では{fmt(avg)}、100軒に{per100(avg)}軒です。</Talk>
       <Talk speaker="touko">屋根で電気をつくるの？　わたくしの頃は、電燈が引かれたばかりという家も多かったのに。</Talk>

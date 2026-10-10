@@ -174,8 +174,8 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
           const nat = D.national[ind.key][L(ind)];
           meta = `<div class="rm-card-meta">47都道府県中 ${rk}位<span>（${ind.rankWord}）</span></div>` +
             (nat === null ? '' : D.nationalIsTotal && D.nationalIsTotal[ind.key]
-              ? `<div class="rm-card-meta rm-card-meta--soft">全国の合計 ${fmtText(ind, nat)}</div><div class="rm-card-meta rm-card-meta--soft">47都道府県の平均 ${fmtText(ind, D.prefAverage[ind.key][L(ind)])}</div>`
-              : `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} ${fmtText(ind, nat)}</div>`);
+              ? `<div class="rm-card-meta rm-card-meta--soft">全国の合計 <span>${fmtText(ind, nat)}</span></div><div class="rm-card-meta rm-card-meta--soft">47都道府県の平均 <span>${fmtText(ind, D.prefAverage[ind.key][L(ind)])}</span></div>`
+              : `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} <span>${fmtText(ind, nat)}</span></div>`);
         } else {
           const pp = poolOf(ind, prefOf(a));
           meta = `<div class="rm-card-meta">全国 ${rk}位／${all.length}<span>（${ind.rankWord}）</span></div>` +
@@ -225,21 +225,22 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const minRk = Math.min(...pos.map((x) => x.rk));
     const maxRk = Math.max(...pos.map((x) => x.rk));
     const sameN = pos.every((x) => x.n === pos[0].n);
+    const rkRange = minRk === maxRk ? `${minRk}` : `${minRk}〜${maxRk}`; // どれも同じ順位なら「13〜13番目」とせず「13番目」
     const among = sameN ? `${pos[0].n}${unitWord}` : (isPref ? '47都道府県' : '全国の市区町村');
     const sameWord = pos.every((x) => x.ind.rankWord === pos[0].ind.rankWord) ? `（${pos[0].ind.rankWord}）` : '';
     const allMiddle = pos.every((x) => x.p >= 0.2 && x.p <= 0.8);
     const allTop = pos.every((x) => x.p <= 0.15);
     const allBottom = pos.every((x) => x.p >= 0.85);
     if (allTop) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで上位にあり、${minRk}〜${maxRk}番目${sameWord}です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで上位にあり、${rkRange}番目${sameWord}です。`;
     } else if (allBottom) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${minRk}〜${maxRk}番目${sameWord}です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${rkRange}番目${sameWord}です。`;
     } else if (allMiddle) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${minRk}〜${maxRk}番目${sameWord}にあります。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${rkRange}番目${sameWord}にあります。`;
     } else if (pos.every((x) => x.p >= 0.5)) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${minRk}〜${maxRk}番目${sameWord}にあります。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${rkRange}番目${sameWord}にあります。`;
     } else if (pos.every((x) => x.p <= 0.5)) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${minRk}〜${maxRk}番目${sameWord}にあります。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${rkRange}番目${sameWord}にあります。`;
     } else kei.textContent = `${name}の項目のうち、上のほうにあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。下のほうにあるのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
     const seed = parseInt(a.c, 10) || 0;
     let t;
