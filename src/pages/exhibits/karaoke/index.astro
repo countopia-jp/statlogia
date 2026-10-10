@@ -161,8 +161,12 @@ const twist = !sameTop && bothTop.length <= 2;
         ))}
       </ol>
 
-      <Talk speaker="touko">カラオケで一番だった{topNames.join('と')}は、楽器では何番目なの。</Talk>
-      <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInIn}です。かわりに楽器で一番なのは${inTopNames.join('と')}で、カラオケでは${inTopInKa}でした。`}</Talk>
+      {!sameTop && (
+        <>
+          <Talk speaker="touko">カラオケで一番だった{topNames.join('と')}は、楽器では何番目なの。</Talk>
+          <Talk speaker="kei">{`${topInIn}です。かわりに楽器で一番なのは${inTopNames.join('と')}で、カラオケでは${inTopInKa}でした。`}</Talk>
+        </>
+      )}
 
       <details class="all">
         <summary>楽器の演奏も47都道府県すべてを見る（多い順）</summary>

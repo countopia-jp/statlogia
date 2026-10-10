@@ -44,6 +44,8 @@ const eduTop = price.education.rows[0];
 
 const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
 const pct = (v) => v.toFixed(1);
+// 住まいの3つの出典年は同じ年になりやすいので、重ねて書かない（「2023年度、2023年、2023年」→「2023年」）
+const housingYears = [...new Set([vacancy.year, housing.year, solar.year].map((y) => String(y).replace(/年度?$/, '')))].join('・') + '年';
 const mangaMore = reading.manga.national > reading.national;
 ---
 <BaseLayout title="展望塔｜Countopia Stats" description="日本の数字を一望する、Countopia Statsの展望塔。睡眠・通勤・物価・住まいなどの全国の数字を、計器の形で並べています。" backHref="/" backLabel="玄関">
@@ -157,31 +159,31 @@ const mangaMore = reading.manga.national > reading.national;
         <a class="gauge" href="/exhibits/price/">
           <span class="g-label">物価がいちばん高い</span>
           <span class="g-value small">{priceTop.n}</span>
-          <span class="g-unit">{priceTop.minutes}（全国平均＝100）</span>
+          <span class="g-unit">{priceTop.minutes.toFixed(1)}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/price/">
           <span class="g-label">食べものがいちばん高い</span>
           <span class="g-value small">{foodTop.n}</span>
-          <span class="g-unit">{foodTop.minutes}（全国平均＝100）</span>
+          <span class="g-unit">{foodTop.minutes.toFixed(1)}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/utility/">
           <span class="g-label">光熱・水道がいちばん高い</span>
           <span class="g-value small">{heatTop.n}</span>
-          <span class="g-unit">{heatTop.minutes}（全国平均＝100）</span>
+          <span class="g-unit">{heatTop.minutes.toFixed(1)}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
         <a class="gauge" href="/exhibits/education-price/">
           <span class="g-label">教育がいちばん高い</span>
           <span class="g-value small">{eduTop.n}</span>
-          <span class="g-unit">{eduTop.minutes}（全国平均＝100）</span>
+          <span class="g-unit">{eduTop.minutes.toFixed(1)}（全国平均＝100）</span>
           <span class="g-link">→ 展示を見る</span>
         </a>
       </div>
 
       <p class="note">出典：睡眠・通勤・家事：総務省統計局「社会生活基本調査」を加工して作成（週全体・10歳以上。年次は各展示の出典をご覧ください）</p>
-      <p class="note">物価（{price.year}）・住まい（{vacancy.year}、{housing.year}、{solar.year}）・ごみ（{waste.year}年度）：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ（{reading.year}）・山歩き（{hiking.year}）・野球・サッカー（{ball.year}）・つり（{fishing.year}）：社会生活基本調査（行動者率）</p>
+      <p class="note">物価（{price.year}）・住まい（{housingYears}）・ごみ（{waste.year}年度）：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ（{reading.year}）・山歩き（{hiking.year}）・野球・サッカー（{ball.year}）・つり（{fishing.year}）：社会生活基本調査（行動者率）</p>
     </section>
   </main>
 </BaseLayout>

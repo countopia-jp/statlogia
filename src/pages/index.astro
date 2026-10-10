@@ -66,7 +66,7 @@ const prefectures = [
 ];
 ---
 <BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
-  <main>
+  <main class="entrance">
     <!-- 製図台の上に、白紙を1枚広げている -->
     <div class="desk">
       <div class="sheet">
@@ -244,6 +244,8 @@ const prefectures = [
   </main>
 </BaseLayout>
 <style>
+  /* 製図台（.desk）は100vwで全幅に広げているため、縦のスクロールバーがある環境ではその幅だけ横にはみ出す。玄関の main で切る */
+  .entrance { overflow-x: clip; }
 /* ── 製図台と白紙 ───────────────────── */
 .desk{
   position:relative;

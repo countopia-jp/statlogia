@@ -28,6 +28,6 @@ export const FARM_SEA = {
     { key: 'abandoned', label: '耕作放棄地の面積', table: C, code: 'C3109', decimals: 0, rankWord: '広い順' },
     { key: 'fishOutput', label: '海の漁業・養殖業の産出額', table: C, code: 'C31201', unit: '億円', scale: 0.01, decimals: 0, rankWord: '多い順' },
     { key: 'catch', label: '海の漁獲量', table: C, code: 'C312101', decimals: 0, rankWord: '多い順' },
-    { key: 'farmed', label: '海の養殖の収獲量', table: C, code: 'C312201', decimals: 0, rankWord: '多い順' },
+    { key: 'farmed', label: '海の養殖の収獲量', table: C, code: 'C3122', decimals: 0, rankWord: '多い順' },
   ],
 };

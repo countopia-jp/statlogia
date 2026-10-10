@@ -223,7 +223,13 @@ const isPref = room.scope === 'pref';
     const among = sameN ? `${pos[0].n}${unitWord}` : (isPref ? '47都道府県' : '全国の市区町村');
     const sameWord = pos.every((x) => x.ind.rankWord === pos[0].ind.rankWord) ? `（${pos[0].ind.rankWord}）` : '';
     const allMiddle = pos.every((x) => x.p >= 0.2 && x.p <= 0.8);
-    if (allMiddle) {
+    const allTop = pos.every((x) => x.p <= 0.15);
+    const allBottom = pos.every((x) => x.p >= 0.85);
+    if (allTop) {
+      kei.textContent = `${name}は、どの項目も${among}のなかで上位にあり、${minRk}〜${maxRk}番目${sameWord}です。`;
+    } else if (allBottom) {
+      kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${minRk}〜${maxRk}番目${sameWord}です。`;
+    } else if (allMiddle) {
       kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${minRk}〜${maxRk}番目${sameWord}にあります。`;
     } else if (pos.every((x) => x.p >= 0.5)) {
       kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${minRk}〜${maxRk}番目${sameWord}にあります。`;
@@ -232,7 +238,9 @@ const isPref = room.scope === 'pref';
     } else kei.textContent = `${name}の項目のうち、上のほうにあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。下のほうにあるのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
     const seed = parseInt(a.c, 10) || 0;
     let t;
-    if (allMiddle) t = ['とびぬけたところのない、ほどよい土地なのね。', '上にも下にも寄らない、ちょうどいいところなのね。'][seed % 2];
+    if (allTop) t = ['どれも、上のほうなのね。', 'どの項目も、上から数えたほうが早いのね。'][seed % 2];
+    else if (allBottom) t = ['どれも、下のほうなのね。', 'どの項目も、下から数えたほうが早いのね。'][seed % 2];
+    else if (allMiddle) t = ['とびぬけたところのない、ほどよい土地なのね。', '上にも下にも寄らない、ちょうどいいところなのね。'][seed % 2];
     else if (top.p <= 0.1 && bot.p >= 0.9) t = ['上のほうにも下のほうにも、ある土地なのね。', '項目によって、ずいぶん順位が違うのねえ。'][seed % 2];
     else if (top.p <= 0.1) t = `「${top.ind.label}」は、上から数えたほうが早いのね。`;
     else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下から数えたほうが早いのね。`;

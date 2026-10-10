@@ -219,7 +219,10 @@ export async function getRoomData(room) {
       // 全国の値が47県の合計（件数・面積など）なら、グラフでは47県の平均とくらべる
       const lastNat = nat[nat.length - 1];
       const lastSum = avg[avg.length - 1] === null ? null : avg[avg.length - 1] * areaList.length;
-      const isTotal = !isAvg && lastNat !== null && lastSum !== null && lastNat > 0 && Math.abs(lastNat - lastSum) / lastNat < 0.02;
+      // 全国が47県の合計（差2%以内）か、どの県よりも大きい（平均ならあり得ない＝合計の類）なら「合計」とみなす
+      const lastVals = areaList.map((a) => calcAt(a.c, useTimes[useTimes.length - 1])).filter((v) => v !== null);
+      const lastMax = lastVals.length ? Math.max(...lastVals) : null;
+      const isTotal = !isAvg && lastNat !== null && lastNat > 0 && ((lastSum !== null && Math.abs(lastNat - lastSum) / lastNat < 0.02) || (lastMax !== null && lastNat > lastMax * 1.05));
       nationalIsTotal[ind.key] = isTotal;
       prefAverage[ind.key] = avg.map((v) => roundTo(v, d));
     }
@@ -249,7 +252,10 @@ export async function getRoomData(room) {
     nationalIsAvg: scope === 'pref' ? nationalIsAvg : undefined,
     nationalIsTotal: scope === 'pref' ? nationalIsTotal : undefined,
     prefAverage: scope === 'pref' ? prefAverage : undefined,
-    areas: areaList.map((a) => ({ c: a.c, n: a.n, ...(a.x ? { x: 1 } : {}), v: Object.fromEntries(indicatorsOut.map((i) => [i.key, values[i.key][a.c]])) })),
+    // どの項目にも値のない地域（北方領土の村など）は、選ぶ欄に出さない
+    areas: areaList
+      .filter((a) => indicatorsOut.some((i) => (values[i.key][a.c] || []).some((v) => v !== null)))
+      .map((a) => ({ c: a.c, n: a.n, ...(a.x ? { x: 1 } : {}), v: Object.fromEntries(indicatorsOut.map((i) => [i.key, values[i.key][a.c]])) })),
   };
   cache.set(room.id, out);
   return out;

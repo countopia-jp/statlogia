@@ -51,8 +51,9 @@ async function fetchActivityByPrefecture(activityWord, sexWord = '総数') {
     const danjo  = nameOf(danjoAxis, v);
     const chiku  = nameOf(chikuAxis, v);
 
+    // 「11_移動(通勤・通学を除く)」も「通勤・通学」の言葉を含むので、「除く」のつく行動は外す
     if (
-      koudou.includes(activityWord) &&
+      koudou.includes(activityWord) && !koudou.includes('除く') &&
       youbi.includes('週全体') &&
       (!danjoAxis || danjo.includes(sexWord)) &&
       (!chikuAxis || chiku.includes('総数')) &&
@@ -63,6 +64,11 @@ async function fetchActivityByPrefecture(activityWord, sexWord = '総数') {
     }
   }
 
+  // 1県1行のはず。重なったり欠けたりしたら、ビルドを止めて気づけるようにする
+  const prefs = new Set(rows.map((r) => r.pref));
+  if (rows.length !== 47 || prefs.size !== 47) {
+    throw new Error(`[estat.js] 「${activityWord}」(${sexWord}) が${rows.length}行・${prefs.size}県になりました（47県1行ずつのはず）`);
+  }
   return rows;
 }
 
