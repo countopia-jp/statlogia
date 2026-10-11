@@ -139,6 +139,7 @@ const prefectures = [
       </div>
       <div class="cards">
         <a class="card pc" href="/exhibits/housing-type/">
+          <img class="card-img" src="/images/exhibits/housing-type-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>27</b></span>
           <span class="pc-kind">最多・{houseTop.n}</span>
           <span class="pc-num">{houseTop.minutes.toFixed(1)}<small>％</small></span>
@@ -147,6 +148,7 @@ const prefectures = [
           <span class="c-place">住まいの広場</span>
         </a>
         <a class="card pc" href="/exhibits/solar/">
+          <img class="card-img" src="/images/exhibits/solar-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>28</b></span>
           <span class="pc-kind">最多・{solarTop.n}</span>
           <span class="pc-num">{solarTop.minutes.toFixed(1)}<small>％</small></span>
@@ -155,6 +157,7 @@ const prefectures = [
           <span class="c-place">住まいの広場</span>
         </a>
         <a class="card pc" href="/exhibits/karaoke/">
+          <img class="card-img" src="/images/exhibits/karaoke-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>29</b></span>
           <span class="pc-kind">最多・{karaokeTop.n}</span>
           <span class="pc-num">{karaokeTop.minutes.toFixed(1)}<small>％</small></span>
@@ -194,16 +197,19 @@ const prefectures = [
       </div>
       <div class="cards">
         <a class="card" href="/education/">
+          <img class="card-img" src="/images/icon/school-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>学びの登記所</h3>
           <p>全国の市区町村から選んで、幼稚園から高校までの学校の数字を自分の手で引き出せます。あなたの町に、学校はいくつ？</p>
           <span class="c-place">閲覧室</span>
         </a>
         <a class="card" href="/living/">
+          <img class="card-img" src="/images/icon/living-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>暮らしの見積所</h3>
           <p>給与、家賃、家の広さ、持ち家率。あなたの県の「暮らしの釣り合い」を、数字でご覧ください。</p>
           <span class="c-place">閲覧室</span>
         </a>
         <a class="card" href="/population/">
+          <img class="card-img" src="/images/icon/population-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>国勢の間</h3>
           <p>総人口、高齢化率、世帯数、出生率、婚姻率。あなたの県の「人のかたち」を、数字でご覧ください。</p>
           <span class="c-place">閲覧室</span>
@@ -447,6 +453,13 @@ h1 .num{color:var(--stamp)}
   transition:transform .15s,box-shadow .15s;
 }
 .card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
+/* カードの頭に扉絵の縮小版（カードの縁いっぱいに） */
+.card:has(.card-img){overflow:hidden}
+.card-img{
+  display:block;width:calc(100% + 48px);max-width:none;height:auto;aspect-ratio:16/9;object-fit:cover;
+  margin:-24px -24px 4px;border-bottom:1px solid var(--line);
+}
+.card.pc .card-img{margin-top:-22px}
 .card--closed{border-style:dashed;color:var(--ink-soft);background:#f4f4ee88}
 .card--closed:hover{transform:none;box-shadow:none}
 .c-no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.26em;color:var(--stamp)}
