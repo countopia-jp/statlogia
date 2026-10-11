@@ -1,4 +1,8 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
+// 扉絵の縮小版があればカードに出す（新しい窓口は絵が届くまで文だけ）
+const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${id}-thumb.webp`)) ? `/images/icon/${id}-thumb.webp` : null);
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
@@ -82,17 +86,6 @@ import Talk from '../../components/Talk.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
           </div>
         </a>
-        <a class="rr-card" href="/town-culture/">
-          <img class="rr-card-img" src="/images/icon/town-culture-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>わが町の図書館と公民館</h3>
-          <p class="rr-card-desc">
-            市区町村を選んで、図書館と公民館の数をご覧いただけます。
-            図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
-          </div>
-        </a>
         <a class="rr-card" href="/town-nursery/">
           <img class="rr-card-img" src="/images/icon/town-nursery-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -113,6 +106,16 @@ import Talk from '../../components/Talk.astro';
             「保育所は、近いか」の介護版。介護の足もとが、町ごとに見えてきます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2018年度）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/fire-ems/">
+          {thumbOf('fire-ems') && <img class="rr-card-img" src={thumbOf('fire-ems')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>消防と救急</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、消防署・消防団・救急車の数と、救急の出動や火事の件数を、人口あたりで。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（消防庁の調べ）</p>
           </div>
         </a>
       </div>
@@ -260,8 +263,8 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
-    <section class="rr-group" aria-label="学びのしらべ">
-      <h2 class="rr-group-title">学びのしらべ</h2>
+    <section class="rr-group" aria-label="学びと文化">
+      <h2 class="rr-group-title">学びと文化</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/education/">
           <img class="rr-card-img" src="/images/icon/school-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
@@ -283,6 +286,27 @@ import Talk from '../../components/Talk.astro';
             端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-culture/">
+          <img class="rr-card-img" src="/images/icon/town-culture-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>わが町の図書館と公民館</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、図書館と公民館の数をご覧いただけます。
+            図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/culture/">
+          {thumbOf('culture') && <img class="rr-card-img" src={thumbOf('culture')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>文化施設</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、博物館・劇場や音楽堂・体育施設の数（人口あたり）と、重要文化財・史跡名勝天然記念物の件数を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
           </div>
         </a>
       </div>
