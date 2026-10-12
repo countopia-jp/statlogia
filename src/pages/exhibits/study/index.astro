@@ -55,11 +55,11 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
         </div>
       </div>
 
-      <Talk speaker="kei">いちばん学ぶ{topNames.join('と')}でも、1日{fmt(top.minutes)}。1日は1440分ありますから、そのうちのごくわずかです。</Talk>
-      <Talk speaker="touko">寺子屋の子どもたちのほうが、よほど机に向かっていたかもしれないわ。</Talk>
+      <Talk speaker="kei">いちばん長い{topNames.join('と')}でも、1日{fmt(top.minutes)}。1日は1440分ありますから、そのうちのごくわずかです。</Talk>
+      <Talk speaker="touko">わたくしの頃の尋常小学校では、みんな石盤に向かっていたけれど……。</Talk>
       <Talk speaker="kei">この数字は「その日に学ばなかった人」も含めた平均です。学ぶ人はしっかり学び、そうでない人は0分。その均しの姿だと思ってください。</Talk>
 
-      <h2>よく学ぶ県 TOP5</h2>
+      <h2>学ぶ時間が長い県 TOP5</h2>
       <ol class="rank">
         {most.map((r) => (
           <li>

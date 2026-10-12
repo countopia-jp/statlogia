@@ -68,7 +68,7 @@ const isFlipped = topHeatRank >= 38;
       <Talk speaker="touko">上と下で、これほど違うものなの。</Talk>
       <Talk speaker="kei">{topNames.join('と')}が{fmt(top.minutes)}、{bottomNames.join('と')}が{fmt(bottom.minutes)}で、差は{eduSpread.toFixed(1)}ポイント。総合で見たときの差は{totalSpread.toFixed(1)}ポイント、電気やガスでも{heatSpread.toFixed(1)}ポイントでした。</Talk>
 
-      <h2>教育が高い県 TOP5</h2>
+      <h2>教育の物価が高い県 TOP5</h2>
       <ol class="rank">
         {most.map((r) => (
           <li>
@@ -80,7 +80,7 @@ const isFlipped = topHeatRank >= 38;
         ))}
       </ol>
 
-      <h2>教育が安い県 TOP5</h2>
+      <h2>教育の物価が低い県 TOP5</h2>
       <ol class="rank low">
         {least.map((r) => (
           <li>

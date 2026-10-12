@@ -154,7 +154,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
       )}
 
       <Talk speaker="touko">同じ「晴れ」を数えているのに、{clearSpreadWider ? 'ずいぶん' : '少し'}違うのねえ。</Talk>
-      <Talk speaker="kei">開きかたも違います。日が差す時間は上と下で{spread}倍でしたが、快晴の日数は{clearSpread}倍。{clearSpreadWider ? '桁がひとつ変わります。' : '同じ空を、別のものさしで測っているからです。'}</Talk>
+      <Talk speaker="kei">開きかたも違います。日が差す時間は上と下で{spread}倍でしたが、快晴の日数は{clearSpread}倍。{clearSpreadWider ? '開きが、ずっと大きくなります。' : '同じ空を、別のものさしで測っているからです。'}</Talk>
       {corrStrong ? (
         <Talk speaker="kei">二つの数字はよく似た動きをします。それでも、上位の顔ぶれはこのとおり入れ替わります。</Talk>
       ) : corrMild ? (
@@ -183,7 +183,7 @@ const twist = !sunSameTop && bothTop.length <= 2;
           <Talk speaker="touko">……あまり、変わらないのねえ。</Talk>
           <Talk speaker="kei">{first.year}年が{fmt(first.minutes)}、{last.year}年が{fmt(last.minutes)}。{spanYears}年で{diffPct}％の{trendUp ? '増' : '減'}です。ほとんど伸びも縮みもしていません。</Talk>
           <Talk speaker="touko">{spanYears}年ものあいだ、同じだけお日さまが出ていたの。</Talk>
-          <Talk speaker="kei">少なくとも、この数字はそう言っています。年ごとの上下はありますが、長い目で見ると同じところに戻ってきます。</Talk>
+          <Talk speaker="kei">少なくとも、この数字はそう言っています。年ごとの上下はありますが、始めと終わりでは、ほとんど同じ数字です。</Talk>
         </>
       ) : (
         <>

@@ -232,7 +232,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const allTop = pos.every((x) => x.p <= 0.15);
     const allBottom = pos.every((x) => x.p >= 0.85);
     if (allTop) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで上位にあり、${rkRange}番目${sameWord}です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで上のほうにあり、${rkRange}番目${sameWord}です。`;
     } else if (allBottom) {
       kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${rkRange}番目${sameWord}です。`;
     } else if (allMiddle) {
@@ -241,7 +241,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${rkRange}番目${sameWord}にあります。`;
     } else if (pos.every((x) => x.p <= 0.5)) {
       kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${rkRange}番目${sameWord}にあります。`;
-    } else kei.textContent = `${name}の項目のうち、上のほうにあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。下のほうにあるのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
+    } else kei.textContent = `${name}の項目のうち、順位がいちばん上なのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下なのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
     const seed = parseInt(a.c, 10) || 0;
     let t;
     if (allTop) t = ['どれも、上のほうなのね。', 'どの項目も、上のほうなのね。'][seed % 2];

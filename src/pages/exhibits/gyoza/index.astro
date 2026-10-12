@@ -27,6 +27,14 @@ const years = [...new Set(series.flatMap((s) => s.points.map((p) => p.year)))].s
 // 途中の年から始まる線があるか（調査対象に後から入った市）。無ければその会話は出さない
 const lateSeries = series.filter((s) => s.points.length > 0 && s.points[0].year > years[0]);
 const late = lateSeries[0];
+// 上位3市の線のうち、年ごとにいちばん上の市が入れかわったか（全国の線は除く）
+const cityLines = series.filter((s) => s.name !== '全国');
+const leaders = years.map((y) => {
+  let best = null;
+  for (const s of cityLines) { const v = s.points.find((p) => p.year === y)?.value; if (v != null && (!best || v > best.v)) best = { n: s.name, v }; }
+  return best?.n;
+}).filter(Boolean);
+const leaderChanged = new Set(leaders).size > 1;
 const chartData = {
   labels: years,
   datasets: series.map((s, i) => ({
@@ -58,7 +66,7 @@ const chartData = {
       <Talk speaker="kei">小麦の皮で肉や野菜を包んで、焼いたり茹でたりして食べるものです。橙子さんのいた頃には、まだ街に広まっていなかったかもしれません。いまでは、お国が家計の品目として数えるほど、ふつうに食べられています。</Talk>
       <Talk speaker="touko">まあ。そんな食べものだけの統計があるの。お国は何でも数えているのねえ。</Talk>
       <Talk speaker="kei">全国平均は{fmt(avg)}。ただしこの調査は、県庁所在市と政令指定都市、あわせて{data.cityCount}市だけが対象です。都道府県では引けません。</Talk>
-      <Talk speaker="touko">好きかどうかまで、数字で分かるものなの。</Talk>
+      <Talk speaker="touko">これで、どの街の人が餃子を好きか分かるのかしら。</Talk>
       <Talk speaker="kei">正直に申し上げますと、分かりません。これは「餃子に使ったお金」の額です。好きな気持ちを測ったものではありませんし、同じ数を買っても、餃子が高い街なら金額は上がります。</Talk>
 
       <div class="highlight">
@@ -94,8 +102,17 @@ const chartData = {
       <h2>この{years.length}年の移り変わり</h2>
       <div class="chart-wrap"><canvas id="gyozaChart"></canvas></div>
 
-      <Talk speaker="touko">線が抜きつ抜かれつしているわ。ずっと同じ街が一番だったわけではないのね。</Talk>
-      <Talk speaker="kei">その年ごとに順位は入れ替わっています。1年の数字だけを見て「昔からそうだった」と決めてしまわないことです。</Talk>
+      {leaderChanged ? (
+        <>
+          <Talk speaker="touko">線が抜きつ抜かれつしているわ。ずっと同じ街が一番だったわけではないのね。</Talk>
+          <Talk speaker="kei">その年ごとに順位は入れ替わっています。1年の数字だけを見て「昔からそうだった」と決めてしまわないことです。</Talk>
+        </>
+      ) : (
+        <>
+          <Talk speaker="touko">いちばん上の線は、ずっと同じ街なのね。</Talk>
+          <Talk speaker="kei">この3市のなかでは、そうです。ただ、ほかの市との差は年によって変わります。1年の数字だけで決めてしまわないことです。</Talk>
+        </>
+      )}
       {late ? (
         <>
           <Talk speaker="touko">あら、{lateSeries.map((s) => s.name).join('と')}の線{lateSeries.length > 1 ? 'は' : 'だけ'}途中から始まっているわ。</Talk>

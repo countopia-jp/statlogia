@@ -63,7 +63,7 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
       <Talk speaker="touko">上と下では、ずいぶん違うのねえ。</Talk>
       <Talk speaker="kei">いちばん多いのは{topNames}で{fmt(top.minutes)}{topTies.length > 1 ? '、同じ値で並びました' : ''}。いちばん少ない{bottomNames}は{fmt(bottom.minutes)}{bottomTies.length > 1 ? '、こちらも同じ値で並びました' : ''}。その差は{diff}ポイントです。</Talk>
 
-      <h2>する人が多い県 TOP5</h2>
+      <h2>パチンコをする人が多い県 TOP5</h2>
       <ol class="rank">
         {most.map((r) => (
           <li>
@@ -75,7 +75,7 @@ const bigInLeast = least.some((r) => bigCities.includes(r.n));
         ))}
       </ol>
 
-      <h2>する人が少ない県 TOP5</h2>
+      <h2>パチンコをする人が少ない県 TOP5</h2>
       <ol class="rank low">
         {least.map((r) => (
           <li>

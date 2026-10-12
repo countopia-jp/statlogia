@@ -27,21 +27,6 @@ const bottomNames = bottomTies.map((r) => r.n).join('と');
 const second = [...rows].reverse().find((r) => r.minutes.toFixed(1) !== bottom.minutes.toFixed(1)) ?? rows[rows.length - 2];
 const bottomGap = (r1(second.minutes) - r1(bottom.minutes)).toFixed(1);
 
-// 山地の広い県が実際に何位にいるかを毎回引き直す
-const MOUNTAIN_PREFS = ['長野県', '岐阜県', '山梨県', '北海道', '岩手県', '高知県'];
-const mountainRanks = MOUNTAIN_PREFS
-  .map((n) => {
-    const r = rows.find((x) => x.n === n);
-    return r ? { n, rank: rankOf(r.minutes) } : null;
-  })
-  .filter(Boolean)
-  .sort((a, b) => a.rank - b.rank);
-const mountainHigh = mountainRanks.filter((m) => m.rank <= 10);
-const mountainMid = mountainRanks.filter((m) => m.rank > 10 && m.rank <= 20);
-const mountainLow = mountainRanks.filter((m) => m.rank > 20);
-const listRanks = (arr) => arr.map((m) => `${m.n}が${m.rank}番目`).join('、');
-// 首位が山地の広い県かどうかで、橙子の受けを変える
-const topIsMountain = topTies.some((r) => MOUNTAIN_PREFS.includes(r.n));
 ---
 <BaseLayout title="登山・ハイキングをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に登山やハイキングをした人の割合。日本一「山を歩く」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -72,11 +57,7 @@ const topIsMountain = topTies.some((r) => MOUNTAIN_PREFS.includes(r.n));
         </div>
       </div>
 
-      {topIsMountain ? (
-        <Talk speaker="touko">山の多い県が、上に来ているのね。</Talk>
-      ) : (
-        <Talk speaker="touko">この顔ぶれは、思っていたのと違うわ。</Talk>
-      )}
+      <Talk speaker="touko">山を歩く人は、どこの県に多いのかしら。</Talk>
       <Talk speaker="kei">ひとつお断りしておくと、ここで数えているのは「その県に住んでいる人」であって、「その県の山に登った人」ではありません。県境を越えて出かけた人も、住んでいる県の側に数えられます。</Talk>
 
       <h2>山を歩く人が多い県 TOP5</h2>
@@ -91,17 +72,6 @@ const topIsMountain = topTies.some((r) => MOUNTAIN_PREFS.includes(r.n));
         ))}
       </ol>
 
-      {mountainLow.length > 0 ? (
-        <>
-          <Talk speaker="touko">山の名所が、そのまま上に並ぶわけではないのねえ。</Talk>
-          <Talk speaker="kei">はい。山の広い県で言えば、{listRanks(mountainLow)}。{mountainMid.length > 0 ? `${listRanks(mountainMid)}と、まんなかあたりにいます。` : ''}{mountainHigh.length > 0 ? `いっぽうで${listRanks(mountainHigh)}と、上位に入る県もあります。` : '山の多さと、そのまま同じ順にはならないんです。'}</Talk>
-        </>
-      ) : (
-        <>
-          <Talk speaker="touko">山の多い県が、やはり上のほうにいるのね。</Talk>
-          <Talk speaker="kei">そうですね。{listRanks(mountainRanks)}という並びでした。</Talk>
-        </>
-      )}
 
       <h2>山を歩く人が少ない県 TOP5</h2>
       <ol class="rank low">
