@@ -244,12 +244,12 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     } else kei.textContent = `${name}の項目のうち、上のほうにあるのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。下のほうにあるのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
     const seed = parseInt(a.c, 10) || 0;
     let t;
-    if (allTop) t = ['どれも、上のほうなのね。', 'どの項目も、上から数えたほうが早いのね。'][seed % 2];
-    else if (allBottom) t = ['どれも、下のほうなのね。', 'どの項目も、下から数えたほうが早いのね。'][seed % 2];
+    if (allTop) t = ['どれも、上のほうなのね。', 'どの項目も、上のほうなのね。'][seed % 2];
+    else if (allBottom) t = ['どれも、下のほうなのね。', 'どの項目も、下のほうなのね。'][seed % 2];
     else if (allMiddle) t = ['どれも、まんなかあたりなのね。', 'どの項目も、上にも下にも寄っていないのね。'][seed % 2];
     else if (top.p <= 0.1 && bot.p >= 0.9) t = ['上のほうの項目も、下のほうの項目もあるのね。', '項目によって、ずいぶん順位が違うのねえ。'][seed % 2];
-    else if (top.p <= 0.1) t = `「${top.ind.label}」は、上から数えたほうが早いのね。`;
-    else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下から数えたほうが早いのね。`;
+    else if (top.p <= 0.1) t = `「${top.ind.label}」は、上のほうなのね。`;
+    else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下のほうなのね。`;
     else t = ['項目によって、順位が違うのねえ。', 'ならべてみると、いろいろなのね。'][seed % 2];
     touko.textContent = t;
   }
