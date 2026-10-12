@@ -1,0 +1,289 @@
+---
+import ExhibitHero from '../../../components/ExhibitHero.astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { getBeefPorkData } from '../../../lib/beef-pork.js';
+
+const data = await getBeefPorkData();
+const rows = data.rows;
+const pork = data.pork;
+const share = data.beefShare;
+const yen = (v) => `${Math.round(v).toLocaleString()}円`;
+const pct = (v) => `${v.toFixed(1)}％`;
+// 金額は円の整数で比べる。割合は表示する小数第1位で比べる
+const sameYen = (a, b) => Math.round(a) === Math.round(b);
+const samePct = (a, b) => a.toFixed(1) === b.toFixed(1);
+
+// 上位・下位の5番目と同じ値の市は、表にいっしょに載せる（同額を切らない）
+const topCut = (list, same) => { const v = list[4].minutes; return list.filter((r) => r.minutes > v || same(r.minutes, v)); };
+const lowCut = (list, same) => { const v = list[list.length - 5].minutes; return list.filter((r) => r.minutes < v || same(r.minutes, v)).reverse(); };
+const rankIn = (list, same) => (v) => list.findIndex((r) => same(r.minutes, v)) + 1;
+const namesAt = (list, same, v) => list.filter((r) => same(r.minutes, v)).map((r) => r.n);
+const rankOfName = (list, same, name) => {
+  const v = list.find((r) => r.n === name)?.minutes;
+  return v === undefined ? 0 : list.findIndex((r) => same(r.minutes, v)) + 1;
+};
+
+// 牛肉
+const most = topCut(rows, sameYen);
+const least = lowCut(rows, sameYen);
+const top = rows[0];
+const bottom = rows[rows.length - 1];
+const maxBeef = top.minutes;
+const rankOf = rankIn(rows, sameYen);
+const lowRankOf = rankIn(least, sameYen);
+const topNames = namesAt(rows, sameYen, top.minutes);
+const bottomNames = namesAt(least, sameYen, bottom.minutes);
+const beefRatio = (top.minutes / bottom.minutes).toFixed(1);
+
+// 豚肉
+const pMost = topCut(pork.rows, sameYen);
+const pLeast = lowCut(pork.rows, sameYen);
+const pTop = pork.rows[0];
+const pBottom = pork.rows[pork.rows.length - 1];
+const maxPork = pTop.minutes;
+const pRankOf = rankIn(pork.rows, sameYen);
+const pLowRankOf = rankIn(pLeast, sameYen);
+const pTopNames = namesAt(pork.rows, sameYen, pTop.minutes);
+const porkRatio = (pTop.minutes / pBottom.minutes).toFixed(1);
+
+const sameTop = topNames.length === 1 && pTopNames.length === 1 && top.n === pTop.n;
+const beefTopInPork = topNames.map((n) => `${n}は${rankOfName(pork.rows, sameYen, n)}番目`).join('、');
+const porkTopInBeef = pTopNames.map((n) => `${n}は${rankOfName(rows, sameYen, n)}番目`).join('、');
+const porkMoreNational = pork.national > data.national;
+
+// 両方の上位に入る市
+const bothTop = most.map((r) => r.n).filter((n) => pMost.map((r) => r.n).includes(n));
+// 見出しの接続詞：一番が違い、上位の重なりが2市以下なら「ところが」
+const twist = !sameTop && bothTop.length <= 2;
+
+// 牛肉の下位5に入るのに、豚肉では上位10に入る市（無ければ逆）
+const pTop10 = pork.rows.slice(0, 10).map((r) => r.n);
+const bTop10 = rows.slice(0, 10).map((r) => r.n);
+const swapA = least.map((r) => r.n).filter((n) => pTop10.includes(n));
+const swapB = pLeast.map((r) => r.n).filter((n) => bTop10.includes(n));
+const hasSwap = swapA.length > 0 || swapB.length > 0;
+const swapPorkHigh = swapA.length > 0;
+const swapName = swapPorkHigh ? swapA[0] : (swapB[0] || '');
+const swapBeefRank = hasSwap ? rankOfName(rows, sameYen, swapName) : 0;
+const swapPorkRank = hasSwap ? rankOfName(pork.rows, sameYen, swapName) : 0;
+
+// 牛肉＋豚肉のうち牛肉の割合
+const sMost = topCut(share.rows, samePct);
+const sLeast = lowCut(share.rows, samePct);
+const sRankOf = rankIn(share.rows, samePct);
+const sLowRankOf = rankIn(sLeast, samePct);
+const beefOver = share.rows.filter((r) => r.minutes > 50);
+const beefOverNames = beefOver.map((r) => r.n);
+// セリフの文は、ここで組み立てておく
+const porkLine = '全国で' + yen(pork.national) + '。牛肉より' + yen(Math.abs(pork.national - data.national)) + (porkMoreNational ? '多く' : '少なく') + '使われています。いちばん多い市と少ない市の開きは' + porkRatio + '倍で、牛肉より' + (Number(porkRatio) < Number(beefRatio) ? 'ずっと小さくなります' : '大きくなります') + '。そして、' + (sameTop ? 'いちばん多い市は同じでした。' : 'いちばん多い市が入れかわります。');
+const topSwapLine = beefTopInPork + 'です。かわりに豚肉で一番なのは' + pTopNames.join('と') + 'で、牛肉では' + porkTopInBeef + 'でした。';
+const swapLine = 'あら、' + swapName + 'は' + (swapPorkHigh ? '牛肉では' + swapBeefRank + '番目なのに、豚肉では' + swapPorkRank + '番目' : '豚肉では' + swapPorkRank + '番目なのに、牛肉では' + swapBeefRank + '番目') + 'なのね。';
+const overLine = beefOver.length > 0
+  ? '牛肉のほうに多く使っている市は、' + beefOver.length + '市あるのね。' + (beefOverNames.length <= 8 ? beefOverNames.join('、') + '。' : '')
+  : '牛肉のほうに多く使っている市は、ひとつもないのね。';
+---
+<BaseLayout title="牛肉と豚肉にかけるお金｜Countopia Stats" description="都市別・1世帯当たりの牛肉と豚肉の年間支出額。牛肉と豚肉、日本一はどの市か。" backHref="/exhibits/" backLabel="展示一覧">
+  <main>
+    <section class="exhibit">
+      <div class="sec-head">
+        <span class="no">EXHIBIT 30</span>
+        <h1>牛肉と豚肉、日本一はどの市だ</h1>
+        <p class="sub">暮らしの広場｜1世帯当たりの牛肉・豚肉の年間支出額（{data.year}）</p>
+      </div>
+      <ExhibitHero slug="beef-pork" />
+
+      <Talk speaker="kei">30番目の展示は「牛肉」です。1世帯が1年間に牛肉へ使ったお金を、市ごとに並べました。全国では{yen(data.national)}です。</Talk>
+      <Talk speaker="touko">牛肉なら知っていてよ。牛鍋はハイカラなごちそうでしたもの。</Talk>
+      <Talk speaker="kei">いまでは、ふだんの食卓に出るものになりました。ただしこの調査は、県庁所在市と政令指定都市、あわせて{data.cityCount}市だけが対象です。都道府県では引けません。</Talk>
+      <Talk speaker="touko">それで「どの県」ではなく「どの市」なのね。</Talk>
+
+      <div class="highlight">
+        <div class="card card--hot">
+          <span class="seal" aria-hidden="true"><b>最多</b></span>
+          <span class="label">牛肉にいちばん使う</span>
+          <strong>{topNames.join('・')}</strong>
+          <span class="num">{yen(top.minutes)}</span>
+        </div>
+        <div class="card card--cool">
+          <span class="seal" aria-hidden="true"><b>最少</b></span>
+          <span class="label">牛肉にいちばん使わない</span>
+          <strong>{bottomNames.join('・')}</strong>
+          <span class="num">{yen(bottom.minutes)}</span>
+        </div>
+      </div>
+
+      <Talk speaker="kei">いちばん多い{topNames.join('と')}と、いちばん少ない{bottomNames.join('と')}では、{beefRatio}倍の開きがあります。</Talk>
+      <Talk speaker="touko">同じ牛肉で、そんなに違うものなの。</Talk>
+
+      <h2>牛肉にお金を使う市 TOP5</h2>
+      <ol class="rank">
+        {most.map((r) => (
+          <li>
+            <span class="pos">{rankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxBeef) * 100}%`}></span>
+            <span class="min">{yen(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>牛肉にお金を使わない市 TOP5</h2>
+      <ol class="rank low">
+        {least.map((r) => (
+          <li>
+            <span class="pos">{lowRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxBeef) * 100}%`}></span>
+            <span class="min">{yen(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <details class="all">
+        <summary>{data.cityCount}市すべてを見る（多い順）</summary>
+        <ol>
+          {rows.map((r) => <li>{r.n}　{yen(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <h2>{twist ? 'ところが' : 'こんどは'}、豚肉を数えると</h2>
+
+      <Talk speaker="touko">では、豚肉はどうなの？</Talk>
+      <Talk speaker="kei">{porkLine}</Talk>
+
+      <h2>豚肉にお金を使う市 TOP5</h2>
+      <ol class="rank pork">
+        {pMost.map((r) => (
+          <li>
+            <span class="pos">{pRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxPork) * 100}%`}></span>
+            <span class="min">{yen(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>豚肉にお金を使わない市 TOP5</h2>
+      <ol class="rank low">
+        {pLeast.map((r) => (
+          <li>
+            <span class="pos">{pLowRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${(r.minutes / maxPork) * 100}%`}></span>
+            <span class="min">{yen(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      {!sameTop && (
+        <>
+          <Talk speaker="touko">牛肉で一番だった{topNames.join('と')}は、豚肉では何番目なの。</Talk>
+          <Talk speaker="kei">{topSwapLine}</Talk>
+        </>
+      )}
+      {hasSwap && (
+        <>
+          <Talk speaker="touko">{swapLine}</Talk>
+          <Talk speaker="kei">はい。同じお肉でも、市ごとの並びは別ものです。</Talk>
+        </>
+      )}
+
+      <details class="all">
+        <summary>豚肉も{data.cityCount}市すべてを見る（多い順）</summary>
+        <ol>
+          {pork.rows.map((r) => <li>{r.n}　{yen(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <h2>牛肉と豚肉、どちらにお金を使う？</h2>
+
+      <Talk speaker="kei">最後に、牛肉と豚肉に使ったお金を足して、そのうち牛肉がどれだけを占めるかを出しました。全国では{pct(share.national)}です。</Talk>
+      <Talk speaker="touko">{overLine}</Talk>
+
+      <h2>牛肉の割合が高い市 TOP5</h2>
+      <ol class="rank share">
+        {sMost.map((r) => (
+          <li>
+            <span class="pos">{sRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${r.minutes}%`}></span>
+            <span class="min">{pct(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <h2>牛肉の割合が低い市 TOP5</h2>
+      <ol class="rank low">
+        {sLeast.map((r) => (
+          <li>
+            <span class="pos">{sLowRankOf(r.minutes)}</span>
+            <span class="pref">{r.n}</span>
+            <span class="bar" style={`--w:${r.minutes}%`}></span>
+            <span class="min">{pct(r.minutes)}</span>
+          </li>
+        ))}
+      </ol>
+
+      <details class="all">
+        <summary>牛肉の割合も{data.cityCount}市すべてを見る（高い順）</summary>
+        <ol>
+          {share.rows.map((r) => <li>{r.n}　{pct(r.minutes)}</li>)}
+        </ol>
+      </details>
+
+      <Talk speaker="touko">お金の額で比べているのよね。牛肉が高い街なら、同じだけ食べても額は増えるのではなくて？</Talk>
+      <Talk speaker="kei">おっしゃるとおりです。これは「使ったお金」で、食べた量ではありません。それに、1つの市で調べる世帯は多くの市で百ほどなので、年によって順位が入れかわることもあります。</Talk>
+
+      <p class="note">数字は総務省統計局「家計調査」の、二人以上の世帯の1世帯当たり年間支出額です。家計調査の対象は都道府県庁所在市と政令指定都市の{data.cityCount}市で、都道府県別の数字はありません。「牛肉」「豚肉」は生の肉（精肉）で、ハムやソーセージ、調理済みの総菜は含みません。金額は買った量と値段の両方で決まるため、食べた量の順位とは一致しません。調べる世帯の数が市ごとに限られるので、1年分の数字には年ごとのゆれがあります。「牛肉の割合」は、牛肉と豚肉の支出額を足した額に占める牛肉の割合です。5番目と同じ値の市があるときは、TOP5の表にいっしょに載せています。</p>
+
+      <p class="cross">あわせて読む：<a href="/exhibits/gyoza/">日本一「餃子が好き」な市はどこだ</a>｜<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/exhibits/food/">日本一の「外食の街」はどの県だ</a></p>
+
+      <div class="source">
+        <p>出典：{data.source}</p>
+        <p>このサービスは、政府統計総合窓口(e-Stat)のAPI機能を使用していますが、サービスの内容は国によって保証されたものではありません。</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+<style>
+.exhibit{padding:56px 0 80px;max-width:720px;margin:0 auto}
+.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
+h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.5rem,4vw,2.2rem);margin-top:8px}
+.sub{color:var(--ink-soft);font-size:.85rem;margin-top:6px;margin-bottom:28px}
+h2{font-family:"Shippori Mincho",serif;font-size:1.15rem;margin:40px 0 16px;border-left:4px solid var(--stamp);padding-left:12px}
+.highlight{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}
+@media(max-width:560px){.highlight{grid-template-columns:1fr}}
+.card{position:relative;border:1px solid var(--line);border-radius:12px;padding:20px;background:#fff;display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.card .label{font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft)}
+.card strong{font-family:"Shippori Mincho",serif;font-size:1.9rem;line-height:1.2}
+.card .num{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.1rem}
+.card--hot .num{color:#b23a2f}
+.card--cool .num{color:#2d6a4f}
+.seal{
+  position:absolute;top:12px;right:14px;width:48px;height:48px;
+  border:2px solid currentColor;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;gap:1px;
+  transform:rotate(-12deg);opacity:.55;
+  font-family:"Shippori Mincho",serif;
+}
+.seal b{font-size:.8rem;line-height:1;letter-spacing:.06em}
+.card--hot .seal{color:#b23a2f}
+.card--cool .seal{color:#2d6a4f}
+.rank{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px}
+.rank li{display:grid;grid-template-columns:2em 6.5em 1fr auto;align-items:center;gap:10px}
+.rank .pos{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600}
+.rank .bar{height:10px;border-radius:99px;background:var(--stamp);width:var(--w);opacity:.85;min-width:8px}
+.rank.low .bar{background:#3a6b52}
+.rank.pork .bar{background:#c07a5a}
+.rank.share .bar{background:#8a5a7a}
+.rank .min{font-family:"IBM Plex Mono",monospace;font-size:.85rem;color:var(--ink-soft)}
+.all{margin:32px 0}
+.all summary{cursor:pointer;color:var(--stamp);font-size:.9rem}
+.all ol{columns:2;margin-top:14px;font-size:.9rem;color:var(--ink-soft)}
+@media(max-width:560px){.all ol{columns:1}}
+.note{margin-top:28px;font-size:.85rem;color:var(--ink-soft);line-height:1.9}
+.cross{margin-top:36px;font-size:.9rem}
+.cross a{color:var(--stamp)}
+.source{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.75rem;color:var(--ink-soft);line-height:1.8}
+</style>

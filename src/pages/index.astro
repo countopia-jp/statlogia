@@ -7,7 +7,8 @@ import { getReadingData } from '../lib/reading.js';
 import { getSolarData } from '../lib/solar.js';
 import { getKaraokeData } from '../lib/karaoke.js';
 import { news } from '../data/news.js';
-import { getHousingTypeData } from '../lib/housing-type.js';
+import { getBeefPorkData } from '../lib/beef-pork.js';
+import fs from 'node:fs';
 
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
 
@@ -26,7 +27,9 @@ const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
 const solarTop = (await getSolarData()).rows[0];
 const karaokeTop = (await getKaraokeData()).rows[0];
-const houseTop = (await getHousingTypeData()).rows[0];
+const beefTop = (await getBeefPorkData()).rows[0];
+// 絵がまだ無い展示のカードは、絵なしで出す
+const hasThumb = (slug) => fs.existsSync(`public/images/exhibits/${slug}-thumb.webp`);
 const reading = await getReadingData();
 const readingTop = reading.rows[0];
 
@@ -138,15 +141,6 @@ const prefectures = [
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/housing-type/">
-          <img class="card-img" src="/images/exhibits/housing-type-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>27</b></span>
-          <span class="pc-kind">最多・{houseTop.n}</span>
-          <span class="pc-num">{houseTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>一戸建てと木の家、日本一はどの県だ</h3>
-          <p>住まいに占める一戸建ての割合と、一戸建てのうち木造の割合を47都道府県で比較。木の家の割合も、県ごとに並べています。</p>
-          <span class="c-place">住まいの広場</span>
-        </a>
         <a class="card pc" href="/exhibits/solar/">
           <img class="card-img" src="/images/exhibits/solar-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>28</b></span>
@@ -164,6 +158,15 @@ const prefectures = [
           <h3>カラオケと楽器、日本一はどの県だ</h3>
           <p>カラオケと楽器の演奏の行動者率を47都道府県で比較。いちばん多い県と、県ごとの並びの違いをご覧ください。</p>
           <span class="c-place">趣味の広場</span>
+        </a>
+        <a class="card pc" href="/exhibits/beef-pork/">
+          {hasThumb('beef-pork') && <img class="card-img" src="/images/exhibits/beef-pork-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>30</b></span>
+          <span class="pc-kind">牛肉・最多・{beefTop.n}</span>
+          <span class="pc-num">{beefTop.minutes.toLocaleString()}<small>円</small></span>
+          <h3>牛肉と豚肉、日本一はどの市だ</h3>
+          <p>1世帯が1年間に牛肉と豚肉へ使ったお金を、県庁所在市と政令指定都市の52市で比較。牛肉と豚肉では、上位の顔ぶれががらりと変わります。</p>
+          <span class="c-place">暮らしの広場</span>
         </a>
       </div>
       <div class="more-actions">
@@ -216,7 +219,7 @@ const prefectures = [
         </a>
       </div>
       <div class="more-actions">
-        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全24窓口）→</a>
+        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全28窓口）→</a>
       </div>
     </section>
 

@@ -13,5 +13,9 @@ import { PREF_ECONOMY } from './pref-economy.js';
 import { HOUSEHOLD } from './household.js';
 import { FIRE_EMS } from './fire-ems.js';
 import { CULTURE } from './culture.js';
+import { TOWN_ELDERLY } from './town-elderly.js';
+import { TOWN_KIDS } from './town-kids.js';
+import { TOWN_INDUSTRY } from './town-industry.js';
+import { TOWN_WORKPLACE } from './town-workplace.js';
 
-export const ROOMS = Object.fromEntries([SKY, DISASTER, TOWN_FOREST, NATURE, TOWN_WORK, TOWN_SHOPS, FARM_SEA, STAY, LAND_PRICE, WORK_STYLE, PREF_ECONOMY, HOUSEHOLD, FIRE_EMS, CULTURE].map((r) => [r.id, r]));
+export const ROOMS = Object.fromEntries([SKY, DISASTER, TOWN_FOREST, NATURE, TOWN_WORK, TOWN_SHOPS, FARM_SEA, STAY, LAND_PRICE, WORK_STYLE, PREF_ECONOMY, HOUSEHOLD, FIRE_EMS, CULTURE, TOWN_ELDERLY, TOWN_KIDS, TOWN_INDUSTRY, TOWN_WORKPLACE].map((r) => [r.id, r]));

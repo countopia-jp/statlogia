@@ -263,6 +263,52 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
+    <section class="rr-group" aria-label="わが町をくわしく">
+      <h2 class="rr-group-title">わが町をくわしく</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/town-elderly/">
+          {thumbOf('town-elderly') && <img class="rr-card-img" src={thumbOf('town-elderly')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の老人ホーム</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、老人福祉施設・特別養護老人ホーム・有料老人ホームの数と定員を、全国と県内の順位で。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会福祉施設等調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-kids/">
+          {thumbOf('town-kids') && <img class="rr-card-img" src={thumbOf('town-kids')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の保育所と子どもの施設</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、保育所等の数（公営・民営）と公営の割合、児童館なども含む児童福祉施設等の数を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会福祉施設等調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-industry/">
+          {thumbOf('town-industry') && <img class="rr-card-img" src={thumbOf('town-industry')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の業種</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、町の事業所で働く人がお店・飲食や宿・医療や福祉・ものづくりなど、どの業種にいるかを割合で。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（経済センサス）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-workplace/">
+          {thumbOf('town-workplace') && <img class="rr-card-img" src={thumbOf('town-workplace')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>働きに出る町・来る町</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、町に住む人がどこで働いているかと、町の外から働きに来る人の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（国勢調査）</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
     <section class="rr-group" aria-label="学びと文化">
       <h2 class="rr-group-title">学びと文化</h2>
       <div class="rr-grid">

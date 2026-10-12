@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Room from '../../components/Room.astro';
+import { TOWN_KIDS } from '../../data/rooms/town-kids.js';
+const room = TOWN_KIDS;
+---
+<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
+  <Room room={room} />
+</BaseLayout>
