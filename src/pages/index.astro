@@ -4,10 +4,9 @@ import Talk from '../components/Talk.astro';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
 import { getReadingData } from '../lib/reading.js';
-import { getSolarData } from '../lib/solar.js';
-import { getKaraokeData } from '../lib/karaoke.js';
 import { news } from '../data/news.js';
-import { getBeefPorkData } from '../lib/beef-pork.js';
+import { getKakeiPair } from '../lib/kakei-pair.js';
+import { getActivityPair } from '../lib/activity-pair.js';
 import fs from 'node:fs';
 
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
@@ -25,9 +24,9 @@ const priceTop = price.rows[0];
 const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
-const solarTop = (await getSolarData()).rows[0];
-const karaokeTop = (await getKaraokeData()).rows[0];
-const beefTop = (await getBeefPorkData()).rows[0];
+const breadTop = (await getKakeiPair('010120000', '010110001')).rows[0];
+const movieTop = (await getActivityPair('04', '02')).rows[0];
+const campTop = (await getActivityPair('34', '33')).rows[0];
 // 絵がまだ無い展示のカードは、絵なしで出す
 const hasThumb = (slug) => fs.existsSync(`public/images/exhibits/${slug}-thumb.webp`);
 const reading = await getReadingData();
@@ -122,32 +121,32 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/solar/">
-          <img class="card-img" src="/images/exhibits/solar-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>28</b></span>
-          <span class="pc-kind">最多・{solarTop.n}</span>
-          <span class="pc-num">{solarTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>日本一「太陽光発電の家」県はどこだ</h3>
-          <p>人の住む家のうち、太陽光発電機器のある家の割合を47都道府県で比較。いちばん多い県と少ない県の開きをご覧ください。</p>
-          <span class="c-place">住まいの広場</span>
+        <a class="card pc" href="/exhibits/bread-rice/">
+          {hasThumb('bread-rice') && <img class="card-img" src="/images/exhibits/bread-rice-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>32</b></span>
+          <span class="pc-kind">パン・最多・{breadTop.n}</span>
+          <span class="pc-num">{breadTop.minutes.toLocaleString()}<small>円</small></span>
+          <h3>パンとお米、日本一はどの市だ</h3>
+          <p>1世帯が1年間にパンとお米へ使ったお金を、県庁所在市と政令指定都市で比較。パンとお米を足したうち、パンがどれだけかも並べます。</p>
+          <span class="c-place">暮らしの広場</span>
         </a>
-        <a class="card pc" href="/exhibits/karaoke/">
-          <img class="card-img" src="/images/exhibits/karaoke-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>29</b></span>
-          <span class="pc-kind">最多・{karaokeTop.n}</span>
-          <span class="pc-num">{karaokeTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>カラオケと楽器、日本一はどの県だ</h3>
-          <p>カラオケと楽器の演奏の行動者率を47都道府県で比較。いちばん多い県と、県ごとの並びの違いをご覧ください。</p>
+        <a class="card pc" href="/exhibits/movies-art/">
+          {hasThumb('movies-art') && <img class="card-img" src="/images/exhibits/movies-art-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>33</b></span>
+          <span class="pc-kind">映画館・最多・{movieTop.n}</span>
+          <span class="pc-num">{movieTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>映画館と美術館、日本一はどの県だ</h3>
+          <p>映画館で映画を見た人と、美術鑑賞をした人の割合を47都道府県で比較。二つの鑑賞で、県の並びをくらべます。</p>
           <span class="c-place">趣味の広場</span>
         </a>
-        <a class="card pc" href="/exhibits/beef-pork/">
-          {hasThumb('beef-pork') && <img class="card-img" src="/images/exhibits/beef-pork-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>30</b></span>
-          <span class="pc-kind">牛肉・最多・{beefTop.n}</span>
-          <span class="pc-num">{beefTop.minutes.toLocaleString()}<small>円</small></span>
-          <h3>牛肉と豚肉、日本一はどの市だ</h3>
-          <p>1世帯が1年間に牛肉と豚肉へ使ったお金を、県庁所在市と政令指定都市で比較。牛肉と豚肉で、上位の顔ぶれをくらべます。</p>
-          <span class="c-place">暮らしの広場</span>
+        <a class="card pc" href="/exhibits/camp-park/">
+          {hasThumb('camp-park') && <img class="card-img" src="/images/exhibits/camp-park-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>34</b></span>
+          <span class="pc-kind">キャンプ・最多・{campTop.n}</span>
+          <span class="pc-num">{campTop.minutes.toFixed(1)}<small>％</small></span>
+          <h3>キャンプと遊園地、日本一はどの県だ</h3>
+          <p>キャンプをした人と、遊園地や動植物園・水族館に行った人の割合を47都道府県で比較。外の遊びを二つ、県ごとにくらべます。</p>
+          <span class="c-place">趣味の広場</span>
         </a>
       </div>
       <div class="more-actions">
