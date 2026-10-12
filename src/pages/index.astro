@@ -53,19 +53,6 @@ const monthlyFacts = [
   { text: `本を読む人がいちばん多いのは${readingTop.n}で${num(readingTop.minutes)}％です。`, href: '/exhibits/reading/' },
 ];
 const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
-
-const prefectures = [
-  ['01','北海道'],['02','青森県'],['03','岩手県'],['04','宮城県'],['05','秋田県'],
-  ['06','山形県'],['07','福島県'],['08','茨城県'],['09','栃木県'],['10','群馬県'],
-  ['11','埼玉県'],['12','千葉県'],['13','東京都'],['14','神奈川県'],['15','新潟県'],
-  ['16','富山県'],['17','石川県'],['18','福井県'],['19','山梨県'],['20','長野県'],
-  ['21','岐阜県'],['22','静岡県'],['23','愛知県'],['24','三重県'],['25','滋賀県'],
-  ['26','京都府'],['27','大阪府'],['28','兵庫県'],['29','奈良県'],['30','和歌山県'],
-  ['31','鳥取県'],['32','島根県'],['33','岡山県'],['34','広島県'],['35','山口県'],
-  ['36','徳島県'],['37','香川県'],['38','愛媛県'],['39','高知県'],['40','福岡県'],
-  ['41','佐賀県'],['42','長崎県'],['43','熊本県'],['44','大分県'],['45','宮崎県'],
-  ['46','鹿児島県'],['47','沖縄県'],
-];
 ---
 <BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
   <main>
@@ -115,18 +102,13 @@ const prefectures = [
 
     <!-- 県選択：紙の外、方眼の上に置く -->
     <div class="hero-row">
-      <form class="hero-search" action="/population/" method="get">
-        <label for="hero-pref">あなたの県は、どんな数字？</label>
+      <form class="hero-search" action="/search/" role="search" onsubmit="location.href='/search/#q='+encodeURIComponent(this.querySelector('input').value);return false">
+        <label for="hero-q">知りたいのは、どの数字？</label>
         <div class="hero-search-row">
-          <select id="hero-pref" name="pref" required>
-            <option value="" disabled selected>都道府県を選ぶ</option>
-            {prefectures.map(([code, name]) => (
-              <option value={name}>{name}</option>
-            ))}
-          </select>
-          <button type="submit">見にいく →</button>
+          <input id="hero-q" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" required />
+          <button type="submit">たずねる →</button>
         </div>
-        <p class="hero-search-note">「国勢の間」で、人口・世帯の数字をご覧いただけます。</p>
+        <p class="hero-search-note">「たずね窓口」で、その数字が載っている窓口と展示をご案内します。</p>
       </form>
     </div>
 
@@ -218,7 +200,7 @@ const prefectures = [
         </a>
       </div>
       <div class="more-actions">
-        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全28窓口）→</a>
+        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全32窓口）→</a>
       </div>
     </section>
 
@@ -408,7 +390,7 @@ h1 .num{color:var(--stamp)}
 .hero-search-note{
   margin-top:8px;font-size:.72rem;color:var(--ink-soft);
 }
-.hero-search select{
+.hero-search select,.hero-search input{
   flex:1;min-width:120px;padding:7px 9px;border:1px solid var(--line);
   border-radius:8px;background:#fff;font-size:.85rem;color:inherit;
 }
@@ -575,7 +557,7 @@ h1 .num{color:var(--stamp)}
   }
   .hero-search label{margin-bottom:6px;font-size:.76rem}
   .hero-search-note{margin-top:6px;font-size:.7rem;line-height:1.6}
-  .hero-search select{padding:6px 8px}
+  .hero-search select,.hero-search input{padding:6px 8px}
   .hero-search button{padding:6px 12px}
 
   /* 橙子の高札：文字を少し大きく */
@@ -609,7 +591,7 @@ h1 .num{color:var(--stamp)}
 @media(max-width:600px){
   /* 県選択：ボタンを下に回して横幅を確保 */
   .hero-search-row{flex-direction:column;align-items:stretch}
-  .hero-search select{width:100%}
+  .hero-search select,.hero-search input{width:100%}
   .hero-search button{width:100%;padding:9px 14px}
   .hero-search label{font-size:.85rem}
   .hero-search-note{font-size:.76rem;line-height:1.8}

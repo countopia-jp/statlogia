@@ -1,0 +1,33 @@
+// 閲覧室「図書館の利用」（都道府県・文化 G14xx、A1101 で割る）
+const G = '0000010107';
+const A = '0000010101';
+const per = (a, pop, n) => (a === null || !pop ? null : (a / pop) * n);
+const pop = [A, 'A1101'];
+export const LIBRARY = {
+  id: 'library',
+  scope: 'pref',
+  path: '/library/',
+  description: '都道府県を選んで、図書館の数と、蔵書の数・登録している人・貸し出された本の冊数を、人口あたりでご覧いただける窓口。',
+  title: '図書館の利用',
+  shelf: '学びと文化',
+  imageAlt: '',
+  lead: '図書館に本はどれだけあって、どれだけ借りられているのか。<br />県ごとに、人口あたりの数でご覧ください。',
+  intro: [
+    ['kei', 'こちらは、図書館の利用の窓口です。図書館の数と、本の数、借りられた本の冊数をお出しします。'],
+    ['touko', '本を、ただで借りられるのでしょう？　わたくしの頃より、ずいぶん増えたのね。'],
+    ['kei', 'はい。どれも人口あたりに直してあります。市区町村ごとの図書館の数は「わが町の図書館と公民館」でどうぞ。'],
+  ],
+  notes: [
+    '文部科学省の社会教育調査によるものです（3年ごとの調査）。公立と私立の図書館を合わせた数です。',
+    '登録している人は、図書館の利用者として登録している人の数です。住んでいる県の外の図書館に登録している人も、その図書館の県で数えます。',
+    '人口あたりの値は、同じ年の総人口で割って計算しています。',
+  ],
+  cross: [['/town-culture/', 'わが町の図書館と公民館'], ['/culture/', '文化施設'], ['/exhibits/reading/', '本とマンガ、日本一はどの県だ']],
+  indicators: [
+    { key: 'libs', label: '図書館（人口10万人あたり）', unit: '館', decimals: 2, rankWord: '多い順', needs: [[G, 'G1401'], pop], carry: ['A1101'], calc: (g) => per(g('G1401'), g('A1101'), 1e5) },
+    { key: 'books', label: '図書館の蔵書（1人あたり）', unit: '冊', decimals: 2, rankWord: '多い順', needs: [[G, 'G1403'], pop], carry: ['A1101'], calc: (g) => per(g('G1403'), g('A1101'), 1) },
+    { key: 'lend', label: '貸し出された本（1人あたり）', unit: '冊', decimals: 2, rankWord: '多い順', needs: [[G, 'G1406'], pop], carry: ['A1101'], calc: (g) => per(g('G1406'), g('A1101'), 1) },
+    { key: 'members', label: '図書館に登録している人（人口100人あたり）', unit: '人', decimals: 1, rankWord: '多い順', needs: [[G, 'G1404'], pop], carry: ['A1101'], calc: (g) => per(g('G1404'), g('A1101'), 100) },
+    { key: 'staff', label: '図書館の職員（人口10万人あたり）', unit: '人', decimals: 1, rankWord: '多い順', needs: [[G, 'G1402'], pop], carry: ['A1101'], calc: (g) => per(g('G1402'), g('A1101'), 1e5) },
+  ],
+};

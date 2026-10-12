@@ -264,6 +264,26 @@ import Talk from '../../components/Talk.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（宿泊旅行統計ほか）</p>
           </div>
         </a>
+        <a class="rr-card" href="/town-farm/">
+          {thumbOf('town-farm') && <img class="rr-card-img" src={thumbOf('town-farm')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の農家</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、販売農家と自給的農家の数、販売農家のうち専業農家の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（農林業センサス）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-business-size/">
+          {thumbOf('town-business-size') && <img class="rr-card-img" src={thumbOf('town-business-size')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の事業所の大きさ</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、民営の事業所を働く人の数（1〜4人、5〜9人…）で分けた割合と、個人で営む事業所の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（経済センサス）</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -357,6 +377,26 @@ import Talk from '../../components/Talk.astro';
             都道府県を選んで、博物館・劇場や音楽堂・体育施設の数（人口あたり）と、重要文化財・史跡名勝天然記念物の件数を。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/sports-fields/">
+          {thumbOf('sports-fields') && <img class="rr-card-img" src={thumbOf('sports-fields')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>運動の場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、公共の体育館・プール・野球場・テニスコート・武道場・キャンプ場と、民間の運動施設の数（人口あたり）を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/library/">
+          {thumbOf('library') && <img class="rr-card-img" src={thumbOf('library')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>図書館の利用</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、図書館の数と、蔵書・登録している人・貸し出された本の冊数（人口あたり）を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
           </div>
         </a>
       </div>
