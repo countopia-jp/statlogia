@@ -175,7 +175,9 @@ const data = await getMuniMigrationData();
       function updateLines(a) {
         const delta = a.v[3], sr = a.v[SR_I];
         const kei = document.getElementById('keiLine');
-        const touko = document.getElementById('toukoLine');
+        const TOUKO_LINES = ["引っ越してくる人と出ていく人を、両方数えているのね。", "わたくしの頃は、生まれた町で一生暮らす人が多かったわ。", "人が動くと、町も変わっていくのね。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasDelta = typeof delta === 'number';
         let k = '';
         if (hasDelta) {

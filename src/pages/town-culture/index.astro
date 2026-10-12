@@ -169,7 +169,9 @@ const data = await getMuniCultureData();
       function updateLines(a) {
         const lib = a.v[LIB], komin = a.v[KOMIN], libPer = a.v[LIB_PER];
         const kei = document.getElementById('keiLine');
-        const touko = document.getElementById('toukoLine');
+        const TOUKO_LINES = ["図書館が、町ごとに数えてあるのね！", "公民館？　町の人が集まるところなのね。", "わたくしの頃、本は高くて、なかなか買えなかったのよ。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasLib = typeof lib === 'number';
         const hasKomin = typeof komin === 'number';
         let k = '';

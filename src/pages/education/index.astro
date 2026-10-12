@@ -140,7 +140,9 @@ const yearNote = '2024年度';
 
       function updateCharacterLines(area) {
         const keiEl = document.getElementById('keiLine');
-        const toukoEl = document.getElementById('toukoLine');
+        const TOUKO_LINES = ["学校の数も、先生の数も、ちゃんと分かるのね。", "わたくしの学校も、教室はひとつきりでしたのよ。", "子どもの数まで、学校ごとに数えてあるなんて。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const toukoEl = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const elCount = val(area, 'E2101');
         const elStudents = val(area, 'E2501');
         const hsCount = val(area, 'E4101');

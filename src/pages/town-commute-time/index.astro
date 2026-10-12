@@ -135,7 +135,9 @@ const data = await getMuniCommuteTimeData();
       function updateLines(a) {
         const short = a.v[SHORT], long = a.v[LONG], vlong = a.v[VLONG];
         const kei = document.getElementById('keiLine');
-        const touko = document.getElementById('toukoLine');
+        const TOUKO_LINES = ["通うのにかかる時間まで、調べてあるの？", "わたくしの頃は、みんな歩いて通ったものよ。", "片道の時間を、家ごとに尋ねたのかしら。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasShort = typeof short === 'number';
         const hasLong = typeof long === 'number';
         const hasVlong = typeof vlong === 'number';

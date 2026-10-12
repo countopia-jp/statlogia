@@ -207,7 +207,10 @@ const lastYear = pl.years[pl.years.length - 1];
         if (above === vals.length) t = 'まあ、どの分類も100より上なのね。';
         else if (below === vals.length) t = 'どの分類も、100より下なのね。';
         else t = `100より上が${above}つ、下が${below}つ${even ? `、ちょうど100が${even}つ` : ''}。分類によって分かれるのねえ。`;
-        document.getElementById('plTouko').textContent = t;
+        const TOUKO_LINES = ["物の値段を、県ごとにくらべてあるのね。", "わたくしの頃は、お豆腐が一丁いくらだったかしら。", "百を目安に高い安いを見るのね。面白い測り方だわ。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const plToukoSlot = { set textContent(v) { const el = document.getElementById('plTouko'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('plKei').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
+        plToukoSlot.textContent = t;
       }
 
       // ---- 移りかわり ----

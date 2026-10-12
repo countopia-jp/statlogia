@@ -187,7 +187,9 @@ const data = await getMuniPopulationData();
       function updateLines(a) {
         const now = a.v[0], future = a.v[5], aging = a.v[1];
         const kei = document.getElementById('keiLine');
-        const touko = document.getElementById('toukoLine');
+        const TOUKO_LINES = ["町の人の数が、何年も先まで見通してあるの？", "わたくしの頃の町より、ずっと大きな町もあるのね。", "町ごとに人の数が分かるなんて、便利ねえ。"];
+        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasNow = typeof now === 'number' && now > 0;
         const hasFuture = typeof future === 'number';
         const hasAging = typeof aging === 'number';

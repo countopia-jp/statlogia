@@ -88,7 +88,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 </main>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script is:inline define:vars={{ ROOM_ID: room.id }}>
+<script is:inline define:vars={{ ROOM_ID: room.id, TOUKO: room.touko || [] }}>
 (async function () {
   const res = await fetch(`/data/room-${ROOM_ID}.json`);
   const D = await res.json();
@@ -202,6 +202,9 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     drawLine();
   }
 
+  // 橙子の一言は順位を言い直さず、その窓口の数字への驚きや感心を言う（町を選ぶたびに入れ替わる）
+  const TOUKO_COMMON = ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの頃に、こんな台帳があったら便利だったでしょうね。'];
+  const toukoLine = (a) => { const pool = TOUKO.length ? TOUKO : TOUKO_COMMON; return pool[(parseInt(a.c, 10) || 0) % pool.length]; };
   function lines(a, ranks) {
     const kei = document.getElementById('rmKei');
     const touko = document.getElementById('rmTouko');
@@ -214,7 +217,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     if (ranks.length === 1) {
       const x = ranks[0];
       kei.textContent = `${name}の「${x.ind.label}」は、${x.n}${isPref ? '都道府県' : 'の市区町村'}のなかで${x.rk}番目（${x.ind.rankWord}）です。`;
-      touko.textContent = 'ほかの土地とくらべると、よく分かるのね。';
+      touko.textContent = toukoLine(a);
       return;
     }
     // 比べやすいよう、順位を「上からの割合」にそろえる
@@ -242,16 +245,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     } else if (pos.every((x) => x.p <= 0.5)) {
       kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${rkRange}番目${sameWord}にあります。`;
     } else kei.textContent = `${name}の項目のうち、順位がいちばん上なのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下なのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
-    const seed = parseInt(a.c, 10) || 0;
-    let t;
-    if (allTop) t = ['どれも、上のほうなのね。', 'どの項目も、上のほうなのね。'][seed % 2];
-    else if (allBottom) t = ['どれも、下のほうなのね。', 'どの項目も、下のほうなのね。'][seed % 2];
-    else if (allMiddle) t = ['どれも、まんなかあたりなのね。', 'どの項目も、上にも下にも寄っていないのね。'][seed % 2];
-    else if (top.p <= 0.1 && bot.p >= 0.9) t = ['上のほうの項目も、下のほうの項目もあるのね。', '項目によって、ずいぶん順位が違うのねえ。'][seed % 2];
-    else if (top.p <= 0.1) t = `「${top.ind.label}」は、上のほうなのね。`;
-    else if (bot.p >= 0.9) t = `「${bot.ind.label}」は、下のほうなのね。`;
-    else t = ['項目によって、順位が違うのねえ。', 'ならべてみると、いろいろなのね。'][seed % 2];
-    touko.textContent = t;
+    touko.textContent = toukoLine(a);
   }
 
   // ---- 移りかわり ----
