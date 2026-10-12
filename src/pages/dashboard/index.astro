@@ -18,6 +18,10 @@ import Talk from '../../components/Talk.astro';
       </p>
       <p class="rr-note">※各窓口カードの「出典」年度はカード設置時点のものです。実際にお調べいただく数字は、常に最新の統計に自動で更新されています。</p>
     </header>
+    <form class="rr-search" action="/search/" role="search" onsubmit="location.href='/search/#q='+encodeURIComponent(this.querySelector('input').value);return false">
+      <label for="rrQ">どの窓口か分からないときは、言葉でたずねてください</label>
+      <div class="rr-search-row"><input id="rrQ" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" /><button type="submit">たずねる</button></div>
+    </form>
     <Talk speaker="kei">
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
     </Talk>
@@ -389,6 +393,11 @@ import Talk from '../../components/Talk.astro';
     /* 絵が左に入るので、2列は1101px以上だけ。高さは全棚でそろえる */
     @media (max-width: 1100px) { .rr-grid { grid-template-columns: 1fr; } }
     @media (min-width: 1101px) { .rr-card { min-height: 15.5rem; } }
+    .rr-search { margin: 8px 0 24px; padding: 14px 16px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+    .rr-search label { display: block; font-size: .8rem; color: var(--ink-soft); margin-bottom: 8px; }
+    .rr-search-row { display: flex; gap: 10px; }
+    .rr-search-row input { flex: 1; min-width: 0; font: inherit; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); }
+    .rr-search-row button { flex: 0 0 auto; font: inherit; font-weight: 700; padding: 9px 16px; border: 0; border-radius: 8px; background: var(--ink); color: var(--paper); cursor: pointer; }
     .rr-card {
       display: flex;
       flex-direction: column;
