@@ -39,9 +39,8 @@ const num = (v) => v.toFixed(1);
 const buildJst = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
 // 入国印の日付はビルド時のもの（月初の再ビルドで押し直される）
 const stampDate = buildJst.slice(0, 7).replace('-', '.');
-// 最終更新＝展示・窓口を足した日（news.js の先頭）／数字の取得＝ビルドした日
+// 数字の取得＝ビルドした日
 const dot = (d) => d.replaceAll('-', '.');
-const updatedDate = news.length ? dot(news[0].date) : '';
 const fetchedDate = dot(buildJst);
 
 // 今月の一数字：読み込み済みのデータから、月ごとに1つ選ぶ
@@ -110,7 +109,7 @@ const prefectures = [
           <span class="today-text">{monthlyFact.text}</span>
           <span class="today-more">→</span>
         </a>
-        <p class="site-dates">{updatedDate && <span>最終更新 <time datetime={updatedDate.replaceAll('.', '-')}>{updatedDate}</time></span>}<span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></p>
+        <p class="site-dates"><span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></p>
       </div>
     </div>
 
@@ -328,7 +327,7 @@ const prefectures = [
   display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
   color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
 }
-/* 最終更新日と、数字を取りに行った日（紙の右下） */
+/* 数字を取りに行った日（紙の右下） */
 .site-dates{
   display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 16px;margin:14px 0 0;
   font-family:"Zen Kaku Gothic New",sans-serif;font-size:.76rem;font-weight:400;letter-spacing:.06em;color:var(--ink-soft);
