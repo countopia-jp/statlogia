@@ -203,7 +203,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   }
 
   // 橙子の一言は順位を言い直さず、その窓口の数字への驚きや感心を言う（町を選ぶたびに入れ替わる）
-  const TOUKO_COMMON = ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの頃に、こんな台帳があったら便利だったでしょうね。'];
+  const TOUKO_COMMON = ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの時代にも、こんな台帳があったら便利なのに。'];
   const toukoLine = (a) => { const pool = TOUKO.length ? TOUKO : TOUKO_COMMON; return pool[(parseInt(a.c, 10) || 0) % pool.length]; };
   function lines(a, ranks) {
     const kei = document.getElementById('rmKei');

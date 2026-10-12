@@ -136,7 +136,7 @@ const twist = !sameTop && bothTop.length <= 2;
 
       <h2>{twist ? "ところが" : "こんどは"}、楽器の演奏を数えると</h2>
 
-      <Talk speaker="touko">楽器なら分かりますわ。わたくしの学校にも、オルガンがありましたもの。楽器を弾く人は、どうなの？</Talk>
+      <Talk speaker="touko">楽器なら分かりますわ。わたくしの学校にも、オルガンがありますもの。楽器を弾く人は、どうなの？</Talk>
       <Talk speaker="kei">全国で{fmt(inst.national)}。{sameNational ? 'カラオケとほぼ同じ数字です。' : `カラオケより${Math.abs(diff).toFixed(1)}ポイント${karaokeMore ? '少ない' : '多い'}数字です。`}そして、{sameTop ? 'いちばん多い県は同じでした。' : 'いちばん多い県が入れかわります。'}</Talk>
 
       <h2>楽器を演奏する人が多い県 TOP5</h2>

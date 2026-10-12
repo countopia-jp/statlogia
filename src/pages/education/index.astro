@@ -140,7 +140,7 @@ const yearNote = '2024年度';
 
       function updateCharacterLines(area) {
         const keiEl = document.getElementById('keiLine');
-        const TOUKO_LINES = ["学校の数も、先生の数も、ちゃんと分かるのね。", "わたくしの学校も、教室はひとつきりでしたのよ。", "子どもの数まで、学校ごとに数えてあるなんて。"];
+        const TOUKO_LINES = ["学校の数も、先生の数も、ちゃんと分かるのね。", "わたくしの学校も、教室はひとつきりですのよ。", "子どもの数まで、学校ごとに数えてあるなんて。"];
         // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const toukoEl = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const elCount = val(area, 'E2101');
@@ -158,7 +158,7 @@ const yearNote = '2024年度';
           const r = Math.round(ratio);
           if (ratio < medianRatio * 0.4) {
             kei = `小学校1校あたり約${r}人。全国の中央値（約${Math.round(medianRatio)}人）の半分より少ない町です。`;
-            touko = ['わたくしの学校も、教室はひとつきりでしたのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
+            touko = ['わたくしの学校も、教室はひとつきりですのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
           } else if (ratio > medianRatio * 2) {
             kei = `小学校1校あたり約${r}人。全国の中央値の2倍を超えています。`;
             touko = ['一校にこんなに大勢……運動会は壮観でしょうねえ。', 'お昼の給食を配るだけで、ひと仕事になりそうだわ。'][seed % 2];

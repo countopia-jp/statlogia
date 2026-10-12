@@ -158,7 +158,7 @@ const data = await getMuniMedicalData();
       function updateLines(a) {
         const doctor = a.v[DOCTOR], hospital = a.v[HOSPITAL], beds = a.v[BEDS];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["お医者さんの数まで、町ごとに分かるのね。", "わたくしの頃は、往診に来てくださるお医者さまが頼りだったわ。", "病院の寝台の数まで、数えてあるなんて。"];
+        const TOUKO_LINES = ["お医者さんの数まで、町ごとに分かるのね。", "わたくしの時代では、往診に来てくださるお医者さまが頼りなのよ。", "病院の寝台の数まで、数えてあるなんて。"];
         // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const num = (v) => Math.round(v).toLocaleString('ja-JP');

@@ -174,7 +174,7 @@ const data = await getMuniDaycareData();
       function updateLines(a) {
         const near = a.v[NEAR], far = a.v[FAR];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["お年寄りが昼間に通うところがあるのね。", "家からの道のりまで、測ってあるなんて。", "わたくしの頃は、お年寄りは縁側で日向ぼっこだったわ。"];
+        const TOUKO_LINES = ["お年寄りが昼間に通うところがあるのね。", "家からの道のりまで、測ってあるなんて。", "わたくしの時代では、お年寄りは縁側で日向ぼっこよ。"];
         // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasNear = typeof near === 'number';

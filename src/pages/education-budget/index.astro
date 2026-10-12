@@ -203,7 +203,7 @@ const yearNote = years.join('・');
 
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["県のお財布と、学校にかけるお金を並べてあるのね。", "子ども一人にかけるお金まで、分かるなんて。", "わたくしの頃は、教科書や帳面を大事に使ったものよ。"];
+        const TOUKO_LINES = ["県のお財布と、学校にかけるお金を並べてあるのね。", "子ども一人にかけるお金まで、分かるなんて。", "わたくしの時代では、教科書や帳面を大事に使っているのよ。"];
         // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const financeRank = stats['#D0110101'].rank[area.c];
