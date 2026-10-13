@@ -31,7 +31,7 @@ export const INDICATORS = [
 let _cache = null;
 
 function getAppId() {
-  const appId = import.meta.env.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
+  const appId = import.meta.env?.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
   if (!appId) throw new Error('[muni-commute.js] ESTAT_APP_ID が設定されていません');
   return appId;
 }

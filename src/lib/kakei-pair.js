@@ -17,7 +17,7 @@ const KUBUN = '03';
 const _cache = new Map();
 
 function getAppId() {
-  const appId = import.meta.env.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
+  const appId = import.meta.env?.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
   if (!appId) throw new Error('[kakei-pair.js] ESTAT_APP_ID が設定されていません');
   return appId;
 }

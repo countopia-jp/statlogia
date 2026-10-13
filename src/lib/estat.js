@@ -1,5 +1,5 @@
 // e-Stat APIからデータを取得するビルド時ユーティリティ
-const APP_ID = import.meta.env.ESTAT_APP_ID ?? process.env.ESTAT_APP_ID;
+const APP_ID = import.meta.env?.ESTAT_APP_ID ?? process.env.ESTAT_APP_ID;
 
 const BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json/getStatsData';
 

@@ -14,7 +14,7 @@ let cache = null;
 export async function getWasteData() {
   if (cache) return cache;
 
-  const appId = import.meta.env.ESTAT_APP_ID;
+  const appId = import.meta.env?.ESTAT_APP_ID;
   if (!appId) throw new Error('ESTAT_APP_ID が設定されていません');
 
   const qs = new URLSearchParams({

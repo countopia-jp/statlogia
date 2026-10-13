@@ -7,7 +7,7 @@
 // 全国(00000)の行は存在するが値が空なので、national は47県の単純平均を自分で出す。
 // キー名は全展示共通の規約に合わせて 県名=n / 値=minutes。
 
-const APP_ID = import.meta.env.ESTAT_APP_ID;
+const APP_ID = import.meta.env?.ESTAT_APP_ID;
 const BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_DATA_ID = '0000010102';
 

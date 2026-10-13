@@ -25,7 +25,7 @@ const FROM_YEAR = 2000;   // cdCat02=03 は2000年以降
 let _cache = null;
 
 function getAppId() {
-  const appId = import.meta.env.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
+  const appId = import.meta.env?.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
   if (!appId) throw new Error('[gyoza.js] ESTAT_APP_ID が設定されていません');
   return appId;
 }

@@ -17,7 +17,7 @@ const TAB_RATE = '202110A09B08';
 const _cache = new Map();
 
 function getAppId() {
-  const appId = import.meta.env.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
+  const appId = import.meta.env?.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
   if (!appId) throw new Error('[activity-pair.js] ESTAT_APP_ID が設定されていません');
   return appId;
 }
