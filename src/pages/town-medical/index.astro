@@ -1,4 +1,5 @@
 ---
+import { yearsText } from '../../lib/year-pick.js';
 import fs from 'node:fs';
 import path from 'node:path';
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/town-medical-large.webp'));
@@ -59,7 +60,7 @@ const data = await getMuniMedicalData();
 
     <footer class="tp-source">
       <p>
-        出典：{data.source}（{data.medYear}）<br />
+        出典：{data.source}（{yearsText(data.indicators)}）<br />
         {data.note}<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
       </p>

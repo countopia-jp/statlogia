@@ -82,7 +82,7 @@ function fromTownList(data, key, href, room, opt = {}) {
   for (const a of data.areas) values[a.c] = { v: a.v[idx] ?? null, x: !!a.x, n: a.n };
   return {
     label: opt.label || key, unit: cleanUnit(opt.unit ?? ind.unit), decimals: decOf(Object.values(values).map((o) => o.v)),
-    rankWord: opt.rankWord || '多い順', year: opt.year || ind.year || data.year || data.medYear || data.culYear || '', href, room: nameOf(href, room),
+    rankWord: opt.rankWord || '多い順', year: ind.year || opt.year || data.year || data.medYear || data.culYear || '', href, room: nameOf(href, room),
     values, compare: null, noRank: !!opt.noRank,
   };
 }

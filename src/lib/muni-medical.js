@@ -1,3 +1,4 @@
+import { makeYearBook } from './year-pick.js';
 // =====================================================
 // Countopia Stats - わが町の医療 データ取得モジュール
 // src/lib/muni-medical.js
@@ -40,12 +41,12 @@ const SERIES_CODE = 'I6100';
 const val = (v, code) => (v[code] === undefined ? null : v[code]);
 
 export const INDICATORS = [
-  { key: '病院', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5101') },
-  { key: '一般診療所', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5102') },
-  { key: '歯科診療所', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5103') },
-  { key: 'お医者さん', unit: '人', kind: 'base', calc: (v) => val(v, 'I6100') },
-  { key: '薬剤師', unit: '人', kind: 'base', calc: (v) => val(v, 'I6300') },
-  { key: '病院の病床数', unit: '床', kind: 'base', calc: (v) => val(v, 'I5211') },
+  { key: '病院', code: 'I5101', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5101') },
+  { key: '一般診療所', code: 'I5102', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5102') },
+  { key: '歯科診療所', code: 'I5103', unit: '施設', kind: 'base', calc: (v) => val(v, 'I5103') },
+  { key: 'お医者さん', code: 'I6100', unit: '人', kind: 'base', calc: (v) => val(v, 'I6100') },
+  { key: '薬剤師', code: 'I6300', unit: '人', kind: 'base', calc: (v) => val(v, 'I6300') },
+  { key: '病院の病床数', code: 'I5211', unit: '床', kind: 'base', calc: (v) => val(v, 'I5211') },
 ];
 
 let _cache = null;
@@ -110,6 +111,7 @@ async function fetchStatsData(statsDataId, codes, timeCodes) {
 
 export async function getMuniMedicalData() {
   if (_cache) return _cache;
+  const book = makeYearBook(); // 項目ごとに、そろっている最新の年を決める
 
   const medTimes = (await fetchTimes(STATS_ID_MED)).slice(0, RECENT_YEARS);
   const popTimes = (await fetchTimes(STATS_ID_POP)).slice(0, 12);
@@ -149,6 +151,7 @@ export async function getMuniMedicalData() {
       area.h[rec['@time']][rec['@cat01']] = num;
       // 時点の昇順に処理しているので、最後に入った値＝最新
       area.v[rec['@cat01']] = num;
+      book.add(rec['@cat01'], rec['@time'], rec['@area'], num); // 値と年を組で持つ
       if (!area.medYear || rec['@time'] > area.medYear) area.medYear = rec['@time'];
     }
   }
@@ -170,12 +173,14 @@ export async function getMuniMedicalData() {
     }
   }
 
+  const picked = Object.fromEntries(INDICATORS.map((i) => [i.code, book.pick(i.code)]));
   let medYear = null;
   let popYear = null;
 
   const areaList = [...areas.values()]
     .map((a) => {
-      const v = INDICATORS.map((ind) => ind.calc(a.v));
+      // 項目ごとに決めた年の値だけを出す（古い年の値を新しい年として見せない）
+      const v = INDICATORS.map((ind) => book.at(ind.code, picked[ind.code], a.c));
 
       if (a.medYear && (!medYear || a.medYear > medYear)) medYear = a.medYear;
       if (a.popYear && (!popYear || a.popYear > popYear)) popYear = a.popYear;
@@ -195,9 +200,9 @@ export async function getMuniMedicalData() {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ（表番号0000020109・0000020101）',
     note: 'その市区町村にある施設と人の数です。人口では割っていません。医療は市区町村の境をまたいで使われるため、となりの町の病院に通っている場合もあります。一般診療所は、数字のない市区町村があります。',
-    medYear: medYear ? timeName[medYear] || medYear : null,
+    medYear: (() => { const t = Object.values(picked).filter(Boolean).sort().at(-1); return t ? timeName[t] || t : null; })(),
     popYear: popYear ? timeName[popYear] || popYear : null,
-    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, decimal: !!i.decimal })),
+    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind, decimal: !!i.decimal, year: picked[i.code] ? timeName[picked[i.code]] || picked[i.code] : null })),
     areas: areaList,
   };
   return _cache;

@@ -1,3 +1,4 @@
+import { makeYearBook } from './year-pick.js';
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020101';
 const RECENT_YEARS = 40; // 国勢調査は5年に一度のため、12年では2点しか取れない。長めに遡って複数時点を確保する
@@ -6,9 +7,9 @@ const FETCH = ['A1101', 'A1301', 'A1302', 'A1303', 'A7101', 'A191007'];
 
 export const INDICATORS = [
   { key: '総人口',           unit: '人',   kind: 'base', code: 'A1101' },
-  { key: '高齢化率',         unit: '％',   kind: 'rate', calc: (v) => rate(v.A1303, v.A1101) },
-  { key: '年少人口率',       unit: '％',   kind: 'rate', calc: (v) => rate(v.A1301, v.A1101) },
-  { key: '生産年齢人口率',   unit: '％',   kind: 'rate', calc: (v) => rate(v.A1302, v.A1101) },
+  { key: '高齢化率',         unit: '％',   kind: 'rate', codes: ['A1303', 'A1101'], calc: (v) => rate(v.A1303, v.A1101) },
+  { key: '年少人口率',       unit: '％',   kind: 'rate', codes: ['A1301', 'A1101'], calc: (v) => rate(v.A1301, v.A1101) },
+  { key: '生産年齢人口率',   unit: '％',   kind: 'rate', codes: ['A1302', 'A1101'], calc: (v) => rate(v.A1302, v.A1101) },
   { key: '世帯数',           unit: '世帯', kind: 'base', code: 'A7101' },
   { key: '2050年の推計人口', unit: '人',   kind: 'base', code: 'A191007' },
 ];
@@ -106,6 +107,7 @@ export async function getMuniPopulationData() {
   }
 
   let latestTime = null;
+  const book = makeYearBook(); // 項目ごとに、そろっている最新の年を決める
   const valueList = asArray(statData.DATA_INF.VALUE);
   // 履歴を時系列順（古い→新しい）で積みたいので昇順ソート
   valueList.sort((a, b) => a['@time'].localeCompare(b['@time']));
@@ -126,16 +128,21 @@ export async function getMuniPopulationData() {
 
     // 最新値の採用（昇順ソートなので都度上書きすれば最後に残るのは最新）
     area.v[cat] = num;
+    book.add(cat, rec['@time'], rec['@area'], num); // 値と年を組で持つ
     if (!latestTime || rec['@time'] > latestTime) latestTime = rec['@time'];
   }
 
+  // 項目ごとの採用年（割合は分子の採用年）
+  const pickedTime = Object.fromEntries(INDICATORS.map((i) => [i.key, book.pick(i.code || i.codes[0])]));
   const areaList = [...areas.values()]
     .map((a) => {
-      const v = INDICATORS.map((ind) =>
-        ind.kind === 'base'
-          ? (a.v[ind.code] !== undefined ? a.v[ind.code] : null)
-          : ind.calc(a.v)
-      );
+      // 項目ごとに決めた年の値だけを出す。割合は、分子の年と同じ年の分母で計算する
+      const v = INDICATORS.map((ind) => {
+        if (ind.kind === 'base') return book.at(ind.code, pickedTime[ind.key], a.c);
+        const t = pickedTime[ind.key];
+        const vals = Object.fromEntries(ind.codes.map((c) => [c, book.at(c, t, a.c) ?? undefined]));
+        return ind.codes.every((c) => vals[c] !== undefined) ? ind.calc(vals) : null;
+      });
       // 総人口の時系列（年名に変換して昇順のまま）
       const series = (a.h[SERIES_CODE] || []).map((pt) => ({
         year: timeNameByCode[pt.time] || pt.time,
@@ -150,8 +157,11 @@ export async function getMuniPopulationData() {
     generated: new Date().toISOString().slice(0, 10),
     source: '政府統計の総合窓口(e-Stat) 社会・人口統計体系 市区町村データ 基礎データ（表番号0000020101）',
     note: '高齢化率・年少人口率・生産年齢人口率は年齢別人口から算出。2050年は将来推計人口。政令指定都市の行政区と、特別区部計はランキング除外（選択には表示）。',
-    year: latestTime ? timeNameByCode[latestTime] || null : null,
-    indicators: INDICATORS.map((i) => ({ key: i.key, unit: i.unit, kind: i.kind })),
+    year: (() => { const t = Object.values(pickedTime).filter(Boolean).sort().at(-1); return t ? timeNameByCode[t] || t : null; })(),
+    indicators: INDICATORS.map((i) => {
+      const t = pickedTime[i.key];
+      return { key: i.key, unit: i.unit, kind: i.kind, year: t ? timeNameByCode[t] || t : null };
+    }),
     areas: areaList,
   };
   return _cache;

@@ -1,4 +1,5 @@
 ---
+import { yearsText } from '../../lib/year-pick.js';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { getMuniPopulationData } from '../../lib/muni-population.js';
@@ -64,7 +65,7 @@ const data = await getMuniPopulationData();
 
     <footer class="tp-source">
       <p>
-        出典：{data.source}（{data.year}）<br />
+        出典：{data.source}（{yearsText(data.indicators)}）<br />
         {data.note}<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
       </p>
