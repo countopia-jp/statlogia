@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 地域の台帳（県・町を1つ選んで、いろいろな数字を一覧で見る）
+// Countopia Stats - 展望塔の台帳（日本全体・県・町を1つ選んで、いろいろな数字を一覧で見る）
 // src/lib/area-ledger.js
 //
 // 新しく e-Stat を引かず、閲覧室で使っている数字（共通エンジンと手書きページの lib。
@@ -156,17 +156,41 @@ export async function getPrefLedger() {
     group('学びと文化', [
       await fromRoom('library', 'libs'), await fromRoom('library', 'lend'), await fromRoom('culture', 'museums'),
       await fromRoom('sports-fields', 'gym'),
-      fromPrefList(ict, 'E9401', '/ict/', '情報化の帳場', { label: '学校の端末1台あたりの児童数（小学校）' }),
+      fromPrefList(ict, 'E9421', '/ict/', '情報化の帳場', { label: 'デジタル教科書の整備率（小学校）', rankWord: '高い順' }),
     ]),
     group('消防と救急', [await fromRoom('fire-ems', 'volunteers'), await fromRoom('fire-ems', 'emsCalls')]),
     group('過ごし方', [await fromRoom('leisure', 'sport'), await fromRoom('leisure', 'trip'), await fromRoom('volunteer', 'all')]),
   ].filter((g) => g.items.length);
+
+  // 人口の窓口は全国の行を持たないので、47都道府県から計算する（総数は合計、割合は人口で重みづけた平均）
+  const popItems = groups[0].items;
+  const popOf = Object.fromEntries((popItems.find((it) => it.label === '総人口')?.values ? Object.entries(popItems.find((it) => it.label === '総人口').values) : []).map(([c, o]) => [c, o.v]));
+  const sumOf = (it) => Object.values(it.values).reduce((s, o) => s + (ok(o.v) ? o.v : 0), 0);
+  const wAvg = (it) => {
+    let s = 0, w = 0;
+    for (const [c, o] of Object.entries(it.values)) if (ok(o.v) && ok(popOf[c])) { s += o.v * popOf[c]; w += popOf[c]; }
+    return w ? Number((s / w).toFixed(it.decimals)) : null;
+  };
+  for (const it of popItems) {
+    if (it.label === '総人口' || it.label === '世帯数') it.compare = { label: '全国', v: sumOf(it), calc: true };
+    else if (/高齢化率|年少人口率|婚姻率/.test(it.label)) it.compare = { label: '全国', v: wAvg(it), calc: true };
+  }
+  for (const g of groups) for (const it of g.items) if (it.href === '/prices/') it.hideNational = true;
 
   const prefs = pop.areas.map((a) => ({ c: a.c, n: a.n })).sort((a, b) => a.c.localeCompare(b.c));
   const codes = prefs.map((p) => p.c);
   for (const g of groups) for (const it of g.items) { const r = rankOf(it, codes); it.rank = r.rank; it.count = r.count; }
   _pref = { prefs, groups };
   return _pref;
+}
+
+// 日本全体：全国の値がある項目だけ（全国の値のない項目、全国の値が合計になる項目は出さない）
+export function nationalRows(ledger) {
+  return ledger.groups.map((g) => ({
+    title: g.title,
+    rows: g.items.filter((it) => !it.hideNational && it.compare && it.compare.label === '全国' && typeof it.compare.v === 'number')
+      .map((it) => ({ label: it.label, unit: it.unit, decimals: it.decimals, year: it.year, href: it.href, room: it.room, v: it.compare.v })),
+  })).filter((g) => g.rows.length);
 }
 
 // 1つの県の行だけを取り出す（ページに渡す形）

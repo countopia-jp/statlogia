@@ -1,0 +1,81 @@
+---
+// 町の台帳：県ごとに1ページ。その県の市区町村ぶんの数字をページに埋め込み、選んだ町の一覧を画面の中で描く
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Talk from '../../../../components/Talk.astro';
+import AreaLedgerStyle from '../../../../components/AreaLedgerStyle.astro';
+import { getPrefLedger, getTownLedger, townPack } from '../../../../lib/area-ledger.js';
+
+export async function getStaticPaths() {
+  const pl = await getPrefLedger();
+  return pl.prefs.map((p) => ({ params: { pref: p.c.slice(0, 2) }, props: { prefCode: p.c.slice(0, 2), name: p.n } }));
+}
+const { prefCode, name } = Astro.props;
+const pl = await getPrefLedger();
+const tl = await getTownLedger();
+const pack = townPack(tl, prefCode);
+const itemCount = pack.items.length;
+---
+<BaseLayout title={`${name}の市区町村の台帳｜Countopia Stats`} description={`${name}の市区町村を選んで、人口・住まい・働く・近くにある施設・町の財政など${itemCount}の数字を一覧で。全国と県内の順位、くわしく見られる窓口つき。`} backHref="/tower/" backLabel="展望塔">
+  <AreaLedgerStyle />
+  <main class="al">
+    <header class="al-head">
+      <p class="al-kicker">展望塔｜市区町村</p>
+      <h1>{name}の市区町村の台帳</h1>
+      <p class="al-lead">市区町村を選ぶと、閲覧室と別館の窓口から、その町の数字を{itemCount}項目、一枚に写してお見せします。<br />項目の名前を押すと、その数字の窓口でくわしく見られます。</p>
+    </header>
+    <p class="al-jump">
+      <label for="alTown">市区町村：</label>
+      <select id="alTown">
+        <option value="">選んでください</option>
+        {pack.towns.map((t) => <option value={t.c}>{t.n}</option>)}
+      </select>
+      <label for="alPref">ほかの都道府県：</label>
+      <select id="alPref" onchange="if(this.value)location.href='/tower/town/'+this.value+'/'">
+        {pl.prefs.map((p) => <option value={p.c.slice(0, 2)} selected={p.c.slice(0, 2) === prefCode}>{p.n}</option>)}
+      </select>
+      <a href={`/tower/${prefCode}/`}>{name}の台帳 →</a>
+    </p>
+    <div class="al-talk">
+      <Talk speaker="kei"><span id="alSay">市区町村を選ぶと、ここに数字を並べます。順位は、数字の大きいほうから数えたもので、良し悪しを表すものではありません。</span></Talk>
+      <Talk speaker="touko"><span id="alTouko">町ひとつのことが、帳面一枚にまとまるのね。</span></Talk>
+    </div>
+    <div id="alBody"></div>
+    <p class="al-note">
+      数字はすべて、政府統計の総合窓口（e-Stat）から取ったもので、項目ごとに調べた年が違います。全国の順位は全国の市区町村の中の順位、県内の順位は{name}の市区町村の中の順位です。政令指定都市の区と東京の特別区部計は、値だけを出して順位には入れていません。同じ値の町は同じ順位にしています。財政力指数は順位を出していません。値のない項目は、その町についての数字がもとの統計にないものです。くわしい定義と注意は、それぞれの窓口の注記をご覧ください。
+    </p>
+  </main>
+</BaseLayout>
+
+<script is:inline define:vars={{ PACK: pack }}>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const fmt = (v, d) => (typeof v === 'number' && isFinite(v) ? v.toLocaleString('ja-JP', { minimumFractionDigits: d, maximumFractionDigits: d }) : null);
+  function render(code) {
+    const t = PACK.towns.find((x) => x.c === code);
+    if (!t) { $('alBody').innerHTML = ''; return; }
+    let html = '';
+    for (const g of PACK.groups) {
+      const items = PACK.items.filter((i) => i.g === g);
+      html += '<section class="al-group"><h2>' + esc(g) + '</h2><table class="al-table"><thead><tr><th>項目</th><th>' + esc(t.n) + '</th><th>年</th><th>全国の中で</th><th>県内で</th></tr></thead><tbody>';
+      for (const it of items) {
+        const [v, r, pr] = it.v[code] || [null, null, null];
+        const val = fmt(v, it.d);
+        html += '<tr><td class="al-label"><a href="' + esc(it.href) + '">' + esc(it.label) + '</a><span class="al-room">' + esc(it.room) + '</span></td>'
+          + '<td class="al-val">' + (val !== null ? val + '<small>' + esc(it.unit) + '</small>' : '<span class="al-none">値なし</span>') + '</td>'
+          + '<td class="al-year" data-h="年">' + esc(it.year || '') + '</td>'
+          + '<td class="al-rank" data-h="全国の中で">' + (r ? '<b>' + r + '</b>位／' + it.count.toLocaleString('ja-JP') + '（' + esc(it.rw) + '）' : '—') + '</td>'
+          + '<td class="al-rank" data-h="県内で">' + (pr ? '<b>' + pr + '</b>位／' + it.prefCount + '（' + esc(it.rw) + '）' : '—') + '</td></tr>';
+      }
+      html += '</tbody></table></section>';
+    }
+    $('alBody').innerHTML = html;
+    $('alSay').textContent = t.n + 'の数字を、分野ごとに並べました。順位は、数字の大きいほうから数えたもので、良し悪しを表すものではありません。' + (t.x ? 'この区は、値だけをお出しして、順位には入れていません。' : '');
+    const lines = ['町ひとつのことが、帳面一枚にまとまるのね。', 'お医者さんの数から農家の数まで、ずいぶんいろいろ数えてあるのね。', 'わたくしの時代では、こんな帳面は、お役所の奥にしまってあるものよ。'];
+    let h = 0; for (const ch of code) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    $('alTouko').textContent = lines[h % lines.length];
+  }
+  const sel = $('alTown');
+  sel.addEventListener('change', () => { render(sel.value); if (sel.value) history.replaceState(null, '', '#' + sel.value); });
+  const h0 = location.hash.slice(1);
+  if (h0 && PACK.towns.some((t) => t.c === h0)) { sel.value = h0; render(h0); }
+</script>

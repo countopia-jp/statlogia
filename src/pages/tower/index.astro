@@ -1,222 +1,70 @@
 ---
+// 展望塔：日本全体の数字を一望し、そこから都道府県・市区町村の台帳へ降りていく
+// （2026-10-13 に計器の展望塔から、地域の台帳に換装）
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { fetchSleepByPrefecture, fetchCommuteByPrefecture, fetchHouseworkBySex } from '../../lib/estat.js';
-import { getVacancyData } from '../../lib/vacancy.js';
-import { getPriceData } from '../../lib/price.js';
-import { getReadingData } from '../../lib/reading.js';
-import { getHikingData } from '../../lib/hiking.js';
-import { getWasteData } from '../../lib/waste.js';
-import { getBallGamesData } from '../../lib/ball-games.js';
-import { getFishingData } from '../../lib/fishing.js';
-import { getHousingTypeData } from '../../lib/housing-type.js';
-import { getSolarData } from '../../lib/solar.js';
-
-const sleep = await fetchSleepByPrefecture();
-const sleepTop = sleep[0];
-const sleepAvg = Math.round(sleep.reduce((s, r) => s + r.minutes, 0) / sleep.length);
-
-const commute = await fetchCommuteByPrefecture();
-const commuteTop = commute[0];
-
-const housework = await fetchHouseworkBySex();
-const hwAvgGap = Math.round(housework.reduce((s, r) => s + r.gap, 0) / housework.length);
-
-const vacancy = await getVacancyData();
-const vacancyAvg = vacancy.national;
-
-const reading = await getReadingData();
-const hiking = await getHikingData();
-const waste = await getWasteData();
-const ball = await getBallGamesData();
-const fishing = await getFishingData();
-const fishingTop = fishing.rows[0];
-
-const housing = await getHousingTypeData();
-const woodLeast = housing.wood.rows[housing.wood.rows.length - 1];
-const solar = await getSolarData();
-const solarFirst = solar.series[0];
-
-const price = await getPriceData();
-const priceTop = price.rows[0];
-const foodTop = price.food.rows[0];
-const heatTop = price.heat.rows[0];
-const eduTop = price.education.rows[0];
-
-const fmt = (m) => `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
-const pct = (v) => v.toFixed(1);
-// 住まいの3つの出典年は同じ年になりやすいので、重ねて書かない（「2023年度、2023年、2023年」→「2023年」）
-const housingYears = [...new Set([vacancy.year, housing.year, solar.year].map((y) => String(y).replace(/年度?$/, '')))].join('・') + '年';
-const mangaMore = reading.manga.national > reading.national;
+import Talk from '../../components/Talk.astro';
+import AreaLedgerStyle from '../../components/AreaLedgerStyle.astro';
+import { getPrefLedger, nationalRows } from '../../lib/area-ledger.js';
+const pl = await getPrefLedger();
+const nat = nationalRows(pl);
+const natCount = nat.reduce((n, g) => n + g.rows.length, 0);
+const fmt = (v, d) => (typeof v === 'number' && Number.isFinite(v) ? v.toLocaleString('ja-JP', { minimumFractionDigits: d, maximumFractionDigits: d }) : '—');
+const REGIONS = [
+  ['北海道・東北', 1, 7], ['関東', 8, 14], ['中部', 15, 23], ['近畿', 24, 30], ['中国', 31, 35], ['四国', 36, 39], ['九州・沖縄', 40, 47],
+];
+const inRegion = (from, to) => pl.prefs.filter((p) => { const n = Number(p.c.slice(0, 2)); return n >= from && n <= to; });
 ---
-<BaseLayout title="展望塔｜Countopia Stats" description="日本の数字を一望する、Countopia Statsの展望塔。睡眠・通勤・物価・住まいなどの全国の数字を、計器の形で並べています。" backHref="/" backLabel="玄関">
-  <main>
-    <section class="tower">
-      <img class="tw-figure" src="/images/icon/tower-large.webp" alt="アーチ窓から広がる川と町を、指さす橙子と見つめる京の水彩画" width="1400" height="788" loading="lazy" />
-        <div class="sec-head">
-          <span class="no">OBSERVATORY</span>
-          <h1>展望塔</h1>
-          <p class="sub">この国の数字を、いくつか選んで並べた観測盤。気になった計器から、展示へどうぞ。</p>
-        </div>
+<BaseLayout title="展望塔｜Countopia Stats" description="日本全体の数字を一望し、都道府県や市区町村を1つ選んで、人口・気候・物価・給与・住まい・施設など、いろいろな数字を一枚の台帳で見られる展望塔。" backHref="/" backLabel="玄関">
+  <AreaLedgerStyle />
+  <main class="al">
+    <header class="al-head">
+      <p class="al-kicker">展望塔</p>
+      <h1>この国を、上から見渡す</h1>
+      <p class="al-lead">閲覧室は「数字を選んで、土地を見る」窓口です。<br />展望塔は逆に「土地を選んで、いろいろな数字を見る」ところです。<br />まず日本全体を見渡して、それから県へ、町へと降りていけます。</p>
+    </header>
+    <div class="al-talk">
+      <Talk speaker="kei">展望塔へようこそ。閲覧室と別館の窓口から、土地ごとの数字を写した台帳をお出しします。まずは日本全体から。</Talk>
+      <Talk speaker="touko">まあ、高いところから見ると、国じゅうが帳面みたいね。</Talk>
+    </div>
 
-      <h2 class="board-head">時間の計器</h2>
-      <div class="board">
-        <a class="gauge" href="/exhibits/sleep/">
-          <span class="g-label">平均睡眠時間（全国）</span>
-          <span class="g-value">{fmt(sleepAvg)}</span>
-          <span class="g-unit">時間：分／日</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/sleep/">
-          <span class="g-label">いちばん眠らない</span>
-          <span class="g-value small">{sleepTop.pref}</span>
-          <span class="g-unit">{fmt(sleepTop.minutes)}</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/commute/">
-          <span class="g-label">通勤・通学が長い・日本一</span>
-          <span class="g-value small">{commuteTop.pref}</span>
-          <span class="g-unit">{commuteTop.minutes}分／日</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/housework/">
-          <span class="g-label">家事の男女差（全国平均）</span>
-          <span class="g-value">{hwAvgGap}<small>分</small></span>
-          <span class="g-unit">1日あたり・女性−男性</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-      </div>
-
-      <h2 class="board-head">暮らしの計器</h2>
-      <div class="board">
-        <a class="gauge" href="/exhibits/ball-games/">
-          <span class="g-label">野球をする人（全国平均）</span>
-          <span class="g-value">{pct(ball.national)}<small>％</small></span>
-          <span class="g-unit">サッカーは{pct(ball.soccer.national)}％</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/reading/">
-          <span class="g-label">本を読む人（全国平均）</span>
-          <span class="g-value">{pct(reading.national)}<small>％</small></span>
-          <span class="g-unit">過去1年間・10歳以上</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/reading/">
-          <span class="g-label">マンガを読む人（全国平均）</span>
-          <span class="g-value">{pct(reading.manga.national)}<small>％</small></span>
-          <span class="g-unit">{mangaMore ? `本（${pct(reading.national)}％）より多い` : `本は${pct(reading.national)}％`}</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/hiking/">
-          <span class="g-label">山を歩く人（全国平均）</span>
-          <span class="g-value">{pct(hiking.national)}<small>％</small></span>
-          <span class="g-unit">過去1年間・10歳以上</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/waste/">
-          <span class="g-label">1人1日のごみ（全国平均）</span>
-          <span class="g-value">{Math.round(waste.national)}<small>g</small></span>
-          <span class="g-unit">{waste.trend[0].year}年度は{Math.round(waste.trend[0].waste)}g</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/fishing/">
-          <span class="g-label">つりをする人（全国平均）</span>
-          <span class="g-value">{pct(fishing.national)}<small>％</small></span>
-          <span class="g-unit">いちばん多いのは{fishingTop.n}・{pct(fishingTop.minutes)}％</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-      </div>
-
-      <h2 class="board-head">住まいの計器</h2>
-      <div class="board">
-        <a class="gauge" href="/exhibits/vacancy/">
-          <span class="g-label">空き家率（全国平均）</span>
-          <span class="g-value">{vacancyAvg}<small>％</small></span>
-          <span class="g-unit">総住宅数に占める割合</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/housing-type/">
-          <span class="g-label">一戸建ての割合（全国）</span>
-          <span class="g-value">{pct(housing.national)}<small>％</small></span>
-          <span class="g-unit">人の住む家に占める割合</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/housing-type/">
-          <span class="g-label">一戸建てに木造がいちばん少ない</span>
-          <span class="g-value small">{woodLeast.n}</span>
-          <span class="g-unit">{pct(woodLeast.minutes)}％（全国は{pct(housing.wood.national)}％）</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/solar/">
-          <span class="g-label">太陽光発電のある家（全国）</span>
-          <span class="g-value">{pct(solar.national)}<small>％</small></span>
-          <span class="g-unit">{solarFirst.year}年は{pct(solarFirst.value)}％</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-      </div>
-
-      <h2 class="board-head">物価の計器</h2>
-      <div class="board">
-        <a class="gauge" href="/exhibits/price/">
-          <span class="g-label">物価がいちばん高い</span>
-          <span class="g-value small">{priceTop.n}</span>
-          <span class="g-unit">{priceTop.minutes.toFixed(1)}（全国平均＝100）</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/price/">
-          <span class="g-label">食べものがいちばん高い</span>
-          <span class="g-value small">{foodTop.n}</span>
-          <span class="g-unit">{foodTop.minutes.toFixed(1)}（全国平均＝100）</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/utility/">
-          <span class="g-label">光熱・水道がいちばん高い</span>
-          <span class="g-value small">{heatTop.n}</span>
-          <span class="g-unit">{heatTop.minutes.toFixed(1)}（全国平均＝100）</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-        <a class="gauge" href="/exhibits/education-price/">
-          <span class="g-label">教育がいちばん高い</span>
-          <span class="g-value small">{eduTop.n}</span>
-          <span class="g-unit">{eduTop.minutes.toFixed(1)}（全国平均＝100）</span>
-          <span class="g-link">→ 展示を見る</span>
-        </a>
-      </div>
-
-      <p class="note">出典：睡眠・通勤・家事：総務省統計局「社会生活基本調査」を加工して作成（週全体・10歳以上。年次は各展示の出典をご覧ください）</p>
-      <p class="note">物価（{price.year}）・住まい（{housingYears}）・ごみ（{waste.year}年度）：政府統計の総合窓口(e-Stat) 社会・人口統計体系 都道府県データ 基礎データ（表番号0000010103・0000010108）。本・マンガ（{reading.year}）・山歩き（{hiking.year}）・野球・サッカー（{ball.year}）・つり（{fishing.year}）：社会生活基本調査（行動者率）</p>
+    <p class="al-jump"><a href="#japan">日本全体の数字</a>／<a href="#pref">都道府県の台帳</a>／<a href="#town">市区町村の台帳</a></p>
+    <h2 class="al-bighead" id="japan">日本全体の数字</h2>
+    <p class="al-lead">全国の値がある{natCount}項目です。項目の名前を押すと、県ごとの数字を窓口で見られます。</p>
+    {nat.map((g) => (
+      <section class="al-group">
+        <h2>{g.title}</h2>
+        <table class="al-table">
+          <thead><tr><th>項目</th><th>全国</th><th>年</th></tr></thead>
+          <tbody>
+            {g.rows.map((r) => (
+              <tr>
+                <td class="al-label"><a href={r.href}>{r.label}</a><span class="al-room">{r.room}</span></td>
+                <td class="al-val">{fmt(r.v, r.decimals)}<small>{r.unit}</small></td>
+                <td class="al-year" data-h="年">{r.year}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
+    ))}
+    <h2 class="al-bighead" id="pref">都道府県の台帳</h2>
+    <section class="al-group">
+      {REGIONS.map(([r, a, b]) => (<>
+        <p class="al-region">{r}</p>
+        <div class="al-list">{inRegion(a, b).map((p) => <a href={`/tower/${p.c.slice(0, 2)}/`}>{p.n}</a>)}</div>
+      </>))}
     </section>
+    <h2 class="al-bighead" id="town">市区町村の台帳</h2>
+    <section class="al-group">
+      <p class="al-lead">都道府県を選ぶと、その中の市区町村を選べるページへ進みます。</p>
+      {REGIONS.map(([r, a, b]) => (<>
+        <p class="al-region">{r}</p>
+        <div class="al-list">{inRegion(a, b).map((p) => <a href={`/tower/town/${p.c.slice(0, 2)}/`}>{p.n}</a>)}</div>
+      </>))}
+    </section>
+
+    <p class="al-note">
+      数字はすべて、政府統計の総合窓口（e-Stat）から取ったもので、項目ごとに調べた年が違います。都道府県の台帳には、全国の値がない項目（給与や出生率など）も含めて、50ほどの項目を並べています。家計の数字は、県庁所在市の二人以上の世帯の値です。総人口・世帯数・高齢化率・年少人口率・婚姻率の全国の値は、47都道府県の数字から計算したもの（総数は合計、割合は人口で重みづけた平均）で、国の公表値と小数の位で少し違うことがあります。くわしい定義と注意は、それぞれの窓口の注記をご覧ください。
+    </p>
   </main>
 </BaseLayout>
-<style>
-.tower{padding:56px 0 80px;max-width:880px;margin:0 auto}
-.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
-h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px}
-.sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;margin-bottom:36px;max-width:36em}
-.board-head{
-  font-family:"Shippori Mincho",serif;font-size:1.05rem;
-  border-left:4px solid var(--stamp);padding-left:12px;
-  margin:36px 0 14px;
-}
-.board-head:first-of-type{margin-top:0}
-.board{
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;
-  background:var(--line);border:2px solid var(--line);border-radius:14px;overflow:hidden;
-}
-.gauge{
-  background:#fdfcf7;padding:26px 22px 20px;display:flex;flex-direction:column;gap:8px;
-  text-decoration:none;color:inherit;position:relative;transition:background .15s;
-}
-a.gauge:hover{background:#f7f4e9}
-@media(max-width:600px){.board{grid-template-columns:1fr}}
-.g-label{font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding-bottom:8px}
-.g-value{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:2.4rem;color:var(--stamp);line-height:1.1}
-.g-value.small{font-family:"Shippori Mincho",serif;font-size:1.7rem;color:inherit}
-.g-value small{font-size:1rem;margin-left:2px}
-.g-unit{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:var(--ink-soft)}
-.g-link{font-size:.72rem;color:var(--stamp);margin-top:auto;padding-top:10px}
-.gauge.soon{opacity:.55}
-.gauge.soon .g-value{color:var(--ink-soft)}
-.note{margin-top:20px;font-size:.72rem;color:var(--ink-soft)}
-.note + .note{margin-top:6px}
-.tw-figure{display:block;width:100%;max-width:900px;height:auto;border-radius:4px;margin:0 auto 28px}
-</style>

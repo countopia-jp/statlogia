@@ -132,11 +132,11 @@ function collectValues(statData, areas, latestTimeByCat) {
     if (!area.h[cat]) area.h[cat] = [];
     area.h[cat].push({ time: rec['@time'], value: num });
 
-    // 最新値の更新（従来通り）
-    if (area.v[cat] === undefined || rec['@time'] > (latestTimeByCat[cat] || '')) {
-      area.v[cat] = num;
-      latestTimeByCat[cat] = rec['@time'];
-    }
+    // 最新値の更新：昇順に並べてあるので、地域ごとに上書きすれば最後に残るのが最新
+    // （2026-10-13 修正。以前は「全地域で共通の最新年より新しいときだけ」上書きしていたため、
+    //   最初の地域（北海道）以外は一番古い年の値のまま残っていた）
+    area.v[cat] = num;
+    if (rec['@time'] > (latestTimeByCat[cat] || '')) latestTimeByCat[cat] = rec['@time'];
   }
 }
 
