@@ -125,7 +125,20 @@ export const exhibits = [
   { no: 34, href: '/exhibits/camp-park/', place: 'hobby',
     title: 'キャンプと遊園地、日本一はどの県だ',
     lead: 'キャンプをした人と、遊園地や動植物園・水族館に行った人の割合を47都道府県で比較。外の遊びを二つ、県ごとにくらべます。' },
+  { no: 35, href: '/exhibits/cake-manju/', place: 'living',
+    title: 'ケーキとまんじゅう、日本一はどの市だ',
+    lead: '1世帯が1年間にケーキとまんじゅうへ使ったお金を、県庁所在市と政令指定都市で比較。洋と和のお菓子で、上位の顔ぶれをくらべます。' },
+  { no: 36, href: '/exhibits/tuna-salmon/', place: 'living',
+    title: 'マグロとサケ、日本一はどの市だ',
+    lead: '1世帯が1年間に生のマグロとサケへ使ったお金を、県庁所在市と政令指定都市で比較。二つの魚で、上位の顔ぶれをくらべます。' },
+  { no: 37, href: '/exhibits/spectator/', place: 'hobby',
+    title: 'スポーツ観戦と演劇、日本一はどの県だ',
+    lead: '会場でスポーツを見た人と、演芸・演劇・舞踊を見た人の割合を47都道府県で比較。見に行く楽しみを二つ、県ごとにくらべます。' },
+  { no: 38, href: '/exhibits/jogging-walking/', place: 'sports',
+    title: 'ジョギングとウォーキング、日本一はどの県だ',
+    lead: 'ジョギングやマラソンをした人と、ウォーキングや軽い体操をした人の割合を47都道府県で比較。走ると歩くで、県の並びをくらべます。' },
 ];
+
 
 // 出典一覧などで使う「パス→表示名」の辞書
 export const exhibitNameOf = new Map(

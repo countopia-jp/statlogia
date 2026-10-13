@@ -32,6 +32,7 @@ export const ROOM_NAMES = {
   '/town-farm/': '閲覧室　わが町の農家',
   '/town-business-size/': '閲覧室　わが町の事業所の大きさ',
   '/pref-economy/': '別館　県のふところ',
+  '/pref-spending/': '別館　県のお金の使いみち',
   '/household/': '別館　家計の帳場',
   '/work-style/': '別館　働き方の帳場',
   '/land-price/': '別館　土地の値段',

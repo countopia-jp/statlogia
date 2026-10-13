@@ -5,11 +5,13 @@
 // 社会生活基本調査 2021年
 //   statsDataId: 0003456573（男女,趣味・娯楽の種類別行動者率(10歳以上)－全国，都道府県）
 //   cat01=0（総数）、cat02=99000（総数）、tab=202110A09B08（行動者率）、cat03=種類（2桁）
+//   スポーツの表 0003456409 も同じ軸なので第3引数で渡せる（例：19 ジョギング・マラソン／20 ウォーキング・軽い体操）
 //   例：02 美術鑑賞／04 映画館での映画鑑賞／33 遊園地・動植物園・水族館などの見物／34 キャンプ
 // 戻り値は PairExhibit.astro の data の形：{ year, national, rows, second: { national, rows }, source }
 // =====================================================
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
-const STATS_DATA_ID = '0003456573';
+const STATS_DATA_ID = '0003456573'; // 趣味・娯楽。スポーツは 0003456409（軸は同じ：cat01男女・cat02人口集中地区・cat03種類）
+const TABLE_NAME = { '0003456573': '趣味・娯楽', '0003456409': 'スポーツ' };
 const TAB_RATE = '202110A09B08';
 
 const _cache = new Map();
@@ -22,9 +24,9 @@ function getAppId() {
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
 // 種類ごとに1リクエスト（まとめると取得上限で切り詰められるため）
-async function fetchOne(cat03) {
+async function fetchOne(cat03, statsId) {
   const qs = new URLSearchParams({
-    appId: getAppId(), lang: 'J', statsDataId: STATS_DATA_ID, cdTab: TAB_RATE,
+    appId: getAppId(), lang: 'J', statsDataId: statsId, cdTab: TAB_RATE,
     cdCat01: '0', cdCat02: '99000', cdCat03: cat03,
     metaGetFlg: 'Y', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0',
   });
@@ -52,13 +54,13 @@ async function fetchOne(cat03) {
   return { national, rows };
 }
 
-export async function getActivityPair(codeA, codeB) {
-  const key = `${codeA}-${codeB}`;
+export async function getActivityPair(codeA, codeB, statsId = STATS_DATA_ID) {
+  const key = `${statsId}-${codeA}-${codeB}`;
   if (_cache.has(key)) return _cache.get(key);
-  const a = await fetchOne(codeA);
-  const b = await fetchOne(codeB);
+  const a = await fetchOne(codeA, statsId);
+  const b = await fetchOne(codeB, statsId);
   const out = {
-    source: '政府統計の総合窓口(e-Stat) 社会生活基本調査 2021年（表番号0003456573）',
+    source: `政府統計の総合窓口(e-Stat) 社会生活基本調査 2021年 ${TABLE_NAME[statsId] || ''}の種類別行動者率（表番号${statsId}）`,
     year: '2021年',
     national: a.national,
     rows: a.rows,

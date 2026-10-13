@@ -6,7 +6,7 @@ import path from 'node:path';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。7つの窓口があります。">
+<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。8つの窓口があります。">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
@@ -59,6 +59,17 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
             転入・転出の数字から、町の人の動きを追います。
           </p>
           <span class="lc-foot">別館・市区町村</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('pref-spending') ? ' ledger-card--img' : ''}`} href="/pref-spending/">
+          {thumbOf('pref-spending') && <img class="lc-img" src={thumbOf('pref-spending')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">支</span>
+          <h3>県のお金の使いみち</h3>
+          <p class="lc-desc">
+            都道府県が1年に使ったお金と、福祉・教育・土木など使いみちごとの割合を。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
       </div>
