@@ -27,6 +27,7 @@ export const ROOM_NAMES = {
   '/town-workplace/': '閲覧室　働きに出る町・来る町',
   '/sports-fields/': '閲覧室　運動の場',
   '/library/': '閲覧室　図書館の利用',
+  '/volunteer/': '閲覧室　ボランティア',
   '/town-farm/': '閲覧室　わが町の農家',
   '/town-business-size/': '閲覧室　わが町の事業所の大きさ',
   '/pref-economy/': '別館　県のふところ',
