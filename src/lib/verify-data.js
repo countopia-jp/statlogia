@@ -45,6 +45,13 @@ import { getActivityPair } from './activity-pair.js';
 import { getKakeiPair } from './kakei-pair.js';
 import { getGyozaData } from './gyoza.js';
 import { getBeefPorkData } from './beef-pork.js';
+import * as MH from './muni-housing.js';
+import * as MCT from './muni-commute-time.js';
+import * as MC from './muni-commute.js';
+import * as MN from './muni-nursery.js';
+import * as MD from './muni-daycare.js';
+import * as ML from './muni-landuse.js';
+import * as MM from './muni-migration.js';
 
 const API = 'https://api.e-stat.go.jp/rest/3.0/app/json/getStatsData';
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
@@ -384,6 +391,38 @@ export async function verifyAll() {
       compareRows(res, `展示 ${d[k].label}（${d[k].year}）`, d[k].rows.map((r) => ({ ...r, c: r.c || r.code })), (r) => yearOf(got[r.c], d[k].year), { decimals: 1, expect: 47 });
     }
   });
+
+  // 5) 手書きの町ページ：表示年の元の数字を取り直し、部品と同じ計算（INDICATORS の calc）をしてくらべる
+  const townCalc = [
+    ['わが町の住まい', MH.getMuniHousingData, MH.INDICATORS, '0000020108', ['H1100', 'H1101', 'H110202', 'H1310', 'H1320', 'H1403', 'H2130', 'H4104']],
+    ['通勤に、どれだけかかるか', MCT.getMuniCommuteTimeData, MCT.INDICATORS, '0000020108', ['H740501', 'H740502', 'H740503', 'H740504']],
+    ['通勤の足は、何か', MC.getMuniCommuteData, MC.INDICATORS, '0000020108', ['H7301', 'H730102', 'H730103', 'H730105']],
+    ['保育所は、近いか', MN.getMuniNurseryData, MN.INDICATORS, '0000020108', ['H2905', 'H2906', 'H2907', 'H2908', 'H2909']],
+    ['介護は、近いか', MD.getMuniDaycareData, MD.INDICATORS, '0000020108', ['H2915', 'H2916', 'H2917', 'H2918', 'H2919']],
+    ['わが町の土地の使われ方', ML.getMuniLanduseData, ML.INDICATORS, '0000020108', ['H8104', 'H810401', 'H810402', 'H810403', 'H810404', 'H810405', 'H810406', 'H810407', 'H8101', 'H8103']],
+    ['わが町の人の出入り', MM.getMuniMigrationData, MM.INDICATORS, '0000020101', ['A1101', 'A5101', 'A5102']],
+  ];
+  for (const [name, get, INDS, table, codes] of townCalc) {
+    await run(name, async () => {
+      const d = await get();
+      const towns = sampleTowns(d.areas);
+      const got = {};
+      for (const c of codes) got[c] = await direct(table, c, towns.map((a) => a.c));
+      for (const a of towns) {
+        const v = {};
+        for (const c of codes) { const x = yearOf(got[c][a.c], d.year); if (ok(x)) v[c] = x; }
+        INDS.forEach((ind, i) => {
+          const shown = a.v[i];
+          if (!ok(shown) || !ind.calc) return;
+          res.checked++;
+          let want = null;
+          try { want = ind.calc(v); } catch { want = null; }
+          if (!ok(want)) { res.warnings.push(`${name}・${ind.key}｜${a.n}：表示年（${d.year}）の値から計算できません（表示 ${shown}）`); return; }
+          if (Math.abs(want - shown) > 1e-6 * Math.max(1, Math.abs(want))) res.errors.push(`${name}・${ind.key}｜${a.n}：表示 ${shown} ≠ 計算し直した値 ${want}（${d.year}）`);
+        });
+      }
+    });
+  }
 
   return res;
 }

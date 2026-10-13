@@ -38,4 +38,27 @@
   .al-table td.al-val{font-size:1.05rem}
   .al-table td[data-h]::before{content:attr(data-h)'：';color:var(--ink-soft);font-size:.75rem}
 }
+/* 旧展望塔の計器盤（2026-10-13 に台帳へ流用） */
+.tw-figure{display:block;width:100%;max-width:900px;height:auto;border-radius:4px;margin:0 auto 28px}
+.al .sec-head{flex-direction:column;align-items:flex-start;gap:0;padding-bottom:14px;margin-bottom:20px}
+.al .sec-head .no{font-size:.72rem;letter-spacing:.3em}
+.al .sec-head h1{font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.6rem,4vw,2.4rem);margin-top:8px;line-height:1.35}
+.al .sec-head .sub{color:var(--ink-soft);font-size:.9rem;margin-top:8px;line-height:1.9}
+.tw-picker{margin:20px 0 8px;display:flex;flex-wrap:wrap;gap:12px 20px;padding:16px 18px;background:#fdfcf7;border:2px solid var(--line);border-radius:14px}
+.tw-picker label{display:flex;flex-direction:column;gap:6px;font-size:.85rem;flex:1 1 220px}
+.tw-picker select{width:100%;padding:10px 12px;border:1px solid #1b4332;border-radius:6px;background:#fff;font-size:1rem;font-family:inherit}
+.tw-picker select:disabled{background:#f0f0ea;color:#999}
+.board-head{font-family:"Shippori Mincho",serif;font-size:1.05rem;font-weight:800;border-left:4px solid var(--stamp);padding-left:12px;margin:36px 0 14px}
+.board{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px;background:var(--line);border:2px solid var(--line);border-radius:14px;overflow:hidden}
+.gauge{background:#fdfcf7;padding:26px 22px 20px;display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;transition:background .15s}
+a.gauge:hover{background:#f7f4e9}
+.g-label{font-size:.72rem;letter-spacing:.16em;color:var(--ink-soft);border-bottom:1px dashed var(--line);padding-bottom:8px;line-height:1.6}
+.g-value{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:clamp(1.8rem,5vw,2.4rem);color:var(--stamp);line-height:1.1;overflow-wrap:anywhere}
+.g-value small{font-family:"Shippori Mincho",serif;font-size:1rem;margin-left:4px;color:var(--ink)}
+.g-value.small{font-family:"Shippori Mincho",serif;font-size:1.3rem;color:#aaa}
+.g-unit{font-family:"IBM Plex Mono",monospace;font-size:.75rem;color:var(--ink-soft);line-height:1.7}
+.g-unit b{color:var(--ink);font-weight:700}
+.g-link{font-size:.72rem;color:var(--stamp);margin-top:auto;padding-top:10px}
+.board-empty{padding:28px 22px;color:var(--ink-soft);font-size:.9rem;text-align:center;border:2px dashed var(--line);border-radius:14px;margin-top:20px}
+@media(max-width:600px){.board{grid-template-columns:1fr}}
 </style>

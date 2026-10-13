@@ -1,3 +1,4 @@
+import { makeYearBook } from './year-pick.js';
 // =====================================================
 // Countopia Stats - わが町の住まい データ取得モジュール
 // src/lib/muni-housing.js
@@ -147,24 +148,23 @@ export async function getMuniHousingData() {
 
       if (!area.h[rec['@time']]) area.h[rec['@time']] = {};
       area.h[rec['@time']][cat] = num;
-      area.v[cat] = num;
     }
   }
 
-  let overallLatestCompleteTime = null;
+  // 表示する年：総住宅数（H1100）の値がそろっている、いちばん新しい年を1つに決め、全地域その年の値だけを使う
+  // （地域ごとに最新を拾うと、調査の対象外になった町だけ古い年の値になり、見出しの年と合わなくなるため）
+  const book = makeYearBook();
+  for (const a of areas.values()) for (const [t, snap] of Object.entries(a.h)) if (snap.H1100 !== undefined) book.add('H1100', t, a.c, snap.H1100);
+  const showTime = book.pick('H1100');
+  let overallLatestCompleteTime = showTime;
 
   const areaList = [...areas.values()]
     .map((a) => {
-      const v = INDICATORS.map((ind) => ind.calc(a.v));
+      const v = INDICATORS.map((ind) => ind.calc((showTime && a.h[showTime]) || {}));
 
       const completeTimes = Object.keys(a.h)
         .filter((t) => SERIES_CODES.every((c) => a.h[t][c] !== undefined))
         .sort();
-
-      const latestComplete = completeTimes[completeTimes.length - 1] || null;
-      if (latestComplete && (!overallLatestCompleteTime || latestComplete > overallLatestCompleteTime)) {
-        overallLatestCompleteTime = latestComplete;
-      }
 
       const series = completeTimes.map((time) => {
         const snap = a.h[time];
@@ -173,7 +173,7 @@ export async function getMuniHousingData() {
 
       return { c: a.c, n: a.n, x: a.x, v, series };
     })
-    .filter((a) => a.v.some((val) => val !== null))
+    .filter((a) => a.v.some((val) => val !== null) || a.series.length)
     .sort((a, b) => a.c.localeCompare(b.c));
 
   _cache = {
