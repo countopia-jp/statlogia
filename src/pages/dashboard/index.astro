@@ -344,8 +344,8 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
-    <section class="rr-group" aria-label="学びと文化">
-      <h2 class="rr-group-title">学びと文化</h2>
+    <section class="rr-group" aria-label="学校と学び">
+      <h2 class="rr-group-title">学校と学び</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/education/">
           <img class="rr-card-img" src="/images/icon/school-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
@@ -356,78 +356,6 @@ import Talk from '../../components/Talk.astro';
             学校の数と、1校あたりの児童数を、校種ごとに並べて見られます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（2024年度）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/ict/">
-          <img class="rr-card-img" src="/images/icon/ict-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>情報化の帳場</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
-            端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/town-culture/">
-          <img class="rr-card-img" src="/images/icon/town-culture-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>わが町の図書館と公民館</h3>
-          <p class="rr-card-desc">
-            市区町村を選んで、図書館と公民館の数をご覧いただけます。
-            図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/culture/">
-          {thumbOf('culture') && <img class="rr-card-img" src={thumbOf('culture')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>文化施設</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、博物館・劇場や音楽堂・体育施設の数（人口あたり）と、重要文化財・史跡名勝天然記念物の件数を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/sports-fields/">
-          {thumbOf('sports-fields') && <img class="rr-card-img" src={thumbOf('sports-fields')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>運動の場</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、公共の体育館・プール・野球場・テニスコート・武道場・キャンプ場と、民間の運動施設の数（人口あたり）を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/library/">
-          {thumbOf('library') && <img class="rr-card-img" src={thumbOf('library')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>図書館の利用</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、図書館の数と、蔵書・登録している人・貸し出された本の冊数（人口あたり）を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/volunteer/">
-          {thumbOf('volunteer') && <img class="rr-card-img" src={thumbOf('volunteer')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>ボランティア</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、この1年にボランティア活動をした人の割合を、まちづくり・子ども・高齢者・災害など活動の種類ごとに。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/leisure/">
-          {thumbOf('leisure') && <img class="rr-card-img" src={thumbOf('leisure')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>余暇の過ごし方</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、この1年にスポーツをした人、旅行や日帰りの行楽に出かけた人の割合を。旅行は国内と海外に分けて。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
           </div>
         </a>
         <a class="rr-card" href="/school-build/">
@@ -455,9 +383,87 @@ import Talk from '../../components/Talk.astro';
           <div class="rr-card-body">
           <h3>大学と専門学校</h3>
           <p class="rr-card-desc">
-            都道府県を選んで、大学・短期大学・専修学校の数と学ぶ人の数を人口あたりで。専修学校の分野（医療・美容や調理・文化教養など）の割合も。
+            都道府県を選んで、大学・短期大学・専修学校の数と、そこで学ぶ人の数を人口あたりで見られます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（学校基本調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/ict/">
+          <img class="rr-card-img" src="/images/icon/ict-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>情報化の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、学校のICT整備を小・中・高でご覧いただけます。
+            端末の行き渡り・電子黒板・デジタル教科書——GIGAスクールを経た教室の景色が、県ごとに見えてきます。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="文化と余暇">
+      <h2 class="rr-group-title">文化と余暇</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/town-culture/">
+          <img class="rr-card-img" src="/images/icon/town-culture-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>わが町の図書館と公民館</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、図書館と公民館の数をご覧いただけます。
+            図書館は「何人に1館か」も。公民館は過去からの移りかわりも。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/culture/">
+          {thumbOf('culture') && <img class="rr-card-img" src={thumbOf('culture')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>文化施設</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、博物館・劇場や音楽堂・体育施設の数（人口あたり）と、重要文化財・史跡名勝天然記念物の件数を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/library/">
+          {thumbOf('library') && <img class="rr-card-img" src={thumbOf('library')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>図書館の利用</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、図書館の数と、蔵書・登録している人・貸し出された本の冊数（人口あたり）を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/sports-fields/">
+          {thumbOf('sports-fields') && <img class="rr-card-img" src={thumbOf('sports-fields')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>運動の場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、公共の体育館・プール・野球場・テニスコート・武道場・キャンプ場と、民間の運動施設の数（人口あたり）を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/leisure/">
+          {thumbOf('leisure') && <img class="rr-card-img" src={thumbOf('leisure')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>余暇の過ごし方</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、この1年にスポーツをした人、旅行や日帰りの行楽に出かけた人の割合を。旅行は国内と海外に分けて。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/volunteer/">
+          {thumbOf('volunteer') && <img class="rr-card-img" src={thumbOf('volunteer')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>ボランティア</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、この1年にボランティア活動をした人の割合を、まちづくり・子ども・高齢者・災害など活動の種類ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
           </div>
         </a>
       </div>
