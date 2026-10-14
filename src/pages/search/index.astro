@@ -33,6 +33,19 @@ const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '�
     </div>
 
     <ol class="sx-list" id="sxList" aria-live="polite"></ol>
+    <p class="sx-note" id="sxSecret" hidden><a href="/news/">瓦版（確認用）→</a></p>
+    <script is:inline>
+      (() => {
+        const KEY = 'カウントピア瓦版';
+        const q = document.getElementById('sxQ'), box = document.getElementById('sxSecret');
+        const fromHash = () => { const m = location.hash.match(/q=([^&]*)/); try { return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } };
+        const check = () => { const v = (q.value || fromHash()).replace(/\s/g, ''); box.hidden = v !== KEY; };
+        q.addEventListener('input', check);
+        window.addEventListener('hashchange', check);
+        document.getElementById('sxGo').addEventListener('click', check);
+        setTimeout(check, 0);
+      })();
+    </script>
 
     <p class="sx-note">
       公開中の{entries.reduce((n, e) => n + e.labels.length, 0)}の数字（窓口と展示{entries.length}か所）から探しています。

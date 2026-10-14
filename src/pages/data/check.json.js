@@ -8,6 +8,7 @@ import { verifyAll } from '../../lib/verify-data.js';
 export async function GET() {
   const res = await verifyAll();
   console.log(`[check] 照合 ${res.checked} 件、食い違い ${res.errors.length} 件、表示年の値なし ${res.warnings.length} 件`);
+  for (const w of res.warnings.filter((w) => w.includes('つながらず'))) console.warn('[check] ' + w);
   if (res.errors.length) {
     for (const e of res.errors.slice(0, 50)) console.error('[check] ' + e);
     throw new Error(`[check] 表示する年の e-Stat の値と食い違う数字が ${res.errors.length} 件あります。ビルドを止めました。`);

@@ -95,3 +95,12 @@ footer.site{border-top:2px solid var(--ink);background:var(--ink);color:var(--pa
 .foot{max-width:1280px;margin:0 auto;padding:36px 20px;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center}
 .foot .mono{font-size:.8rem;opacity:.85}
 .foot .credit{font-size:.72rem;opacity:.65}
+@media(max-width:600px){
+  :root{--ink-soft:#2F473A}
+  .card.pc .pc-kind{opacity:1}
+  main [class*="-lead"]{text-align:left}
+  main [class*="-lead"][class]{color:#333}
+  .sec-head:has(h1),.sec-head:has(.sub){flex-direction:column;align-items:flex-start;gap:0}
+  .sec-head:has(h1) h1{margin-top:6px;line-height:1.35}
+  .sec-head:has(.sub) .sub{margin:8px 0 0}
+}

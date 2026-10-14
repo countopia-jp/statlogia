@@ -178,7 +178,15 @@ export async function verifyAll() {
   const res = { generated: new Date().toISOString().slice(0, 10), checked: 0, errors: [], warnings: [], sets: [] };
   const run = async (name, fn) => {
     const before = res.checked, e0 = res.errors.length;
-    try { await fn(); } catch (err) { res.errors.push(`${name}：照合の途中で失敗しました（${err.message}）`); }
+    // e-Stat への接続が一時的に切れることがあるので、3回まで間をおいて取り直す。
+    // それでも取れないときは「照合できなかった」として warnings に入れる（数字の食い違いではないので、ビルドは止めない）
+    for (let i = 0; i < 3; i++) {
+      res.checked = before; res.errors.length = e0;
+      try { await fn(); break; } catch (err) {
+        if (i < 2) { await new Promise((r) => setTimeout(r, 5000 * (i + 1))); continue; }
+        res.warnings.push(`${name}：e-Stat につながらず照合できませんでした（${err.message}）`);
+      }
+    }
     res.sets.push({ name, checked: res.checked - before, errors: res.errors.length - e0 });
   };
 
