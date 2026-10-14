@@ -22,8 +22,10 @@ import { VOLUNTEER } from './volunteer.js';
 import { LEISURE } from './leisure.js';
 import { PREF_SPENDING } from './pref-spending.js';
 import { APPLIANCES } from './appliances.js';
+import { SCHOOL_BUILD } from './school-build.js';
+import { AFTER_SCHOOL } from './after-school.js';
 import { LIBRARY } from './library.js';
 import { TOWN_FARM } from './town-farm.js';
 import { TOWN_BUSINESS_SIZE } from './town-business-size.js';
 
-export const ROOMS = Object.fromEntries([SKY, DISASTER, TOWN_FOREST, NATURE, TOWN_WORK, TOWN_SHOPS, FARM_SEA, STAY, LAND_PRICE, WORK_STYLE, PREF_ECONOMY, HOUSEHOLD, FIRE_EMS, CULTURE, TOWN_ELDERLY, TOWN_KIDS, TOWN_INDUSTRY, TOWN_WORKPLACE, SPORTS_FIELDS, LIBRARY, TOWN_FARM, TOWN_BUSINESS_SIZE, VOLUNTEER, LEISURE, PREF_SPENDING, APPLIANCES].map((r) => [r.id, r]));
+export const ROOMS = Object.fromEntries([SKY, DISASTER, TOWN_FOREST, NATURE, TOWN_WORK, TOWN_SHOPS, FARM_SEA, STAY, LAND_PRICE, WORK_STYLE, PREF_ECONOMY, HOUSEHOLD, FIRE_EMS, CULTURE, TOWN_ELDERLY, TOWN_KIDS, TOWN_INDUSTRY, TOWN_WORKPLACE, SPORTS_FIELDS, LIBRARY, TOWN_FARM, TOWN_BUSINESS_SIZE, VOLUNTEER, LEISURE, PREF_SPENDING, APPLIANCES, SCHOOL_BUILD, AFTER_SCHOOL].map((r) => [r.id, r]));
