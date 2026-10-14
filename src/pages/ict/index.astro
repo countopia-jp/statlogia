@@ -75,6 +75,7 @@ const yearNote = years.join('・');
       <h2>全国ベスト5</h2>
       <div class="ict-tabs" role="tablist">
         <button class="ict-tab is-active" data-rank="board" role="tab">電子黒板が多い</button>
+        <button class="ict-tab" data-rank="display" role="tab">大型提示装置が多い</button>
         <button class="ict-tab" data-rank="text" role="tab">デジタル教科書が多い</button>
         <button class="ict-tab" data-rank="pc" role="tab">1人1台が進む</button>
       </div>
@@ -123,11 +124,27 @@ const yearNote = years.join('・');
           ],
         },
         {
+          title: '1人あたりの学習用PC', note: '児童生徒1人あたりの学習用PCの台数。2023年度から数えはじめた値です。', dir: 'desc',
+          items: [
+            { code: 'E9404', school: '小学校' },
+            { code: 'E9405', school: '中学校' },
+            { code: 'E9406', school: '高等学校' },
+          ],
+        },
+        {
           title: '電子黒板', note: '普通教室の電子黒板整備率。高いほど教室に行き渡っている。', dir: 'desc',
           items: [
             { code: 'E9414', school: '小学校' },
             { code: 'E9415', school: '中学校' },
             { code: 'E9416', school: '高等学校' },
+          ],
+        },
+        {
+          title: '大型提示装置', note: '普通教室のうち、電子黒板・大型テレビ・プロジェクターなどの大きな画面がある教室の割合。', dir: 'desc',
+          items: [
+            { code: 'E9417', school: '小学校' },
+            { code: 'E9418', school: '中学校' },
+            { code: 'E9419', school: '高等学校' },
           ],
         },
         {
@@ -346,6 +363,7 @@ const yearNote = years.join('・');
       // ---- ランキング ----
       const RANKS = {
         board: { code: 'E9414', dir: 'desc', note: '普通教室の電子黒板整備率が高い県ベスト5（小学校）。1教室に複数台だと100％を超えます。' },
+        display: { code: 'E9417', dir: 'desc', note: '普通教室の大型提示装置の整備率が高い県ベスト5（小学校）。' },
         text: { code: 'E9421', dir: 'desc', note: 'デジタル教科書の整備率が高い県ベスト5（小学校）。' },
         pc: { code: 'E9401', dir: 'asc', note: '教育用コンピュータ1台あたりの児童数が少ない県ベスト5（小学校）。少ないほど「1人1台」に近い。' },
       };
