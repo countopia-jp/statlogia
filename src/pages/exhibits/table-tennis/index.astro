@@ -1,0 +1,23 @@
+---
+import PairExhibit from '../../../components/PairExhibit.astro';
+import { getActivityPair } from '../../../lib/activity-pair.js';
+const data = await getActivityPair('06', '08', '0003456409');
+---
+<PairExhibit
+  data={data} unit="pct" area="県" no={40} slug="table-tennis"
+  title="卓球とバドミントン、日本一はどの県だ"
+  sub="スポーツの広場｜卓球、バドミントンの行動者率"
+  pageTitle="卓球とバドミントンの行動者率｜Countopia Stats"
+  description="都道府県別・卓球をした人と、バドミントンをした人の割合。卓球とバドミントン、日本一はどの県か。"
+  a={{ label: '卓球をする人', short: '卓球' }}
+  b={{ label: 'バドミントンをする人', short: 'バドミントン' }}
+  genre="ラケットの競技"
+  intro={[
+    ['kei', '40番目の展示は「卓球」です。1年のあいだに、卓球をした人の割合を、県ごとに並べました。全国では{A_NAT}です。'],
+    ['touko', 'ピンポンなら知っているわ。わたくしの時代でも、はやっているのよ。'],
+    ['kei', 'いまは「卓球」と呼ぶのがふつうです。温泉宿で遊んだ人も、1回でもすれば数に入ります。'],
+  ]}
+  secondAsk="羽根つきのような、バドミントンというのはどうなの？"
+  notes="「行動者率」は、過去1年間にその活動を1回でもした人（10歳以上）の割合です。総務省統計局「社会生活基本調査」（5年ごと）の都道府県別の値で、小数第1位までの数字のため、0.1ポイントの差は調査のゆれの範囲と考えてください。部活動や学校の授業として行ったものは入りません。5番目と同じ値の県があるときは、TOP5の表にいっしょに載せています。"
+  cross={[['/exhibits/ball-games/', '野球とサッカー、日本一はどの県だ'], ['/exhibits/jogging-walking/', 'ジョギングとウォーキング、日本一はどの県だ'], ['/sports-fields/', '閲覧室　運動の場']]}
+/>

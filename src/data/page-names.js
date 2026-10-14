@@ -29,6 +29,7 @@ export const ROOM_NAMES = {
   '/library/': '閲覧室　図書館の利用',
   '/volunteer/': '閲覧室　ボランティア',
   '/leisure/': '閲覧室　余暇の過ごし方',
+  '/appliances/': '閲覧室　暮らしの道具',
   '/town-farm/': '閲覧室　わが町の農家',
   '/town-business-size/': '閲覧室　わが町の事業所の大きさ',
   '/pref-economy/': '別館　県のふところ',
