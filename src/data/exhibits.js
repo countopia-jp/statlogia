@@ -149,6 +149,18 @@ export const exhibits = [
   { no: 42, href: '/exhibits/natto-tofu/', place: 'living',
     title: '納豆と豆腐、日本一はどの市だ',
     lead: '1世帯が1年間に納豆と豆腐へ使ったお金を、県庁所在市と政令指定都市で比較。大豆の食べものを二つ、上位の顔ぶれをくらべます。' },
+  { no: 43, href: '/exhibits/golf-bowling/', place: 'sports',
+    title: 'ゴルフとボウリング、日本一はどの県だ',
+    lead: 'ゴルフをした人と、ボウリングをした人の割合を47都道府県で比較。球を打つ競技と転がす競技で、県の並びをくらべます。' },
+  { no: 44, href: '/exhibits/painting-pottery/', place: 'hobby',
+    title: '絵と焼きもの、日本一はどの県だ',
+    lead: '絵や彫刻をつくった人と、陶芸や工芸をした人の割合を47都道府県で比較。手でつくる趣味を二つ、県ごとにくらべます。' },
+  { no: 45, href: '/exhibits/sake-beer/', place: 'living',
+    title: '日本酒とビール、日本一はどの市だ',
+    lead: '1世帯が1年間に清酒（日本酒）とビールへ使ったお金を、県庁所在市と政令指定都市で比較。二つのお酒で、上位の顔ぶれをくらべます。' },
+  { no: 46, href: '/exhibits/senbei-chocolate/', place: 'living',
+    title: 'せんべいとチョコレート、日本一はどの市だ',
+    lead: '1世帯が1年間にせんべいとチョコレートへ使ったお金を、県庁所在市と政令指定都市で比較。和と洋のおやつで、上位の顔ぶれをくらべます。' },
 ];
 
 
