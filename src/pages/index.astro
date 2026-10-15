@@ -8,6 +8,8 @@ import { news } from '../data/news.js';
 import { getKakeiPair } from '../lib/kakei-pair.js';
 import { getActivityPair } from '../lib/activity-pair.js';
 import fs from 'node:fs';
+import { exhibits, PLACES } from '../data/exhibits.js';
+import { EXHIBIT_PAIRS } from '../data/exhibit-pairs.js';
 
 const publishedCount = catalog.filter((c) => c.status === 'published').length;
 
@@ -24,9 +26,17 @@ const priceTop = price.rows[0];
 const foodTop = price.food.rows[0];
 const heatTop = price.heat.rows[0];
 const eduTop = price.education.rows[0];
-const breadTop = (await getKakeiPair('010120000', '010110001')).rows[0];
-const movieTop = (await getActivityPair('04', '02')).rows[0];
-const campTop = (await getActivityPair('34', '33')).rows[0];
+// いまの展示：2つをくらべる展示のうち、新しい順に3つ（展示を足せば自動で入れ替わる）
+const slugOf = (href) => href.replace(/^\/exhibits\//, '').replace(/\/$/, '');
+const latest = [...exhibits].sort((x, y) => y.no - x.no).filter((e) => EXHIBIT_PAIRS[slugOf(e.href)]).slice(0, 3);
+const latestCards = [];
+for (const e of latest) {
+  const slug = slugOf(e.href);
+  const pr = EXHIBIT_PAIRS[slug];
+  const d = pr.kind === 'kakei' ? await getKakeiPair(pr.a, pr.b) : await getActivityPair(pr.a, pr.b, pr.stats);
+  const top = d.rows[0];
+  latestCards.push({ ...e, slug, kind: pr.kind, short: pr.short, top, place: PLACES[e.place] || '' });
+}
 // 絵がまだ無い展示のカードは、絵なしで出す
 const hasThumb = (slug) => fs.existsSync(`public/images/exhibits/${slug}-thumb.webp`);
 const reading = await getReadingData();
@@ -119,33 +129,19 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
         </div>
       </div>
       <div class="cards">
-        <a class="card pc" href="/exhibits/bread-rice/">
-          {hasThumb('bread-rice') && <img class="card-img" src="/images/exhibits/bread-rice-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>32</b></span>
-          <span class="pc-kind">パン・最多・{breadTop.n}</span>
-          <span class="pc-num">{breadTop.minutes.toLocaleString()}<small>円</small></span>
-          <h3>パンとお米、日本一はどの市だ</h3>
-          <p>1世帯が1年間にパンとお米へ使ったお金を、県庁所在市と政令指定都市で比較。パンとお米を足したうち、パンがどれだけかも並べます。</p>
-          <span class="c-place">暮らしの広場</span>
-        </a>
-        <a class="card pc" href="/exhibits/movies-art/">
-          {hasThumb('movies-art') && <img class="card-img" src="/images/exhibits/movies-art-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>33</b></span>
-          <span class="pc-kind">映画館・最多・{movieTop.n}</span>
-          <span class="pc-num">{movieTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>映画館と美術館、日本一はどの県だ</h3>
-          <p>映画館で映画を見た人と、美術鑑賞をした人の割合を47都道府県で比較。二つの鑑賞で、県の並びをくらべます。</p>
-          <span class="c-place">趣味の広場</span>
-        </a>
-        <a class="card pc" href="/exhibits/camp-park/">
-          {hasThumb('camp-park') && <img class="card-img" src="/images/exhibits/camp-park-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>34</b></span>
-          <span class="pc-kind">キャンプ・最多・{campTop.n}</span>
-          <span class="pc-num">{campTop.minutes.toFixed(1)}<small>％</small></span>
-          <h3>キャンプと遊園地、日本一はどの県だ</h3>
-          <p>キャンプをした人と、遊園地や動植物園・水族館に行った人の割合を47都道府県で比較。外の遊びを二つ、県ごとにくらべます。</p>
-          <span class="c-place">趣味の広場</span>
-        </a>
+        {latestCards.map((c) => (
+          <a class="card pc" href={c.href}>
+            {hasThumb(c.slug) && <img class="card-img" src={`/images/exhibits/${c.slug}-thumb.webp`} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+            <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>{c.no}</b></span>
+            <span class="pc-kind">{c.short}・最多・{c.top.n}</span>
+            {c.kind === 'kakei'
+              ? <span class="pc-num">{c.top.minutes.toLocaleString()}<small>円</small></span>
+              : <span class="pc-num">{c.top.minutes.toFixed(1)}<small>％</small></span>}
+            <h3>{c.title}</h3>
+            <p>{c.lead}</p>
+            <span class="c-place">{c.place}</span>
+          </a>
+        ))}
       </div>
       <div class="more-actions">
         <a class="more-btn" href="/exhibits/">すべての展示を見る（全{exhibitCount}展示）→</a>
@@ -635,5 +631,12 @@ h1 .num{color:var(--stamp)}
 }
 @media(min-width:761px) and (max-width:1024px){
   .hero .hero-chara{width:62%;max-width:255px}
+}
+/* 10-15 スマホの玄関は見出し・説明文・指標数を中央寄せ */
+@media(max-width:600px){
+  .hero h1{text-align:center;text-indent:1em}
+  .hero .lead{text-align:center;margin-left:auto;margin-right:auto}
+  .hero .lead>span:first-child>span+span{margin-left:0}
+  .hero .api-count{justify-content:center}
 }
 </style>
