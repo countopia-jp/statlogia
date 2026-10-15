@@ -104,3 +104,15 @@ footer.site{border-top:2px solid var(--ink);background:var(--ink);color:var(--pa
   .sec-head:has(h1) h1{margin-top:6px;line-height:1.35}
   .sec-head:has(.sub) .sub{margin:8px 0 0}
 }
+
+/* 10-15 スマホのヘッダー2段・いまいる場所・展示見出しの改行 */
+nav a[aria-current="page"]{color:var(--stamp)}
+@media(max-width:600px){
+  .nav{flex-direction:column;align-items:stretch;gap:4px;padding:10px 12px 6px}
+  .logo .mark{font-size:1.05rem}
+  nav{padding:2px 12px;margin:0 -12px;border-left:0}
+  nav ul{gap:2px}
+  nav a{display:block;padding:4px 11px;border-radius:999px;font-size:.86rem}
+  nav a[aria-current="page"]{background:var(--ink);color:var(--paper)}
+  h1 .h1b{display:block}
+}

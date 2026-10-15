@@ -17,15 +17,15 @@ const years = [...new Set(ict.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="情報化の帳場｜学校のデジタル化｜Countopia Stats" description="都道府県を選んで、学校の端末の行き渡り・電子黒板・デジタル教科書の整備状況を小・中・高ごとにご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="情報化の帳場｜学校のデジタル化｜Countopia Stats" description="都道府県を選んで、学校の学習用パソコン・大型提示装置・デジタル教科書の整備状況を小・中・高ごとに、以前の調査の電子黒板などとあわせてご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="ict-dash">
     <header class="ict-hero">
     <img class="ict-hero-figure" src="/images/icon/ict-large.webp" alt="古い帳場机に並ぶ、タブレット端末・電子黒板・デジタル教科書と算盤や筆" width="1400" height="788" loading="lazy" />
       <p class="ict-kicker">ダッシュボード</p>
       <h1>情報化の帳場</h1>
       <p class="ict-lead">
-        端末の行き渡り、電子黒板、デジタル教科書。<br />
-        あなたの県の学校が、どこまでデジタルになったかをご覧ください。
+        学習用のパソコン、大きな画面、デジタル教科書。<br />
+        あなたの県の学校に、どんな機器がそろっているかをご覧ください。
       </p>
     </header>
 
@@ -54,7 +54,7 @@ const yearNote = years.join('・');
       <div class="ict-line-wrap">
         <p class="ict-line-title">端末整備の推移（小学校・1台当たり児童数）</p>
         <canvas id="pcLineChart" height="120"></canvas>
-        <p class="ict-line-note">※数値が少ないほど、1人1台に近づいています（右肩下がりが「整備が進んだ」ことを示します）</p>
+        <p class="ict-line-note">※教育用コンピュータ1台を何人で使っているか。右肩下がりは、1台あたりの児童数が減ったことを表します（この数え方は2022年度まで）</p>
       </div>
 
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳面をお出しします。</span></Talk>
@@ -62,9 +62,9 @@ const yearNote = years.join('・');
     </section>
 
     <!-- ===== 散布図 ===== -->
-    <section class="ict-scatter-sec" aria-label="電子黒板とデジタル教科書の散布図">
-      <h2>教室のデジタル化 見取り図</h2>
-      <p class="ict-note">横軸が電子黒板整備率、縦軸がデジタル教科書整備率（どちらも小学校）。右上ほど、教室のデジタル化が進んだ県です。</p>
+    <section class="ict-scatter-sec" aria-label="大型提示装置とデジタル教科書の散布図">
+      <h2>教室の機器 見取り図</h2>
+      <p class="ict-note">横軸が大型提示装置のある普通教室の割合、縦軸がデジタル教科書の整備率（どちらも小学校）。右へ行くほど大きな画面のある教室が多く、上へ行くほどデジタル教科書の整備率が高い県です。</p>
       <div class="ict-chart-wrap">
         <canvas id="scatterChart" height="260"></canvas>
       </div>
@@ -74,17 +74,16 @@ const yearNote = years.join('・');
     <section class="ict-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>
       <div class="ict-tabs" role="tablist">
-        <button class="ict-tab is-active" data-rank="board" role="tab">電子黒板が多い</button>
-        <button class="ict-tab" data-rank="display" role="tab">大型提示装置が多い</button>
+        <button class="ict-tab is-active" data-rank="display" role="tab">大型提示装置が多い</button>
         <button class="ict-tab" data-rank="text" role="tab">デジタル教科書が多い</button>
-        <button class="ict-tab" data-rank="pc" role="tab">1人1台が進む</button>
+        <button class="ict-tab" data-rank="pc1" role="tab">1人あたりのPCが多い</button>
       </div>
       <ol class="ict-rank-list" id="rankList"></ol>
       <p class="ict-note" id="rankNote"></p>
     </section>
 
     <Talk speaker="kei">
-      端末の行き渡りと、電子黒板やデジタル教科書の整備は、別々の指標です。それぞれの県の並びを、カードでご覧ください。
+      学習用のパソコン、大型提示装置、デジタル教科書は、それぞれ別の調査の項目です。県ごとの数字を、カードでご覧ください。
     </Talk>
     <Talk speaker="touko">
       同じ日本でも、教室の景色はずいぶん違うのねえ。
@@ -96,7 +95,8 @@ const yearNote = years.join('・');
       <p>
         出典：{ict.source}（{yearNote}）<br />
         指標によって調査年度が異なります。各カードに年度を明記しています。<br />
-        「1台当たりの児童生徒数」は、数が少ないほど1人1台に近く、整備が進んでいることを表します。<br />
+        「1台あたりの児童生徒数」は、教育用のコンピュータ1台を何人で使っているかを表します（2022年度まで）。2023年度からは「1人あたりの学習用PCの台数」で数えています。<br />
+        「大型提示装置」は、電子黒板・大型テレビ・プロジェクターなどの大きな画面です。電子黒板だけの整備率は2017年度までの調査です。<br />
         「平均」は47都道府県の単純平均であり、全国値とは一致しません。<br />
         このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
       </p>
@@ -116,27 +116,11 @@ const yearNote = years.join('・');
       // 3グループ×小中高。dir は「良い方向」（pcだけ少ないほど良い＝asc）
       const GROUPS = [
         {
-          title: '端末の行き渡り', note: '教育用コンピュータ1台あたりの児童生徒数。少ないほど「1人1台」に近い。', dir: 'asc',
-          items: [
-            { code: 'E9401', school: '小学校' },
-            { code: 'E9402', school: '中学校' },
-            { code: 'E9403', school: '高等学校' },
-          ],
-        },
-        {
-          title: '1人あたりの学習用PC', note: '児童生徒1人あたりの学習用PCの台数。2023年度から数えはじめた値です。', dir: 'desc',
+          title: '1人あたりの学習用PC', note: '児童生徒1人あたりの学習用PCの台数。', dir: 'desc',
           items: [
             { code: 'E9404', school: '小学校' },
             { code: 'E9405', school: '中学校' },
             { code: 'E9406', school: '高等学校' },
-          ],
-        },
-        {
-          title: '電子黒板', note: '普通教室の電子黒板整備率。高いほど教室に行き渡っている。', dir: 'desc',
-          items: [
-            { code: 'E9414', school: '小学校' },
-            { code: 'E9415', school: '中学校' },
-            { code: 'E9416', school: '高等学校' },
           ],
         },
         {
@@ -148,13 +132,22 @@ const yearNote = years.join('・');
           ],
         },
         {
-          title: 'デジタル教科書', note: 'デジタル教科書の整備率。高いほど導入が進んでいる。', dir: 'desc',
+          title: 'デジタル教科書', note: 'デジタル教科書の整備率。', dir: 'desc',
           items: [
             { code: 'E9421', school: '小学校' },
             { code: 'E9422', school: '中学校' },
             { code: 'E9423', school: '高等学校' },
           ],
         },
+      ];
+      // 以前の調査の数字（カードには出さず、下の表に年つきで出す）
+      const OLD = [
+        { code: 'E9414', label: '電子黒板の整備率（小学校）' },
+        { code: 'E9415', label: '電子黒板の整備率（中学校）' },
+        { code: 'E9416', label: '電子黒板の整備率（高等学校）' },
+        { code: 'E9401', label: '教育用コンピュータ1台あたりの児童数（小学校）' },
+        { code: 'E9402', label: '教育用コンピュータ1台あたりの生徒数（中学校）' },
+        { code: 'E9403', label: '教育用コンピュータ1台あたりの生徒数（高等学校）' },
       ];
 
       function fmtValue(code, v) {
@@ -265,6 +258,13 @@ const yearNote = years.join('・');
           wrap.appendChild(sec);
         }
 
+        const old = document.createElement('div');
+        old.className = 'ict-old';
+        old.innerHTML = '<h3>以前の調査の数字</h3><p>いまは数え方が変わったり、調べられなくなったりした数字です。</p><table>' +
+          OLD.map((o) => `<tr><th>${o.label}</th><td>${fmtValue(o.code, val(area, o.code))}</td><td class="ict-old-year">${meta[o.code].year || ''}</td></tr>`).join('') +
+          '</table>';
+        wrap.appendChild(old);
+
         renderPcLine(area);
         updateLines(area);
         highlightScatter(area);
@@ -273,49 +273,31 @@ const yearNote = years.join('・');
       // ---- 案内人コメント ----
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["電子黒板？　黒板が光るのかしら。", "わたくしの時代では、石盤に石筆で書くのよ。", "教科書まで、機械で読む時代なのね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
-        const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
-        const boardRank = stats['E9414'].rank[area.c]; // 電子黒板・小（高い順）
-        const textRank = stats['E9421'].rank[area.c]; // デジタル教科書・小（高い順）
-        const total = stats['E9414'].total;
-        const seed = parseInt(area.c, 10) || 0;
-
-        const hasBoard = typeof boardRank === 'number';
-        const hasText = typeof textRank === 'number';
-        let k = hasBoard && hasText
-          ? `小学校で見ると、電子黒板の整備は${total}県中${boardRank}位、デジタル教科書は${textRank}位です。`
-          : `小学校で見ると、${hasBoard ? `電子黒板の整備は${total}県中${boardRank}位です。` : '電子黒板は、この県の値がありません。'} ${hasText ? `デジタル教科書は${textRank}位です。` : 'デジタル教科書は、この県の値がありません。'}`;
-        let t = '';
-
-        if (!hasBoard || !hasText) {
-          t = '値のない欄もあるのね。';
-        } else if (boardRank <= 8 && textRank <= 8) {
-          k += ' 電子黒板もデジタル教科書も、全国の上位です。';
-          t = ['どちらも上のほうにあるのねえ。', '二つとも、上位ということね。'][seed % 2];
-        } else if (boardRank >= 40 && textRank >= 40) {
-          k += ' 電子黒板もデジタル教科書も、全国の下位です。';
-          t = ['どちらも下のほうにあるのねえ。', '二つとも、下位ということね。'][seed % 2];
-        } else if (Math.abs(boardRank - textRank) >= 20) {
-          k += ' 電子黒板とデジタル教科書で、順位が20以上離れています。';
-          t = ['二つの順位が、離れているのね。', '片方だけ、順位が違うのねえ。'][seed % 2];
-        } else {
-          k += ' 全国の中ほど、というところです。';
-          t = ['まんなかあたりなのね。', 'どちらも、まんなかあたりなのねえ。'][seed % 2];
-        }
-
+        const toukoEl = document.getElementById('toukoLine');
+        // 橙子は順位に反応しない。大正の目から見た一言（京のセリフで1行を選ぶ）
+        const TOUKO_LINES = ['教室に、そんなに大きな画面があるの？　わたくしの教室は黒板だけよ。', 'わたくしの時代では、石盤に石筆で書くのよ。', '教科書まで、機械で読む時代なのね。'];
+        const dRank = stats['E9417'].rank[area.c];
+        const tRank = stats['E9421'].rank[area.c];
+        const hasD = typeof dRank === 'number';
+        const hasT = typeof tRank === 'number';
+        const k = '小学校で見ると、' +
+          (hasD ? `大型提示装置のある教室の割合は${stats['E9417'].total}県中${dRank}位、` : '大型提示装置は、この県の値がありません。') +
+          (hasT ? `デジタル教科書の整備率は${stats['E9421'].total}県中${tRank}位です。` : 'デジタル教科書は、この県の値がありません。');
         kei.textContent = k;
-        touko.textContent = t;
+        if (!hasD || !hasT) { toukoEl.textContent = '値のない欄もあるのね。'; return; }
+        let h = 0;
+        for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+        toukoEl.textContent = TOUKO_LINES[h % TOUKO_LINES.length];
       }
 
-      // ---- 散布図（電子黒板×デジタル教科書・小学校） ----
+      // ---- 散布図（大型提示装置×デジタル教科書・小学校） ----
       let chart = null;
       let selectedCode = null;
 
       function buildScatter() {
         const points = data.areas
-          .filter((a) => val(a, 'E9414') !== null && val(a, 'E9421') !== null)
-          .map((a) => ({ x: val(a, 'E9414'), y: val(a, 'E9421'), n: a.n, c: a.c }));
+          .filter((a) => val(a, 'E9417') !== null && val(a, 'E9421') !== null)
+          .map((a) => ({ x: val(a, 'E9417'), y: val(a, 'E9421'), n: a.n, c: a.c }));
 
         const ctx = document.getElementById('scatterChart');
         chart = new Chart(ctx, {
@@ -339,12 +321,12 @@ const yearNote = years.join('・');
               tooltip: {
                 callbacks: {
                   label: (c) =>
-                    `${c.raw.n}：電子黒板 ${c.raw.x.toFixed(1)}％ / デジタル教科書 ${c.raw.y.toFixed(1)}％`,
+                    `${c.raw.n}：大型提示装置 ${c.raw.x.toFixed(1)}％ / デジタル教科書 ${c.raw.y.toFixed(1)}％`,
                 },
               },
             },
             scales: {
-              x: { title: { display: true, text: '電子黒板整備率（小学校・％）' } },
+              x: { title: { display: true, text: '大型提示装置のある教室の割合（小学校・％）' } },
               y: { title: { display: true, text: 'デジタル教科書整備率（小学校・％）' } },
             },
             responsive: true,
@@ -362,10 +344,9 @@ const yearNote = years.join('・');
 
       // ---- ランキング ----
       const RANKS = {
-        board: { code: 'E9414', dir: 'desc', note: '普通教室の電子黒板整備率が高い県ベスト5（小学校）。1教室に複数台だと100％を超えます。' },
-        display: { code: 'E9417', dir: 'desc', note: '普通教室の大型提示装置の整備率が高い県ベスト5（小学校）。' },
+        display: { code: 'E9417', dir: 'desc', note: '普通教室のうち大型提示装置がある教室の割合が高い県ベスト5（小学校）。' },
         text: { code: 'E9421', dir: 'desc', note: 'デジタル教科書の整備率が高い県ベスト5（小学校）。' },
-        pc: { code: 'E9401', dir: 'asc', note: '教育用コンピュータ1台あたりの児童数が少ない県ベスト5（小学校）。少ないほど「1人1台」に近い。' },
+        pc1: { code: 'E9404', dir: 'desc', note: '児童1人あたりの学習用PCの台数が多い県ベスト5（小学校）。' },
       };
 
       const rankList = document.getElementById('rankList');
@@ -402,7 +383,7 @@ const yearNote = years.join('・');
         });
       });
 
-      showRank('board');
+      showRank('display');
     })();
   </script>
 
@@ -441,6 +422,13 @@ const yearNote = years.join('・');
     .ict-card-meta { margin-top: 6px; font-size: 0.75rem; }
     .ict-rank { color: #b23a2f; font-weight: 700; }
 
+    .ict-old { margin: 8px 0 22px; padding: 14px 16px; border: 1px dashed #cfcab8; border-radius: 8px; background: #fbfaf5; }
+    .ict-old h3 { margin: 0; font-family: "Shippori Mincho", serif; font-size: 0.95rem; text-align: center; color: #555; }
+    .ict-old p { margin: 2px 0 10px; font-size: 0.72rem; color: #888; text-align: center; }
+    .ict-old table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .ict-old th { text-align: left; font-weight: 400; color: #444; padding: 6px 4px; border-top: 1px solid #e6e2d4; }
+    .ict-old td { text-align: right; padding: 6px 4px; border-top: 1px solid #e6e2d4; white-space: nowrap; font-family: "IBM Plex Mono", monospace; }
+    .ict-old td.ict-old-year { color: #999; font-family: inherit; font-size: 0.72rem; width: 5.5em; }
     .ict-line-wrap {
       margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
       border-radius: 8px; background: #fff;

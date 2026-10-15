@@ -36,4 +36,9 @@ const p = profiles[speaker] ?? profiles.kei;
 .say.kei .name{color:#2d6a4f}
 .say.touko .bubble{color:#222}
 .say.touko .name{color:#a33227}
+/* スマホでは顔を大きく（表情が見えるように） */
+@media(max-width:600px){
+  .say{gap:10px}
+  .face{width:64px;height:64px}
+}
 </style>
