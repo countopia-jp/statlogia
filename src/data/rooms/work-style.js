@@ -1,5 +1,7 @@
 // 別館「働き方の帳場」（都道府県・労働 F11xx・F24xx・F21xx）
 const F = '0000010106';
+const A = '0000010101';
+const per = (a, b, n) => (a === null || !b ? null : (a / b) * n);
 const pct = (a, b) => (a === null || b === null || !b ? null : (a / b) * 100);
 const EMP = [[F, 'F2409'], [F, 'F2410'], [F, 'F2411']];
 const empShare = (code) => (g) => {
@@ -12,7 +14,7 @@ export const WORK_STYLE = {
   scope: 'pref',
   path: '/work-style/',
   annex: true,
-  description: '都道府県を選んで、完全失業率・働いている人の割合・正社員とパートや派遣の割合・65歳以上で働く人の割合を、全国の順位と移りかわりでご覧いただける窓口。',
+  description: '都道府県を選んで、完全失業率・働いている人の割合・正社員とパートや派遣の割合・65歳以上で働く人の割合、ハローワークで仕事を探した人と就職した人の割合、高校新卒の求人倍率を、全国の順位と移りかわりでご覧いただける窓口。',
   title: '働き方の帳場',
   imageAlt: '朝の町の交差点で、出勤する勤め人、店の準備をする人、荷を積む若者、畑へ向かう人、登校を見守る警備員が行き交う水彩画',
   shelf: '町の出納帳',
@@ -32,6 +34,7 @@ export const WORK_STYLE = {
     '完全失業率＝完全失業者÷労働力人口。労働力率＝労働力人口÷（労働力人口＋非労働力人口）。',
     '雇われ方の割合は、正規の職員・従業員、派遣社員、パート・アルバイト・その他の合計に対するものです（役員や自営業の人は入りません）。',
     '65歳以上で働く人の割合は、働いている人全体のうち65歳以上の人の割合です。',
+    'ハローワークの数字は厚生労働省の職業安定業務統計（年度の合計）によるもので、民間の求人サイトや知り合いの紹介で決まった仕事は入りません。「新しく仕事を探し始めた人」は新規学卒者とパートタイムを除いた数です。高校新卒の求人倍率は、就職を希望する高校卒業予定者1人あたりの求人の数です。',
   ],
   cross: [['/town-work/', 'わが町の仕事'], ['/living/', '暮らしの見積所'], ['/pref-economy/', '県のふところ']],
   indicators: [
@@ -43,5 +46,8 @@ export const WORK_STYLE = {
     { key: 'dispatch', label: '派遣社員の割合', unit: '％', decimals: 1, rankWord: '高い順', needs: EMP, calc: empShare('F2410') },
     { key: 'elderly', label: '働く人のうち65歳以上の割合', unit: '％', decimals: 1, rankWord: '高い順', needs: [[F, 'F2116'], [F, 'F1102']], calc: (g) => pct(g('F2116'), g('F1102')) },
     { key: 'workers', label: '働いている人', table: F, code: 'F1102', decimals: 0, rankWord: '多い順' },
+    { key: 'newSeek', label: 'ハローワークで新しく仕事を探し始めた人（人口1000人あたり）', unit: '件', decimals: 1, rankWord: '多い順', needs: [[F, 'F3101'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('F3101'), g('A1101'), 1e3) },
+    { key: 'placeRate', label: '仕事を探し始めた人のうち就職した割合', unit: '％', decimals: 1, rankWord: '高い順', needs: [[F, 'F3105'], [F, 'F3101']], calc: (g) => per(g('F3105'), g('F3101'), 100) },
+    { key: 'hsRatio', label: '高校新卒の求人倍率', unit: '倍', decimals: 2, rankWord: '高い順', needs: [[F, 'F3312'], [F, 'F3302']], calc: (g) => per(g('F3312'), g('F3302'), 1) },
   ],
 };

@@ -18,4 +18,8 @@ export const EXHIBIT_PAIRS = {
   'painting-pottery': { kind: 'act', a: '23', b: '24', short: '絵画・彫刻' },
   'sake-beer': { kind: 'kakei', a: '011100010', b: '011100030', short: '日本酒' },
   'senbei-chocolate': { kind: 'kakei', a: '010800090', b: '010800130', short: 'せんべい' },
+  'swim-cycling': { kind: 'act', a: '15', b: '18', stats: SPORT, short: '水泳' },
+  'odori-dance': { kind: 'act', a: '13', b: '14', short: '邦舞・おどり' },
+  'soy-miso': { kind: 'kakei', a: '010720020', b: '010720030', short: 'しょう油' },
+  'apple-mandarin': { kind: 'kakei', a: '010610010', b: '010610020', short: 'りんご' },
 };

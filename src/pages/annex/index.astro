@@ -6,7 +6,7 @@ import path from 'node:path';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。11の窓口があります。">
+<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。12の窓口があります。">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
@@ -123,7 +123,7 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-mark">家</span>
           <h3>家計の帳場</h3>
           <p class="lc-desc">
-            県庁所在市の世帯の、1か月の収入と、食料から交通・通信まで支出の内訳です。
+            県庁所在市の世帯の、1か月の収入と、食料から交通・通信まで支出の内訳、手取りのうち使った割合です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
           </div>
@@ -134,7 +134,7 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-mark">働</span>
           <h3>働き方の帳場</h3>
           <p class="lc-desc">
-            完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合です。
+            完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合、ハローワークで仕事を探した人と就職した人の割合です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
           </div>
@@ -159,6 +159,17 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
             転入・転出の数字から、町の人の動きを追います。
           </p>
           <span class="lc-foot">別館・市区町村</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('pref-migration') ? ' ledger-card--img' : ''}`} href="/pref-migration/">
+          {thumbOf('pref-migration') && <img class="lc-img" src={thumbOf('pref-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">移</span>
+          <h3>県の人の出入り</h3>
+          <p class="lc-desc">
+            引っ越してきた人・出ていった人とその差、自然増減率、海外へ出かけた日本人の数です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
       </div>

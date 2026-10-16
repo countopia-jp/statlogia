@@ -6,10 +6,10 @@ for (const line of fs.readFileSync(new URL('../.env', import.meta.url), 'utf8').
 const { getActivityPair } = await import('../src/lib/activity-pair.js');
 const { getKakeiPair } = await import('../src/lib/kakei-pair.js');
 const jobs = [
-  ['43 ゴルフとボウリング', () => getActivityPair('09', '13', '0003456409')],
-  ['44 絵と焼きもの', () => getActivityPair('23', '24')],
-  ['45 日本酒とビール', () => getKakeiPair('011100010', '011100030')],
-  ['46 せんべいとチョコレート', () => getKakeiPair('010800090', '010800130')],
+  ['47 水泳とサイクリング', () => getActivityPair('15', '18', '0003456409')],
+  ['48 おどりと社交ダンス', () => getActivityPair('13', '14')],
+  ['49 しょう油とみそ', () => getKakeiPair('010720020', '010720030')],
+  ['50 りんごとみかん', () => getKakeiPair('010610010', '010610020')],
 ];
 for (const [name, get] of jobs) {
   try {
@@ -30,6 +30,6 @@ const meta = async (id, objId) => {
 };
 const hobby = await meta('0003456573', 'cat03'), sport = await meta('0003456409', 'cat03'), kakei = await meta('0004023605', 'cat01');
 console.log('\n== 項目名の確認');
-console.log('  趣味 23:', hobby['23'], ' 24:', hobby['24']);
-console.log('  スポーツ 09:', sport['09'], ' 13:', sport['13']);
-for (const c of ['011100010', '011100030', '010800090', '010800130']) console.log('  家計', c, kakei[c]);
+console.log('  趣味 13:', hobby['13'], ' 14:', hobby['14']);
+console.log('  スポーツ 15:', sport['15'], ' 18:', sport['18']);
+for (const c of ['010720020', '010720030', '010610010', '010610020']) console.log('  家計', c, kakei[c]);
