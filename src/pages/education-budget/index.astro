@@ -34,8 +34,11 @@ const yearNote = years.join('・');
     <Talk speaker="kei">
       当所では、県の財政力指数と、人口や児童生徒1人当たりの教育費を、並べて見ていただけます。
     </Talk>
-    <Talk speaker="touko">
-      財政力指数というのは、どういう物差しなの？
+    <Talk speaker="shiori">
+      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。財政力指数というのは、どういう物差しなんですか？
+    </Talk>
+    <Talk speaker="kei">
+      県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った指数です。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -59,7 +62,7 @@ const yearNote = years.join('・');
       </div>
 
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳簿をお出しします。</span></Talk>
-      <Talk speaker="touko"><span id="toukoLine">どれくらい、かけているのかしら。</span></Talk>
+      <Talk speaker="shiori"><span id="toukoLine">県を選ぶと、帳簿の欄が埋まりますよ。</span></Talk>
     </section>
 
     <!-- ===== ランキング ===== -->
@@ -77,8 +80,8 @@ const yearNote = years.join('・');
     <Talk speaker="kei">
       財政力指数の順位と、教育費の順位は、同じ並びにはなりません。この数字だけでは理由までは分かりません。分かるのは、県ごとの並びだけです。
     </Talk>
-    <Talk speaker="touko">
-      二つの順位を並べて見る、ということね。
+    <Talk speaker="shiori">
+      二つの帳簿を、横に並べて見るということなんですね。
     </Talk>
 
     <p class="edb-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/population/">国勢の間</a></p>
@@ -203,8 +206,8 @@ const yearNote = years.join('・');
 
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["県のお財布と、学校にかけるお金を並べてあるのね。", "子ども一人にかけるお金まで、分かるなんて。", "わたくしの時代では、教科書や帳面を大事に使っているのよ。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["財政力指数と教育費、二つの帳簿を並べてあるんです。", "1人あたりに直すと、大きな県と小さな県を同じ物差しで見られます。", "教育費の欄には、先生のお給金や校舎の修繕のお金も入るんですよ。"];
+        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const financeRank = stats['#D0110101'].rank[area.c];
         const eduRank = stats['#D0331403'].rank[area.c];
@@ -221,7 +224,7 @@ const yearNote = years.join('・');
         const band = (r, n) => (r <= 10 ? '上位' : r >= n - 9 ? '下位' : '中ほど');
         if (!hasFin || !hasEdu) {
           k += ' 二つを並べて見ることはできません。';
-          t = '値のない欄もあるのね。';
+          t = '値のない欄もあるんですよ。';
         } else if (band(financeRank, total) === band(eduRank, eduTotal)) {
           k += ` 二つの順位は、どちらも全国の${band(financeRank, total)}です。`;
           t = '二つの順位が、同じあたりに並んでいるのね。';

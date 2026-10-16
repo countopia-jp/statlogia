@@ -21,8 +21,8 @@ const data = await getMuniFinanceData();
     <Talk speaker="kei">
       こちらは市区町村の財政窓口です。財政力指数は、町の標準的な収入を標準的な支出で割った指数で、1を超えると収入が支出を上回る計算になります。
     </Talk>
-    <Talk speaker="touko">
-      町の帳面を、わたくしが見てもよいのかしら。
+    <Talk speaker="shiori">
+      うちの帳場では、歳入と歳出の帳簿を、毎晩金庫にしまってから帰るんです。町の帳簿も、こうして並べて見られるんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -46,7 +46,7 @@ const data = await getMuniFinanceData();
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="shiori"><span id="toukoLine"></span></Talk>
     </section>
 
     <section class="tp-ranking">
@@ -173,8 +173,8 @@ const data = await getMuniFinanceData();
       function updateLines(a) {
         const fin = a.v[FIN], edu = a.v[EDU];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["町のお財布の具合まで、数字になるのね。", "財政力指数？　むずかしい言葉ねえ。", "子どもの教育にかけるお金まで、分かるのね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["財政力指数は、町の標準的な収入を、標準的な支出で割った数なんです。", "教育費の欄には、学校や公民館に使ったお金が入るんですよ。", "1人あたりに直すと、大きな町と小さな町を同じ物差しで並べられます。"];
+        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         let k = '';
         const hasFin = typeof fin === 'number';
@@ -190,8 +190,8 @@ const data = await getMuniFinanceData();
         else k += ' 住民1人あたりの教育費は、この町の値がありません。';
         kei.textContent = k;
         touko.textContent = hasFin
-          ? (fin >= 1 ? '1を超えているのね。' : '1より小さいのね。')
-          : '値のない欄もあるのね。';
+          ? (fin >= 1 ? '1を超えているんですね。' : '1より小さいんですね。')
+          : '値のない欄もあるんですよ。';
       }
 
       const RANKS = {

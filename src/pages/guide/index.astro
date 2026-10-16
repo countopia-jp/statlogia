@@ -7,15 +7,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 ---
 
-<BaseLayout title="案内人｜橙子と京｜Countopia Stats" description="Countopia Statsを案内する二人、大正から来た子・橙子と、統計局案内人の京のご紹介。" backHref="/" backLabel="玄関">
+<BaseLayout title="案内人｜橙子と京と栞｜Countopia Stats" description="Countopia Statsを案内する三人、大正から来た子・橙子、統計局案内人の京、別館の昭和の統計係・栞のご紹介。" backHref="/" backLabel="玄関">
   <main class="guide-page">
     <header class="guide-hero">
       <p class="guide-kicker">GUIDE</p>
       <h1>この国の案内人</h1>
       <p class="guide-lead">
-        Countopia Statsを案内する、二人のキャラクターをご紹介します。<br />
-        大正から来た子の橙子と、統計局案内人の京。性分はまるで違う二人です。
+        Countopia Statsを案内する、三人のキャラクターをご紹介します。<br />
+        大正から来た子の橙子と、統計局案内人の京。<br />
+        それに、別館の帳簿をあずかる、昭和の統計係の栞です。
       </p>
+      <img class="guide-group" src="/images/chara/touko-shiori-kei-near.webp" alt="左から橙子・栞・京。帳簿を開いた栞を、橙子が見上げ、京がそばで見ている水彩画" width="1376" height="768" loading="lazy" />
     </header>
 
     <section class="guide-profile" id="kei">
@@ -46,6 +48,20 @@ import Talk from '../../components/Talk.astro';
       </div>
     </section>
 
+    <section class="guide-profile" id="shiori">
+      <figure class="guide-portrait">
+        <img src="/images/chara/shiori-desk.webp" alt="昭和の統計係・栞。役所の事務机で算盤に手を置き、顔を上げている" width="1400" height="782" loading="lazy" />
+      </figure>
+      <div class="guide-text">
+        <span class="guide-no">GUIDE 03</span>
+        <h2>栞<span class="guide-romaji">SHIORI</span><span class="guide-role">昭和の帳場から来た子</span></h2>
+        <p>
+          昭和36年の市役所で統計係をしている、別館「町の出納帳」の案内人。算盤と帳簿が仕事道具で、財政や家計、人の出入りといった数字の欄が何を数えたものなのかを、一つひとつ教えてくれます。名前のとおり、大正の頁と令和の頁のあいだにはさまる、一枚のしおりのような存在です。
+        </p>
+        <Talk speaker="shiori">欄の名前をひとつずつ確かめながら、読んでいきましょうね。</Talk>
+      </div>
+    </section>
+
     <p class="guide-note">
       二人そろって案内するとき、名前を並べると「橙子」＋「京」＝「統計」になります。これは、この国を作るときに仕込んだ、ちょっとした洒落です。
     </p>
@@ -63,6 +79,7 @@ import Talk from '../../components/Talk.astro';
     .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
     .guide-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
     .guide-lead { color: #555; line-height: 1.9; }
+    .guide-group { display: block; width: 100%; height: auto; border-radius: 8px; margin: 20px auto 0; }
 
     .guide-profile {
       display: flex; flex-direction: column; align-items: center;

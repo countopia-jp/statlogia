@@ -85,6 +85,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
 
       <a class="foot-source" href="/annex/">
         <span class="fs-label">ANNEX</span>
+        <img class="fs-icon" src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" />
         <span class="fs-body">
           <span class="fs-title">別館　町の出納帳</span>
           <span class="fs-note">財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側の数字をまとめています。</span>
@@ -175,6 +176,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       font-size: .62rem; letter-spacing: .24em; opacity: .6;
     }
     .fs-body { flex: 1; min-width: 0; }
+    .fs-icon { flex-shrink: 0; width: 64px; height: 64px; border-radius: 8px; display: block; }
     .fs-title {
       display: block; font-family: "Shippori Mincho", serif;
       font-weight: 800; font-size: .95rem;

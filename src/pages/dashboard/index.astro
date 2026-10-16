@@ -562,8 +562,8 @@ import Talk from '../../components/Talk.astro';
     <section class="rr-group" aria-label="別館のご案内">
       <h2 class="rr-group-title">別館のご案内</h2>
       <p class="rr-lead">
-        「教育の帳場」「わが町の財政と教育費」「わが町の人の出入り」の3つの窓口は、別館「町の出納帳」へ移りました。
-        <a class="rr-annex-link" href="/annex/"><img src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" /><span>別館 町の出納帳へ →</span></a>
+        県や町の財政、人の出入り、家計や土地の値段、働き方など、お金と暮らしの内側に関わる12の窓口は、別館「町の出納帳」にあります。昭和の帳場から来た栞がご案内します。
+        <a class="rr-annex-link" href="/annex/" aria-label="別館 町の出納帳へ"><img src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" /><span>別館 町の出納帳</span></a>
       </p>
     </section>
 
@@ -573,8 +573,10 @@ import Talk from '../../components/Talk.astro';
   </main>
   <style>
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
-    .rr-annex-link { display: flex; width: fit-content; align-items: center; gap: 12px; margin-top: 10px; }
-    .rr-annex-link img { width: 88px; height: 88px; border-radius: 8px; flex: none; }
+    .rr-annex-link { display: flex; flex-direction: column; align-items: center; gap: 6px; width: fit-content; margin-top: 14px; padding: 10px 14px 8px; border-radius: 10px; text-decoration: none; color: #2d4a3e; transition: background .15s, transform .15s; }
+    .rr-annex-link img { width: 132px; height: 132px; border-radius: 8px; display: block; box-shadow: 0 1px 4px rgba(0,0,0,.08); }
+    .rr-annex-link span { font-size: .82rem; letter-spacing: .08em; }
+    .rr-annex-link:hover, .rr-annex-link:focus-visible { background: rgba(45,106,79,.08); transform: translateY(-2px); }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }

@@ -21,8 +21,8 @@ const data = await getMuniMigrationData();
     <Talk speaker="kei">
       こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
     </Talk>
-    <Talk speaker="touko">
-      出ていく人と、入ってくる人……町にも、潮の満ち引きがあるのねえ。
+    <Talk speaker="shiori">
+      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。町にも、出ていく人と入ってくる人の帳簿があるんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -46,7 +46,7 @@ const data = await getMuniMigrationData();
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="shiori"><span id="toukoLine"></span></Talk>
     </section>
 
     <section class="tp-ranking">
@@ -175,8 +175,8 @@ const data = await getMuniMigrationData();
       function updateLines(a) {
         const delta = a.v[3], sr = a.v[SR_I];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["引っ越してくる人と出ていく人を、両方数えているのね。", "わたくしの時代では、生まれた町で一生暮らす人が多いのよ。", "人が動くと、町も変わっていくのね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["転入と転出は、住民票を移した人の数で数えるんです。", "転入から転出を引いた数が「社会増減」の欄なんですよ。", "生まれた人と亡くなった人の差は、別の欄で数えるんです。"];
+        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasDelta = typeof delta === 'number';
         let k = '';
@@ -191,7 +191,7 @@ const data = await getMuniMigrationData();
         kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = !hasDelta
-          ? '値のない欄もあるのね。'
+          ? '値のない欄もあるんですよ。'
           : delta > 0
             ? ['入ってくる人のほうが多いのねえ。', '出た人より、来た人が多かったのね。'][seed % 2]
             : delta < 0

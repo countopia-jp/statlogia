@@ -17,6 +17,8 @@ const { room } = Astro.props;
 const data = await getRoomData(room);
 const years = yearSummary(data);
 const isPref = room.scope === 'pref';
+// 別館（annex）の窓口は、橙子のかわりに昭和の帳場の栞が相手をする
+const companion = room.annex ? 'shiori' : 'touko';
 // 扉絵：public/images/icon/<窓口id>-large.webp を置けば出る（無いあいだは出さない）
 const heroImage = room.image ?? `/images/icon/${room.id}-large.webp`;
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
@@ -46,7 +48,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     <h2 id="rmTitle"></h2>
     <div class="rm-cards" id="rmCards"></div>
     <Talk speaker="kei"><span id="rmKei"></span></Talk>
-    <Talk speaker="touko"><span id="rmTouko"></span></Talk>
+    <Talk speaker={companion}><span id="rmTouko"></span></Talk>
   </section>
 
   <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">
@@ -88,7 +90,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 </main>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script is:inline define:vars={{ ROOM_ID: room.id, TOUKO: room.touko || [] }}>
+<script is:inline define:vars={{ ROOM_ID: room.id, TOUKO: room.annex ? (room.shiori || []) : (room.touko || []), ANNEX: !!room.annex }}>
 (async function () {
   const res = await fetch(`/data/room-${ROOM_ID}.json`);
   const D = await res.json();
@@ -203,7 +205,10 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   }
 
   // 橙子の一言は順位を言い直さず、その窓口の数字への驚きや感心を言う（町を選ぶたびに入れ替わる）
-  const TOUKO_COMMON = ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの時代にも、こんな台帳があったら便利なのに。'];
+  // 別館では栞（昭和36年ごろの市役所の統計係）が、帳簿の欄の読み方を一言添える（評価や理由は言わない）
+  const TOUKO_COMMON = ANNEX
+    ? ['欄の名前を、ひとつずつ確かめてみてくださいね。', '割合の欄は、合計を100として分けた数なんです。', '年によって数え方が変わる欄もあるので、注にも目を通してくださいね。']
+    : ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの時代にも、こんな台帳があったら便利なのに。'];
   const toukoLine = (a) => { const pool = TOUKO.length ? TOUKO : TOUKO_COMMON; return pool[(parseInt(a.c, 10) || 0) % pool.length]; };
   function lines(a, ranks) {
     const kei = document.getElementById('rmKei');
@@ -211,7 +216,9 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const name = isPref ? a.n : shortName(a);
     if (ranks.length === 0) {
       kei.textContent = a.x ? `${name}は政令指定都市の区なので、数字だけをお出しして、順位はつけていません。` : `${name}は、最新の年の値がそろっていません。`;
-      touko.textContent = a.x ? '区ごとの数字も、見られるのね。' : '値のない欄もあるのね。';
+      touko.textContent = ANNEX
+        ? (a.x ? '区ごとの数字も、帳簿に載っているんですよ。' : '値の入っていない欄もあるんです。')
+        : (a.x ? '区ごとの数字も、見られるのね。' : '値のない欄もあるのね。');
       return;
     }
     if (ranks.length === 1) {

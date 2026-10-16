@@ -1,11 +1,12 @@
 ---
 // 掛け合い用コンポーネント
-// 使い方: <Talk speaker="kei">セリフ</Talk> / <Talk speaker="touko">セリフ</Talk>
+// 使い方: <Talk speaker="kei">セリフ</Talk> / <Talk speaker="touko">セリフ</Talk> / <Talk speaker="shiori">セリフ</Talk>（栞＝別館の案内人、昭和36年ごろ）
 // img を差し替えれば全記事のアイコンが一斉に更新される(原画完成時はここだけ変更)
 const { speaker = 'kei' } = Astro.props;
 const profiles = {
   kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
   touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
+  shiori: { name: '栞（昭和の帳場から来た子）', img: '/images/chara/shiori-face.webp', side: 'right', tone: 'shiori' },
   // 旧名の互換
   guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
   traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
@@ -36,6 +37,9 @@ const p = profiles[speaker] ?? profiles.kei;
 .say.kei .name{color:#2d6a4f}
 .say.touko .bubble{color:#222}
 .say.touko .name{color:#a33227}
+.say.shiori{--bubble-bg:#e3eef7}
+.say.shiori .bubble{color:#222}
+.say.shiori .name{color:#2c4a7a}
 /* スマホでは顔を大きく（表情が見えるように） */
 @media(max-width:600px){
   .say{gap:10px}
