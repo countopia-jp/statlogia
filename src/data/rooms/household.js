@@ -5,7 +5,7 @@ export const HOUSEHOLD = {
   scope: 'pref',
   path: '/household/',
   annex: true,
-  description: '都道府県（県庁所在市）を選んで、1か月の収入・可処分所得・消費支出と、食料・住居・光熱・教育・教養娯楽への支出、貯蓄の額をご覧いただける窓口。',
+  description: '都道府県（県庁所在市）を選んで、1か月の収入・可処分所得・消費支出と、食料・住居・光熱・教育・教養娯楽などへの支出をご覧いただける窓口。',
   title: '家計の帳場',
   imageAlt: '夜の台所のテーブルで、電卓を手に家計簿をつける母親と、のぞき込む父親の水彩画',
   shelf: '町の出納帳',
@@ -24,7 +24,6 @@ export const HOUSEHOLD = {
     '家計調査によるもので、その県の県庁所在市の値です（県全体の値ではありません）。調べる世帯の数が限られるため、年ごとの振れが大きいことがあります。',
     '実収入と可処分所得は、二人以上の世帯のうち勤め人の世帯（勤労者世帯）の1か月あたりの平均です。可処分所得＝実収入から税金や社会保険料を引いた額。',
     '消費支出とその内訳は、二人以上の世帯（勤め人以外の世帯も含む）の1か月あたりの平均です。',
-    '貯蓄現在高は、全国家計構造調査（5年ごと）による二人以上の世帯の平均で、万円にそろえています（元の表は千円単位）。',
   ],
   cross: [['/prices/', '物価の帳場'], ['/living/', '暮らしの見積所'], ['/pref-economy/', '県のふところ']],
   indicators: [
@@ -36,6 +35,10 @@ export const HOUSEHOLD = {
     { key: 'utility', label: '光熱・水道費', table: L, code: 'L322103', decimals: 0, rankWord: '多い順' },
     { key: 'education', label: '教育費', table: L, code: 'L322108', decimals: 0, rankWord: '多い順' },
     { key: 'leisure', label: '教養娯楽費', table: L, code: 'L322109', decimals: 0, rankWord: '多い順' },
-    { key: 'savings', label: '貯蓄現在高', table: L, code: 'L730101', unit: '万円', scale: 0.1, decimals: 0, rankWord: '多い順' },
+    { key: 'furniture', label: '家具・家事用品費', table: L, code: 'L322104', decimals: 0, rankWord: '多い順' },
+    { key: 'clothes', label: '被服及び履物費', table: L, code: 'L322105', decimals: 0, rankWord: '多い順' },
+    { key: 'medical', label: '保健医療費', table: L, code: 'L322106', decimals: 0, rankWord: '多い順' },
+    { key: 'transport', label: '交通・通信費', table: L, code: 'L322107', decimals: 0, rankWord: '多い順' },
+    { key: 'other', label: 'その他の消費支出', table: L, code: 'L322110', decimals: 0, rankWord: '多い順' },
   ],
 };

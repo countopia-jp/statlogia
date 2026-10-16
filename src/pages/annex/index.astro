@@ -6,7 +6,7 @@ import path from 'node:path';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。8つの窓口があります。">
+<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。11の窓口があります。">
   <main class="rr">
     <header class="rr-hero">
       <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
@@ -25,9 +25,42 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
       帳面には、町のいろんな数字が綴じてあるのねえ。
     </Talk>
 
-    <section class="rr-group" aria-label="財政と人の動き">
-      <h2 class="ledger-shelf">財政と人の動き</h2>
-      <div class="ledger-grid">
+    <section class="rr-group" aria-label="県のお金">
+      <h2 class="ledger-shelf">県のお金</h2>
+      <div class="ledger-grid ledger-grid--4">
+        <a class={`ledger-card${thumbOf('pref-spending') ? ' ledger-card--img' : ''}`} href="/pref-spending/">
+          {thumbOf('pref-spending') && <img class="lc-img" src={thumbOf('pref-spending')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">支</span>
+          <h3>県のお金の使いみち</h3>
+          <p class="lc-desc">
+            都道府県が1年に使ったお金と、福祉・教育・土木など使いみちごとの割合を。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('pref-revenue') ? ' ledger-card--img' : ''}`} href="/pref-revenue/">
+          {thumbOf('pref-revenue') && <img class="lc-img" src={thumbOf('pref-revenue')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">入</span>
+          <h3>県のお金の入り口</h3>
+          <p class="lc-desc">
+            都道府県の1年間の収入が、税・地方交付税・国からのお金・借り入れなど、どこから入ってきたかの割合を。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('pref-economy') ? ' ledger-card--img' : ''}`} href="/pref-economy/">
+          {thumbOf('pref-economy') && <img class="lc-img" src={thumbOf('pref-economy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">県</span>
+          <h3>県のふところ</h3>
+          <p class="lc-desc">
+            県内総生産と県民所得、1人当たり県民所得と、その内訳をまとめた帳場です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
         <a class={`ledger-card${thumbOf('education-budget') ? ' ledger-card--img' : ''}`} href="/education-budget/">
           {thumbOf('education-budget') && <img class="lc-img" src={thumbOf('education-budget')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="lc-body">
@@ -37,6 +70,34 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
             都道府県ごとの財政力指数と、教育費のかけ方をまとめた帳場です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="町のお金">
+      <h2 class="ledger-shelf">町のお金</h2>
+      <div class="ledger-grid">
+        <a class={`ledger-card${thumbOf('town-spending') ? ' ledger-card--img' : ''}`} href="/town-spending/">
+          {thumbOf('town-spending') && <img class="lc-img" src={thumbOf('town-spending')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">使</span>
+          <h3>町のお金の使いみち</h3>
+          <p class="lc-desc">
+            市区町村が1年に使ったお金と、福祉・衛生・土木・消防など使いみちごとの割合を。
+          </p>
+          <span class="lc-foot">別館・市区町村</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('town-revenue') ? ' ledger-card--img' : ''}`} href="/town-revenue/">
+          {thumbOf('town-revenue') && <img class="lc-img" src={thumbOf('town-revenue')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">納</span>
+          <h3>町のお金の入り口</h3>
+          <p class="lc-desc">
+            市区町村の1年間の収入が、税・地方交付税・国や県からのお金・借り入れなど、どこから入ってきたかの割合を。
+          </p>
+          <span class="lc-foot">別館・市区町村</span>
           </div>
         </a>
         <a class={`ledger-card${thumbOf('town-finance') ? ' ledger-card--img' : ''}`} href="/town-finance/">
@@ -50,52 +111,19 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・市区町村</span>
           </div>
         </a>
-        <a class={`ledger-card${thumbOf('town-migration') ? ' ledger-card--img' : ''}`} href="/town-migration/">
-          {thumbOf('town-migration') && <img class="lc-img" src={thumbOf('town-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="lc-body">
-          <span class="lc-mark">人</span>
-          <h3>わが町の人の出入り</h3>
-          <p class="lc-desc">
-            転入・転出の数字から、町の人の動きを追います。
-          </p>
-          <span class="lc-foot">別館・市区町村</span>
-          </div>
-        </a>
-        <a class={`ledger-card${thumbOf('pref-spending') ? ' ledger-card--img' : ''}`} href="/pref-spending/">
-          {thumbOf('pref-spending') && <img class="lc-img" src={thumbOf('pref-spending')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="lc-body">
-          <span class="lc-mark">支</span>
-          <h3>県のお金の使いみち</h3>
-          <p class="lc-desc">
-            都道府県が1年に使ったお金と、福祉・教育・土木など使いみちごとの割合を。
-          </p>
-          <span class="lc-foot">別館・都道府県</span>
-          </div>
-        </a>
       </div>
     </section>
 
-    <section class="rr-group" aria-label="お金と暮らし">
-      <h2 class="ledger-shelf">お金と暮らし</h2>
+    <section class="rr-group" aria-label="暮らしと人の動き">
+      <h2 class="ledger-shelf">暮らしと人の動き</h2>
       <div class="ledger-grid ledger-grid--4">
-        <a class={`ledger-card${thumbOf('pref-economy') ? ' ledger-card--img' : ''}`} href="/pref-economy/">
-          {thumbOf('pref-economy') && <img class="lc-img" src={thumbOf('pref-economy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="lc-body">
-          <span class="lc-mark">県</span>
-          <h3>県のふところ</h3>
-          <p class="lc-desc">
-            県内総生産と県民所得、1人当たり県民所得と、その内訳をまとめた帳場です。
-          </p>
-          <span class="lc-foot">別館・都道府県</span>
-          </div>
-        </a>
         <a class={`ledger-card${thumbOf('household') ? ' ledger-card--img' : ''}`} href="/household/">
           {thumbOf('household') && <img class="lc-img" src={thumbOf('household')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="lc-body">
           <span class="lc-mark">家</span>
           <h3>家計の帳場</h3>
           <p class="lc-desc">
-            県庁所在市の世帯の、1か月の収入と支出の内訳、貯蓄の額です。
+            県庁所在市の世帯の、1か月の収入と、食料から交通・通信まで支出の内訳です。
           </p>
           <span class="lc-foot">別館・都道府県</span>
           </div>
@@ -122,8 +150,20 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
+        <a class={`ledger-card${thumbOf('town-migration') ? ' ledger-card--img' : ''}`} href="/town-migration/">
+          {thumbOf('town-migration') && <img class="lc-img" src={thumbOf('town-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">人</span>
+          <h3>わが町の人の出入り</h3>
+          <p class="lc-desc">
+            転入・転出の数字から、町の人の動きを追います。
+          </p>
+          <span class="lc-foot">別館・市区町村</span>
+          </div>
+        </a>
       </div>
     </section>
+
   </main>
 
   <style>
