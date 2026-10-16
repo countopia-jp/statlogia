@@ -18,11 +18,11 @@ const data = await getMuniFinanceData();
       </p>
     </header>
 
-    <Talk speaker="kei">
-      こちらは市区町村の財政窓口です。財政力指数は、町の標準的な収入を標準的な支出で割った指数で、1を超えると収入が支出を上回る計算になります。
+    <Talk speaker="shiori">
+      うちの帳場では、歳入と歳出の帳簿を、毎晩金庫にしまってから帰るんです。ここは市区町村の財政の帳場ですよ。
     </Talk>
     <Talk speaker="shiori">
-      うちの帳場では、歳入と歳出の帳簿を、毎晩金庫にしまってから帰るんです。町の帳簿も、こうして並べて見られるんですね。
+      財政力指数は、町の標準的な収入を標準的な支出で割った数なんです。1を超えると、収入が支出を上回る計算になります。
     </Talk>
 
     <section class="tp-selector">
@@ -45,8 +45,7 @@ const data = await getMuniFinanceData();
         <canvas id="finChart" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="shiori"><span id="toukoLine"></span></Talk>
+      <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
     <section class="tp-ranking">

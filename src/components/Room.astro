@@ -17,8 +17,7 @@ const { room } = Astro.props;
 const data = await getRoomData(room);
 const years = yearSummary(data);
 const isPref = room.scope === 'pref';
-// 別館（annex）の窓口は、橙子のかわりに昭和の帳場の栞が相手をする
-const companion = room.annex ? 'shiori' : 'touko';
+// 別館（annex）の窓口は栞がひとりで案内する（順位を言うのも栞。京・橙子は出ない）
 // 扉絵：public/images/icon/<窓口id>-large.webp を置けば出る（無いあいだは出さない）
 const heroImage = room.image ?? `/images/icon/${room.id}-large.webp`;
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
@@ -47,8 +46,14 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   <section id="rmResult" class="rm-result" hidden aria-live="polite">
     <h2 id="rmTitle"></h2>
     <div class="rm-cards" id="rmCards"></div>
-    <Talk speaker="kei"><span id="rmKei"></span></Talk>
-    <Talk speaker={companion}><span id="rmTouko"></span></Talk>
+    {room.annex ? (
+      <Talk speaker="shiori"><span id="rmKei"></span> <span id="rmTouko"></span></Talk>
+    ) : (
+      <>
+        <Talk speaker="kei"><span id="rmKei"></span></Talk>
+        <Talk speaker="touko"><span id="rmTouko"></span></Talk>
+      </>
+    )}
   </section>
 
   <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">

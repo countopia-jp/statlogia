@@ -31,14 +31,11 @@ const yearNote = years.join('・');
       </p>
     </header>
 
-    <Talk speaker="kei">
-      当所では、県の財政力指数と、人口や児童生徒1人当たりの教育費を、並べて見ていただけます。
+    <Talk speaker="shiori">
+      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。この帳場では、県の財政力指数と、人口や児童生徒1人あたりの教育費を、並べて見ていただけますよ。
     </Talk>
     <Talk speaker="shiori">
-      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。財政力指数というのは、どういう物差しなんですか？
-    </Talk>
-    <Talk speaker="kei">
-      県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った指数です。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
+      財政力指数は、県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った数なんです。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -61,8 +58,7 @@ const yearNote = years.join('・');
         <canvas id="edbChart" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳簿をお出しします。</span></Talk>
-      <Talk speaker="shiori"><span id="toukoLine">県を選ぶと、帳簿の欄が埋まりますよ。</span></Talk>
+      <Talk speaker="shiori"><span id="keiLine">県を選ぶと、帳簿の欄が埋まりますよ。</span> <span id="toukoLine"></span></Talk>
     </section>
 
     <!-- ===== ランキング ===== -->
@@ -77,11 +73,8 @@ const yearNote = years.join('・');
       <p class="edb-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="kei">
-      財政力指数の順位と、教育費の順位は、同じ並びにはなりません。この数字だけでは理由までは分かりません。分かるのは、県ごとの並びだけです。
-    </Talk>
     <Talk speaker="shiori">
-      二つの帳簿を、横に並べて見るということなんですね。
+      財政力指数の順位と、教育費の順位は、同じ並びにはならないんです。この帳簿だけでは理由までは分かりません。分かるのは、県ごとの並びだけですよ。
     </Talk>
 
     <p class="edb-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/population/">国勢の間</a></p>

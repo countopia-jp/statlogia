@@ -18,11 +18,11 @@ const data = await getMuniMigrationData();
       </p>
     </header>
 
-    <Talk speaker="kei">
-      こちらは、人の出入りの窓口です。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
+    <Talk speaker="shiori">
+      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。ここは、町の人の出入りの帳場ですよ。
     </Talk>
     <Talk speaker="shiori">
-      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。町にも、出ていく人と入ってくる人の帳簿があるんですね。
+      転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
     </Talk>
 
     <section class="tp-selector">
@@ -45,8 +45,7 @@ const data = await getMuniMigrationData();
         <canvas id="migChart" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="shiori"><span id="toukoLine"></span></Talk>
+      <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
     <section class="tp-ranking">

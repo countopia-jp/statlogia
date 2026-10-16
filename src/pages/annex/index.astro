@@ -18,16 +18,13 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
       </p>
     </header>
 
-    <Talk speaker="kei">
-      ここは本館の奥、別館です。財政やひとの出入りなど、町の内側の数字を扱う窓口を集めた出納帳です。別館の帳簿は、栞さんと一緒にご案内します。
+    <Talk speaker="shiori">
+      ようこそ、別館「町の出納帳」へ。昭和36年の市役所で、統計係をしている栞です。わたしたちBGは、毎日この帳簿とにらめっこなんですよ。
     </Talk>
     <Talk speaker="shiori">
-      昭和36年の市役所で、統計係をしている栞です。わたしたちBGは、毎日この帳簿とにらめっこなんですよ。
+      ここには、財政やひとの出入りなど、町の内側の数字の帳簿を綴じてあります。欄の名前をひとつずつ確かめながら、読んでいきましょうね。
     </Talk>
-    <Talk speaker="shiori">
-      欄の名前をひとつずつ確かめながら、読んでいきましょうね。
-    </Talk>
-    <img class="rr-figure rr-figure--pair" src="/images/chara/kei-shiori-ledger.webp" alt="京と栞が、開いた帳簿の一行をのぞきこんでいる水彩画" width="1400" height="782" loading="lazy" />
+    <p class="rr-shiori-link"><a href="/annex/shiori/">別館の案内人・栞のこと →</a></p>
 
     <section class="rr-group" aria-label="県のお金">
       <h2 class="ledger-shelf">県のお金</h2>
@@ -185,7 +182,8 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
-    .rr-figure--pair { max-width: 560px; margin: 8px auto 28px; }
+    .rr-shiori-link { text-align: right; font-size: .85rem; margin: 4px 0 24px; }
+    .rr-shiori-link a { color: #2c4a7a; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
     .rr-lead { color: #555; line-height: 1.9; }
