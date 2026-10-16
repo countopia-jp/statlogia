@@ -22,4 +22,11 @@ export const EXHIBIT_PAIRS = {
   'odori-dance': { kind: 'act', a: '13', b: '14', short: '邦舞・おどり' },
   'soy-miso': { kind: 'kakei', a: '010720020', b: '010720030', short: 'しょう油' },
   'apple-mandarin': { kind: 'kakei', a: '010610010', b: '010610020', short: 'りんご' },
+  'yoga-training': { kind: 'act', a: '21', b: '22', stats: SPORT, short: 'ヨガ' },
+  'tennis-volleyball': { kind: 'act', a: '07', b: '03', stats: SPORT, short: 'テニス' },
+  'photo-cooking': { kind: 'act', a: '25', b: '20', short: '写真' },
+  'hogaku-chorus': { kind: 'act', a: '10', b: '11', short: '邦楽' },
+  'shochu-wine': { kind: 'kakei', a: '011100020', b: '011100050', short: '焼酎' },
+  'milk-yogurt': { kind: 'kakei', a: '010410001', b: '010420020', short: '牛乳' },
+  'sushi-burger': { kind: 'kakei', a: '011211040', b: '011211090', short: 'すし（外食）' },
 };

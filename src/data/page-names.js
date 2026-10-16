@@ -38,7 +38,7 @@ export const ROOM_NAMES = {
   '/work-forms/': '閲覧室　働き方のかたち',
   '/home-features/': '閲覧室　家のつくりと設備',
   '/town-households/': '閲覧室　わが町の世帯のかたち',
-  '/home-space/': '閲覧室　住まいの広さと近さ',
+  '/home-space/': '閲覧室　住まいの広さ',
   '/medical-staff/': '閲覧室　医療の担い手',
   '/learning-places/': '閲覧室　学びの場と集い',
   '/house-build/': '閲覧室　家の建ちかた',

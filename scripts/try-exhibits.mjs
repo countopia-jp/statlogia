@@ -6,10 +6,13 @@ for (const line of fs.readFileSync(new URL('../.env', import.meta.url), 'utf8').
 const { getActivityPair } = await import('../src/lib/activity-pair.js');
 const { getKakeiPair } = await import('../src/lib/kakei-pair.js');
 const jobs = [
-  ['47 水泳とサイクリング', () => getActivityPair('15', '18', '0003456409')],
-  ['48 おどりと社交ダンス', () => getActivityPair('13', '14')],
-  ['49 しょう油とみそ', () => getKakeiPair('010720020', '010720030')],
-  ['50 りんごとみかん', () => getKakeiPair('010610010', '010610020')],
+  ['51 ヨガとトレーニング', () => getActivityPair('21', '22', '0003456409')],
+  ['52 テニスとバレーボール', () => getActivityPair('07', '03', '0003456409')],
+  ['53 写真と料理・菓子作り', () => getActivityPair('25', '20')],
+  ['54 邦楽とコーラス', () => getActivityPair('10', '11')],
+  ['55 焼酎とワイン', () => getKakeiPair('011100020', '011100050')],
+  ['56 牛乳とヨーグルト', () => getKakeiPair('010410001', '010420020')],
+  ['57 すしとハンバーガー', () => getKakeiPair('011211040', '011211090')],
 ];
 for (const [name, get] of jobs) {
   try {
@@ -30,6 +33,6 @@ const meta = async (id, objId) => {
 };
 const hobby = await meta('0003456573', 'cat03'), sport = await meta('0003456409', 'cat03'), kakei = await meta('0004023605', 'cat01');
 console.log('\n== 項目名の確認');
-console.log('  趣味 13:', hobby['13'], ' 14:', hobby['14']);
-console.log('  スポーツ 15:', sport['15'], ' 18:', sport['18']);
-for (const c of ['010720020', '010720030', '010610010', '010610020']) console.log('  家計', c, kakei[c]);
+console.log('  趣味 25:', hobby['25'], ' 20:', hobby['20'], ' 10:', hobby['10'], ' 11:', hobby['11']);
+console.log('  スポーツ 21:', sport['21'], ' 22:', sport['22'], ' 07:', sport['07'], ' 03:', sport['03']);
+for (const c of ['011100020', '011100050', '010410001', '010420020', '011211040', '011211090']) console.log('  家計', c, kakei[c]);
