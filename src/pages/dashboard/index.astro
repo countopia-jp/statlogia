@@ -562,8 +562,8 @@ import Talk from '../../components/Talk.astro';
     <section class="rr-group" aria-label="別館のご案内">
       <h2 class="rr-group-title">別館のご案内</h2>
       <p class="rr-lead">
-        「教育の帳場」「わが町の財政と教育費」「わが町の人の出入り」の3つの窓口は、別館「町の出納帳」へ移りました。<br />
-        <a href="/annex/">別館 町の出納帳へ →</a>
+        「教育の帳場」「わが町の財政と教育費」「わが町の人の出入り」の3つの窓口は、別館「町の出納帳」へ移りました。
+        <a class="rr-annex-link" href="/annex/"><img src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" /><span>別館 町の出納帳へ →</span></a>
       </p>
     </section>
 
@@ -573,6 +573,8 @@ import Talk from '../../components/Talk.astro';
   </main>
   <style>
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
+    .rr-annex-link { display: flex; width: fit-content; align-items: center; gap: 12px; margin-top: 10px; }
+    .rr-annex-link img { width: 88px; height: 88px; border-radius: 8px; flex: none; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }

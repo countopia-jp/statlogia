@@ -16,34 +16,42 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
         <div class="cards">
         <a class="card" href="/how-to-read/median-vs-mean/">
+          <img class="card-img" src="/images/icon/median-vs-mean-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>平均のところに、誰もいない</h3>
           <p>「平均年収」を見て、自分と合わないと感じたことはありませんか。平均値と中央値のちがいを、京が絵で説明します。</p>
         </a>
         <a class="card" href="/how-to-read/average-vs-national/">
+          <img class="card-img" src="/images/icon/average-vs-national-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>全国平均と単純平均はなぜ違うのか</h3>
           <p>Countopiaの窓口によく出てくる「47都道府県の単純平均」という注記。それが公式の全国値とどう違うのか、京が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/per-capita/">
+          <img class="card-img" src="/images/icon/per-capita-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>人口あたりで見るということ</h3>
           <p>飲食店の数、教育費……実数のまま比べると、いつも大きな街が「1位」になってしまいます。「あたり」に直す意味を、京が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/rate-and-count/">
+          <img class="card-img" src="/images/icon/rate-and-count-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>割合だけ見ると、消えるもの</h3>
           <p>人口で割ると、大きな町と小さな町を同じ土俵で比べられます。そのかわり消えるものがある。二つの物差しの使い分けを、京が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/base-100/">
+          <img class="card-img" src="/images/icon/base-100-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>100は、円ではない</h3>
           <p>物価の展示に出てくる「125.1」は何円のことでしょう。円ではありません。全国平均を100とした指数の読み方を、京が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/data-lag/">
+          <img class="card-img" src="/images/icon/data-lag-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>いちばん新しい数字が、数年前なわけ</h3>
           <p>窓口に「2018年度」と書いてあっても、それがいちばん新しい数字です。調査の周期と、公表までにかかる時間の話を、京が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/data-source/">
+          <img class="card-img" src="/images/icon/data-source-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>データの出どころ（e-Stat）</h3>
           <p>Countopiaの数字は、どこから来ているのでしょう。国の統計調査からこのサイトまでの道筋を、京がご案内します。</p>
         </a>
         <a class="card" href="/how-to-read/surveys/">
+          <img class="card-img" src="/images/icon/surveys-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>数字のもとになった調査</h3>
           <p>国勢調査、家計調査、社会生活基本調査……。この国の数字は、だれが、何を、どう数えたものなのか。主な調査を、京がご案内します。</p>
         </a>
@@ -100,6 +108,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   transition:transform .15s,box-shadow .15s;
 }
 a.card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
+.card{overflow:hidden}
+.card-img{display:block;width:calc(100% + 48px);max-width:none;height:auto;aspect-ratio:16/9;object-fit:cover;margin:-24px -24px 6px;border-bottom:1px solid var(--line)}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
 .card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
 </style>
