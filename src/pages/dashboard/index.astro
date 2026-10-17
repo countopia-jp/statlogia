@@ -232,6 +232,16 @@ import Talk from '../../components/Talk.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（運転免許統計・損害保険料率算出機構ほか）</p>
           </div>
         </a>
+        <a class="rr-card" href="/transport/">
+          {thumbOf('transport') && <img class="rr-card-img" src={thumbOf('transport')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>乗りものと運ぶもの</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、JR・私鉄・バス・タクシー・飛行機・船に乗った人の数を1人あたりで。鉄道・船・飛行機の貨物の量や、トラック運送の事業者の数も。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（国土交通省の鉄道・航空・港湾・自動車の統計ほか）</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -304,6 +314,16 @@ import Talk from '../../components/Talk.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（工業統計・経済センサスほか）</p>
           </div>
         </a>
+        <a class="rr-card" href="/per-worker/">
+          {thumbOf('per-worker') && <img class="rr-card-img" src={thumbOf('per-worker')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>働く人ひとりが生み出す額</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、製造業・卸売業・小売業で働く人1人あたりの付加価値額や販売額と、情報通信業で働く人の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（工業統計・商業統計・経済センサス・国勢調査・県民経済計算）</p>
+          </div>
+        </a>
         <a class="rr-card" href="/farm-sea/">
           <img class="rr-card-img" src="/images/icon/farm-sea-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -312,6 +332,16 @@ import Talk from '../../components/Talk.astro';
             都道府県を選んで、農業産出額・田畑の広さ・耕作放棄地と、海の漁獲量や養殖の収獲量を。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（農林水産省の調べ）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/forest-river/">
+          {thumbOf('forest-river') && <img class="rr-card-img" src={thumbOf('forest-river')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>森と川のめぐみ</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、林業の生産額・林道の長さ、川や湖の漁獲量、農産物直売所の数と販売額を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（県民経済計算・内水面漁業統計・6次産業化総合調査ほか）</p>
           </div>
         </a>
         <a class="rr-card" href="/stay/">
