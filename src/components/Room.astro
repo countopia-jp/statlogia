@@ -73,12 +73,27 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">
     <h2 id="rmLineTitle">移りかわり</h2>
     <div class="rm-tabs" id="rmLineTabs" role="tablist"></div>
+    <div class="rm-mode" id="rmLineMode" role="group" aria-label="グラフの見せ方">
+      <button type="button" data-mode="value" class="is-active" aria-pressed="true">値で見る</button>
+      <button type="button" data-mode="index" aria-pressed="false">最初の年を100にそろえる</button>
+    </div>
     <div class="rm-line-wrap">
       <canvas id="rmLine" height="140"></canvas>
       <p class="rm-note" id="rmLineEmpty" hidden></p>
     </div>
     <p class="rm-note" id="rmLineNote"></p>
   </section>
+
+  {!isPref && data.pop && data.indicators.some((i) => i.perCap === 'p100k') && (
+    <section id="rmFunSec" class="rm-fun" hidden aria-label="人口の大きさを考えに入れて見る">
+      <h2>人口の大きさを考えに入れて見る</h2>
+      <p class="rm-note rm-fun-lead">人口の少ない町は、数が1つ違うだけで「人口あたり」が大きく動きます。横に人口、縦に人口10万人あたりの値をとり、全国の率のまわりに「偶然のゆらぎでも出る範囲」の線を引きました（ファンネルプロット）。線の外にある町は、偶然だけでは説明しにくい差がある町です。</p>
+      <div class="rm-selector rm-selector--small"><label><span>項目</span><select id="rmFunInd"></select></label></div>
+      <div class="rm-line-wrap"><canvas id="rmFun" height="170"></canvas></div>
+      <p class="rm-fun-read" id="rmFunRead"></p>
+      <p class="rm-note">実線は全国の率、内側の点線は95％、外側の点線は99.8％の範囲です（ポアソン分布による近似）。「見込みの数」は、全国の率どおりならその町にあるはずの数、「比」は実際の数÷見込みの数×100です。「ならした値」は、小さな町の揺れを全国の傾向に寄せて安定させた値（経験ベイズ推定）です。横軸は人口を対数の目盛りで並べています。</p>
+    </section>
+  )}
 
   <section class="rm-ranking" aria-label="上位と下位">
     <h2>{isPref ? '全国の上位と下位' : '上位と下位'}</h2>
@@ -103,6 +118,10 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     <p>
       出典：{data.source}（{years}）<br />
       {room.notes.map((n) => <>{n}<br /></>)}
+      {data.pop && <>「人口10万人あたり」「1人あたり」「人口に対する割合」は、各地域の総人口（{data.popYear}{isPref ? '' : '・国勢調査'}）で割った値です。年のずれがあるため目安としてご覧ください。<br /></>}
+      「上位◯％」は、{isPref ? '47都道府県' : '全国の市区町村'}を値の大きい順に並べたときの位置です。偏差値は、分布の偏りが小さい項目にだけ出しています（平均50、標準偏差10に換算）。<br />
+      グラフの「年平均の伸び」は、最初の年から最後の年までを複利でならした1年あたりの伸び率です。割合の項目は、動いた幅をポイントで示しています。<br />
+      読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>{!isPref && data.pop && data.indicators.some((i) => i.perCap === 'p100k') && <>｜<a href="/how-to-read/small-towns/">小さな町の1位は、あてにならない</a></>}{data.indicators.some((i) => i.lq) && <>｜<a href="/how-to-read/specialization/">町の得意を測る物差し</a></>}<br />
       このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
     </p>
   </footer>
@@ -150,6 +169,69 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     return pool.filter((b) => r(ind, at(b, ind)) > rv).length + 1;
   };
 
+  // ---- 10-18 散らばりの中の位置（人口あたり・分位・偏差値・ドット帯） ----
+  const POP = D.pop || null;
+  const pcOf = (a, ind) => {
+    const v = at(a, ind);
+    if (!ind.perCap || !POP || v === null || !POP[a.c]) return null;
+    return ind.perCap === 'man' ? (v * 1e4) / POP[a.c] : (v / POP[a.c]) * 1e5;
+  };
+  const pcLabel = (ind) => (ind.perCap === 'man' ? '1人あたり' : '人口10万人あたり');
+  const pcUnit = (ind) => (ind.perCap === 'man' ? '万円' : ind.unit);
+  const pcDec = (ind, vals) => { const med = vals.length ? Math.abs(vals[Math.floor(vals.length / 2)]) : 0; return med >= 100 ? 0 : med >= 10 ? 1 : 2; };
+  const metricOf = (a, ind) => (ind.perCap && POP ? pcOf(a, ind) : at(a, ind));
+  const DIST = {};
+  const distOf = (ind) => {
+    if (DIST[ind.key]) return DIST[ind.key];
+    const vals = AREAS.filter((a) => !a.x).map((a) => metricOf(a, ind)).filter((v) => v !== null && Number.isFinite(v)).sort((x, y) => x - y);
+    const n = vals.length;
+    const mean = vals.reduce((s, v) => s + v, 0) / (n || 1);
+    const sd = Math.sqrt(vals.reduce((s, v) => s + (v - mean) ** 2, 0) / (n || 1));
+    const skew = sd > 0 ? vals.reduce((s, v) => s + ((v - mean) / sd) ** 3, 0) / n : 0;
+    const q = (p) => { if (!n) return null; const h = (n - 1) * p; const lo = Math.floor(h); return vals[lo] + (vals[Math.min(lo + 1, n - 1)] - vals[lo]) * (h - lo); };
+    const out = { vals, n, mean, sd, skew, q, dec: ind.perCap ? pcDec(ind, vals) : ind.decimals };
+    DIST[ind.key] = out;
+    return out;
+  };
+  // 分位（上位◯％）：大きいほうから数えた順位を全体の数で割る。同じ値は同じ順位
+  const posText = (ind, a) => {
+    const v = metricOf(a, ind);
+    if (v === null || a.x) return '';
+    const S = distOf(ind);
+    if (S.n < 5) return '';
+    const above = S.vals.filter((x) => x > v + 1e-12).length;
+    const rk = above + 1;
+    const pTop = Math.ceil((rk / S.n) * 100);
+    const pBot = Math.ceil(((S.n - rk + 1) / S.n) * 100);
+    const part = pTop <= 50 ? `上位${pTop}％` : `下位${pBot}％`;
+    // 偏差値は、分布が左右に大きく偏っていないときだけ出す（偏りが強いと、極端な値に引っぱられて実感とずれるため）
+    const dev = S.sd > 0 && Math.abs(S.skew) < 1 ? Math.round(50 + (10 * (v - S.mean)) / S.sd) : null;
+    return part + (dev === null ? '' : `・偏差値${dev}`);
+  };
+  const stripSvg = (ind, a) => {
+    const v = metricOf(a, ind);
+    const S = distOf(ind);
+    if (v === null || S.n < 5) return '';
+    const W = 200, H = 18, PAD = 6;
+    let lo, hi;
+    if (isPref) { lo = S.vals[0]; hi = S.vals[S.n - 1]; } else { lo = S.q(0.01); hi = S.q(0.99); }
+    if (!(hi > lo)) return '';
+    const X = (x) => PAD + ((Math.min(Math.max(x, lo), hi) - lo) / (hi - lo)) * (W - PAD * 2);
+    let body = '';
+    if (isPref) {
+      body = S.vals.map((x) => `<circle cx="${X(x).toFixed(1)}" cy="9" r="2.4" fill="#1b4332" fill-opacity=".22"/>`).join('');
+    } else {
+      const p5 = X(S.q(0.05)), p25 = X(S.q(0.25)), p50 = X(S.q(0.5)), p75 = X(S.q(0.75)), p95 = X(S.q(0.95));
+      body = `<line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1b4332" stroke-opacity=".35"/>` +
+        `<rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1b4332" fill-opacity=".14" stroke="#1b4332" stroke-opacity=".35"/>` +
+        `<line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1b4332" stroke-opacity=".6"/>`;
+    }
+    const out = !isPref && (v < lo || v > hi);
+    const mark = `<circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#b23a2f" stroke="#fff" stroke-width="1.2"/>`;
+    const tip = isPref ? '47都道府県の値を点で並べたもの。赤がこの県' : '真ん中の箱は全国の市区町村の真ん中半分、線は5〜95％の範囲。赤がこの町' + (out ? '（端の外にあるため端に置いています）' : '');
+    return `<svg class="rm-dist" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tip}"><title>${tip}</title>${body}${mark}</svg>`;
+  };
+
   // ---- 選択 ----
   const prefSel = document.getElementById('rmPref');
   const townSel = document.getElementById('rmTown');
@@ -175,6 +257,35 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   let compare = [];
   const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5', '#7a5c99'];
   const MAXCMP = 4;
+  function extraOf(ind, a, isLatest) {
+    if (!isLatest || a.x) return '';
+    let h = '';
+    if (ind.perCap && POP) {
+      const pv = pcOf(a, ind);
+      if (pv !== null) {
+        const S = distOf(ind);
+        const rk = S.vals.filter((x) => x > pv + 1e-12).length + 1;
+        // 見せ方：人口10万人あたりが大きくなりすぎる項目は、人の数なら「人口に対する割合」、それ以外は「1人あたり」に直す
+        const med = S.q(0.5) || 0;
+        let label = pcLabel(ind), unit = pcUnit(ind), shown = pv, dec = S.dec;
+        if (ind.perCap === 'p100k' && ind.unit === '人' && med >= 1000) { label = '人口に対する割合'; unit = '％'; shown = pv / 1000; dec = 1; }
+        else if (ind.perCap === 'p100k' && med >= 100000) { label = '1人あたり'; shown = pv / 1e5; dec = shown >= 100 ? 0 : shown >= 10 ? 1 : 2; }
+        h += `<div class="rm-card-pc">${label} <b>${shown.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec })}</b>${unit}<span>${isPref ? '47都道府県中' : '全国'} ${rk}位${isPref ? '' : `／${S.n}`}</span></div>`;
+      }
+    }
+    if (ind.lq) {
+      const nat = isPref ? (D.national && D.national[ind.key] ? D.national[ind.key][L(ind)] : null) : (D.nationalLatest ? D.nationalLatest[ind.key] : null);
+      const v = at(a, ind);
+      if (nat > 0 && v !== null) {
+        const lq = v / nat;
+        h += `<div class="rm-card-lq">特化係数 <b>${lq.toFixed(2)}</b><span>全国の割合（${nat.toFixed(1)}％）の${lq.toFixed(2)}倍</span></div>`;
+      }
+    }
+    const pos = posText(ind, a);
+    const svg = stripSvg(ind, a);
+    if (svg) h += `<div class="rm-card-dist">${svg}<div class="rm-card-pos">${ind.perCap && POP ? '人口あたりで ' : ''}${pos}</div></div>`;
+    return h;
+  }
   function render(a) {
     current = a;
     compare = compare.filter((b) => b.c !== a.c);
@@ -214,7 +325,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       d.innerHTML =
         `<div class="rm-card-label">${ind.label}</div>` +
         `<div class="rm-card-num">${lk ? fmt(ind, lk.v) : '—'}</div>` +
-        `<div class="rm-card-year">${lk ? ind.yearLabels[lk.i] : ''}</div>` + meta +
+        `<div class="rm-card-year">${lk ? ind.yearLabels[lk.i] : ''}</div>` + meta + extraOf(ind, a, isLatest) +
         (ind.note ? `<div class="rm-card-note">${ind.note}</div>` : '');
       cards.appendChild(d);
     }
@@ -366,8 +477,97 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     });
     tabs.appendChild(b);
   }
+  // ---- 10-18 ファンネルプロットと経験ベイズ推定（市区町村の、数の項目） ----
+  const funSec = document.getElementById('rmFunSec');
+  const funSel = document.getElementById('rmFunInd');
+  const FUN_IND = funSec && POP ? IND.filter((i) => i.perCap === 'p100k') : [];
+  let funChart = null;
+  if (funSel) {
+    for (const ind of FUN_IND) { const o = document.createElement('option'); o.value = ind.key; o.textContent = ind.label; funSel.appendChild(o); }
+    funSel.addEventListener('change', () => drawFunnel());
+  }
+  const FUNC = {};
+  function funnelStats(ind) {
+    if (FUNC[ind.key]) return FUNC[ind.key];
+    const pts = AREAS.filter((a) => !a.x && POP[a.c] > 0 && at(a, ind) !== null).map((a) => ({ a, n: POP[a.c], y: at(a, ind) }));
+    const k = pts.length;
+    const N = pts.reduce((s, p) => s + p.n, 0);
+    const Y = pts.reduce((s, p) => s + p.y, 0);
+    const m = Y / N; // 全国の率（1人あたり）
+    // Marshall の大域的な経験ベイズ推定：ばらつきのうち、偶然では説明できない分 A を見積もり、町ごとに寄せる強さを決める
+    const s2 = pts.reduce((s, p) => s + p.n * (p.y / p.n - m) ** 2, 0) / N;
+    const A = Math.max(0, s2 - m / (N / k));
+    const eb = (p) => { const C = A + m / p.n > 0 ? A / (A + m / p.n) : 0; return m + C * (p.y / p.n - m); };
+    const out = { pts, m, A, eb, byCode: Object.fromEntries(pts.map((p) => [p.a.c, p])) };
+    FUNC[ind.key] = out;
+    return out;
+  }
+  function drawFunnel() {
+    if (!funSec || !current || FUN_IND.length === 0) return;
+    if (current.x || !POP[current.c]) { funSec.hidden = true; return; }
+    funSec.hidden = false;
+    const ind = FUN_IND.find((i) => i.key === funSel.value) || FUN_IND[0];
+    const F = funnelStats(ind);
+    const per = 1e5;
+    const ns = F.pts.map((p) => p.n);
+    const nMin = Math.max(1, Math.min(...ns)), nMax = Math.max(...ns);
+    const grid = Array.from({ length: 60 }, (_, i) => Math.exp(Math.log(nMin) + ((Math.log(nMax) - Math.log(nMin)) * i) / 59));
+    const lim = (z, sgn) => grid.map((n) => ({ x: n, y: Math.max(0, (F.m + sgn * z * Math.sqrt(F.m / n)) * per) }));
+    const rates = F.pts.map((p) => (p.y / p.n) * per).sort((x, y) => x - y);
+    const yRaw = Math.max(rates[Math.floor(rates.length * 0.995)] * 1.15, F.m * per * 2);
+    const step = Math.pow(10, Math.floor(Math.log10(yRaw)));
+    const yMax = Math.ceil(yRaw / step) * step;
+    const clampY = (v) => Math.min(v, yMax);
+    const sel = [current, ...compare].filter((b) => F.byCode[b.c]);
+    const sets = [
+      { type: 'scatter', label: '市区町村', data: F.pts.map((p) => ({ x: p.n, y: clampY((p.y / p.n) * per) })), backgroundColor: 'rgba(27,67,50,.16)', pointRadius: 2, pointHoverRadius: 3 },
+      { type: 'line', label: '全国の率', data: [{ x: nMin, y: F.m * per }, { x: nMax, y: F.m * per }], borderColor: '#1b4332', borderWidth: 1.5, pointRadius: 0 },
+      { type: 'line', label: '95％', data: lim(1.96, 1), borderColor: '#c99a2e', borderDash: [5, 4], borderWidth: 1.2, pointRadius: 0 },
+      { type: 'line', label: '95％下', data: lim(1.96, -1), borderColor: '#c99a2e', borderDash: [5, 4], borderWidth: 1.2, pointRadius: 0 },
+      { type: 'line', label: '99.8％', data: lim(3.09, 1), borderColor: '#b23a2f', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
+      { type: 'line', label: '99.8％下', data: lim(3.09, -1), borderColor: '#b23a2f', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
+      ...sel.map((b, k) => { const p = F.byCode[b.c]; return { type: 'scatter', label: isPref ? b.n : shortName(b), data: [{ x: p.n, y: clampY((p.y / p.n) * per) }], backgroundColor: COLORS[k], borderColor: '#fff', borderWidth: 1.5, pointRadius: 6, pointHoverRadius: 7 }; }),
+    ];
+    if (funChart) funChart.destroy();
+    funChart = new Chart(document.getElementById('rmFun'), {
+      type: 'scatter',
+      data: { datasets: sets },
+      options: {
+        responsive: true,
+        aspectRatio: window.innerWidth < 600 ? 1.05 : 1.9,
+        parsing: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { filter: (it) => it.dataset.type === 'scatter' && it.datasetIndex >= 6, callbacks: { label: (c) => `${c.dataset.label}：人口${Math.round(c.raw.x).toLocaleString('ja-JP')}人、10万人あたり${c.raw.y.toFixed(1)}` } },
+        },
+        scales: {
+          x: { type: 'logarithmic', title: { display: true, text: '人口（対数の目盛り）' }, ticks: { callback: (v) => { const l = Math.log10(v); return Number.isInteger(Math.round(l * 1e6) / 1e6) ? Number(v).toLocaleString('ja-JP') : ''; } } },
+          y: { min: 0, max: yMax, title: { display: true, text: `人口10万人あたり（${ind.unit}）` } },
+        },
+      },
+    });
+    const lines = sel.map((b) => {
+      const p = F.byCode[b.c];
+      const E = F.m * p.n;
+      const r = (p.y / p.n) * per;
+      const se = Math.sqrt(F.m / p.n) * per;
+      const z = se > 0 ? (r - F.m * per) / se : 0;
+      const band = Math.abs(z) <= 1.96 ? '95％の線の内側' : Math.abs(z) <= 3.09 ? `95％の線の${z > 0 ? '上' : '下'}、99.8％の線の内側` : `99.8％の線の${z > 0 ? '上' : '下'}（外側）`;
+      const nm = isPref ? b.n : shortName(b);
+      return `${nm}（人口${p.n.toLocaleString('ja-JP')}人）：実際 ${fmtText(ind, p.y)}、見込み ${E.toFixed(E < 10 ? 1 : 0)}${ind.unit}（比 ${E > 0 ? Math.round((p.y / E) * 100) : '—'}）。${band}です。ならした値は人口10万人あたり ${(F.eb(p) * per).toFixed(1)}${ind.unit}（そのままの値は ${r.toFixed(1)}）。`;
+    });
+    document.getElementById('rmFunRead').innerHTML = lines.map((t) => `<span>${t}</span>`).join('');
+  }
+
+  let lineMode = 'value';
+  document.querySelectorAll('#rmLineMode button').forEach((b) => b.addEventListener('click', () => {
+    lineMode = b.dataset.mode;
+    document.querySelectorAll('#rmLineMode button').forEach((x) => { x.classList.toggle('is-active', x === b); x.setAttribute('aria-pressed', String(x === b)); });
+    drawLine();
+  }));
   function drawLine() {
     if (!current) return;
+    drawFunnel();
     const a = current;
     if (!userPicked) {
       const moves = (i) => {
@@ -413,6 +613,31 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       noteParts.push(`点線は${natLabel}です。`);
     }
     if (gaps) noteParts.push(isPref ? '線が途切れている年は、どこかの県の値が欠けていて、くらべられない年です。' : '線が途切れている年は、値のそろわない年です。');
+    // 10-18 伸び方：割合の項目は「何ポイント動いたか」、それ以外は年平均の伸び率（複利）で並べる
+    const isShare = ind.unit === '％' || ind.unit === '‰';
+    const growth = sets.map((st) => {
+      const pts2 = st.data.map((v, k) => ({ v, y: Number(labels[k]) })).filter((p) => p.v !== null && p.v !== undefined && Number.isFinite(Number(p.v)));
+      if (pts2.length < 2) return null;
+      const f = pts2[0], l = pts2[pts2.length - 1];
+      const yrs = l.y - f.y;
+      if (!(yrs > 0)) return null;
+      if (isShare) { const d = l.v - f.v; return Math.abs(d) < 0.05 ? `${st.label} ±0.0ポイント` : `${st.label} ${d > 0 ? '+' : '−'}${Math.abs(d).toFixed(1)}ポイント`; }
+      if (!(f.v > 0 && l.v > 0)) return null;
+      const g = (Math.pow(l.v / f.v, 1 / yrs) - 1) * 100;
+      return Math.abs(g) < 0.05 ? `${st.label} ±0.0％` : `${st.label} ${g > 0 ? '+' : '−'}${Math.abs(g).toFixed(1)}％`;
+    }).filter(Boolean);
+    if (growth.length) {
+      const yrsAll = sets[0].data.map((v, k) => (v === null || v === undefined ? null : labels[k])).filter(Boolean);
+      const span = yrsAll.length >= 2 ? `${yrsAll[0]}→${yrsAll[yrsAll.length - 1]}年` : '';
+      noteParts.push(isShare ? `動いた幅（${span}）：${growth.join('、')}。` : `年平均の伸び（${span}）：${growth.join('、')}。`);
+    }
+    if (lineMode === 'index') {
+      for (const st of sets) {
+        const base = st.data.find((v) => v !== null && v !== undefined && Number(v) !== 0);
+        st.data = st.data.map((v) => (v === null || v === undefined || !base ? null : (Number(v) / Number(base)) * 100));
+      }
+      noteParts.push('それぞれの線の最初の年を100にして、伸び方だけをくらべています。');
+    }
     const note = document.getElementById('rmLineNote');
     if (note) note.textContent = noteParts.join('');
     chart = new Chart(canvas, {
@@ -420,7 +645,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       data: { labels, datasets: sets },
       options: {
         responsive: true,
-        plugins: { legend: { display: compare.length > 0, labels: { boxWidth: 14, filter: (it) => !String(it.text).includes('47都道府県の平均') && it.text !== '全国' } }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${fmtText(ind, Number(c.raw))}` } } },
+        plugins: { legend: { display: compare.length > 0, labels: { boxWidth: 14, filter: (it) => !String(it.text).includes('47都道府県の平均') && it.text !== '全国' } }, tooltip: { callbacks: { label: (c) => (lineMode === 'index' ? `${c.dataset.label}：${Number(c.raw).toFixed(1)}` : `${c.dataset.label}：${fmtText(ind, Number(c.raw))}`) } } },
         scales: { y: { ticks: { callback: (v) => Number(v).toLocaleString('ja-JP') } } },
       },
     });
@@ -529,6 +754,24 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   .rm-card-meta--soft { color: #777; font-weight: 400; margin-top: 2px; }
   .rm-card-note { font-size: .66rem; color: #999; margin-top: 4px; line-height: 1.5; }
 
+  .rm-card-pc { margin-top: 6px; font-size: .74rem; color: #2d6a4f; }
+  .rm-card-pc b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1b4332; margin: 0 2px; }
+  .rm-card-pc span { display: block; color: #b23a2f; font-weight: 600; }
+  .rm-card-dist { margin-top: 8px; }
+  .rm-dist { display: block; width: 100%; max-width: 220px; height: auto; margin: 0 auto; }
+  .rm-card-pos { font-size: .7rem; color: #666; margin-top: 2px; }
+  .rm-card-lq { margin-top: 6px; font-size: .74rem; color: #2d6a4f; }
+  .rm-card-lq b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1b4332; margin: 0 2px; }
+  .rm-card-lq span { display: block; color: #777; font-size: .68rem; }
+  .rm-fun { margin-top: 40px; }
+  .rm-fun h2 { text-align: center; font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 8px; }
+  .rm-fun-lead { text-align: left; }
+  .rm-fun-read { font-size: .85rem; line-height: 1.85; margin: 10px 0 6px; }
+  .rm-fun-read span { display: block; padding: 6px 0; border-bottom: 1px dashed #d8dcd2; }
+  .rm-fun-read span:last-child { border-bottom: 0; }
+  .rm-mode { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 0 0 10px; }
+  .rm-mode button { font: inherit; font-size: .78rem; padding: 4px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; color: #2d6a4f; cursor: pointer; }
+  .rm-mode button.is-active { background: #2d6a4f; border-color: #2d6a4f; color: #fff; }
   .rm-cmp { margin-top: 40px; }
   .rm-cmp h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
   .rm-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0 0 14px; }

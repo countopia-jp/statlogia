@@ -5,6 +5,7 @@ import path from 'node:path';
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/town-medical-large.webp'));
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniMedicalData } from '../../lib/muni-medical.js';
 const data = await getMuniMedicalData();
 ---
@@ -56,6 +57,8 @@ const data = await getMuniMedicalData();
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <p class="tp-cross">あわせて見る：<a href="/town-daycare/">介護は、近いか</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
 
     <footer class="tp-source">
@@ -70,6 +73,7 @@ const data = await getMuniMedicalData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const HOSPITAL = 0, CLINIC = 1, DENTAL = 2, DOCTOR = 3, PHARMACIST = 4, BEDS = 5;
 

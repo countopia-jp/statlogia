@@ -6,6 +6,7 @@ const ind = (key, label, code) => ({ key, label, unit: '％', decimals: 1, rankW
 export const TOWN_INDUSTRY = {
   id: 'town-industry',
   scope: 'town',
+  lq: true, // 10-18 構成の割合に特化係数（全国の割合に対する倍率）を添える
   path: '/town-industry/',
   description: '市区町村を選んで、町の事業所で働く人がどの業種にいるか（お店、飲食や宿、医療や福祉、ものづくり、工事など）を割合でご覧いただける窓口。',
   title: 'わが町の業種',

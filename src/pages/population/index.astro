@@ -12,6 +12,7 @@
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getPopulationData } from '../../lib/population.js';
 
 const pop = await getPopulationData();
@@ -63,6 +64,8 @@ const yearNote = years.join('・');
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、台帳をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな土地かしら。</span></Talk>
     </section>
+
+    <CompareAddon level="pref" selectId="prefSelect" src="/data/population.json" />
 
     <!-- ===== ランキング ===== -->
     <section class="pop-ranking" aria-label="ランキング">

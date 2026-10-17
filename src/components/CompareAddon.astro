@@ -1,0 +1,200 @@
+---
+// =====================================================
+// ほかの県/市区町村とならべる（共通エンジン以前に作った窓口用の後付け部品）
+// ・ページの都道府県/市区町村セレクタ（selectId）で選ばれた地域を基準に、
+//   ほかの地域を4つまで足して、数字を横に並べた表を出す。
+// ・データは src（JSON）から読むか、ページが window[global] に置いたものを使う。
+//   形はどちらも { indicators:[{label|key, unit, decimal?}], areas:[{c, n, p?, x?, v:[]}] }。
+//   adapter="prices" は消費者物価（v が {code:[年ごとの値]}）を最新年の値に直して使う。
+// ・順位は値の大きい順（同じ値は同じ順位）。x のついた地域（政令市の区など）は順位をつけない。
+// ・?cmp=コード,コード で、並べる地域を指定して開ける。
+// =====================================================
+interface Props {
+  level: 'pref' | 'town';
+  selectId: string;
+  src?: string;
+  global?: string;
+  adapter?: 'std' | 'prices';
+}
+const { level, selectId, src = '', global = '', adapter = 'std' } = Astro.props;
+const isPref = level === 'pref';
+const word = isPref ? '県' : '市区町村';
+---
+<section class="cmpx" hidden aria-label="ほかの地域とならべる" data-level={level} data-select={selectId} data-src={src} data-global={global} data-adapter={adapter}>
+  <h2>ほかの{word}とならべる</h2>
+  <p class="cmpx-note">{word}を4つまで足して、数字を横に並べます。</p>
+  <div class="cmpx-sel">
+    <label><span>都道府県</span><select class="cmpx-pref"><option value="">{isPref ? '足す県を選ぶ' : '選んでください'}</option></select></label>
+    {!isPref && <label><span>市区町村</span><select class="cmpx-town" disabled><option value="">まず都道府県を選ぶ</option></select></label>}
+  </div>
+  <ul class="cmpx-chips"></ul>
+  <div class="cmpx-wrap" hidden><table class="cmpx-table"></table></div>
+  <p class="cmpx-note cmpx-foot" hidden>順位は{isPref ? '47都道府県の中' : '全国の市区町村の中'}での、値の大きい順の順位です。</p>
+</section>
+
+<script is:inline>
+(function () {
+  const sec = document.currentScript.previousElementSibling;
+  if (!sec || !sec.classList.contains('cmpx')) return;
+  const isPref = sec.dataset.level === 'pref';
+  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5', '#7a5c99'];
+  const MAXCMP = 4;
+  const PREF_NAMES = {'01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県','08':'茨城県','09':'栃木県','10':'群馬県','11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県','15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県','21':'岐阜県','22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県','29':'奈良県','30':'和歌山県','31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県','36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県','41':'佐賀県','42':'長崎県','43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'};
+  const prefOf = (a) => a.c.slice(0, 2);
+  const shortName = (a) => { const p = PREF_NAMES[prefOf(a)]; return p && a.n.startsWith(p) ? a.n.slice(p.length).trim() : a.n; };
+  const nameOf = (a) => (isPref ? a.n : `${shortName(a)}（${PREF_NAMES[prefOf(a)] || ''}）`);
+
+  function normalize(d) {
+    if (sec.dataset.adapter === 'prices') {
+      const last = d.years.length - 1;
+      return {
+        indicators: d.categories.map((c) => ({ label: c.label, unit: '', decimal: 1, code: c.code })),
+        areas: d.areas.map((a) => ({ c: a.c, n: a.n, v: d.categories.map((c) => { const s = a.v[c.code]; return s && typeof s[last] === 'number' ? s[last] : null; }) })),
+        caption: `${d.yearLabel || d.years[last] + '年'}の値。全国平均を100とした物価の水準です。`,
+      };
+    }
+    return { indicators: d.indicators, areas: d.areas };
+  }
+
+  function start(raw) {
+    const D = normalize(raw);
+    const IND = D.indicators.map((ind) => ({ label: ind.label || ind.key || ind.name || '', unit: ind.unit && ind.unit !== '‐' && ind.unit !== '-' ? ind.unit : '', decimal: ind.decimal, year: ind.year || '' }));
+    const AREAS = D.areas.filter((a) => a && a.c && Array.isArray(a.v));
+    const byCode = Object.fromEntries(AREAS.map((a) => [a.c, a]));
+    const decOf = IND.map((ind, i) => {
+      if (typeof ind.decimal === 'number') return ind.decimal;
+      let d = 0;
+      for (const a of AREAS) { const v = a.v[i]; if (typeof v === 'number' && !Number.isInteger(v)) { const s = String(v).split('.')[1] || ''; d = Math.max(d, Math.min(s.length, 2)); } }
+      return d;
+    });
+    const fmt = (i, v) => (typeof v === 'number' ? v.toLocaleString('ja-JP', { minimumFractionDigits: decOf[i], maximumFractionDigits: decOf[i] }) + (IND[i].unit === '‰' || IND[i].unit === '％' ? IND[i].unit : IND[i].unit ? ' ' + IND[i].unit : '') : '—');
+    const RANK = IND.map((_, i) => {
+      const vals = AREAS.filter((a) => !a.x && typeof a.v[i] === 'number').map((a) => a.v[i]).sort((x, y) => y - x);
+      return (v) => (typeof v === 'number' ? vals.indexOf(v) + 1 : null);
+    });
+
+    let current = null;
+    let compare = [];
+    const sel = document.getElementById(sec.dataset.select);
+    const cPref = sec.querySelector('.cmpx-pref');
+    const cTown = sec.querySelector('.cmpx-town');
+    if (isPref) {
+      for (const a of AREAS) { const o = document.createElement('option'); o.value = a.c; o.textContent = a.n; cPref.appendChild(o); }
+      cPref.addEventListener('change', () => { add(cPref.value); cPref.value = ''; });
+    } else {
+      const prefs = [...new Set(AREAS.map(prefOf))].sort();
+      for (const p of prefs) { const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; cPref.appendChild(o); }
+      cPref.addEventListener('change', () => {
+        cTown.innerHTML = '<option value="">足す市区町村を選ぶ</option>';
+        const list = AREAS.filter((a) => prefOf(a) === cPref.value);
+        for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); cTown.appendChild(o); }
+        cTown.disabled = list.length === 0;
+      });
+      cTown.addEventListener('change', () => { add(cTown.value); cTown.value = ''; });
+    }
+    function add(code) {
+      const a = byCode[code];
+      if (!a || !current || a.c === current.c || compare.some((b) => b.c === a.c) || compare.length >= MAXCMP) return;
+      compare.push(a);
+      render();
+      syncUrl();
+    }
+    function syncUrl() {
+      try {
+        const u = new URL(location.href);
+        if (compare.length) u.searchParams.set('cmp', compare.map((a) => a.c).join(',')); else u.searchParams.delete('cmp');
+        history.replaceState(null, '', u);
+      } catch (e) {}
+    }
+    function render() {
+      if (!current) { sec.hidden = true; return; }
+      sec.hidden = false;
+      const full = compare.length >= MAXCMP;
+      cPref.disabled = full;
+      if (cTown) cTown.disabled = full || !cPref.value;
+      const chips = sec.querySelector('.cmpx-chips');
+      chips.innerHTML = '';
+      const all = [current, ...compare];
+      all.forEach((a, k) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i style="background:${COLORS[k]}"></i>${nameOf(a)}`;
+        if (k > 0) {
+          const b = document.createElement('button');
+          b.type = 'button'; b.setAttribute('aria-label', `${nameOf(a)}を外す`); b.textContent = '×';
+          b.addEventListener('click', () => { compare = compare.filter((x) => x.c !== a.c); render(); syncUrl(); });
+          li.appendChild(b);
+        }
+        chips.appendChild(li);
+      });
+      const wrap = sec.querySelector('.cmpx-wrap');
+      const foot = sec.querySelector('.cmpx-foot');
+      wrap.hidden = foot.hidden = compare.length === 0;
+      if (compare.length === 0) return;
+      const th = all.map((a, k) => `<th scope="col"><i style="background:${COLORS[k]}"></i>${isPref ? a.n : shortName(a)}${isPref ? '' : `<small>${PREF_NAMES[prefOf(a)] || ''}</small>`}</th>`).join('');
+      const rows = IND.map((ind, i) => {
+        const tds = all.map((a) => {
+          const v = a.v[i];
+          if (typeof v !== 'number') return '<td>—</td>';
+          const rk = a.x ? null : RANK[i](v);
+          return `<td><b>${fmt(i, v)}</b>${rk ? `<small>${rk}位</small>` : ''}</td>`;
+        }).join('');
+        return `<tr><th scope="row">${ind.label}${ind.year ? `<small>${ind.year}</small>` : ''}</th>${tds}</tr>`;
+      }).join('');
+      const cap = D.caption ? `<caption>${D.caption}</caption>` : '';
+      sec.querySelector('.cmpx-table').innerHTML = `${cap}<thead><tr><th scope="col">項目</th>${th}</tr></thead><tbody>${rows}</tbody>`;
+    }
+    function follow() {
+      const code = sel ? sel.value : '';
+      const a = byCode[code] || null;
+      if ((a && a.c) === (current && current.c)) return;
+      current = a;
+      compare = compare.filter((b) => !current || b.c !== current.c);
+      render();
+    }
+    if (sel) sel.addEventListener('change', () => setTimeout(follow, 0));
+    setInterval(follow, 600);
+    const want = new URLSearchParams(location.search).get('cmp');
+    const pending = want ? want.split(',').filter((c) => byCode[c]).slice(0, MAXCMP) : [];
+    (function waitBase(n) {
+      follow();
+      if (current) { pending.forEach(add); return; }
+      if (n < 20) setTimeout(() => waitBase(n + 1), 300);
+    })(0);
+  }
+
+  const src = sec.dataset.src;
+  const g = sec.dataset.global;
+  if (src) {
+    fetch(src).then((r) => r.json()).then(start).catch(() => {});
+  } else if (g) {
+    (function wait(n) { if (window[g]) start(window[g]); else if (n < 50) setTimeout(() => wait(n + 1), 100); })(0);
+  }
+})();
+</script>
+
+<style is:global>
+  .cmpx { max-width: 860px; margin: 40px auto 0; }
+  .cmpx h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
+  .cmpx-note { text-align: center; font-size: .82rem; color: #666; line-height: 1.8; margin: 0 0 12px; }
+  .cmpx-foot { text-align: left; font-size: .75rem; color: #888; }
+  .cmpx-sel { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 0 0 14px; }
+  .cmpx-sel label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; }
+  .cmpx-sel select { min-width: 200px; padding: 8px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; }
+  .cmpx-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0 0 14px; }
+  .cmpx-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .85rem; }
+  .cmpx-chips i, .cmpx-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .cmpx-chips button { border: 0; background: none; cursor: pointer; font-size: 1rem; line-height: 1; color: #888; padding: 2px 4px; min-width: 28px; min-height: 28px; }
+  .cmpx-chips button:hover { color: #b23a2f; }
+  .cmpx-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .cmpx-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  .cmpx-table caption { caption-side: top; text-align: left; font-size: .75rem; color: #666; padding: 8px 10px 0; }
+  .cmpx-table th, .cmpx-table td { padding: 9px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
+  .cmpx-table tbody tr:last-child th, .cmpx-table tbody tr:last-child td { border-bottom: 0; }
+  .cmpx-table thead th { font-weight: 600; color: #1b4332; white-space: nowrap; background: #f6f8f4; }
+  .cmpx-table thead th i { margin-right: 5px; }
+  .cmpx-table thead th:first-child, .cmpx-table tbody th { text-align: left; }
+  .cmpx-table tbody th { font-weight: 400; color: #2d6a4f; min-width: 9em; position: sticky; left: 0; background: #fff; }
+  .cmpx-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
+  .cmpx-table small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
+  @media (max-width: 600px) { .cmpx-table { font-size: .8rem; } .cmpx-table tbody th { min-width: 6.5em; } .cmpx-table th, .cmpx-table td { padding: 8px 7px; } .cmpx-sel select { min-width: 150px; } }
+</style>

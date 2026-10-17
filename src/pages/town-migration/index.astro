@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniMigrationData } from '../../lib/muni-migration.js';
 const data = await getMuniMigrationData();
 ---
@@ -45,6 +46,8 @@ const data = await getMuniMigrationData();
       <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
@@ -68,6 +71,7 @@ const data = await getMuniMigrationData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const SR_I = 4;
 

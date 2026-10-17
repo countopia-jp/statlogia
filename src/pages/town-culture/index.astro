@@ -4,6 +4,7 @@ import path from 'node:path';
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/town-culture-large.webp'));
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCultureData } from '../../lib/muni-culture.js';
 const data = await getMuniCultureData();
 ---
@@ -55,6 +56,8 @@ const data = await getMuniCultureData();
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <p class="tp-cross">あわせて見る：<a href="/exhibits/reading/">本とマンガ、日本一はどの県だ</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
 
     <footer class="tp-source">
@@ -69,6 +72,7 @@ const data = await getMuniCultureData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const LIB = 0, KOMIN = 1, LIB_PER = 2;
 

@@ -14,6 +14,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/price
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getPriceLedgerData } from '../../lib/price-ledger.js';
 
 const pl = await getPriceLedgerData();
@@ -62,6 +63,8 @@ const lastYear = pl.years[pl.years.length - 1];
       <Talk speaker="kei"><span id="plKei">県を選ぶと、帳面をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="plTouko">どんな値段なのかしら。</span></Talk>
     </section>
+
+    <CompareAddon level="pref" selectId="plPref" src="/data/price-ledger.json" adapter="prices" />
 
     <section id="plLineSec" class="pl-line-sec" hidden aria-label="分類ごとの移りかわり">
       <h2 id="plLineTitle">移りかわり</h2>

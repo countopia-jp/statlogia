@@ -2,6 +2,7 @@
 import { yearsText } from '../../lib/year-pick.js';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniPopulationData } from '../../lib/muni-population.js';
 const data = await getMuniPopulationData();
 ---
@@ -50,6 +51,8 @@ const data = await getMuniPopulationData();
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
@@ -75,6 +78,7 @@ const data = await getMuniPopulationData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const fmt = (i, val) => {
         if (val === null || val === undefined) return '—';

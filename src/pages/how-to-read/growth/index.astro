@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="伸び方は、そろえてから比べる｜統計の歩き方 - Countopia Stats" description="大きさのちがう地域の移りかわりは、最初の年を100にそろえて比べます。年平均の伸び率と、割合の「ポイント」の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1>伸び方は、そろえてから比べる</h1>
+    </header>
+
+    <Talk speaker="touko">
+      京、二つの町の移りかわりを重ねてみたら、小さいほうの町の線がぺたんと寝てしまったわ。
+    </Talk>
+    <Talk speaker="kei">
+      大きさのちがう町を同じ目盛りに描くと、そうなります。小さい町の動きは、大きい町の目盛りに埋もれてしまうのです。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="大きさのちがう二つの町の数を、そのまま描いた図と、最初の年を100にそろえて描いた図の比較">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">そのまま描くと</text>
+        <line x1="60" y1="210" x2="280" y2="210" stroke="#ccc"/><line x1="60" y1="40" x2="60" y2="210" stroke="#ccc"/>
+        <path d="M60.0,79.2 L82.0,76.6 L104.0,74.0 L126.0,71.4 L148.0,68.8 L170.0,66.2 L192.0,63.5 L214.0,60.9 L236.0,58.3 L258.0,55.7 L280.0,53.1" fill="none" stroke="#1b4332" stroke-width="2.5"/>
+        <path d="M60.0,196.9 L82.0,196.3 L104.0,195.6 L126.0,195.0 L148.0,194.3 L170.0,193.7 L192.0,193.0 L214.0,192.3 L236.0,191.7 L258.0,191.0 L280.0,190.4" fill="none" stroke="#b23a2f" stroke-width="2.5"/>
+        <text x="286" y="57" font-size="12" fill="#1b4332">A町</text>
+        <text x="286" y="194" font-size="12" fill="#b23a2f">B町</text>
+        <text x="60" y="230" font-size="11" fill="#777">1年目</text><text x="280" y="230" text-anchor="end" font-size="11" fill="#777">11年目</text>
+        <text x="335" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#b23a2f">最初の年を100にそろえると</text>
+        <line x1="350" y1="210" x2="560" y2="210" stroke="#ccc"/><line x1="350" y1="40" x2="350" y2="210" stroke="#ccc"/>
+        <path d="M350.0,185.7 L371.0,180.9 L392.0,176.0 L413.0,171.1 L434.0,166.3 L455.0,161.4 L476.0,156.6 L497.0,151.7 L518.0,146.9 L539.0,142.0 L560.0,137.1" fill="none" stroke="#1b4332" stroke-width="2.5"/>
+        <path d="M350.0,185.7 L371.0,173.6 L392.0,161.4 L413.0,149.3 L434.0,137.1 L455.0,125.0 L476.0,112.9 L497.0,100.7 L518.0,88.6 L539.0,76.4 L560.0,64.3" fill="none" stroke="#b23a2f" stroke-width="2.5"/>
+        <text x="566" y="141" font-size="12" fill="#1b4332">A町 120</text>
+        <text x="566" y="68" font-size="12" fill="#b23a2f">B町 150</text>
+        <text x="350" y="230" font-size="11" fill="#777">1年目</text><text x="560" y="230" text-anchor="end" font-size="11" fill="#777">11年目</text>
+        <text x="0" y="268" font-size="12" fill="#777">→ 左ではB町がほとんど動いて見えないが、伸び方はB町のほうが大きい</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。A町は1,000から1,200へ、B町は100から150へ増えたとしています。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>最初の年を100にそろえる</h2>
+      <p>
+        それぞれの町の最初の年の値を100として、あとの年をその何倍かで描き直します。これを指数化といいます。
+        こうすると、大きさのちがいが消えて、伸び方だけが残ります。
+        閲覧室の窓口のグラフにある「最初の年を100にそろえる」は、この描き方に切りかえるボタンです。
+      </p>
+      <p>
+        ただし、そろえたあとの線の高さは「何倍になったか」を表すだけで、値の大きさそのものではありません。
+        B町の150はA町の120より上にありますが、数そのものはA町のほうがずっと多いままです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>年平均の伸び率は、複利でならしたもの</h2>
+      <p>
+        10年で1.5倍になった町は、1年あたり何％伸びたのでしょう。50％を10で割って5％、とするのは正しくありません。
+        伸びは前の年の上に積み重なるので、1年あたりの伸びを10回かけあわせて1.5倍になる率を求めます。
+        これを年平均の伸び率（複利の伸び率）といい、この例では1年あたり約4.1％です。
+      </p>
+      <p>
+        窓口のグラフの下には、選んだ地域ごとに、この年平均の伸び率を書き添えています。
+        途中で大きく上下した年があっても、最初と最後の二つの年だけで決まる数字なので、途中の動きはグラフの線で確かめてください。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>割合は「ポイント」で動きを見る</h2>
+      <p>
+        高齢化率が20％から25％になったとき、「25％伸びた」とも「5ポイント上がった」とも言えます。
+        割合の動きを「％伸びた」で言うと、もとの割合が小さいほど大げさに見えてしまいます。
+        そのため、割合の項目では、伸び率ではなく、動いた幅をポイントで示しています。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      同じ動きでも、言い方ひとつで大きくも小さくも聞こえるのね。
+    </Talk>
+    <Talk speaker="kei">
+      ええ。だから、どの物差しで言っているのかを、いつも添えておくのです。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/small-towns/">小さな町の1位は、あてにならない →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

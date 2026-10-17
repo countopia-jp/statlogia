@@ -10,6 +10,7 @@
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getIctData } from '../../lib/ict.js';
 
 const ict = await getIctData();
@@ -60,6 +61,8 @@ const yearNote = years.join('・');
       <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳面をお出しします。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな教室かしら。</span></Talk>
     </section>
+
+    <CompareAddon level="pref" selectId="prefSelect" src="/data/ict.json" />
 
     <!-- ===== 散布図 ===== -->
     <section class="ict-scatter-sec" aria-label="大型提示装置とデジタル教科書の散布図">

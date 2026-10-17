@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { splitTitle } from '../lib/split-title.js';
 import Talk from '../components/Talk.astro';
 import { catalog } from '../data/catalog.js';
 import { getPriceData } from '../lib/price.js';
@@ -137,7 +138,7 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
             {c.kind === 'kakei'
               ? <span class="pc-num">{c.top.minutes.toLocaleString()}<small>円</small></span>
               : <span class="pc-num">{c.top.minutes.toFixed(1)}<small>％</small></span>}
-            <h3>{c.title}</h3>
+            <h3>{splitTitle(c.title)[1] ? <><span class="h1a">{splitTitle(c.title)[0]}</span><span class="h1b">{splitTitle(c.title)[1]}</span></> : c.title}</h3>
             <p>{c.lead}</p>
             <span class="c-place">{c.place}</span>
           </a>
@@ -665,5 +666,26 @@ h1 .num{color:var(--stamp)}
 @media(max-width:760px){
   .hero-side .tk{position:relative;right:auto;bottom:auto;align-self:flex-end;margin:6px 2% 0 0;transform:rotate(-3deg) scale(.8)}
   .hero-side .tk:hover{transform:rotate(-2deg) scale(.8) translateY(-3px)}
+}
+
+/* 10-18 パソコン：京・橙子とスタンプを一歩うしろ、左へ */
+@media(min-width:1025px){
+  .hero .stamp-area{padding-right:18.5%}
+  .hero .stamp{width:266px;font-size:18.3px}
+  .hero .hero-chara{width:57%;max-width:235px;left:-21%;bottom:-22px}
+}
+/* 10-18 タブレット：入場券は見出しの右。京・橙子はスタンプを基準に置き、券に隠れないようスタンプを下げる */
+@media(min-width:761px) and (max-width:1024px){
+  .hero>div:first-child{padding-right:24px}
+  .hero .hero-side .tk{top:0;bottom:auto;left:0;right:auto;transform:rotate(-3deg) scale(.86);transform-origin:left top}
+  .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.86) translateY(-3px)}
+  .hero .stamp-area{padding-top:84px}
+  .hero .hero-chara{width:77.4%;max-width:248px;left:auto;right:calc(min(240px,27vw)*1.135 - 108px);bottom:-24px}
+  .hero .hero-side{min-height:400px}
+}
+/* 10-18 スマホ：スタンプを画面の中央に */
+@media(max-width:600px){
+  .hero .stamp-area{justify-content:center;padding-right:0}
+  .hero .hero-chara{width:46%;max-width:190px;right:53%;bottom:-22px}
 }
 </style>

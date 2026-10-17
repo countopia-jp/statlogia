@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="小さな町の1位は、あてにならない｜統計の歩き方 - Countopia Stats" description="人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロット、見込みの数との比、経験ベイズ推定の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1>小さな町の1位は、あてにならない</h1>
+    </header>
+
+    <Talk speaker="touko">
+      京、人口10万人あたりの順位を見たら、上のほうに知らない小さな村ばかり並んでいるの。
+    </Talk>
+    <Talk speaker="kei">
+      人口あたりの数字では、よくあることです。人口が少ないと、数が1つ増えるだけで、割り算の答えが大きく跳ねるのです。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>1つの差が、どれだけ響くか</h2>
+      <p>
+        人口1,000人の村に施設が1つあれば、人口10万人あたりでは100。2つになれば200です。
+        人口100万人の市で同じ100から200になるには、施設が1,000から2,000に増えなければなりません。
+        小さな町の「人口あたり」は、ほんの少しの出来事で上にも下にも大きく動きます。
+        ですから、順位表の1位が小さな町でも、それが偶然のゆらぎなのか、本当にちがうのかは、順位だけでは分かりません。
+      </p>
+    </section>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="横に人口、縦に人口10万人あたりの値をとり、全国の率のまわりに偶然のゆらぎの範囲を漏斗の形で描いた図">
+        <line x1="70" y1="250" x2="600" y2="250" stroke="#ccc"/><line x1="70" y1="40" x2="70" y2="250" stroke="#ccc"/>
+        <circle cx="196.1" cy="162.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="586.0" cy="198.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="413.9" cy="191.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="518.9" cy="200.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="258.5" cy="217.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="480.9" cy="195.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="454.6" cy="204.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="162.0" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="129.3" cy="84.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="360.6" cy="181.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="373.1" cy="211.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="529.7" cy="193.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="482.1" cy="201.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="377.3" cy="203.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="525.8" cy="194.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="396.6" cy="193.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="108.0" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="316.4" cy="205.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="120.8" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="93.8" cy="105.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="250.3" cy="237.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="348.6" cy="209.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="533.2" cy="195.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="538.1" cy="198.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="141.0" cy="180.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="318.0" cy="189.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="431.6" cy="184.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="551.1" cy="195.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="311.9" cy="207.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="239.4" cy="235.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="181.0" cy="139.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="355.6" cy="199.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="531.7" cy="197.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="320.8" cy="196.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="516.1" cy="197.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="110.8" cy="139.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="288.9" cy="168.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="503.9" cy="208.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="191.5" cy="156.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="518.0" cy="197.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="142.8" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="181.2" cy="139.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="315.8" cy="178.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="364.7" cy="208.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="415.0" cy="190.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="142.4" cy="114.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="365.1" cy="208.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="260.0" cy="185.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="203.6" cy="198.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="75.9" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="190.8" cy="218.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="497.0" cy="203.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="228.3" cy="179.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="89.7" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="120.1" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="318.4" cy="206.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="355.6" cy="189.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="136.3" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="71.4" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="270.8" cy="204.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="305.1" cy="202.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="193.2" cy="219.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="175.5" cy="88.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="77.6" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="326.7" cy="174.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="204.5" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="353.8" cy="220.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="329.9" cy="178.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="281.1" cy="219.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="164.7" cy="202.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="407.6" cy="196.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="357.8" cy="201.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="575.4" cy="195.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="133.4" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="473.5" cy="194.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="334.2" cy="209.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="547.8" cy="201.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="451.7" cy="183.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="486.6" cy="201.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="359.5" cy="207.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="597.3" cy="199.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="358.1" cy="201.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="594.9" cy="198.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="93.3" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="527.2" cy="197.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="370.3" cy="192.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="445.6" cy="198.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="328.1" cy="176.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="477.4" cy="204.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="118.8" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="309.2" cy="175.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="142.4" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="484.4" cy="193.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="362.9" cy="192.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="141.1" cy="112.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="369.9" cy="182.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="415.5" cy="189.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="375.3" cy="202.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="592.3" cy="197.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="363.6" cy="184.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="232.0" cy="183.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="479.7" cy="197.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="573.0" cy="195.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="355.7" cy="216.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="133.2" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="179.0" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="387.7" cy="194.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="150.0" cy="190.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="205.4" cy="149.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="592.1" cy="197.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="591.3" cy="197.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="406.7" cy="203.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="502.8" cy="198.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="397.8" cy="196.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="351.4" cy="203.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="379.6" cy="177.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="406.1" cy="200.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="384.5" cy="213.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="520.0" cy="196.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="484.0" cy="195.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="537.4" cy="197.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="407.3" cy="198.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="344.8" cy="195.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="277.3" cy="225.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="134.7" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="447.2" cy="193.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="89.4" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="233.1" cy="184.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="100.3" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="122.3" cy="157.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="590.4" cy="197.1" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="279.9" cy="187.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="167.8" cy="204.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="451.0" cy="195.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="431.8" cy="191.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="483.5" cy="202.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="254.1" cy="238.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="292.4" cy="217.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="150.6" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="96.6" cy="111.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="485.2" cy="189.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="432.0" cy="199.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="362.5" cy="196.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="467.1" cy="197.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="302.4" cy="194.7" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="103.3" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="169.8" cy="206.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="281.6" cy="219.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="591.8" cy="198.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="383.0" cy="190.4" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="536.2" cy="196.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="366.2" cy="211.3" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="92.1" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="374.0" cy="204.9" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="288.8" cy="181.6" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="297.6" cy="220.2" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="491.0" cy="199.5" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="166.7" cy="250.0" r="2.6" fill="#1b4332" fill-opacity="0.25"/><circle cx="198.2" cy="221.8" r="2.6" fill="#1b4332" fill-opacity="0.25"/>
+        <path d="M70.0,40.0 L79.0,40.0 L88.0,40.0 L96.9,40.0 L105.9,40.0 L114.9,40.0 L123.9,40.0 L132.9,40.0 L141.9,40.0 L150.8,40.0 L159.8,40.0 L168.8,47.8 L177.8,57.9 L186.8,67.4 L195.8,76.2 L204.7,84.5 L213.7,92.1 L222.7,99.3 L231.7,105.9 L240.7,112.2 L249.7,118.0 L258.6,123.4 L267.6,128.4 L276.6,133.1 L285.6,137.4 L294.6,141.5 L303.6,145.3 L312.5,148.9 L321.5,152.2 L330.5,155.2 L339.5,158.1 L348.5,160.8 L357.5,163.3 L366.4,165.6 L375.4,167.8 L384.4,169.8 L393.4,171.7 L402.4,173.4 L411.4,175.1 L420.3,176.6 L429.3,178.0 L438.3,179.3 L447.3,180.6 L456.3,181.7 L465.3,182.8 L474.2,183.8 L483.2,184.7 L492.2,185.6 L501.2,186.4 L510.2,187.1 L519.2,187.8 L528.1,188.5 L537.1,189.1 L546.1,189.7 L555.1,190.2 L564.1,190.7 L573.1,191.2 L582.0,191.6 L591.0,192.0 L600.0,192.4" fill="none" stroke="#b23a2f" stroke-dasharray="2 3" stroke-width="1.5"/>
+        <path d="M70.0,250.0 L79.0,250.0 L88.0,250.0 L96.9,250.0 L105.9,250.0 L114.9,250.0 L123.9,250.0 L132.9,250.0 L141.9,250.0 L150.8,250.0 L159.8,250.0 L168.8,250.0 L177.8,250.0 L186.8,250.0 L195.8,250.0 L204.7,250.0 L213.7,250.0 L222.7,250.0 L231.7,250.0 L240.7,250.0 L249.7,250.0 L258.6,250.0 L267.6,250.0 L276.6,250.0 L285.6,250.0 L294.6,250.0 L303.6,249.7 L312.5,246.1 L321.5,242.8 L330.5,239.8 L339.5,236.9 L348.5,234.2 L357.5,231.7 L366.4,229.4 L375.4,227.2 L384.4,225.2 L393.4,223.3 L402.4,221.6 L411.4,219.9 L420.3,218.4 L429.3,217.0 L438.3,215.7 L447.3,214.4 L456.3,213.3 L465.3,212.2 L474.2,211.2 L483.2,210.3 L492.2,209.4 L501.2,208.6 L510.2,207.9 L519.2,207.2 L528.1,206.5 L537.1,205.9 L546.1,205.3 L555.1,204.8 L564.1,204.3 L573.1,203.8 L582.0,203.4 L591.0,203.0 L600.0,202.6" fill="none" stroke="#b23a2f" stroke-dasharray="2 3" stroke-width="1.5"/>
+        <path d="M70.0,40.0 L79.0,40.0 L88.0,40.0 L96.9,40.0 L105.9,42.1 L114.9,52.7 L123.9,62.5 L132.9,71.7 L141.9,80.2 L150.8,88.2 L159.8,95.6 L168.8,102.5 L177.8,109.0 L186.8,115.0 L195.8,120.6 L204.7,125.8 L213.7,130.7 L222.7,135.2 L231.7,139.4 L240.7,143.4 L249.7,147.0 L258.6,150.5 L267.6,153.7 L276.6,156.6 L285.6,159.4 L294.6,162.0 L303.6,164.4 L312.5,166.7 L321.5,168.7 L330.5,170.7 L339.5,172.5 L348.5,174.2 L357.5,175.8 L366.4,177.3 L375.4,178.6 L384.4,179.9 L393.4,181.1 L402.4,182.2 L411.4,183.3 L420.3,184.2 L429.3,185.1 L438.3,186.0 L447.3,186.8 L456.3,187.5 L465.3,188.2 L474.2,188.8 L483.2,189.4 L492.2,189.9 L501.2,190.4 L510.2,190.9 L519.2,191.4 L528.1,191.8 L537.1,192.2 L546.1,192.5 L555.1,192.9 L564.1,193.2 L573.1,193.5 L582.0,193.8 L591.0,194.0 L600.0,194.2" fill="none" stroke="#c99a2e" stroke-dasharray="5 4" stroke-width="1.5"/>
+        <path d="M70.0,250.0 L79.0,250.0 L88.0,250.0 L96.9,250.0 L105.9,250.0 L114.9,250.0 L123.9,250.0 L132.9,250.0 L141.9,250.0 L150.8,250.0 L159.8,250.0 L168.8,250.0 L177.8,250.0 L186.8,250.0 L195.8,250.0 L204.7,250.0 L213.7,250.0 L222.7,250.0 L231.7,250.0 L240.7,250.0 L249.7,248.0 L258.6,244.5 L267.6,241.3 L276.6,238.4 L285.6,235.6 L294.6,233.0 L303.6,230.6 L312.5,228.3 L321.5,226.3 L330.5,224.3 L339.5,222.5 L348.5,220.8 L357.5,219.2 L366.4,217.7 L375.4,216.4 L384.4,215.1 L393.4,213.9 L402.4,212.8 L411.4,211.7 L420.3,210.8 L429.3,209.9 L438.3,209.0 L447.3,208.2 L456.3,207.5 L465.3,206.8 L474.2,206.2 L483.2,205.6 L492.2,205.1 L501.2,204.6 L510.2,204.1 L519.2,203.6 L528.1,203.2 L537.1,202.8 L546.1,202.5 L555.1,202.1 L564.1,201.8 L573.1,201.5 L582.0,201.2 L591.0,201.0 L600.0,200.8" fill="none" stroke="#c99a2e" stroke-dasharray="5 4" stroke-width="1.5"/>
+        <line x1="70" y1="197.5" x2="600" y2="197.5" stroke="#1b4332" stroke-width="1.8"/>
+        <circle cx="140.2" cy="110.0" r="7" fill="#c99a2e" stroke="#fff" stroke-width="1.5"/>
+        <text x="150" y="102" font-size="12" font-weight="700" fill="#8a6a1e">人口1,500人の町：2つ → 133</text>
+        <circle cx="523.1" cy="187.0" r="7" fill="#b23a2f" stroke="#fff" stroke-width="1.5"/>
+        <text x="513" y="175" text-anchor="end" font-size="12" font-weight="700" fill="#b23a2f">人口60万人の市：360 → 60</text>
+        <text x="76" y="211.5" font-size="11" fill="#1b4332">全国の率 50</text>
+        <text x="114" y="268" text-anchor="middle" font-size="11" fill="#777">1,000人</text>
+        <text x="409" y="268" text-anchor="middle" font-size="11" fill="#777">10万人</text>
+        <text x="556" y="268" text-anchor="middle" font-size="11" fill="#777">100万人</text>
+        <text x="64" y="44" text-anchor="end" font-size="11" fill="#777">200</text>
+        <text x="64" y="250" text-anchor="end" font-size="11" fill="#777">0</text>
+        <text x="0" y="300" font-size="12" fill="#777">→ 横は人口（対数の目盛り）、縦は人口10万人あたり。点線の内側は、偶然でも出る範囲</text>
+      </svg>
+      <p class="art-diagram-note">※点は説明用の仮の例です。全国の率を人口10万人あたり50としています。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>漏斗（ろうと）の形の線：ファンネルプロット</h2>
+      <p>
+        横に人口、縦に人口あたりの値をとって町を並べ、全国の率のまわりに「偶然のゆらぎでも出る範囲」の線を引きます。
+        人口が少ないほど揺れが大きいので、線は左で広く、右へ行くほど狭まり、漏斗のような形になります。
+        内側の点線が95％、外側の点線が99.8％の範囲です。
+      </p>
+      <p>
+        図の人口1,500人の町は、値が133と全国の倍以上ですが、点線の内側にあります。数でいえば2つ。偶然でも十分に起こる差です。
+        人口60万人の市は、値は60と全国より少し上なだけですが、点線の外にあります。人口が大きいので、偶然ではここまで離れにくいのです。
+        値の大きさと、差のたしかさは、別のものです。
+      </p>
+      <p>
+        市区町村の窓口のうち、施設の数のような「数の項目」がある窓口には、この図を置いています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>見込みの数と、その比</h2>
+      <p>
+        全国の率どおりなら、その町にはいくつあるはずか。人口に全国の率をかけたものを「見込みの数」と呼んでいます。
+        実際の数を見込みの数で割って100をかけたものが「比」です。100なら全国の率どおり、200なら見込みの2倍。
+        医療の統計で使われる標準化比と同じ考え方です。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>ならした値：経験ベイズ推定</h2>
+      <p>
+        小さな町の揺れをどう扱うか。よく使われるのが、町の値を全国の率のほうへ少し寄せてから比べる方法です。
+        寄せる強さは町の人口で変わり、人口の少ない町ほど強く、大きな町ほど弱く寄せます。
+        大きな町の値はほとんどそのまま、小さな町の値は全国の率に近づきます。
+      </p>
+      <p>
+        寄せる強さは、データ全体のばらつきから決めます。全国の町のばらつきのうち、偶然のゆらぎだけでは説明できない分が大きければ寄せ方は弱く、小さければ強くなります。
+        この「データから寄せ方を決める」やり方を、経験ベイズ推定といいます。窓口では「ならした値」として、そのままの値と並べて示しています。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      小さな村の数字を、少し割り引いて見るということね。
+    </Talk>
+    <Talk speaker="kei">
+      割り引くというより、揺れのぶんを差し引いて見る、と言うほうが近いでしょうか。村の数字が軽いのではありません。数が少ないぶん、一つひとつの出来事の重みが大きいのです。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/specialization/">町の得意を測る物差し →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

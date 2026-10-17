@@ -6,6 +6,7 @@ const ofWorkers = (key, label, code) => ({ key, label, unit: '％', decimals: 1,
 export const WORK_FORMS = {
   id: 'work-forms',
   scope: 'pref',
+  lq: true, // 10-18 構成の割合に特化係数（全国の割合に対する倍率）を添える
   path: '/work-forms/',
   description: '都道府県を選んで、自営業で働く人や、専門・事務・販売・サービス・ものづくり・管理・輸送・建設・運搬などの仕事をする人の割合、有効求人倍率、転職した人の割合、共働きの世帯をご覧いただける窓口。',
   title: '働き方のかたち',

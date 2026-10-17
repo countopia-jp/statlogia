@@ -13,6 +13,7 @@
 // Astro のコンパイラが読み違えるため）
 // =====================================================
 import ExhibitHero from './ExhibitHero.astro';
+import { splitTitle } from '../lib/split-title.js';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Talk from './Talk.astro';
 
@@ -92,7 +93,7 @@ const shareTouko = share ? (over.length ? a.short + 'のほうに多く使って
     <section class="exhibit">
       <div class="sec-head">
         <span class="no">EXHIBIT {no}</span>
-        <h1>{title.includes('、') ? <><span class="h1a">{title.slice(0, title.indexOf('、') + 1)}</span><span class="h1b">{title.slice(title.indexOf('、') + 1)}</span></> : title}</h1>
+        <h1>{splitTitle(title)[1] ? <><span class="h1a">{splitTitle(title)[0]}</span><span class="h1b">{splitTitle(title)[1]}</span></> : title}</h1>
         <p class="sub">{sub}（{data.year}）</p>
       </div>
       <ExhibitHero slug={slug} />

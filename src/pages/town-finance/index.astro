@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniFinanceData } from '../../lib/muni-finance.js';
 const data = await getMuniFinanceData();
 ---
@@ -45,6 +46,8 @@ const data = await getMuniFinanceData();
       <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
@@ -69,6 +72,7 @@ const data = await getMuniFinanceData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const FIN = 0, EDU = 1;
 

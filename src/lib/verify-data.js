@@ -60,6 +60,17 @@ const appId = () => import.meta.env?.ESTAT_APP_ID || process.env.ESTAT_APP_ID;
 
 // e-Stat から (表, コード, 地域) の値を年の名前ごとに取る → { 地域: { '2024年度': 値 } }
 const _direct = new Map();
+// 10-18 e-Stat が応答しないまま待ち続けてビルドが止まらないよう、1回の取得は90秒で打ち切る（3回まで取り直す）
+async function fetchJson(url) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 90000);
+  try {
+    const r = await fetch(url, { signal: ctl.signal });
+    return await r.json();
+  } finally {
+    clearTimeout(timer);
+  }
+}
 async function direct(table, code, areas) {
   const key = `${table}|${code}|${areas ? areas.join(',') : 'all'}`;
   if (_direct.has(key)) return _direct.get(key);
@@ -68,7 +79,7 @@ async function direct(table, code, areas) {
   if (areas) params.cdArea = areas.join(',');
   let json = null;
   for (let i = 0; i < 3 && !json; i++) {
-    try { json = await (await fetch(`${API}?${new URLSearchParams(params)}`)).json(); } catch { await new Promise((r) => setTimeout(r, 2000)); }
+    try { json = await fetchJson(`${API}?${new URLSearchParams(params)}`); } catch { await new Promise((r) => setTimeout(r, 2000)); }
   }
   const sd = json?.GET_STATS_DATA?.STATISTICAL_DATA;
   const out = {};
@@ -122,7 +133,10 @@ async function directActivity(statsId, cat03) {
   const key = `${statsId}|${cat03}`;
   if (_act.has(key)) return _act.get(key);
   const params = { appId: appId(), lang: 'J', statsDataId: statsId, cdTab: '202110A09B08', cdCat01: '0', cdCat02: '99000', cdCat03: cat03, metaGetFlg: 'N', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0' };
-  const json = await (await fetch(`${API}?${new URLSearchParams(params)}`)).json();
+  let json = null;
+  for (let i = 0; i < 3 && !json; i++) {
+    try { json = await fetchJson(`${API}?${new URLSearchParams(params)}`); } catch { await new Promise((r) => setTimeout(r, 2000)); }
+  }
   const out = {};
   for (const v of asArray(json?.GET_STATS_DATA?.STATISTICAL_DATA?.DATA_INF?.VALUE)) {
     if (v['@tab'] !== '202110A09B08') continue;
@@ -138,7 +152,10 @@ const _kakei = new Map();
 async function directKakei(code) {
   if (_kakei.has(code)) return _kakei.get(code);
   const params = { appId: appId(), lang: 'J', statsDataId: '0004023605', cdCat01: code, cdCat02: '03', metaGetFlg: 'Y', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0' };
-  const json = await (await fetch(`${API}?${new URLSearchParams(params)}`)).json();
+  let json = null;
+  for (let i = 0; i < 3 && !json; i++) {
+    try { json = await fetchJson(`${API}?${new URLSearchParams(params)}`); } catch { await new Promise((r) => setTimeout(r, 2000)); }
+  }
   const sd = json?.GET_STATS_DATA?.STATISTICAL_DATA;
   const out = {};
   if (sd) {
@@ -232,6 +249,19 @@ export async function verifyAll() {
     await run(`窓口 ${room.title}`, async () => {
       const data = await getRoomData(room);
       const towns = room.scope === 'town' ? sampleTowns(data.areas) : null;
+      // 10-18 人口あたり・特化係数のもとになる値の検算：総人口を e-Stat から取り直して照合し、全国の値の有無を確かめる
+      if (data.pop) {
+        const pt = room.scope === 'pref' ? '0000010101' : '0000020101';
+        const gotPop = await direct(pt, 'A1101', towns ? towns.map((a) => a.c) : null);
+        const popRows = (towns || data.areas).filter((a) => data.pop[a.c] !== undefined).map((a) => ({ area: a.c, name: a.n, v: data.pop[a.c] }));
+        compare(res, `${room.title}・総人口（人口あたりの分母）`, pt, 'A1101', data.popYear, popRows, gotPop, { decimals: 0 });
+        const cover = data.areas.filter((a) => !a.x && data.pop[a.c] > 0).length / data.areas.filter((a) => !a.x).length;
+        if (cover < 0.95) res.warnings.push(`${room.title}：総人口のある地域が ${Math.round(cover * 100)}％ しかありません（人口あたりが欠ける地域があります）`);
+      }
+      for (const ind of data.indicators.filter((i) => i.lq)) {
+        const nat = room.scope === 'pref' ? data.national?.[ind.key]?.at(-1) : data.nationalLatest?.[ind.key];
+        if (!(nat > 0)) res.warnings.push(`${room.title}・${ind.label}：全国の割合が無いため、特化係数を出せません`);
+      }
       for (const cfg of room.indicators) {
         if (cfg.calc || cfg.needs) { await checkCalc(room, cfg, data, towns); continue; }
         if (!cfg.table || !cfg.code) continue;

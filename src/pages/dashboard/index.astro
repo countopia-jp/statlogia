@@ -16,14 +16,16 @@ import Talk from '../../components/Talk.astro';
         展示はこちらが選んだ数字の物語。閲覧室では、あなたが選びます。<br />
         知りたい町を指定して、台帳から数字を取り寄せてください。
       </p>
-      <p class="rr-note">※各窓口カードの「出典」年度はカード設置時点のものです。実際にお調べいただく数字は、常に最新の統計に自動で更新されています。</p>
+      <p class="rr-note">※窓口カードの「出典」の年度は、窓口を置いた時点のものです。<br />お調べいただく数字は、最新の統計に自動で更新されています。</p>
     </header>
     <form class="rr-search" action="/search/" role="search" onsubmit="location.href='/search/#q='+encodeURIComponent(this.querySelector('input').value);return false">
       <label for="rrQ">どの窓口か分からないときは、言葉でたずねてください</label>
       <div class="rr-search-row"><input id="rrQ" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" /><button type="submit">たずねる</button></div>
     </form>
-    <p class="rr-compare"><a href="/compare/">くらべる台へ</a>　窓口をまたいで、項目を4つまで並べてくらべられます。</p>
-    <p class="rr-area-link"><a href="/tower/">土地を選んで、いろいろな数字を一枚で見る「展望塔」→</a></p>
+    <nav class="rr-ways" aria-label="ほかの調べ方">
+      <a href="/compare/"><b>くらべる台<i aria-hidden="true">→</i></b><span>窓口をまたいで、項目を4つまで並べてくらべる</span></a>
+      <a href="/tower/"><b>展望塔<i aria-hidden="true">→</i></b><span>土地を選んで、いろいろな数字を一枚で見る</span></a>
+    </nav>
     <Talk speaker="kei">
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
     </Talk>
@@ -609,7 +611,15 @@ import Talk from '../../components/Talk.astro';
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
-    .rr-note { font-size: 0.78rem; color: #888; margin-top: 8px; }
+    .rr-note { font-size: 0.74rem; color: #888; line-height: 1.7; max-width: 40em; margin: 10px auto 0; text-align: center; }
+    /* 10-18 たずね窓口の下に、ほかの調べ方を2枚の札で並べる */
+    .rr-ways { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 640px; margin: 0 auto 26px; }
+    .rr-ways a { display: block; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: #fffdf7; color: inherit; text-decoration: none; transition: border-color .15s, transform .15s; }
+    .rr-ways a:hover, .rr-ways a:focus-visible { border-color: var(--stamp); transform: translateY(-2px); }
+    .rr-ways b { display: flex; justify-content: space-between; align-items: baseline; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.02rem; color: var(--ink); }
+    .rr-ways b i { font-style: normal; color: var(--stamp); }
+    .rr-ways span { display: block; margin-top: 4px; font-size: .78rem; line-height: 1.6; color: var(--ink-soft); }
+    @media (max-width: 600px) { .rr-ways { grid-template-columns: 1fr; gap: 8px; } }
     .rr-group { margin: 0; padding: 20px 0 12px; }
     .rr-group-title {
       font-family: "Shippori Mincho", serif; font-size: 1.15rem;
@@ -621,8 +631,6 @@ import Talk from '../../components/Talk.astro';
     /* 絵が左に入るので、2列は1101px以上だけ。高さは全棚でそろえる */
     @media (max-width: 1100px) { .rr-grid { grid-template-columns: 1fr; } }
     @media (min-width: 1101px) { .rr-card { min-height: 15.5rem; } }
-    .rr-area-link { text-align: center; margin: -8px 0 20px; font-size: .88rem; }
-    .rr-area-link a { color: var(--stamp); }
     .rr-search { max-width: 480px; margin: 4px auto 20px; }
     .rr-search label { display: block; text-align: center; font-size: .75rem; color: var(--ink-soft); margin-bottom: 6px; }
     .rr-search-row { display: flex; gap: 8px; }
@@ -654,6 +662,5 @@ import Talk from '../../components/Talk.astro';
     .rr-card h3 { margin: 0 0 10px; font-size: 1.2rem; font-family: "Shippori Mincho", serif; }
     .rr-card-desc { font-size: 0.9rem; line-height: 1.8; color: #444; margin: 0 0 10px; }
     .rr-card-meta { font-size: 0.75rem; color: #888; margin: auto 0 0; }
-  .rr-compare{text-align:center;margin:10px 0 0;font-size:.9rem;color:#555}.rr-compare a{color:#b23a2f;font-weight:700;margin-right:.3em}
 </style>
 </BaseLayout>

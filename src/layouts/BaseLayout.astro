@@ -175,7 +175,8 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       transition: background .15s, transform .15s, box-shadow .15s;
     }
     .annex-banner:hover, .annex-banner:focus-visible { background: #fff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(31,58,46,.08); }
-    .ab-icon { flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; display: block; }
+    /* 10-18 館の絵を大きく */
+    .ab-icon { flex-shrink: 0; width: 104px; height: 104px; border-radius: 8px; display: block; }
     .ab-body { flex: 1; min-width: 0; }
     .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #2d6a4f; }
     .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
@@ -185,7 +186,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
     @media (max-width: 560px) {
       .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }
-      .ab-icon { width: 60px; height: 60px; }
+      .ab-icon { width: 84px; height: 84px; }
       .ab-arrow { display: none; }
     }
 

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniNurseryData } from '../../lib/muni-nursery.js';
 const data = await getMuniNurseryData();
 ---
@@ -49,6 +50,8 @@ const data = await getMuniNurseryData();
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
@@ -72,6 +75,7 @@ const data = await getMuniNurseryData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const NEAR = 1, FAR = 2; // 近い％ / 遠い％ のインデックス
 

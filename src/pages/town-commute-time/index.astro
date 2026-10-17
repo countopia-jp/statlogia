@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCommuteTimeData } from '../../lib/muni-commute-time.js';
 const data = await getMuniCommuteTimeData();
 ---
@@ -42,6 +43,8 @@ const data = await getMuniCommuteTimeData();
       <Talk speaker="touko"><span id="toukoLine"></span></Talk>
     </section>
 
+    <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>
       <div class="tp-tabs" role="tablist">
@@ -65,6 +68,7 @@ const data = await getMuniCommuteTimeData();
   <script is:inline define:vars={{ TP: data }}>
     (function () {
       const IND = TP.indicators;
+      window.CTP_CMP = TP;
       const areas = TP.areas;
       const SHORT = 1, LONG = 2, VLONG = 3; // 30分未満％ / 1時間以上％ / 1時間30分以上％
 

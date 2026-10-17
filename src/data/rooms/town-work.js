@@ -10,6 +10,7 @@ const SECTORS = [[F, 'F2201'], [F, 'F2211'], [F, 'F2221']];
 export const TOWN_WORK = {
   id: 'town-work',
   scope: 'town',
+  lq: true, // 10-18 構成の割合に特化係数（全国の割合に対する倍率）を添える
   path: '/town-work/',
   description: '市区町村を選んで、田畑や海の仕事・ものづくり・お店やサービスの仕事に就く人の割合と、事業所や働く人の数を、全国と県内の順位でご覧いただける窓口。',
   title: 'わが町の仕事',

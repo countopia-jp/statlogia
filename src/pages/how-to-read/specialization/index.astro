@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="町の得意を測る物差し｜統計の歩き方 - Countopia Stats" description="働く人の割合を全国とくらべる「特化係数」の読み方。割合の大きさと、かたよりの大きさは別のもの。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1>町の得意を測る物差し</h1>
+    </header>
+
+    <Talk speaker="touko">
+      京、この町は医療・福祉で働く人が13％もいて、情報通信業で働く人は1％にも届かないんですって。医療・福祉で働く人の多い町、ということかしら。
+    </Talk>
+    <Talk speaker="kei">
+      割合だけを見るとそう見えます。けれど、医療・福祉で働く人は、全国どこでも多いのです。全国の割合と並べてみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ある町で働く人の産業ごとの割合を全国の割合とくらべ、その倍率を特化係数として示した図">
+        <text x="0" y="22" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">働く人の割合（ある町と全国）</text>
+        <text x="635" y="22" text-anchor="end" font-size="12" font-weight="700" fill="#b23a2f">特化係数</text>
+        <text x="0" y="64" font-size="13" font-weight="700" fill="#1b4332">製造業</text><rect x="110" y="50" width="192.0" height="14" rx="3" fill="#1b4332" fill-opacity="0.35"/><text x="308.0" y="62" font-size="11" fill="#555">全国 16.0％</text><rect x="110" y="68" width="384.0" height="14" rx="3" fill="#b23a2f" fill-opacity="0.8"/><text x="500.0" y="80" font-size="11" fill="#b23a2f">この町 32.0％</text><text x="635" y="74" text-anchor="end" font-size="14" font-weight="700" fill="#b23a2f">2.00</text><text x="0" y="126" font-size="13" font-weight="700" fill="#1b4332">医療・福祉</text><rect x="110" y="112" width="162.0" height="14" rx="3" fill="#1b4332" fill-opacity="0.35"/><text x="278.0" y="124" font-size="11" fill="#555">全国 13.5％</text><rect x="110" y="130" width="156.0" height="14" rx="3" fill="#b23a2f" fill-opacity="0.8"/><text x="272.0" y="142" font-size="11" fill="#b23a2f">この町 13.0％</text><text x="635" y="136" text-anchor="end" font-size="14" font-weight="700" fill="#b23a2f">0.96</text><text x="0" y="188" font-size="13" font-weight="700" fill="#1b4332">情報通信業</text><rect x="110" y="174" width="42.0" height="14" rx="3" fill="#1b4332" fill-opacity="0.35"/><text x="158.0" y="186" font-size="11" fill="#555">全国 3.5％</text><rect x="110" y="192" width="8.399999999999999" height="14" rx="3" fill="#b23a2f" fill-opacity="0.8"/><text x="124.4" y="204" font-size="11" fill="#b23a2f">この町 0.7％</text><text x="635" y="198" text-anchor="end" font-size="14" font-weight="700" fill="#b23a2f">0.20</text>
+        <text x="0" y="242" font-size="12" fill="#777">→ 特化係数＝この町の割合÷全国の割合。1より大きければ、全国よりその産業に寄っている</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>全国の割合で割る</h2>
+      <p>
+        町で働く人のうち、ある産業で働く人の割合を、全国の同じ割合で割ったものを特化係数といいます。
+        1なら全国と同じ、2なら全国の2倍その産業に寄っている、0.5なら半分です。
+        地域の産業の特色を見るときに、国や自治体の分析でも広く使われている物差しです。
+      </p>
+      <p>
+        図の町では、医療・福祉の割合は13.0％と大きいものの、全国も13.5％なので、特化係数は0.96。ほぼ全国並みです。
+        いっぽう情報通信業は0.7％しかありませんが、全国が3.5％なので0.20。製造業は32.0％で、全国の2倍です。
+        割合の大きさと、かたよりの大きさは、別のものなのです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>窓口での見え方</h2>
+      <p>
+        市区町村の「わが町の業種」「わが町の仕事」と、県の「働き方のかたち」の窓口では、割合の項目のカードに特化係数を添えています。
+        全国の割合が小さい産業ほど、少しの差で係数が大きく動くので、もとの割合とあわせてご覧ください。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      多いか少ないかと、全国とくらべてどうかは、別の問いなのね。
+    </Talk>
+    <Talk speaker="kei">
+      そうです。どちらの問いに答えている数字なのかを、見分けられるようにしておきましょう。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/position/">10位は、近いのか遠いのか →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

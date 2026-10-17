@@ -1,0 +1,210 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="10位は、近いのか遠いのか｜統計の歩き方 - Countopia Stats" description="順位だけでは、差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1>10位は、近いのか遠いのか</h1>
+    </header>
+
+    <Talk speaker="touko">
+      京、帳面に「10位」とあったわ。1位とは、ずいぶん離れているのでしょう？
+    </Talk>
+    <Talk speaker="kei">
+      それが、順位だけでは分からないのです。並べ方によっては、1位と10位がほとんど同じ値のこともあります。絵にしてみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="同じ10位でも、47県が狭く固まっている場合と、広く散らばっている場合とで、ほかの県との離れ方がちがうことを示す図">
+        <text x="0" y="22" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">項目A：47県がせまく固まっている</text>
+        <line x1="110" y1="90" x2="590" y2="90" stroke="#ccc"/>
+        <circle cx="374.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="368.8" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="367.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="367.2" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="366.0" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="364.9" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="362.3" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="359.1" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="358.0" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="357.4" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="357.3" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="357.2" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="356.1" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="356.1" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="355.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="355.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="354.4" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="354.4" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="353.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="353.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="353.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="352.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="350.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="349.3" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="348.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="346.9" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="346.7" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="346.3" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="345.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="345.0" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="344.0" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="343.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="343.3" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="342.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="341.1" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="340.8" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="340.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="339.4" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="338.4" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="337.2" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="336.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="336.2" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="328.5" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="326.0" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="325.6" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="324.9" cy="90" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="357.5" cy="90" r="7" fill="#b23a2f" stroke="#fff" stroke-width="1.5"/>
+        <text x="358" y="122" text-anchor="middle" font-size="12" font-weight="700" fill="#b23a2f">10位</text>
+        <text x="100" y="94" text-anchor="end" font-size="11" fill="#777">少ない</text>
+        <text x="600" y="94" font-size="11" fill="#777">多い</text>
+        <text x="0" y="162" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">項目B：47県が広く散らばっている</text>
+        <line x1="110" y1="230" x2="590" y2="230" stroke="#ccc"/>
+        <circle cx="503.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="488.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="488.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="473.7" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="473.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="455.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="443.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="441.7" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="440.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="414.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="409.4" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="409.1" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="405.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="402.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="400.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="399.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="397.7" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="391.7" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="384.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="384.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="373.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="373.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="365.1" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="361.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="344.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="344.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="339.8" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="319.1" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="306.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="299.0" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="291.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="289.2" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="279.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="271.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="257.1" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="242.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="228.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="225.3" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="210.1" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="209.4" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="199.4" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="167.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="160.5" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="156.6" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="154.9" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="108.2" cy="230" r="4" fill="#1b4332" fill-opacity="0.25"/>
+        <circle cx="429.5" cy="230" r="7" fill="#b23a2f" stroke="#fff" stroke-width="1.5"/>
+        <text x="429" y="262" text-anchor="middle" font-size="12" font-weight="700" fill="#b23a2f">10位</text>
+        <text x="100" y="234" text-anchor="end" font-size="11" fill="#777">少ない</text>
+        <text x="600" y="234" font-size="11" fill="#777">多い</text>
+        <text x="0" y="292" font-size="12" fill="#777">→ どちらも「10位」。けれど、まわりとの離れ方はまるでちがう</text>
+      </svg>
+      <p class="art-diagram-note">※点の位置は説明用の仮の例です。</p>
+    </section>
+
+    <Talk speaker="touko">
+      上の10位は、まわりと肩を寄せあっているのね。下の10位は、ぽつんと離れているわ。
+    </Talk>
+    <Talk speaker="kei">
+      そうです。順位は「何番目か」だけを数えます。「どれだけ離れているか」は、順位からは消えてしまうのです。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>点の帯と、箱の帯</h2>
+      <p>
+        Countopiaの窓口では、帳面のカードに小さな帯を添えています。
+        県の窓口では、47都道府県の値を1つずつ点で並べ、選んだ県を赤い点で示します。
+        点が固まっているところは、値の近い県がたくさんあるところです。
+      </p>
+      <p>
+        市区町村の窓口は、点が千を超えるので、箱で描いています。
+        箱の左右の端が、全国の市区町村を値の順に並べたときの4分の1と4分の3の位置、箱の中の縦線がちょうど真ん中（中央値）、
+        左右にのびる線が5％から95％までの範囲です。真ん中の半分の町が、この箱の中に入っています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>「上位◯％」は、順位を全体の数で割ったもの</h2>
+      <p>
+        47都道府県中5位と、1,700の市区町村中5位とでは、同じ5位でも重みがちがいます。
+        そこで、順位を全体の数で割って「上位◯％」と言いかえます。47県中5位なら上位11％、1,700町中170位なら上位10％。
+        ちがう数の中の順位を、同じ物差しで並べられます。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>偏差値は、平均からの離れ方を「ばらつき」で割ったもの</h2>
+      <p>
+        偏差値は、平均を50、ばらつきの目安（標準偏差）を10として、値を言いかえたものです。
+        偏差値60なら、平均から標準偏差1つ分だけ上。単位のちがう項目どうしでも、同じ目盛りで比べられます。
+      </p>
+      <p>
+        ただし、偏差値には弱点があります。ごく一部の地域だけが飛びぬけて大きい項目（大きな街に集中する数など）では、
+        平均とばらつきがその一部に引っぱられて、ほかの地域の偏差値が実感とずれてしまいます。
+        そのためCountopiaでは、分布の偏りが小さい項目にだけ偏差値を出し、偏りが大きい項目は「上位◯％」だけにしています。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      数字の並びにも、くせがあるのね。
+    </Talk>
+    <Talk speaker="kei">
+      ええ。くせを知ったうえで物差しを選ぶのが、統計の読み方の半分です。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/growth/">伸び方は、そろえてから比べる →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

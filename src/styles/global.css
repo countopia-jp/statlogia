@@ -114,8 +114,9 @@ nav a[aria-current="page"]{color:var(--stamp)}
   nav ul{gap:2px}
   nav a{display:block;padding:4px 11px;border-radius:999px;font-size:.86rem}
   nav a[aria-current="page"]{background:var(--ink);color:var(--paper)}
-  h1 .h1b{display:block}
 }
+/* 10-18 展示の見出しと展示カードの題は「日本一はどの県だ」を下の段に（パソコン・タブレット・スマホ共通） */
+h1 .h1b,h3 .h1b{display:block}
 
 /* ===== 別館（暮らしの台帳）：板張りの部屋に台帳を置いた見た目 ===== */
 body.annex{ --annex-ink:#5a3e26; --annex-navy:#2c4a7a; background-color:#efe3cf; }

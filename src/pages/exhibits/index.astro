@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { splitTitle } from '../../lib/split-title.js';
 import { exhibits, PLACES } from '../../data/exhibits.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -42,7 +43,7 @@ const groups = Object.entries(PLACES).map(([key, name]) => ({
               <a class={`card${thumbOf(e.href) ? ' card--img' : ''}`} href={e.href}>
                 {thumbOf(e.href) && <img class="card-img" src={thumbOf(e.href)} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
                 <div class="card-body">
-                  <h3>{e.title}</h3>
+                  <h3>{splitTitle(e.title)[1] ? <><span class="h1a">{splitTitle(e.title)[0]}</span><span class="h1b">{splitTitle(e.title)[1]}</span></> : e.title}</h3>
                   <p>{e.lead}</p>
                 </div>
               </a>

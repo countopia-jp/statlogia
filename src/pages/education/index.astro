@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import CompareAddon from '../../components/CompareAddon.astro';
 
 // 重いe-Stat取得は /data/education.json.js（ビルド時生成）に集約。
 // このページはフッター表示用の定数だけ持つ（budgetページと同じ流儀）。
@@ -62,6 +63,8 @@ const yearNote = '2024年度';
       <Talk speaker="kei"><span id="keiLine">町を選ぶと、台帳を読み上げます。</span></Talk>
       <Talk speaker="touko"><span id="toukoLine">どんな町かしら。</span></Talk>
     </section>
+
+    <CompareAddon level="town" selectId="citySelect" src="/data/education.json" />
 
     <section class="edu-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>

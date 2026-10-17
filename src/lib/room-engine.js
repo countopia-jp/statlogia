@@ -15,6 +15,8 @@
 //         「その時点か、それより前でいちばん新しい値」を使う（国勢調査の人口など、年がまばらなもの）。
 //   decimals（小数の桁）、dir（'desc'＝多いほど上位）、rankWord（「多い順」など）、note（指標の注記）、
 //   scale（単位の換算。百万円→億円なら0.01と unit:'億円'）。窓口に dashAsZero:true を付けると「-」を0として扱う
+//   lq:true（窓口か項目）… 構成の割合（％）に特化係数（全国の割合に対する倍率）を添える
+//   perCapita:false … 人口あたりを添えない（数の項目には自動で添える。perCapKind を参照）
 //
 // 【取得の決まり】コードごとに1リクエスト（まとめると取得上限で切り詰められる）。
 //   e-Stat が応答しないことがあるので、タイムアウト付きで3回まで取り直す。
@@ -120,6 +122,17 @@ function classifyTown(code, name) {
 
 const roundTo = (v, d) => (v === null || v === undefined || !Number.isFinite(v) ? null : Number(v.toFixed(Math.max(0, d) + 1)));
 
+// 10-18 数の項目（人・施設・件・金額の合計など）は、規模の違う地域どうしでは比べにくいので人口あたりを添える
+//   'p100k' … 人口10万人あたり、'man' … 1人あたり万円（億円の項目）。
+//   すでに「〜あたり」「割合」「率」の項目、面積・気象・平均値の項目には付けない。窓口や項目に perCapita:false で止められる
+const PERCAP_UNITS = new Set(['人', 'か所', '所', '施設', '件', '戸', '台', '事業所', '店', '校', '館', '棟', '世帯', '事業体', '人泊', '者', '法人', '講座', '園', '署', '団', '億円']);
+function perCapKind(room, ind, unit) {
+  if (room.perCapita === false || ind.perCapita === false) return null;
+  if (ind.perCapita === true) return unit === '億円' ? 'man' : 'p100k';
+  if (!PERCAP_UNITS.has(unit)) return null;
+  if (/あたり|当たり|割合|率|平均|倍|1人|１人|1か月|1校|1園|1学級|1住宅|1戸/.test(ind.label || '')) return null;
+  return unit === '億円' ? 'man' : 'p100k';
+}
 const cache = new Map();
 
 export async function getRoomData(room) {
@@ -227,6 +240,11 @@ export async function getRoomData(room) {
       prefAverage[ind.key] = avg.map((v) => roundTo(v, d));
     }
 
+    // 10-18 市区町村の窓口でも、全国の値があれば持っておく（特化係数＝その町の割合÷全国の割合 に使う）
+    if (scope === 'town') {
+      const natT = calcAt('00000', useTimes[useTimes.length - 1]);
+      if (natT !== null) national[ind.key] = roundTo(natT, d + 1);
+    }
     const unit = ind.unit ?? raws[baseCodes[0]].unit;
     indicatorsOut.push({
       key: ind.key,
@@ -238,7 +256,27 @@ export async function getRoomData(room) {
       note: ind.note || '',
       years: useTimes.map((t) => t.slice(0, 4)),
       yearLabels: useTimes.map(timeNameOf),
+      ...(perCapKind(room, ind, unit) ? { perCap: perCapKind(room, ind, unit) } : {}),
+      ...((ind.lq ?? room.lq) && unit === '％' ? { lq: true } : {}),
     });
+  }
+
+  // 10-18 人口あたりにそろえるための総人口（県＝毎年の推計、町＝国勢調査）。各地域のいちばん新しい値
+  let pop;
+  let popYear;
+  if (indicatorsOut.some((i) => i.perCap)) {
+    try {
+      const pr = await fetchRaw(scope === 'pref' ? '0000010101' : '0000020101', 'A1101');
+      const lastT = [...pr.times].reverse().find((t) => areaList.filter((a) => !a.x && pr.byTime[t]?.[a.c] > 0).length >= (scope === 'pref' ? 47 : rankCount * 0.8));
+      if (lastT) {
+        pop = {};
+        for (const a of areaList) { const v = pr.byTime[lastT][a.c]; if (v > 0) pop[a.c] = v; }
+        popYear = pr.timeNames[lastT] || lastT.slice(0, 4) + '年';
+      }
+    } catch (e) {
+      console.warn(`[room-engine] ${room.id}: 総人口が取れないため、人口あたりは出しません（${e.message}）`);
+    }
+    if (!pop) for (const i of indicatorsOut) delete i.perCap;
   }
 
   const tables = [...new Set(inds.flatMap((i) => i.needs.map(([t]) => t)))];
@@ -249,9 +287,12 @@ export async function getRoomData(room) {
     source: `政府統計の総合窓口(e-Stat) 社会・人口統計体系 ${scope === 'pref' ? '都道府県' : '市区町村'}データ（表番号${tables.join('・')}）`,
     indicators: indicatorsOut,
     national: scope === 'pref' ? national : undefined,
+    nationalLatest: scope === 'town' && Object.keys(national).length ? national : undefined,
     nationalIsAvg: scope === 'pref' ? nationalIsAvg : undefined,
     nationalIsTotal: scope === 'pref' ? nationalIsTotal : undefined,
     prefAverage: scope === 'pref' ? prefAverage : undefined,
+    pop,
+    popYear,
     // どの項目にも値のない地域（北方領土の村など）は、選ぶ欄に出さない
     areas: areaList
       .filter((a) => indicatorsOut.some((i) => (values[i.key][a.c] || []).some((v) => v !== null)))
