@@ -76,7 +76,7 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
           <div>
             <div class="hero-title-row">
               <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-              <a class="btn primary" href="/exhibits/sleep/">最初の展示を見る</a>
+              <a class="tk" href="/exhibits/sleep/"><span class="tk-stub" aria-hidden="true"><b>No.</b><span>001</span></span><span class="tk-main"><span class="tk-k" aria-hidden="true">ADMISSION · 展示</span><span class="tk-t">最初の展示を見る<i aria-hidden="true">→</i></span></span></a>
             </div>
             <p class="lead"><span><span>Countopia Stats</span><span>（カウントピア・スタッツ）は、</span></span><span><span>都道府県・</span><span>市区町村で引ける、</span><span>暮らしの統計サイト。</span></span><span><span>難しい話はしません。</span></span><span><span>数字の景色を、</span><span>案内人と一緒に</span><span>歩いてください。</span></span></p>
             <p class="api-count">現在 e-Stat の <b>{publishedCount}</b> 指標をご覧になれます</p>
@@ -312,7 +312,7 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
 .site-dates time{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink-soft);margin-left:4px}
 /* タイトルの右下にボタンを置く */
 .hero-title-row{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
-.hero-title-row .btn{flex-shrink:0;margin-bottom:.5rem}
+.hero-title-row .tk{flex-shrink:0;margin-bottom:.5rem}
 h1{
   font-family:"Shippori Mincho",serif;font-weight:800;
   font-size:clamp(2rem,5.2vw,3.4rem);line-height:1.35;letter-spacing:.04em;
@@ -538,7 +538,7 @@ h1 .num{color:var(--stamp)}
   .hero-chara{max-width:240px;left:-20%;bottom:-40px}
   .lead{font-size:.95rem;max-width:none;margin-top:14px}
   .hero-title-row{gap:20px}
-  .hero-title-row .btn{margin-bottom:.3rem}
+  .hero-title-row .tk{margin-bottom:.3rem}
 
   .today{margin-top:24px}
 
@@ -577,7 +577,7 @@ h1 .num{color:var(--stamp)}
 
   /* タイトルとボタン：縦積みで詰める */
   .hero-title-row{gap:14px}
-  .hero-title-row .btn{margin-bottom:0}
+  .hero-title-row .tk{margin-bottom:0}
 
   /* 県選択の行 */
   .hero-row{gap:14px}
@@ -615,7 +615,7 @@ h1 .num{color:var(--stamp)}
   .hero{padding-top:14px}
   .hero>div:first-child{display:flex;flex-direction:column}
   .hero .hero-title-row{display:contents}
-  .hero .hero-title-row .btn{order:3;display:block;text-align:center;margin:20px 0 0;padding:14px}
+  .hero .hero-title-row .tk{order:3;align-self:flex-start;margin:22px 0 0 4px}
   .hero .lead{font-size:.95rem;line-height:1.95;margin-top:16px}
   .hero .lead>span:first-child>span+span{margin-left:-.5em}
   .hero .api-count{font-size:.78rem;letter-spacing:0;flex-wrap:nowrap;white-space:nowrap;gap:.3em}
@@ -646,4 +646,20 @@ h1 .num{color:var(--stamp)}
   .hero .hero-chara{width:86%;max-width:275px;left:-30%;bottom:-106px}
   .hero .hero-side{min-height:330px}
 }
+
+/* 玄関の入場券ボタン */
+.tk{display:inline-flex;align-items:stretch;text-decoration:none;color:var(--ink);background:#f3ead2;border-radius:6px;box-shadow:0 2px 0 #d9caa3,0 6px 14px rgba(30,58,47,.12);transform:rotate(-2deg);transition:transform .18s,box-shadow .18s;
+  -webkit-mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
+  mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
+.tk:hover,.tk:focus-visible{transform:rotate(-1deg) translateY(-3px);box-shadow:0 3px 0 #d9caa3,0 10px 20px rgba(30,58,47,.16)}
+.tk:focus-visible{outline:2px solid var(--stamp);outline-offset:4px}
+.tk-stub{padding:12px 14px;border-right:2px dashed #b9a77a;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"IBM Plex Mono",monospace;line-height:1.2}
+.tk-stub b{font-size:.62rem;letter-spacing:.2em;color:var(--stamp)}
+.tk-stub span{font-size:1.15rem;font-weight:600}
+.tk-main{padding:13px 24px 12px 18px;line-height:1.4}
+.tk-k{display:block;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.24em;color:#7a6a45}
+.tk-t{display:block;font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.25rem;margin-top:3px;white-space:nowrap}
+.tk-t i{font-style:normal;color:var(--stamp);margin-left:8px;display:inline-block;transition:transform .18s}
+.tk:hover .tk-t i{transform:translateX(3px)}
+@media(max-width:600px){.tk-t{font-size:1.1rem}.tk-main{padding:11px 18px 10px 14px}}
 </style>

@@ -116,3 +116,31 @@ nav a[aria-current="page"]{color:var(--stamp)}
   nav a[aria-current="page"]{background:var(--ink);color:var(--paper)}
   h1 .h1b{display:block}
 }
+
+/* ===== 別館（暮らしの台帳）：板張りの部屋に台帳を置いた見た目 ===== */
+body.annex{ --annex-ink:#5a3e26; --annex-navy:#2c4a7a; background-color:#efe3cf; }
+body.annex::before{
+  background-color:#efe3cf;
+  background-image:
+    url("/images/icon/annex-wood.webp"),
+    repeating-linear-gradient(90deg, rgba(150,110,70,.10) 0 1px, transparent 1px 180px),
+    repeating-linear-gradient(90deg, rgba(160,120,80,.05) 0 2px, transparent 2px 23px, rgba(160,120,80,.04) 23px 24px, transparent 24px 61px),
+    linear-gradient(180deg, #f1e6d3, #ead9bf);
+  background-size: 900px auto, auto, auto, auto;
+  background-repeat: repeat;
+}
+body.annex header.site{ background:rgba(247,240,228,.94); border-bottom-color:var(--annex-ink); }
+body.annex .backbar a{ border-color:var(--annex-ink); color:var(--annex-ink); }
+body.annex .backbar a:hover{ background:var(--annex-ink); color:#fff; }
+body.annex main{
+  background-color:#fbf8f1;
+  background-image:linear-gradient(90deg, transparent 18px, rgba(179,64,42,.28) 18px 19px, transparent 19px 22px, rgba(179,64,42,.28) 22px 23px, transparent 23px);
+  border:1px solid #dccbb0; border-radius:6px;
+  box-shadow:0 2px 14px rgba(90,62,38,.12);
+  margin-top:20px !important; margin-bottom:36px !important;
+  padding-left:max(28px, 2vw) !important;
+}
+body.annex .rr-kicker, body.annex .rm-kicker{ color:var(--annex-ink) !important; }
+body.annex .rr-group-title{ border-left-color:var(--annex-ink) !important; }
+body.annex main a{ color:var(--annex-navy); }
+@media (max-width:600px){ body.annex main{ margin-left:8px !important; margin-right:8px !important; padding-left:26px !important; } }

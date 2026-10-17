@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ROOM_NAMES } from '../data/page-names.js';
 const {
   title = 'Countopia Stats｜都道府県・市区町村で引ける、暮らしの統計',
   description = '都道府県・市区町村で引ける、暮らしの統計。日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
@@ -8,6 +9,7 @@ const {
   ogImage = null,
 } = Astro.props;
 const here = Astro.url.pathname;
+const isAnnex = here.startsWith('/annex') || (ROOM_NAMES[here] || '').startsWith('別館');
 const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'page' : undefined;
 ---
 <!DOCTYPE html>
@@ -29,7 +31,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body class={isAnnex ? 'annex' : undefined}>
   <header class="site">
     <div class="nav">
       <a class="logo" href="/">
@@ -61,7 +63,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
         <span class="ab-body">
           <span class="ab-label">ANNEX</span>
           <span class="ab-title">別館　暮らしの台帳</span>
-          <span class="ab-note">財政や家計、給与や働き方、人の出入りや災害など、暮らしの内側の数字を綴じています。</span>
+          <span class="ab-note"><span class="ab-ph">財政や家計、給与や働き方、</span><span class="ab-ph">人の出入りや災害など、</span><span class="ab-ph">暮らしの内側の数字を綴じています。</span></span>
         </span>
         <span class="ab-arrow">→</span>
       </a>
@@ -178,6 +180,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #2d6a4f; }
     .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
     .ab-note { display: block; font-size: .78rem; color: #5a645c; margin-top: 3px; line-height: 1.6; }
+    .ab-ph { display: inline-block; }
     .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
     @media (max-width: 560px) {
       .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }
