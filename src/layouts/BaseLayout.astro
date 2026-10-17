@@ -63,7 +63,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
         <span class="ab-body">
           <span class="ab-label">ANNEX</span>
           <span class="ab-title">別館　暮らしの台帳</span>
-          <span class="ab-note"><span class="ab-ph">財政や家計、給与や働き方、</span><span class="ab-ph">人の出入りや災害など、</span><span class="ab-ph">暮らしの内側の数字を綴じています。</span></span>
+          <span class="ab-note"><span class="ab-ph">財政や家計、給与や働き方、人の出入りや災害など、</span><span class="ab-ph">暮らしの内側の数字を綴じています。</span></span>
         </span>
         <span class="ab-arrow">→</span>
       </a>
@@ -180,7 +180,8 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #2d6a4f; }
     .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
     .ab-note { display: block; font-size: .78rem; color: #5a645c; margin-top: 3px; line-height: 1.6; }
-    .ab-ph { display: inline-block; }
+    .ab-ph { display: block; }
+    @media (max-width: 600px) { .ab-ph { display: inline; } }
     .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
     @media (max-width: 560px) {
       .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }

@@ -133,7 +133,7 @@ body.annex header.site{ background:rgba(247,240,228,.94); border-bottom-color:va
 body.annex .backbar a{ border-color:var(--annex-ink); color:var(--annex-ink); }
 body.annex .backbar a:hover{ background:var(--annex-ink); color:#fff; }
 body.annex main{
-  background-color:#fbf8f1;
+  background-color:rgba(251,248,241,.8);
   background-image:linear-gradient(90deg, transparent 18px, rgba(179,64,42,.28) 18px 19px, transparent 19px 22px, rgba(179,64,42,.28) 22px 23px, transparent 23px);
   border:1px solid #dccbb0; border-radius:6px;
   box-shadow:0 2px 14px rgba(90,62,38,.12);
