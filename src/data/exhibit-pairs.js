@@ -29,4 +29,8 @@ export const EXHIBIT_PAIRS = {
   'shochu-wine': { kind: 'kakei', a: '011100020', b: '011100050', short: '焼酎' },
   'milk-yogurt': { kind: 'kakei', a: '010410001', b: '010420020', short: '牛乳' },
   'sushi-burger': { kind: 'kakei', a: '011211040', b: '011211090', short: 'すし（外食）' },
+  'home-movie-music': { kind: 'act', a: '05', b: '08', short: '家で見る映画' },
+  'basketball-softball': { kind: 'act', a: '04', b: '02', stats: SPORT, short: 'バスケットボール' },
+  'writing-sewing': { kind: 'act', a: '26', b: '18', short: '詩・俳句・小説' },
+  'chicken-egg': { kind: 'kakei', a: '010310030', b: '010430001', short: '鶏肉' },
 };

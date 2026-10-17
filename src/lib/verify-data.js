@@ -326,6 +326,9 @@ export async function verifyAll() {
     ['展示52 テニスとバレーボール', () => getActivityPair('07', '03', SPORT), SPORT, [['rows', '07'], ['second', '03']]],
     ['展示53 写真と料理・菓子作り', () => getActivityPair('25', '20'), HOBBY, [['rows', '25'], ['second', '20']]],
     ['展示54 邦楽とコーラス', () => getActivityPair('10', '11'), HOBBY, [['rows', '10'], ['second', '11']]],
+    ['展示58 家で見る映画と音楽', () => getActivityPair('05', '08'), HOBBY, [['rows', '05'], ['second', '08']]],
+    ['展示59 バスケットボールとソフトボール', () => getActivityPair('04', '02', SPORT), SPORT, [['rows', '04'], ['second', '02']]],
+    ['展示60 俳句・小説と和裁・洋裁', () => getActivityPair('26', '18'), HOBBY, [['rows', '26'], ['second', '18']]],
   ];
   for (const [name, get, statsId, parts] of act) {
     await run(name, async () => {
@@ -355,6 +358,7 @@ export async function verifyAll() {
     ['展示55 焼酎とワイン', () => getKakeiPair('011100020', '011100050'), [['rows', '011100020'], ['second', '011100050']]],
     ['展示56 牛乳とヨーグルト', () => getKakeiPair('010410001', '010420020'), [['rows', '010410001'], ['second', '010420020']]],
     ['展示57 すしとハンバーガー', () => getKakeiPair('011211040', '011211090'), [['rows', '011211040'], ['second', '011211090']]],
+    ['展示61 鶏肉と卵', () => getKakeiPair('010310030', '010430001'), [['rows', '010310030'], ['second', '010430001']]],
   ];
   for (const [name, get, parts] of kakei) {
     await run(name, async () => {

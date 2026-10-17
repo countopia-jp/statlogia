@@ -9,6 +9,7 @@ export const ROOM_NAMES = {
   '/education/': '閲覧室　学びの登記所',
   '/education-budget/': '別館　教育の帳場',
   '/ict/': '閲覧室　情報化の帳場',
+  '/compare/': '閲覧室　くらべる台',
   '/living/': '別館　暮らしの見積所',
   '/prices/': '閲覧室　物価の帳場',
   '/sky/': '閲覧室　空の帳場',

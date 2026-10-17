@@ -1,0 +1,226 @@
+---
+// =====================================================
+// Countopia Stats - くらべる台（窓口をまたいで、項目を並べる）
+// src/pages/compare/index.astro
+//
+// 共通エンジンで動く本館の県の窓口（scope:'pref'、別館は除く）から、項目を4つまで選び、
+// 47都道府県の値と順位を一つの表に並べる。データは各窓口の /data/room-<id>.json を画面で読む。
+// 並べるだけで、理由や良し悪しは言わない（並びが似ていても因果とはかぎらない、と京が断る）。
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { ROOMS } from '../../data/rooms/index.js';
+const SHELF_ORDER = ['人と住まい', '近くにあるもの', '働く・通う・暮らす', '空と大地', '仕事と産業', 'わが町をくわしく', '学校と学び', '文化と余暇'];
+const rooms = Object.values(ROOMS)
+  .filter((r) => r.scope === 'pref' && !r.annex)
+  .map((r) => ({ id: r.id, title: r.title, shelf: r.shelf || 'そのほか' }));
+const shelves = [...new Set([...SHELF_ORDER, ...rooms.map((r) => r.shelf)])].filter((s) => rooms.some((r) => r.shelf === s));
+const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shelf === s) }));
+---
+<BaseLayout title="くらべる台｜Countopia Stats" description="閲覧室の窓口をまたいで、気温・住まい・医療などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べてくらべる台です。" backHref="/dashboard/" backLabel="閲覧室">
+  <main class="cp">
+    <header class="cp-hero">
+      <p class="cp-kicker">閲覧室｜くらべる台</p>
+      <h1>くらべる台</h1>
+      <p class="cp-lead">窓口をまたいで、項目を4つまで選び、<br />47都道府県の値と順位を一つの表に並べます。</p>
+    </header>
+
+    <Talk speaker="kei">窓口ごとの帳面から、ちがう項目を同じ表に写して並べる台です。項目を選ぶと、47都道府県の値と順位が横に並びます。</Talk>
+    <Talk speaker="touko">わたくしの頃は、帳面を何冊も机に広げて、指でたどってくらべたものよ。</Talk>
+    <Talk speaker="kei">並べると、よく似た並びの項目が見つかることもあります。ただ、並びが似ていても、片方がもう片方の理由とはかぎりません。</Talk>
+
+    <section class="cp-pick" aria-label="項目を選ぶ">
+      {[0, 1, 2, 3].map((k) => (
+        <div class="cp-slot" data-slot={k}>
+          <p class="cp-slot-no"><i></i>項目 {k + 1}</p>
+          <label><span>窓口</span>
+            <select class="cp-room">
+              <option value="">{k === 0 ? '窓口を選ぶ' : '（使わない）'}</option>
+              {groups.map((g) => (
+                <optgroup label={g.shelf}>{g.rooms.map((r) => <option value={r.id}>{r.title}</option>)}</optgroup>
+              ))}
+            </select>
+          </label>
+          <label><span>項目</span><select class="cp-ind" disabled><option value="">まず窓口を選ぶ</option></select></label>
+        </div>
+      ))}
+    </section>
+
+    <section class="cp-opts" aria-label="表の見かた">
+      <label><span>色をつける県</span><select id="cpMine"><option value="">選ばない</option></select></label>
+      <button type="button" id="cpClear" class="cp-btn">選んだ項目を外す</button>
+    </section>
+
+    <p class="cp-empty" id="cpEmpty">上で窓口と項目を選ぶと、ここに表が出ます。</p>
+    <div class="cp-wrap" id="cpWrap" hidden>
+      <table class="cp-table" id="cpTable"></table>
+    </div>
+    <p class="cp-note" id="cpNote" hidden>見出しの項目名を押すと、その項目の値の順に並べかえます（もう一度押すと逆の順）。都道府県の見出しを押すと、北から順にもどります。順位は47都道府県の中での順位で、同じ値は同じ順位です。項目ごとに、いちばん新しい年の値です。</p>
+
+    <p class="cp-cross">あわせて見る：<a href="/dashboard/">閲覧室の窓口の一覧</a>｜<a href="/search/">たずね窓口</a>｜<a href="/how-to-read/">統計の歩き方</a></p>
+    <footer class="cp-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」ほか）。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
+  </main>
+</BaseLayout>
+
+<script is:inline>
+(function () {
+  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5'];
+  const cache = {};
+  const load = (id) => (cache[id] ||= fetch(`/data/room-${id}.json`).then((r) => r.json()));
+  const slots = [...document.querySelectorAll('.cp-slot')];
+  slots.forEach((el, k) => el.querySelector('.cp-slot-no i').style.background = COLORS[k]);
+  const picked = [null, null, null, null]; // {room, D, ind}
+  let sortKey = null, sortDir = -1;
+  let prefList = null;
+  const mineSel = document.getElementById('cpMine');
+
+  const L = (ind) => ind.years.length - 1;
+  const r = (ind, v) => Number(v.toFixed(ind.decimals));
+  const fmt = (ind, v) => {
+    if (v === null || v === undefined) return '—';
+    const n = r(ind, v);
+    const s = ind.decimals > 0 ? n.toLocaleString('ja-JP', { minimumFractionDigits: ind.decimals, maximumFractionDigits: ind.decimals }) : Math.round(n).toLocaleString('ja-JP');
+    return s + (ind.unit || '');
+  };
+
+  slots.forEach((el, k) => {
+    const roomSel = el.querySelector('.cp-room');
+    const indSel = el.querySelector('.cp-ind');
+    roomSel.addEventListener('change', async () => {
+      picked[k] = null;
+      indSel.innerHTML = '<option value="">読みこみ中…</option>';
+      indSel.disabled = true;
+      if (!roomSel.value) { indSel.innerHTML = '<option value="">まず窓口を選ぶ</option>'; draw(); return; }
+      const D = await load(roomSel.value);
+      indSel.innerHTML = '<option value="">項目を選ぶ</option>' + D.indicators.map((i) => `<option value="${i.key}">${i.label}</option>`).join('');
+      indSel.disabled = false;
+      draw();
+    });
+    indSel.addEventListener('change', async () => {
+      if (!indSel.value) { picked[k] = null; draw(); return; }
+      const D = await load(roomSel.value);
+      picked[k] = { room: roomSel.value, roomTitle: roomSel.selectedOptions[0].textContent, D, ind: D.indicators.find((i) => i.key === indSel.value) };
+      if (!prefList) {
+        prefList = D.areas.filter((a) => !a.x).map((a) => ({ c: a.c, n: a.n })).sort((a, b) => a.c.localeCompare(b.c));
+        mineSel.innerHTML = '<option value="">選ばない</option>' + prefList.map((p) => `<option value="${p.c}">${p.n}</option>`).join('');
+        if (window.__cpMine) mineSel.value = window.__cpMine;
+      }
+      draw();
+    });
+  });
+  mineSel.addEventListener('change', draw);
+  document.getElementById('cpClear').addEventListener('click', () => {
+    slots.forEach((el, k) => { el.querySelector('.cp-room').value = ''; const s = el.querySelector('.cp-ind'); s.innerHTML = '<option value="">まず窓口を選ぶ</option>'; s.disabled = true; picked[k] = null; });
+    sortKey = null; draw();
+  });
+
+  function valOf(p, code) {
+    const a = p.D.areas.find((x) => x.c === code);
+    const s = a && a.v[p.ind.key];
+    return s ? s[L(p.ind)] : null;
+  }
+  function draw() {
+    const cols = picked.map((p, k) => (p ? { ...p, k } : null)).filter(Boolean);
+    const wrap = document.getElementById('cpWrap');
+    document.getElementById('cpEmpty').hidden = cols.length > 0;
+    wrap.hidden = document.getElementById('cpNote').hidden = cols.length === 0;
+    if (!cols.length || !prefList) return;
+    // 値と順位
+    const rows = prefList.map((p) => ({ ...p, vals: cols.map((c) => valOf(c, p.c)) }));
+    const ranks = cols.map((c, j) => {
+      const vs = rows.map((row) => row.vals[j]).filter((v) => v !== null && v !== undefined).map((v) => r(c.ind, v));
+      return (v) => (v === null || v === undefined ? null : vs.filter((x) => x > r(c.ind, v)).length + 1);
+    });
+    if (sortKey !== null && cols[sortKey]) {
+      rows.sort((a, b) => {
+        const x = a.vals[sortKey], y = b.vals[sortKey];
+        if (x === null || x === undefined) return 1;
+        if (y === null || y === undefined) return -1;
+        return sortDir * (x - y) || a.c.localeCompare(b.c);
+      });
+    }
+    const mine = mineSel.value;
+    const head = cols.map((c, j) => {
+      const arrow = sortKey === j ? (sortDir < 0 ? ' ▼' : ' ▲') : '';
+      return `<th scope="col"><button type="button" data-sort="${j}"><i style="background:${COLORS[c.k]}"></i>${c.ind.label}${arrow}</button><small>${c.ind.yearLabels[L(c.ind)]}・${c.roomTitle}</small><small>順位は${c.ind.rankWord}</small></th>`;
+    }).join('');
+    const natRow = '<tr class="cp-nat"><th scope="row">' + (cols.every((c) => !c.D.nationalIsAvg[c.ind.key] && !(c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key])) ? '全国' : '全国／平均') + '</th>' + cols.map((c) => {
+      const avg = c.D.nationalIsAvg[c.ind.key] || (c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key]);
+      const v = avg && c.D.prefAverage ? c.D.prefAverage[c.ind.key][L(c.ind)] : c.D.national[c.ind.key][L(c.ind)];
+      return `<td>${fmt(c.ind, v)}${avg ? '<small>47都道府県の平均</small>' : ''}</td>`;
+    }).join('') + '</tr>';
+    const body = rows.map((row) => `<tr${row.c === mine ? ' class="is-mine"' : ''}><th scope="row">${row.n}</th>` + cols.map((c, j) => {
+      const v = row.vals[j]; const rk = ranks[j](v);
+      return `<td><b>${fmt(c.ind, v)}</b>${rk ? `<small>${rk}位</small>` : ''}</td>`;
+    }).join('') + '</tr>').join('');
+    const t = document.getElementById('cpTable');
+    t.innerHTML = `<thead><tr><th scope="col"><button type="button" data-sort="pref">都道府県${sortKey === null ? ' ▼' : ''}</button></th>${head}</tr></thead><tbody>${natRow}${body}</tbody>`;
+    t.querySelectorAll('button[data-sort]').forEach((b) => b.addEventListener('click', () => {
+      const s = b.dataset.sort;
+      if (s === 'pref') { sortKey = null; }
+      else { const j = Number(s); if (sortKey === j) sortDir = -sortDir; else { sortKey = j; sortDir = -1; } }
+      draw();
+    }));
+    // いまの選びかたをアドレスに残す（共有用。選んだ県は残さない）
+    const q = cols.map((c) => `${c.room}~${c.ind.key}`).join(',');
+    history.replaceState(null, '', q ? `?i=${encodeURIComponent(q)}` : location.pathname);
+  }
+
+  // ?i=窓口~項目,窓口~項目 で開いたら、その項目を選んだ状態にする
+  const want = new URLSearchParams(location.search).get('i');
+  if (want) {
+    want.split(',').slice(0, 4).forEach(async (pair, k) => {
+      const [room, key] = pair.split('~');
+      const roomSel = slots[k].querySelector('.cp-room');
+      if (![...roomSel.options].some((o) => o.value === room)) return;
+      roomSel.value = room;
+      roomSel.dispatchEvent(new Event('change'));
+      await load(room);
+      const indSel = slots[k].querySelector('.cp-ind');
+      const wait = () => new Promise((res) => { const t = setInterval(() => { if (!indSel.disabled) { clearInterval(t); res(); } }, 30); });
+      await wait();
+      indSel.value = key;
+      indSel.dispatchEvent(new Event('change'));
+    });
+  }
+})();
+</script>
+
+<style is:global>
+  .cp { max-width: 1040px; margin: 0 auto; padding: 0 16px 48px; }
+  .cp > section { padding: 0; }
+  .cp-hero { text-align: center; padding: 32px 0 8px; }
+  .cp-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+  .cp-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+  .cp-lead { color: #555; line-height: 1.9; }
+  .cp-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 28px 0 16px; }
+  @media (max-width: 720px) { .cp-pick { grid-template-columns: 1fr; } }
+  .cp-slot { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .cp-slot-no { margin: 0; font-size: .8rem; color: #1b4332; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .cp-slot-no i, .cp-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .cp-slot label, .cp-opts label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: #555; }
+  .cp-slot select, .cp-opts select { width: 100%; padding: 9px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; }
+  .cp-slot select:disabled { background: #f0f0ea; color: #999; }
+  .cp-opts { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-end; justify-content: center; margin: 0 0 18px; }
+  .cp-opts label { width: 240px; }
+  .cp-btn { padding: 9px 14px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; cursor: pointer; font-size: .85rem; min-height: 40px; }
+  .cp-btn:hover { background: #f4f7f4; }
+  .cp-empty { text-align: center; color: #888; padding: 28px 0; border: 1px dashed #c9d3c6; border-radius: 8px; }
+  .cp-wrap { overflow: auto; max-height: 80vh; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; }
+  .cp-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .86rem; }
+  .cp-table th, .cp-table td { padding: 8px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
+  .cp-table thead th { position: sticky; top: 0; z-index: 2; background: #f6f8f4; text-align: left; font-weight: 600; min-width: 9em; }
+  .cp-table thead th:first-child { min-width: 6em; z-index: 3; left: 0; }
+  .cp-table thead button { all: unset; cursor: pointer; color: #1b4332; display: inline-flex; align-items: center; gap: 5px; line-height: 1.5; }
+  .cp-table thead button:hover { color: #b23a2f; }
+  .cp-table thead small, .cp-table td small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
+  .cp-table tbody th { position: sticky; left: 0; background: #fff; text-align: left; font-weight: 400; white-space: nowrap; }
+  .cp-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
+  .cp-table tr.cp-nat th, .cp-table tr.cp-nat td { background: #fbfaf3; color: #4A6355; }
+  .cp-table tr.is-mine th, .cp-table tr.is-mine td { background: #fbe9e5; }
+  .cp-note { font-size: .8rem; color: #666; line-height: 1.8; margin-top: 10px; }
+  .cp-cross { margin-top: 32px; font-size: .9rem; text-align: center; line-height: 1.9; }
+  .cp-cross a { color: #b23a2f; }
+  .cp-source { margin-top: 32px; font-size: .75rem; color: #888; line-height: 1.8; }
+  @media (max-width: 600px) { .cp-table { font-size: .8rem; } .cp-table th, .cp-table td { padding: 7px 7px; } .cp-table thead th { min-width: 7.5em; } }
+</style>

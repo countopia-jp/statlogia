@@ -58,6 +58,18 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     )}
   </section>
 
+  <section id="rmCmpSec" class="rm-cmp" hidden aria-label="ほかの地域とならべる">
+    <h2>ほかの{isPref ? '県' : '市区町村'}とならべる</h2>
+    <p class="rm-note">{isPref ? '県' : '市区町村'}を4つまで足して、数字を横に並べます。下の移りかわりのグラフにも、線が足されます。</p>
+    <div class="rm-selector rm-selector--small">
+      <label><span>都道府県</span><select id="rmCmpPref"><option value="">{isPref ? '足す県を選ぶ' : '選んでください'}</option></select></label>
+      {!isPref && <label><span>市区町村</span><select id="rmCmpTown" disabled><option value="">まず都道府県を選ぶ</option></select></label>}
+    </div>
+    <ul class="rm-chips" id="rmChips"></ul>
+    <div class="rm-cmp-wrap" id="rmCmpWrap" hidden><table class="rm-cmp-table" id="rmCmpTable"></table></div>
+    <p class="rm-note" id="rmCmpNote" hidden>順位は{isPref ? '47都道府県の中' : '全国の市区町村の中'}での順位です。年の書いてある値は、最新の年の値がないため、それより前の年の値です。</p>
+  </section>
+
   <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">
     <h2 id="rmLineTitle">移りかわり</h2>
     <div class="rm-tabs" id="rmLineTabs" role="tablist"></div>
@@ -160,8 +172,12 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 
   // ---- 帳面 ----
   let current = null;
+  let compare = [];
+  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5', '#7a5c99'];
+  const MAXCMP = 4;
   function render(a) {
     current = a;
+    compare = compare.filter((b) => b.c !== a.c);
     document.getElementById('rmResult').hidden = false;
     document.getElementById('rmTitle').textContent = `${a.n}の帳面`;
     const cards = document.getElementById('rmCards');
@@ -208,7 +224,75 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const cols = [3, 4, 2].reduce((best, c) => (empty(c) < empty(best) ? c : best), 3);
     cards.style.setProperty('--cols', cols);
     lines(a, ranks);
+    renderCmp();
     drawLine();
+  }
+
+  // ---- ほかの地域とならべる ----
+  const cmpPref = document.getElementById('rmCmpPref');
+  const cmpTown = document.getElementById('rmCmpTown');
+  const nameOf = (a) => (isPref ? a.n : `${shortName(a)}（${PREF_NAMES[prefOf(a)]}）`);
+  if (isPref) {
+    for (const a of AREAS) { const o = document.createElement('option'); o.value = a.c; o.textContent = a.n; cmpPref.appendChild(o); }
+    cmpPref.addEventListener('change', () => { addCmp(cmpPref.value); cmpPref.value = ''; });
+  } else {
+    const prefs = [...new Set(AREAS.map(prefOf))].sort();
+    for (const p of prefs) { const o = document.createElement('option'); o.value = p; o.textContent = PREF_NAMES[p] || p; cmpPref.appendChild(o); }
+    cmpPref.addEventListener('change', () => {
+      cmpTown.innerHTML = '<option value="">足す市区町村を選ぶ</option>';
+      const list = AREAS.filter((a) => prefOf(a) === cmpPref.value);
+      for (const a of list) { const o = document.createElement('option'); o.value = a.c; o.textContent = shortName(a); cmpTown.appendChild(o); }
+      cmpTown.disabled = list.length === 0;
+    });
+    cmpTown.addEventListener('change', () => { addCmp(cmpTown.value); cmpTown.value = ''; });
+  }
+  function addCmp(code) {
+    const a = AREAS.find((x) => x.c === code);
+    if (!a || !current || a.c === current.c || compare.some((b) => b.c === a.c)) return;
+    if (compare.length >= MAXCMP) return;
+    compare.push(a);
+    renderCmp();
+    drawLine();
+  }
+  function renderCmp() {
+    const sec = document.getElementById('rmCmpSec');
+    if (!current) return;
+    sec.hidden = false;
+    const full = compare.length >= MAXCMP;
+    cmpPref.disabled = full;
+    if (cmpTown) cmpTown.disabled = full || !cmpPref.value;
+    const chips = document.getElementById('rmChips');
+    chips.innerHTML = '';
+    const all = [current, ...compare];
+    all.forEach((a, k) => {
+      const li = document.createElement('li');
+      li.className = 'rm-chip';
+      li.innerHTML = `<i style="background:${COLORS[k]}"></i>${nameOf(a)}`;
+      if (k > 0) {
+        const b = document.createElement('button');
+        b.type = 'button'; b.setAttribute('aria-label', `${nameOf(a)}を外す`); b.textContent = '×';
+        b.addEventListener('click', () => { compare = compare.filter((x) => x.c !== a.c); renderCmp(); drawLine(); });
+        li.appendChild(b);
+      }
+      chips.appendChild(li);
+    });
+    const wrap = document.getElementById('rmCmpWrap');
+    const note = document.getElementById('rmCmpNote');
+    wrap.hidden = note.hidden = compare.length === 0;
+    if (compare.length === 0) return;
+    const th = all.map((a, k) => `<th scope="col"><i style="background:${COLORS[k]}"></i>${isPref ? a.n : shortName(a)}${isPref ? '' : `<small>${PREF_NAMES[prefOf(a)]}</small>`}</th>`).join('');
+    const rows = IND.map((ind) => {
+      const pool = poolOf(ind);
+      const tds = all.map((a) => {
+        const lk = lastKnown(a, ind);
+        if (!lk) return '<td>—</td>';
+        const old = lk.i !== L(ind);
+        const rk = !old && !a.x ? rankIn(ind, a, pool) : null;
+        return `<td><b>${fmtText(ind, lk.v)}</b>${old ? `<small>${ind.yearLabels[lk.i]}</small>` : ''}${rk ? `<small>${rk}位</small>` : ''}</td>`;
+      }).join('');
+      return `<tr><th scope="row">${ind.label}<small>${ind.yearLabels[L(ind)]}</small></th>${tds}</tr>`;
+    }).join('');
+    document.getElementById('rmCmpTable').innerHTML = `<thead><tr><th scope="col">項目</th>${th}</tr></thead><tbody>${rows}</tbody>`;
   }
 
   // 橙子の一言は順位を言い直さず、その窓口の数字への驚きや感心を言う（町を選ぶたびに入れ替わる）
@@ -302,7 +386,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const empty = document.getElementById('rmLineEmpty');
     const series = a.v[ind.key] || [];
     const pts = series.filter((v) => v !== null && v !== undefined).length;
-    document.getElementById('rmLineTitle').textContent = `${name}の「${ind.label}」の移りかわり`;
+    document.getElementById('rmLineTitle').textContent = compare.length ? `「${ind.label}」の移りかわり` : `${name}の「${ind.label}」の移りかわり`;
     if (chart) { chart.destroy(); chart = null; }
     if (pts < 3) {
       canvas.hidden = true;
@@ -319,7 +403,8 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const labels = yearly ? Array.from({ length: ys[ys.length - 1] - ys[0] + 1 }, (_, i) => String(ys[0] + i)) : ind.years;
     const spread = (arr) => (yearly ? labels.map((y) => { const k = ind.years.indexOf(y); return k < 0 ? null : arr[k]; }) : arr);
     const gaps = yearly && labels.length > ind.years.length;
-    const sets = [{ label: name, data: spread(series), borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 2, spanGaps: false }];
+    const sets = [{ label: name, data: spread(series), borderColor: COLORS[0], backgroundColor: COLORS[0], tension: 0.2, pointRadius: 2, spanGaps: false }];
+    compare.forEach((b, k) => sets.push({ label: isPref ? b.n : shortName(b), data: spread(b.v[ind.key] || []), borderColor: COLORS[k + 1], backgroundColor: COLORS[k + 1], tension: 0.2, pointRadius: 2, spanGaps: false }));
     const noteParts = [];
     if (isPref) {
       const useAvg = D.nationalIsAvg[ind.key] || (D.nationalIsTotal && D.nationalIsTotal[ind.key]);
@@ -335,7 +420,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       data: { labels, datasets: sets },
       options: {
         responsive: true,
-        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${fmtText(ind, Number(c.raw))}` } } },
+        plugins: { legend: { display: compare.length > 0, labels: { boxWidth: 14, filter: (it) => !String(it.text).includes('47都道府県の平均') && it.text !== '全国' } }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${fmtText(ind, Number(c.raw))}` } } },
         scales: { y: { ticks: { callback: (v) => Number(v).toLocaleString('ja-JP') } } },
       },
     });
@@ -409,6 +494,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       if (isPref) { prefSel.value = a.c; }
       else { prefSel.value = prefOf(a); window.__rmFillTowns(prefOf(a)); townSel.value = a.c; updateScopeOptions(); }
       render(a);
+      for (const c of (q.get('cmp') || '').split(',').filter(Boolean)) addCmp(c);
     }
   }
 })();
@@ -443,6 +529,24 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   .rm-card-meta--soft { color: #777; font-weight: 400; margin-top: 2px; }
   .rm-card-note { font-size: .66rem; color: #999; margin-top: 4px; line-height: 1.5; }
 
+  .rm-cmp { margin-top: 40px; }
+  .rm-cmp h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
+  .rm-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0 0 14px; }
+  .rm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .85rem; }
+  .rm-chip i, .rm-cmp-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .rm-chip button { border: 0; background: none; cursor: pointer; font-size: 1rem; line-height: 1; color: #888; padding: 2px 4px; min-width: 28px; min-height: 28px; }
+  .rm-chip button:hover { color: #b23a2f; }
+  .rm-cmp-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .rm-cmp-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+  .rm-cmp-table th, .rm-cmp-table td { padding: 9px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
+  .rm-cmp-table tbody tr:last-child th, .rm-cmp-table tbody tr:last-child td { border-bottom: 0; }
+  .rm-cmp-table thead th { font-weight: 600; color: #1b4332; white-space: nowrap; background: #f6f8f4; }
+  .rm-cmp-table thead th i { margin-right: 5px; }
+  .rm-cmp-table thead th:first-child, .rm-cmp-table tbody th { text-align: left; }
+  .rm-cmp-table tbody th { font-weight: 400; color: #2d6a4f; min-width: 9em; position: sticky; left: 0; background: #fff; }
+  .rm-cmp-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
+  .rm-cmp-table small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
+  @media (max-width: 600px) { .rm-cmp-table { font-size: .8rem; } .rm-cmp-table tbody th { min-width: 6.5em; } .rm-cmp-table th, .rm-cmp-table td { padding: 8px 7px; } }
   .rm-line-sec { margin-top: 44px; }
   .rm-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
   .rm-line-wrap { padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }

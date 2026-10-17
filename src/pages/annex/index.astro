@@ -232,16 +232,19 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
     .rr-shiori-desk { flex: none; width: 420px; height: auto; border-radius: 6px; display: block; margin-right: 22px; }
     .rr-shiori-say { flex: 1; min-width: 0; }
     @media (max-width: 1180px) { .rr-shiori-desk { width: 320px; } }
-    @media (max-width: 900px) { .rr-shiori { flex-wrap: wrap; } .rr-shiori-desk { width: 100%; max-width: 560px; margin: 0 auto 12px; } }
     .rr-shiori-name { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .12em; color: #2c4a7a; margin-bottom: 4px; }
     .rr-shiori-bubble { position: relative; background: #e3eef7; color: #222; border-radius: 12px; padding: 18px 22px; font-size: 1.02rem; line-height: 1.95; margin: 0; }
     .rr-shiori-bubble::after { content: ""; position: absolute; top: 40%; right: -8px; border: 8px solid transparent; border-right: 0; border-left-color: #e3eef7; }
     .rr-shiori-link { text-align: right; font-size: .85rem; margin: 10px 0 0; }
     .rr-shiori-link a { color: #2c4a7a; }
     .rr-shiori-fig { flex: none; width: auto; height: 456px; display: block; }
+    @media (max-width: 900px) {
+      .rr-shiori { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px 10px; }
+      .rr-shiori-desk { grid-column: 1 / -1; justify-self: center; width: 100%; max-width: 620px; margin: 0 0 8px; }
+      .rr-shiori-fig { height: 380px; }
+    }
     @media (max-width: 600px) {
-      .rr-shiori { gap: 4px; flex-wrap: wrap; }
-      .rr-shiori-desk { width: 100%; margin: 0 0 12px; }
+      .rr-shiori { gap: 10px 4px; }
       .rr-shiori-fig { height: 252px; }
       .rr-shiori-bubble { font-size: .9rem; padding: 12px 14px; }
     }

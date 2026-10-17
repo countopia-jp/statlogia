@@ -196,6 +196,18 @@ export const exhibits = [
   { no: 57, href: '/exhibits/sushi-burger/', place: 'food',
     title: 'すしとハンバーガー、日本一はどの市だ',
     lead: '1世帯が1年間に、すし屋などで食べたすしと、ハンバーガーに使ったお金を、県庁所在市と政令指定都市で比較。上位の顔ぶれをくらべます。' },
+  { no: 58, href: '/exhibits/home-movie-music/', place: 'watch',
+    title: '家で見る映画と音楽、日本一はどの県だ',
+    lead: '映画館以外で映画を見た人と、CDやスマートフォンなどで音楽を聴いた人の割合を47都道府県で比較。家で楽しむ映画と音楽を、県ごとにくらべます。' },
+  { no: 59, href: '/exhibits/basketball-softball/', place: 'sports',
+    title: 'バスケットボールとソフトボール、日本一はどの県だ',
+    lead: 'バスケットボールをした人と、ソフトボールをした人の割合を47都道府県で比較。チームでする球技を二つ、県ごとにくらべます。' },
+  { no: 60, href: '/exhibits/writing-sewing/', place: 'hobby',
+    title: '俳句・小説と和裁・洋裁、日本一はどの県だ',
+    lead: '詩や和歌、俳句、小説などを書いた人と、和裁や洋裁をした人の割合を47都道府県で比較。ことばでつくる趣味と、布でつくる趣味を、県ごとにくらべます。' },
+  { no: 61, href: '/exhibits/chicken-egg/', place: 'food',
+    title: '鶏肉と卵、日本一はどの市だ',
+    lead: '1世帯が1年間に鶏肉と卵へ使ったお金を、県庁所在市と政令指定都市で比較。二つの食べもので、上位の顔ぶれをくらべます。' },
 ];
 
 

@@ -22,6 +22,7 @@ import Talk from '../../components/Talk.astro';
       <label for="rrQ">どの窓口か分からないときは、言葉でたずねてください</label>
       <div class="rr-search-row"><input id="rrQ" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" /><button type="submit">たずねる</button></div>
     </form>
+    <p class="rr-compare"><a href="/compare/">くらべる台へ</a>　窓口をまたいで、項目を4つまで並べてくらべられます。</p>
     <p class="rr-area-link"><a href="/tower/">土地を選んで、いろいろな数字を一枚で見る「展望塔」→</a></p>
     <Talk speaker="kei">
       閲覧室のご利用は自由です。台帳はすべて国の統計から写しています。どうぞ、お好きな窓口へ。
@@ -653,5 +654,6 @@ import Talk from '../../components/Talk.astro';
     .rr-card h3 { margin: 0 0 10px; font-size: 1.2rem; font-family: "Shippori Mincho", serif; }
     .rr-card-desc { font-size: 0.9rem; line-height: 1.8; color: #444; margin: 0 0 10px; }
     .rr-card-meta { font-size: 0.75rem; color: #888; margin: auto 0 0; }
-  </style>
+  .rr-compare{text-align:center;margin:10px 0 0;font-size:.9rem;color:#555}.rr-compare a{color:#b23a2f;font-weight:700;margin-right:.3em}
+</style>
 </BaseLayout>
