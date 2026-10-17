@@ -4,13 +4,13 @@ import Talk from '../../components/Talk.astro';
 import { getMuniMigrationData } from '../../lib/muni-migration.js';
 const data = await getMuniMigrationData();
 ---
-<BaseLayout title="わが町の人の出入り｜Countopia Stats" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/annex/" backLabel="町の出納帳">
+<BaseLayout title="わが町の人の出入り｜Countopia Stats" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <header class="tp-hero">
     <img class="tp-hero-figure" src="/images/icon/town-migration-large.webp" alt="家族が家に帰り着く一方で、一人旅立つ人がいる郊外の道の水彩画" width="1400" height="788" loading="lazy" />
-      <p class="tp-kicker">別館・町の出納帳</p>
+      <p class="tp-kicker">別館・暮らしの台帳</p>
       <h1>わが町の人の出入り</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
@@ -19,10 +19,7 @@ const data = await getMuniMigrationData();
     </header>
 
     <Talk speaker="shiori">
-      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。ここは、町の人の出入りの帳場ですよ。
-    </Talk>
-    <Talk speaker="shiori">
-      転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
+      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。ここは、町の人の出入りの帳場ですよ。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
     </Talk>
 
     <section class="tp-selector">

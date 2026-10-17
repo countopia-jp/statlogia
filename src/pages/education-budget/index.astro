@@ -17,13 +17,13 @@ const years = [...new Set(edb.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="教育の帳場｜財政力と教育費｜Countopia Stats" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/annex/" backLabel="町の出納帳">
+<BaseLayout title="教育の帳場｜財政力と教育費｜Countopia Stats" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/annex/" backLabel="暮らしの台帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="edb-dash">
     <header class="edb-hero">
     <img class="edb-hero-figure" src="/images/icon/education-budget-large.webp" alt="天秤の一方に硬貨、もう一方に本とランドセルを載せた静物" width="1400" height="788" loading="lazy" />
-      <p class="edb-kicker">別館・町の出納帳</p>
+      <p class="edb-kicker">別館・暮らしの台帳</p>
       <h1>教育の帳場</h1>
       <p class="edb-lead">
         財政力指数、教育費、小・中・高それぞれの1人当たり経費。<br />
@@ -32,10 +32,7 @@ const yearNote = years.join('・');
     </header>
 
     <Talk speaker="shiori">
-      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。この帳場では、県の財政力指数と、人口や児童生徒1人あたりの教育費を、並べて見ていただけますよ。
-    </Talk>
-    <Talk speaker="shiori">
-      財政力指数は、県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った数なんです。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
+      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。この帳場では、県の財政力指数と、人口や児童生徒1人あたりの教育費を、並べて見ていただけますよ。財政力指数は、県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った数なんです。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->

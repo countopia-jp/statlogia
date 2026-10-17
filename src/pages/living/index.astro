@@ -17,11 +17,11 @@ const years = [...new Set(liv.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 ---
 
-<BaseLayout title="暮らしの見積所｜稼ぎと住まい｜Countopia Stats" description="都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書にまとめてご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="暮らしの見積所｜稼ぎと住まい｜Countopia Stats" description="都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書にまとめてご覧いただける窓口。全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <main class="liv-dash">
     <header class="liv-hero">
       <img class="liv-hero-figure" src="/images/icon/living-large.webp" alt="窓辺の机に広げられた家の間取り図、物差しと虫眼鏡、算盤と帳簿" width="1400" height="788" loading="lazy" />
-      <p class="liv-kicker">ダッシュボード</p>
+      <p class="liv-kicker">別館</p>
       <h1>暮らしの見積所</h1>
       <p class="liv-lead">
         給与、最低賃金、家賃、家の広さ、持ち家率。<br />
@@ -29,11 +29,8 @@ const yearNote = years.join('・');
       </p>
     </header>
 
-    <Talk speaker="kei">
-      当所では、稼ぎと住まいを一緒に見積もります。片方だけでは、暮らしの形は見えてきませんから。
-    </Talk>
-    <Talk speaker="touko">
-      お給金と家賃を並べて見るの？　……なんだか、大人の話ねえ。
+    <Talk speaker="shiori">
+      うちの係でも、お給料袋が配られる日はみんなそわそわするんですよ。この見積所では、稼ぎと住まいを一緒に見積もります。給与・最低賃金・家賃・家の広さ・持ち家率を、一枚の見積書に並べますね。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -50,8 +47,7 @@ const yearNote = years.join('・');
     <section id="resultArea" class="liv-result" hidden aria-live="polite">
       <h2 id="resultTitle"></h2>
       <div class="liv-cards" id="cardGrid"></div>
-      <Talk speaker="kei"><span id="keiLine">県を選ぶと、見積書をお出しします。</span></Talk>
-      <Talk speaker="touko"><span id="toukoLine">どんな暮らしかしら。</span></Talk>
+      <Talk speaker="shiori"><span id="keiLine">県を選ぶと、見積書の欄が埋まりますよ。</span> <span id="toukoLine"></span></Talk>
     </section>
 
     <!-- ===== 散布図 ===== -->
@@ -83,11 +79,8 @@ const yearNote = years.join('・');
       <p class="liv-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="kei">
-      給与の順位と、家賃や家の広さの順位は、同じ並びにはなりません。数字を二つ並べて見るのが、この見積所の流儀です。
-    </Talk>
-    <Talk speaker="touko">
-      お給金の順位と、お家の広さの順位は、別なのねえ。
+    <Talk speaker="shiori">
+      給与の順位と、家賃や家の広さの順位は、同じ並びにはならないんです。数字を二つ並べて見るのが、この見積所の流儀なんですよ。
     </Talk>
 
     <p class="liv-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/exhibits/housework/">家事時間の男女差</a>｜<a href="/how-to-read/median-vs-mean/">平均のところに、誰もいない</a></p>
@@ -199,7 +192,7 @@ const yearNote = years.join('・');
       // ---- 案内人のコメント ----
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["お給金も家賃も、一枚の紙で見られるのね。", "家の広さまで、数字で分かるのね。", "わたくしの時代とは、お金の桁がまるで違いそう。"];
+        const TOUKO_LINES = ["給与の欄は、毎月きまって支払われるお給料の平均なんです。", "家賃の欄は、1畳あたりに直した額なんですよ。", "持ち家率は、住んでいる家のうち自分の持ち家の割合なんです。"];
         // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const wageRank = stats['F620215'].rank[area.c];
@@ -220,7 +213,7 @@ const yearNote = years.join('・');
         let t = '';
 
         if (!hasWage || !hasRent || !hasArea) {
-          t = '値のない欄もあるのね。';
+          t = '値のない欄もあるんですよ。';
         } else if (wageRank <= 10 && rentRank >= 38) {
           k += ' 給与は上位で、家賃の安さは下位です。';
           t = ['お給金は上のほう、家賃の安さは下のほうなのね。', '二つの順位が、反対のところにあるのねえ。'][seed % 2];

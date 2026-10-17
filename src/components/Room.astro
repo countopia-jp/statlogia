@@ -17,6 +17,8 @@ const { room } = Astro.props;
 const data = await getRoomData(room);
 const years = yearSummary(data);
 const isPref = room.scope === 'pref';
+// 栞が続けて話すときは、2つ目以降を左側（別の顔のアイコン）に置いて左右交互にする
+const mergedIntro = room.intro.map(([who, text], i, arr) => [who === 'shiori' && i > 0 && arr[i - 1][0] === 'shiori' && i % 2 === 1 ? 'shiori2' : who, text]);
 // 別館（annex）の窓口は栞がひとりで案内する（順位を言うのも栞。京・橙子は出ない）
 // 扉絵：public/images/icon/<窓口id>-large.webp を置けば出る（無いあいだは出さない）
 const heroImage = room.image ?? `/images/icon/${room.id}-large.webp`;
@@ -30,7 +32,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     <p class="rm-lead" set:html={room.lead} />
   </header>
 
-  {room.intro.map(([who, text]) => <Talk speaker={who}>{text}</Talk>)}
+  {mergedIntro.map(([who, text]) => <Talk speaker={who}>{text}</Talk>)}
 
   <section class="rm-selector" aria-label="地域の選択">
     {isPref ? (

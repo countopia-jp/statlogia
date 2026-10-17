@@ -6,25 +6,26 @@ import path from 'node:path';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="町の出納帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側に関わる数字をまとめた別館です。12の窓口があります。">
+<BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。15の窓口があります。">
   <main class="rr">
     <header class="rr-hero">
-      <img class="rr-figure" src="/images/icon/annex-large.webp" alt="障子窓の前の机に、開いた帳簿と硬貨、筆と硯、算盤が置かれた水彩画" width="1400" height="788" loading="lazy" />
       <p class="rr-kicker">別館</p>
-      <h1>町の出納帳</h1>
+      <h1>暮らしの台帳</h1>
       <p class="rr-lead">
         財政や人の出入り、所得や家計、土地の値段や働き方など、<br />お金と暮らしの内側に関わる数字です。<br />
-        本館とは別に、出納帳としてここにまとめました。
+        本館とは別に、台帳としてここに綴じました。
       </p>
     </header>
 
-    <Talk speaker="shiori">
-      ようこそ、別館「町の出納帳」へ。昭和36年の市役所で、統計係をしている栞です。わたしたちBGは、毎日この帳簿とにらめっこなんですよ。
-    </Talk>
-    <Talk speaker="shiori">
-      ここには、財政やひとの出入りなど、町の内側の数字の帳簿を綴じてあります。欄の名前をひとつずつ確かめながら、読んでいきましょうね。
-    </Talk>
-    <p class="rr-shiori-link"><a href="/annex/shiori/">別館の案内人・栞のこと →</a></p>
+    <section class="rr-shiori" aria-label="案内人のことば">
+      <img class="rr-shiori-desk" src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width="1400" height="788" loading="lazy" />
+      <div class="rr-shiori-say">
+        <span class="rr-shiori-name">栞（昭和の帳場から来た子）</span>
+        <p class="rr-shiori-bubble">ようこそ、別館「暮らしの台帳」へ。昭和36年の市役所で、統計係をしている栞です。わたしたちBGは、毎日この帳簿とにらめっこなんですよ。ここには、お金や働き方、ひとの出入りや災害など、暮らしの内側の数字の台帳を綴じてあります。欄の名前をひとつずつ確かめながら、読んでいきましょうね。</p>
+        <p class="rr-shiori-link"><a href="/annex/shiori/">別館の案内人・栞のこと →</a></p>
+      </div>
+      <img class="rr-shiori-fig" src="/images/chara/shiori-point.webp" alt="帳簿を抱えて、手のひらで窓口のほうを示す栞" width="487" height="1100" loading="lazy" />
+    </section>
 
     <section class="rr-group" aria-label="県のお金">
       <h2 class="ledger-shelf">県のお金</h2>
@@ -115,8 +116,8 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
       </div>
     </section>
 
-    <section class="rr-group" aria-label="暮らしと人の動き">
-      <h2 class="ledger-shelf">暮らしと人の動き</h2>
+    <section class="rr-group" aria-label="暮らしと稼ぎ">
+      <h2 class="ledger-shelf">暮らしと稼ぎ</h2>
       <div class="ledger-grid ledger-grid--4">
         <a class={`ledger-card${thumbOf('household') ? ' ledger-card--img' : ''}`} href="/household/">
           {thumbOf('household') && <img class="lc-img" src={thumbOf('household')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
@@ -129,13 +130,13 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
-        <a class={`ledger-card${thumbOf('work-style') ? ' ledger-card--img' : ''}`} href="/work-style/">
-          {thumbOf('work-style') && <img class="lc-img" src={thumbOf('work-style')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+        <a class={`ledger-card${thumbOf('living') ? ' ledger-card--img' : ''}`} href="/living/">
+          {thumbOf('living') && <img class="lc-img" src={thumbOf('living')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="lc-body">
-          <span class="lc-mark">働</span>
-          <h3>働き方の帳場</h3>
+          <span class="lc-mark">見</span>
+          <h3>暮らしの見積所</h3>
           <p class="lc-desc">
-            完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合、ハローワークで仕事を探した人と就職した人の割合です。
+            給与・最低賃金・家賃・家の広さ・持ち家率を、一枚の見積書に並べます。
           </p>
           <span class="lc-foot">別館・都道府県</span>
           </div>
@@ -151,6 +152,40 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="働く">
+      <h2 class="ledger-shelf">働く</h2>
+      <div class="ledger-grid ledger-grid--4">
+        <a class={`ledger-card${thumbOf('work-style') ? ' ledger-card--img' : ''}`} href="/work-style/">
+          {thumbOf('work-style') && <img class="lc-img" src={thumbOf('work-style')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">働</span>
+          <h3>働き方の帳場</h3>
+          <p class="lc-desc">
+            完全失業率と、正社員・パート・派遣の割合、65歳以上で働く人の割合、ハローワークで仕事を探した人と就職した人の割合です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('work-forms') ? ' ledger-card--img' : ''}`} href="/work-forms/">
+          {thumbOf('work-forms') && <img class="lc-img" src={thumbOf('work-forms')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">職</span>
+          <h3>働き方のかたち</h3>
+          <p class="lc-desc">
+            自営業の人や仕事の種類ごとの割合、有効求人倍率、転職した人の割合、共働きの世帯です。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="人の動きと災害">
+      <h2 class="ledger-shelf">人の動きと災害</h2>
+      <div class="ledger-grid ledger-grid--4">
         <a class={`ledger-card${thumbOf('town-migration') ? ' ledger-card--img' : ''}`} href="/town-migration/">
           {thumbOf('town-migration') && <img class="lc-img" src={thumbOf('town-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="lc-body">
@@ -173,6 +208,17 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
+        <a class={`ledger-card${thumbOf('disaster') ? ' ledger-card--img' : ''}`} href="/disaster/">
+          {thumbOf('disaster') && <img class="lc-img" src={thumbOf('disaster')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">災</span>
+          <h3>自然災害の帳場</h3>
+          <p class="lc-desc">
+            自然災害の被害額・水につかった建物・被害を受けた世帯と人の数を、年ごとに。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -182,8 +228,22 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
-    .rr-shiori-link { text-align: right; font-size: .85rem; margin: 4px 0 24px; }
+    .rr-shiori { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 1100px; margin: 8px auto 28px; }
+    .rr-shiori-desk { flex: none; width: 300px; height: auto; border-radius: 6px; display: block; margin-right: 18px; }
+    .rr-shiori-say { flex: 1; min-width: 0; }
+    @media (max-width: 900px) { .rr-shiori { flex-wrap: wrap; } .rr-shiori-desk { width: 100%; max-width: 560px; margin: 0 auto 12px; } }
+    .rr-shiori-name { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .12em; color: #2c4a7a; margin-bottom: 4px; }
+    .rr-shiori-bubble { position: relative; background: #e3eef7; color: #222; border-radius: 12px; padding: 14px 18px; font-size: .95rem; line-height: 1.9; margin: 0; }
+    .rr-shiori-bubble::after { content: ""; position: absolute; top: 40%; right: -8px; border: 8px solid transparent; border-right: 0; border-left-color: #e3eef7; }
+    .rr-shiori-link { text-align: right; font-size: .85rem; margin: 10px 0 0; }
     .rr-shiori-link a { color: #2c4a7a; }
+    .rr-shiori-fig { flex: none; width: auto; height: 300px; display: block; }
+    @media (max-width: 600px) {
+      .rr-shiori { gap: 4px; flex-wrap: wrap; }
+      .rr-shiori-desk { width: 100%; margin: 0 0 12px; }
+      .rr-shiori-fig { height: 210px; }
+      .rr-shiori-bubble { font-size: .9rem; padding: 12px 14px; }
+    }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
     .rr-lead { color: #555; line-height: 1.9; }

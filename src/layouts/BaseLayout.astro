@@ -54,14 +54,14 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     </div>
   )}
   <slot />
-  {!here.startsWith('/annex/') && (
+  {here === '/' && (
     <div class="annex-banner-wrap">
       <a class="annex-banner" href="/annex/">
         <img class="ab-icon" src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" />
         <span class="ab-body">
           <span class="ab-label">ANNEX</span>
-          <span class="ab-title">別館　町の出納帳</span>
-          <span class="ab-note">財政や人の出入り、所得や家計、土地の値段や働き方など、お金と暮らしの内側の数字をまとめています。</span>
+          <span class="ab-title">別館　暮らしの台帳</span>
+          <span class="ab-note">財政や家計、給与や働き方、人の出入りや災害など、暮らしの内側の数字を綴じています。</span>
         </span>
         <span class="ab-arrow">→</span>
       </a>
@@ -162,22 +162,23 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     }
     .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
 
-    /* 別館への案内：フッターの直上、紙の地に置く（別館トップでは出さない） */
-    .annex-banner-wrap { max-width: 1280px; margin: 48px auto 36px; padding: 0 16px; }
+    /* 別館への案内：フッターの直上、紙の地に置く（玄関＝トップページだけ） */
+    .annex-banner-wrap { max-width: 1280px; margin: 32px auto 36px; padding: 0 16px; }
     .annex-banner {
       display: flex; align-items: center; gap: 18px;
-      padding: 14px 22px 14px 14px;
+      width: fit-content; max-width: 720px; margin: 0 auto;
+      padding: 12px 22px 12px 12px;
       border: 1px solid #c9d3c7; border-left: 4px solid #2d6a4f; border-radius: 10px;
       background: #fbfaf5; text-decoration: none; color: #1f3a2e;
       transition: background .15s, transform .15s, box-shadow .15s;
     }
     .annex-banner:hover, .annex-banner:focus-visible { background: #fff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(31,58,46,.08); }
-    .ab-icon { flex-shrink: 0; width: 76px; height: 76px; border-radius: 8px; display: block; }
+    .ab-icon { flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; display: block; }
     .ab-body { flex: 1; min-width: 0; }
     .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #2d6a4f; }
     .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
     .ab-note { display: block; font-size: .78rem; color: #5a645c; margin-top: 3px; line-height: 1.6; }
-    .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; }
+    .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
     @media (max-width: 560px) {
       .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }
       .ab-icon { width: 60px; height: 60px; }
