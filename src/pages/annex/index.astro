@@ -7,7 +7,7 @@ import HeroFig from '../../components/HeroFig.astro';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。15の窓口があります。">
+<BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。16の窓口があります。">
   <main class="rr">
     <HeroFig src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width={1400} height={788} eager>
         <p class="rr-kicker">別館</p>
@@ -48,6 +48,17 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <h3>県のお金の入り口</h3>
           <p class="lc-desc">
             都道府県の1年間の収入が、税・地方交付税・国からのお金・借り入れなど、どこから入ってきたかの割合を。
+          </p>
+          <span class="lc-foot">別館・都道府県</span>
+          </div>
+        </a>
+        <a class={`ledger-card${thumbOf('pref-finance') ? ' ledger-card--img' : ''}`} href="/pref-finance/">
+          {thumbOf('pref-finance') && <img class="lc-img" src={thumbOf('pref-finance')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">台</span>
+          <h3>県の台所事情</h3>
+          <p class="lc-desc">
+            財政力指数・経常収支比率・将来負担比率などの物差しと、県債の残高、住民税・固定資産税・事業税の1人あたりの額を。
           </p>
           <span class="lc-foot">別館・都道府県</span>
           </div>

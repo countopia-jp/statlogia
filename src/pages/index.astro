@@ -63,6 +63,7 @@ const monthlyFacts = [
   { text: `本を読む人がいちばん多いのは${readingTop.n}で${num(readingTop.minutes)}％です。`, href: '/exhibits/reading/' },
 ];
 const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
+import { THEMES } from '../data/analysis.js';
 ---
 <BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
   <main>
@@ -237,9 +238,7 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
         <div class="ana-feature-body">
           <p class="ana-feature-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
           <div class="ana-themes">
-            <a class="ana-theme" href="/analysis/education/"><b>教育を読み解く</b><span>学校の大きさ、先生の数、かけているお金、学びの道具、卒業したあとの進路</span><i aria-hidden="true">→</i></a>
-            <a class="ana-theme" href="/analysis/living/"><b>暮らしを読み解く</b><span>稼ぎ、物価、家賃、家の広さ、家計のやりくり</span><i aria-hidden="true">→</i></a>
-            <div class="ana-theme ana-theme--soon"><b>産業の稼ぐ力</b><span>準備中</span></div>
+            {THEMES.map((t) => <a class="ana-theme" href={`/analysis/${t.id}/`}><b>{t.title}</b><span>{t.tag}</span><i aria-hidden="true">→</i></a>)}
           </div>
           <a class="ana-feature-go" href="/analysis/">読み解きの間へ →</a>
         </div>
@@ -529,7 +528,8 @@ h1 .num{color:var(--stamp)}
 .ana-feature-img{display:block;width:100%;height:auto;border-radius:8px}
 .ana-feature-body{display:flex;flex-direction:column;gap:14px;justify-content:center}
 .ana-feature-lead{margin:0;font-size:1rem;line-height:1.9;color:var(--ink)}
-.ana-themes{display:flex;flex-direction:column;gap:10px}
+.ana-themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:600px){.ana-themes{grid-template-columns:1fr}}
 .ana-theme{position:relative;display:block;padding:12px 40px 12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s,border-color .15s}
 a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-color:var(--ink);box-shadow:0 6px 16px rgba(30,40,30,.1)}
 .ana-theme b{display:block;font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.05rem;color:var(--ink)}

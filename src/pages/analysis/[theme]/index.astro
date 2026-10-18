@@ -12,7 +12,7 @@ export function getStaticPaths() {
   return THEMES.map((t) => ({ params: { theme: t.id }, props: { t } }));
 }
 const { t } = Astro.props;
-const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
+const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.lq || null };
 ---
 <BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
@@ -44,7 +44,8 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
         <li><b>全国の中の位置</b>：47都道府県の中で、各項目が平均からどれだけ離れているかを偏差値で並べます（平均50、標準偏差10）。</li>
         <li><b>似た県</b>：この組の項目の偏差値の並びがいちばん近い県を、計算で3つ挙げます（標準化した値どうしの距離が近い県）。似た県と見くらべると、全国と比べるだけでは見えない差が分かります。</li>
         <li><b>関係</b>：組の中の二つの項目を散布図に置き、相関係数と回帰直線で、そろって動くかを確かめます。</li>
-        <li><b>時間</b>：毎年の数字がある項目は、最初の年を100にそろえて、全国と伸び方をくらべます。</li>
+        {t.lq && <li><b>特化係数</b>：業種ごとに「県の割合÷全国の割合」を、生み出した額（純付加価値額）と働く人の両方で出し、1人あたりの額も全国を1としてくらべます（地域経済分析システム RESAS の「稼ぐ力分析」と同じ見方です）。</li>}
+        {t.trends.length > 0 && <li><b>時間</b>：毎年の数字がある項目は、最初の年を100にそろえて、全国と伸び方をくらべます。</li>}
       </ul>
     </section>
 
@@ -63,11 +64,19 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
       <p class="an-note">棒は平均（50）からの離れ方です。右へのびるほど値が大きく、左へのびるほど小さいことを示します。大きいことが良いとはかぎりません。</p>
       <div class="an-prof" id="anProf"><p class="an-empty">県を選ぶと、ここにプロフィールが出ます。</p></div>
 
+      {t.lq && <>
+        <h3 class="an-h3">稼ぐ力の見取り図（特化係数）</h3>
+        <p class="an-note">業種ごとに、全国の割合を1としたときの倍率です。<b class="an-lqk an-lqk--va">額</b>は生み出した額（純付加価値額）、<b class="an-lqk an-lqk--wk">人</b>は働く人、<b class="an-lqk an-lqk--pr">1人</b>は働く人1人あたりの額。縦の線が1（全国と同じ）です。生み出した額の倍率が大きい順に並べています。</p>
+        <div class="an-lq" id="anLq"><p class="an-empty">県を選ぶと、ここに業種ごとの特化係数が出ます。</p></div>
+      </>}
+
       <h3 class="an-h3">二つの項目の関係</h3>
       <div class="an-pairs" id="anPairs"></div>
 
-      <h3 class="an-h3">伸び方</h3>
-      <div class="an-trends" id="anTrends"></div>
+      {t.trends.length > 0 && <>
+        <h3 class="an-h3">伸び方</h3>
+        <div class="an-trends" id="anTrends"></div>
+      </>}
     </section>
 
     <section class="an-step">
@@ -81,7 +90,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
     <Talk speaker="touko">数字を並べたあとに「ここまでは言えて、ここからは言えない」と書いておくのね。</Talk>
     <Talk speaker="kei">はい。言えないことを書いておくのも、読み解きのうちです。</Talk>
 
-    <p class="an-cross">あわせて見る：<a href="/compare/">見くらべの間</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a></p>
+    <p class="an-cross">あわせて見る：<a href="/compare/">見くらべの間</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>{t.lq && <>｜<a href="/how-to-read/specialization/">町の得意を測る物差し</a></>}</p>
     <footer class="an-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」「家計調査」「消費者物価地域差指数」ほか）。分析の進め方は、総務省統計局『データ利活用実践ガイドブック EBPMのための』のPPDACサイクルにならっています。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
   </main>
 
@@ -92,7 +101,9 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
     // ---- 読みこみ（同じファイルは1回だけ） ----
     const files = {};
     const urlOf = (i) => (i.src === 'room' ? `/data/room-${i.room}.json` : i.src === 'price' ? '/data/price-ledger.json' : `/data/${i.file}.json`);
-    await Promise.all([...new Set(IND.map(urlOf))].map(async (u) => { try { files[u] = await (await fetch(u)).json(); } catch (e) { files[u] = null; } }));
+    const LQ = CFG.lq;
+    const lqUrls = LQ ? [LQ.va, LQ.wk, LQ.pr].map((r) => `/data/room-${r}.json`) : [];
+    await Promise.all([...new Set([...IND.map(urlOf), ...lqUrls])].map(async (u) => { try { files[u] = await (await fetch(u)).json(); } catch (e) { files[u] = null; } }));
     // ---- 項目ごとに { label, unit, year, dec, val:{県コード:値}, series } にそろえる ----
     const decOf = (vals) => { let d = 0; for (const v of vals) if (typeof v === 'number' && !Number.isInteger(v)) d = Math.max(d, Math.min((String(v).split('.')[1] || '').length, 2)); return d; };
     const M = {};
@@ -228,6 +239,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
 
     function trends() {
       const box = document.getElementById('anTrends');
+      if (!box) return [];
       box.innerHTML = '';
       const out = [];
       CFG.trends.forEach((id) => {
@@ -254,7 +266,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
       return out;
     }
 
-    function conclude(P, T) {
+    function conclude(P, T, Q) {
       const ul = document.getElementById('anCan');
       if (!main) return;
       const nm = NAMES[main];
@@ -264,6 +276,14 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
       li.push(`${nm}は、この組の${IDS.length}項目のうち、偏差値60以上（全国の中で大きいほう）が${hi.length}項目${hi.length ? `（${hi.join('、')}）` : ''}、40以下（小さいほう）が${lo.length}項目${lo.length ? `（${lo.join('、')}）` : ''}です。残りは全国の中ほどにあります。`);
       const s = similar(main);
       li.push(`この組の数字の並びが${nm}に近いのは、${s.map((x) => NAMES[x.c]).join('・')}です。`);
+      if (Q && Q.rows) {
+        const big = Q.rows.filter((r) => (r.va ?? 0) >= 1.2).slice(0, 3);
+        const both = Q.rows.filter((r) => (r.va ?? 0) > 1 && (r.wk ?? 0) > 1).map((r) => r.name);
+        if (big.length) li.push(`${nm}で、生み出した額の特化係数が大きい業種は、${big.map((r) => `${r.name}（${r.va.toFixed(2)}）`).join('、')}です。`);
+        else li.push(`${nm}には、生み出した額の特化係数が1.2以上の業種はなく、業種の割合は全国に近い並びです。`);
+        if (both.length) li.push(`生み出した額と働く人の両方で特化係数が1を超えるのは、${both.join('、')}です。`);
+        if (typeof Q.allPr === 'number') li.push(`全産業の1人あたりの額は、全国を1とすると${Q.allPr.toFixed(2)}です。`);
+      }
       for (const q of P) li.push(`${q.p.why.replace(/か。$/, '')}——47都道府県では、相関係数${q.r.toFixed(2)}の${q.dir}${q.word}関係でした。${q.res}`);
       for (const q of T) if (q.me !== null && q.nat !== null) li.push(q.share
         ? `${q.m.short}は、${q.y0}年から${q.y1}年にかけて、${nm}が${(q.me - q.me0) >= 0 ? '+' : '−'}${Math.abs(q.me - q.me0).toFixed(1)}ポイント、全国（平均）が${(q.nat - q.nat0) >= 0 ? '+' : '−'}${Math.abs(q.nat - q.nat0).toFixed(1)}ポイント動きました。`
@@ -271,13 +291,39 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
       ul.innerHTML = li.map((x) => `<li>${x}</li>`).join('');
     }
 
+
+    // ---- 稼ぐ力の見取り図：業種ごとの特化係数（額・人・1人あたり） ----
+    function lqOf(roomId, key, c) {
+      const D = files[`/data/room-${roomId}.json`];
+      if (!D) return null;
+      const a = D.areas.find((x) => x.c === c);
+      const v = a && a.v[key] ? a.v[key][a.v[key].length - 1] : null;
+      const n = D.national && D.national[key] ? D.national[key][D.national[key].length - 1] : null;
+      return typeof v === 'number' && typeof n === 'number' && n > 0 ? v / n : null;
+    }
+    function lqView() {
+      const box = document.getElementById('anLq');
+      if (!LQ || !box) return [];
+      const rows = LQ.industries.map(([k, name]) => ({ k, name, va: lqOf(LQ.va, k, main), wk: lqOf(LQ.wk, k, main), pr: lqOf(LQ.pr, k, main) })).filter((r) => r.va !== null || r.wk !== null);
+      rows.sort((a, b) => (b.va ?? 0) - (a.va ?? 0));
+      const max = Math.max(2, ...rows.flatMap((r) => [r.va, r.wk, r.pr].filter((x) => typeof x === 'number')));
+      const top = Math.min(4, Math.ceil(max * 2) / 2);
+      const bar = (v, cls) => { if (typeof v !== 'number') return `<span class="an-lqb ${cls}"><i style="width:0"></i><em>—</em></span>`; const w = Math.min(100, (v / top) * 100); return `<span class="an-lqb ${cls}"><i style="width:${w}%"></i><em>${v.toFixed(2)}${v > top ? '→' : ''}</em></span>`; };
+      const one = (1 / top) * 100;
+      box.innerHTML = rows.map((r) => `<div class="an-lqr"><div class="an-lqn">${r.name}</div><div class="an-lqbars" style="--one:${one}%">${bar(r.va, 'an-lqb--va')}${bar(r.wk, 'an-lqb--wk')}${bar(r.pr, 'an-lqb--pr')}</div></div>`).join('')
+        + `<p class="an-lqscale">目もりの右端は ${top} 倍です。</p>`;
+      const allPr = lqOf(LQ.pr, 'all', main);
+      return { rows, allPr };
+    }
+
     function draw() {
       chips();
       if (!main) return;
       profile();
+      const Q = lqView();
       const P = pairs();
       const T = trends();
-      conclude(P, T);
+      conclude(P, T, Q);
     }
     // 県を選ぶ前でも、散布図は全国の並びで見せておく
     pairs();
@@ -285,6 +331,20 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
   </script>
 
   <style is:global>
+    .an-lq { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 20px; }
+    .an-lqr { display: grid; grid-template-columns: 13em 1fr; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e0dccf; }
+    .an-lqn { font-size: .86rem; font-weight: 700; color: #1b4332; line-height: 1.4; }
+    .an-lqbars { position: relative; display: flex; flex-direction: column; gap: 3px; }
+    .an-lqbars::after { content: ''; position: absolute; top: -3px; bottom: -3px; left: var(--one); border-left: 1.5px dashed #555; }
+    .an-lqb { position: relative; display: flex; align-items: center; height: 12px; }
+    .an-lqb i { display: block; height: 100%; border-radius: 2px; }
+    .an-lqb em { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: .7rem; margin-left: 6px; color: #444; white-space: nowrap; }
+    .an-lqb--va i, .an-lqk--va { background: #b23a2f; }
+    .an-lqb--wk i, .an-lqk--wk { background: #4a6fa5; }
+    .an-lqb--pr i, .an-lqk--pr { background: #c99a2e; }
+    .an-lqk { display: inline-block; color: #fff; font-size: .72rem; padding: 0 6px; border-radius: 3px; margin: 0 2px; }
+    .an-lqscale { font-size: .74rem; color: #777; margin: 4px 0 0; text-align: right; }
+    @media (max-width: 600px) { .an-lqr { grid-template-columns: 1fr; gap: 4px; } }
     .an { max-width: 980px; margin: 0 auto; padding: 0 16px 56px; }
     .an > section { padding: 0; }
     .an-hero { text-align: center; padding: 32px 0 8px; }

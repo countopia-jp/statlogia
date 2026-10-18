@@ -43,6 +43,16 @@ import HeroFig from '../../components/HeroFig.astro';
           <p class="rr-card-meta">出典：社会・人口統計体系（2020・2023・2024年度）</p>
           </div>
         </a>
+        <a class="rr-card" href="/life-family/">
+          {thumbOf('life-family') && <img class="rr-card-img" src={thumbOf('life-family')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>人の一生と家族のかたち</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、生まれる人と亡くなる人、初めて結婚する年齢、高齢の人のいる世帯、昼夜間人口比率、住んでいる外国人を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（人口動態統計・国勢調査・在留外国人統計）</p>
+          </div>
+        </a>
         <a class="rr-card" href="/town-population/">
           <img class="rr-card-img" src="/images/icon/town-population-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -173,6 +183,16 @@ import HeroFig from '../../components/HeroFig.astro';
             都道府県を選んで、医師・歯科医師・薬剤師・看護師・助産師・保健師などの人数と、薬局や訪問看護ステーションの数を、人口10万人あたりで見られます。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（医師・歯科医師・薬剤師統計、衛生行政報告例ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/care-supply/">
+          {thumbOf('care-supply') && <img class="rr-card-img" src={thumbOf('care-supply')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>医療と介護の手当て</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、介護老人保健施設の定員や訪問看護の利用者を65歳以上の人数あたりで、救急医療の病院、1人あたりの医療費を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（介護サービス施設・事業所調査・医療施設調査・国民医療費ほか）</p>
           </div>
         </a>
       </div>
@@ -450,6 +470,16 @@ import HeroFig from '../../components/HeroFig.astro';
             市区町村を選んで、町の事業所で働く人がお店・飲食や宿・医療や福祉・ものづくりなど、どの業種にいるかを割合で。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（経済センサス）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-value/">
+          {thumbOf('town-value') && <img class="rr-card-img" src={thumbOf('town-value')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の稼ぎ</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、働く人1人あたりの純付加価値額と、町で生み出された額のうち業種ごとの割合・特化係数を。
+          </p>
+          <p class="rr-card-meta">出典：経済センサス‐活動調査（令和3年）</p>
           </div>
         </a>
         <a class="rr-card" href="/town-workplace/">

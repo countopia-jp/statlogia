@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Room from '../../components/Room.astro';
+import { PREF_FINANCE } from '../../data/rooms/pref-finance.js';
+const room = PREF_FINANCE;
+---
+<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/annex/" backLabel="暮らしの台帳">
+  <Room room={room} />
+</BaseLayout>

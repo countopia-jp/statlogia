@@ -36,7 +36,7 @@ import HeroFig from '../../components/HeroFig.astro';
           <span class="ai-card-t">{t.title}</span>
           <span class="ai-card-q">問い：{t.question}</span>
           <span class="ai-card-l">{t.lead}</span>
-          <span class="ai-card-n">{t.indicators.length}項目・関係{t.pairs.length}組・伸び方{t.trends.length}項目</span>
+          <span class="ai-card-n">{t.indicators.length}項目・関係{t.pairs.length}組{t.trends.length ? `・伸び方${t.trends.length}項目` : ''}{t.lq ? `・特化係数${t.lq.industries.length}業種` : ''}</span>
         </a>
       ))}
       {PLANNED.map((p) => (

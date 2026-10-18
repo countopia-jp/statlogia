@@ -8,6 +8,13 @@
 // 絵を足したら、ここにも1行足す（書かなければ t）。
 // =====================================================
 export const HERO_POS = {
+  'care-supply': 't',
+  'life-family': 't',
+  'pref-finance': 'under',
+  'pref-productivity': 'tl',
+  'pref-value': 't',
+  'pref-workers': 't',
+  'town-value': 't',
   'after-school': 'tr',
   'analysis': 'under',
   'annex': 'c',
