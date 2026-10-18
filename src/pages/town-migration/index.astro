@@ -5,6 +5,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniMigrationData } from '../../lib/muni-migration.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniMigrationData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の人の出入り｜Countopia Stats" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -40,7 +41,7 @@ const data = await getMuniMigrationData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">社会増減率の推移</p>
-        <canvas id="migChart" height="120"></canvas>
+        <canvas id="migChart" data-growth="diff" height="120"></canvas>
       </div>
 
       <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
@@ -280,4 +281,5 @@ const data = await getMuniMigrationData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

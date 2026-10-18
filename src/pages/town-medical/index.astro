@@ -9,6 +9,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniMedicalData } from '../../lib/muni-medical.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniMedicalData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の医療｜Countopia Stats" description="市区町村を選んで、病院・診療所・歯科・お医者さん・薬剤師・病床の数をそのままご覧いただける窓口。お医者さんの数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -50,7 +51,7 @@ const data = await getMuniMedicalData();
 
       <div class="tp-chart-wrap" id="chartWrap">
         <p class="tp-chart-title">お医者さんの数の移りかわり</p>
-        <canvas id="medChart" height="120"></canvas>
+        <canvas id="medChart" data-growth="level" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -235,4 +236,5 @@ const data = await getMuniMedicalData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

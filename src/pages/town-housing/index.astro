@@ -5,6 +5,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniHousingData } from '../../lib/muni-housing.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniHousingData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の住まい｜Countopia Stats" description="市区町村を選んで、空き家率・持ち家率・共同住宅の割合・1軒あたりの広さ・家賃をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -43,7 +44,7 @@ const data = await getMuniHousingData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">空き家率の推移</p>
-        <canvas id="housingChart" height="120"></canvas>
+        <canvas id="housingChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -286,4 +287,5 @@ const data = await getMuniHousingData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

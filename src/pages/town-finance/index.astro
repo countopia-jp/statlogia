@@ -5,6 +5,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniFinanceData } from '../../lib/muni-finance.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniFinanceData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の財政と教育費｜Countopia Stats" description="市区町村を選んで、財政力指数と住民1人あたりの教育費をご覧いただける窓口。財政力指数の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -40,7 +41,7 @@ const data = await getMuniFinanceData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">財政力指数の推移</p>
-        <canvas id="finChart" height="120"></canvas>
+        <canvas id="finChart" data-growth="diff" height="120"></canvas>
       </div>
 
       <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
@@ -270,4 +271,5 @@ const data = await getMuniFinanceData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

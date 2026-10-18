@@ -1,0 +1,100 @@
+---
+// =====================================================
+// Countopia Stats - 前からある窓口の移りかわりのグラフに「伸び方」を添える
+// src/components/GrowthTool.astro
+//
+// canvas に data-growth="level"（人数や台数などの量）か data-growth="diff"（割合・指数・率）を付けたうえで、
+// ページに <GrowthTool /> を置く。Chart.js のプラグインとして、
+//   level … 「実数｜最初の年を100」の切りかえと、最初の年からの増減率・年平均の伸び率
+//   diff  … 最初の年からの変化（data-unit に「ポイント」などの単位）
+// をグラフの下に書き添える。各ページのグラフの作り方には手を入れない。
+// =====================================================
+---
+<script is:inline>
+(function () {
+  function setup() {
+    if (!window.Chart) return setTimeout(setup, 200);
+    if (window.__ctpGrowth) return;
+    window.__ctpGrowth = true;
+    const yearOf = (l) => { const m = String(l).match(/(\d{4})/); return m ? +m[1] : null; };
+    const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : v && typeof v === 'object' && typeof v.y === 'number' ? v.y : null);
+    const sgn = (v, d) => `${v >= 0 ? '+' : '−'}${Math.abs(v).toFixed(d)}`;
+    Chart.register({
+      id: 'ctpGrowth',
+      beforeUpdate(ch) {
+        const cv = ch.canvas, mode = cv.dataset.growth;
+        if (!mode || ch.config.type !== 'line') return;
+        const idx = mode === 'level' && cv.dataset.grIdx === '1';
+        ch.data.datasets.forEach((ds) => {
+          if (ds.data !== ds._grLast) ds._grOrig = ds.data.slice();
+          const o = ds._grOrig;
+          if (idx) {
+            const k0 = o.findIndex((v) => num(v) !== null && num(v) !== 0);
+            ds.data = o.map((v, k) => (k0 < 0 || k < k0 || num(v) === null ? null : (num(v) / num(o[k0])) * 100));
+          } else ds.data = o.slice();
+          ds._grLast = ds.data;
+        });
+        const y = ch.options.scales && ch.options.scales.y;
+        if (y && y.ticks) {
+          if (!('_grCb' in cv)) cv._grCb = y.ticks.callback || null;
+          y.ticks.callback = idx ? (v) => Number(v).toFixed(0) : (cv._grCb || undefined);
+        }
+      },
+      afterUpdate(ch) {
+        const cv = ch.canvas, mode = cv.dataset.growth;
+        if (!mode || ch.config.type !== 'line') return;
+        const labels = ch.data.labels || [];
+        // 切りかえ（量の項目だけ）
+        if (mode === 'level' && !cv._grBtn) {
+          const box = document.createElement('div');
+          box.className = 'gr-mode';
+          box.innerHTML = '<button type="button" data-m="0">実数</button><button type="button" data-m="1">最初の年を100</button>';
+          cv.parentNode.insertBefore(box, cv);
+          box.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+            cv.dataset.grIdx = b.dataset.m;
+            const c = Chart.getChart(cv); if (c) c.update();
+          }));
+          cv._grBtn = box;
+        }
+        if (cv._grBtn) cv._grBtn.querySelectorAll('button').forEach((b) => b.classList.toggle('on', (cv.dataset.grIdx || '0') === b.dataset.m));
+        // 書き添え
+        let note = cv._grNote;
+        if (!note) { note = document.createElement('p'); note.className = 'gr-note'; cv.insertAdjacentElement('afterend', note); cv._grNote = note; }
+        const lines = [];
+        ch.data.datasets.slice(0, 3).forEach((ds) => {
+          const o = ds._grOrig || ds.data;
+          let k0 = -1, k1 = -1;
+          for (let k = 0; k < o.length; k++) if (num(o[k]) !== null) { if (k0 < 0) k0 = k; k1 = k; }
+          if (k0 < 0 || k1 <= k0) return;
+          const y0 = yearOf(labels[k0]), y1 = yearOf(labels[k1]);
+          const a = num(o[k0]), b = num(o[k1]);
+          const name = ch.data.datasets.length > 1 ? `${ds.label}：` : '';
+          const span = `${labels[k0]}→${labels[k1]}`;
+          if (mode === 'level') {
+            if (!(a > 0) || !(b > 0)) return;
+            const ch1 = (b / a - 1) * 100;
+            const yrs = y0 && y1 && y1 > y0 ? y1 - y0 : null;
+            const cagr = yrs ? (Math.pow(b / a, 1 / yrs) - 1) * 100 : null;
+            lines.push(`${name}${span}で${sgn(ch1, 1)}％${cagr !== null ? `（年平均${sgn(cagr, 2)}％）` : ''}`);
+          } else {
+            const u = cv.dataset.unit || '';
+            const d = Number(cv.dataset.dec || (u === 'ポイント' ? 1 : 2));
+            lines.push(`${name}${span}で${sgn(b - a, d)}${u}`);
+          }
+        });
+        note.textContent = lines.length ? `伸び方：${lines.join('　')}` : '';
+        note.hidden = !lines.length;
+      },
+    });
+    // すでに描かれているグラフにも当てる
+    document.querySelectorAll('canvas[data-growth]').forEach((cv) => { const c = Chart.getChart(cv); if (c) c.update(); });
+  }
+  setup();
+})();
+</script>
+<style is:global>
+  .gr-mode { display: flex; justify-content: flex-end; gap: 4px; margin: 0 0 6px; }
+  .gr-mode button { border: 1px solid #c9d3c6; background: #fff; color: #1b4332; font-size: .74rem; padding: 3px 10px; border-radius: 999px; cursor: pointer; }
+  .gr-mode button.on { background: #1b4332; color: #fff; border-color: #1b4332; }
+  .gr-note { margin: 6px 0 0; font-size: .78rem; color: #555; line-height: 1.7; text-align: right; }
+</style>

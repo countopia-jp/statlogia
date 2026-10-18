@@ -17,6 +17,7 @@ import HeroFig from '../../components/HeroFig.astro';
 const ict = await getIctData();
 const years = [...new Set(ict.indicators.map((i) => i.year).filter(Boolean))].sort();
 const yearNote = years.join('・');
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
 <BaseLayout title="情報化の帳場｜学校のデジタル化｜Countopia Stats" description="都道府県を選んで、学校の学習用パソコン・大型提示装置・デジタル教科書の整備状況を小・中・高ごとに、以前の調査の電子黒板などとあわせてご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
@@ -54,7 +55,7 @@ const yearNote = years.join('・');
 
       <div class="ict-line-wrap">
         <p class="ict-line-title">端末整備の推移（小学校・1台当たり児童数）</p>
-        <canvas id="pcLineChart" height="120"></canvas>
+        <canvas id="pcLineChart" data-growth="level" height="120"></canvas>
         <p class="ict-line-note">※教育用コンピュータ1台を何人で使っているか。右肩下がりは、1台あたりの児童数が減ったことを表します（この数え方は2022年度まで）</p>
       </div>
 
@@ -480,4 +481,5 @@ const yearNote = years.join('・');
     .ict-cross a { color: #b23a2f; }
     .ict-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

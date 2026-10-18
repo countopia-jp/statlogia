@@ -20,6 +20,7 @@ import HeroFig from '../../components/HeroFig.astro';
 
 const pl = await getPriceLedgerData();
 const lastYear = pl.years[pl.years.length - 1];
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
 <BaseLayout title="物価の帳場｜Countopia Stats" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
@@ -70,7 +71,7 @@ const lastYear = pl.years[pl.years.length - 1];
       <h2 id="plLineTitle">移りかわり</h2>
       <div class="pl-tabs" id="plLineTabs" role="tablist"></div>
       <div class="pl-line-wrap">
-        <canvas id="plLine" height="140"></canvas>
+        <canvas id="plLine" data-growth="diff" height="140"></canvas>
       </div>
       <p class="pl-note">点線は全国平均（100）です。</p>
     </section>
@@ -369,4 +370,5 @@ const lastYear = pl.years[pl.years.length - 1];
     .pl-cross a { color: #b23a2f; }
     .pl-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

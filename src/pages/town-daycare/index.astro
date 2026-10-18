@@ -5,6 +5,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniDaycareData } from '../../lib/muni-daycare.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniDaycareData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="介護は、近いか｜Countopia Stats" description="市区町村を選んで、最寄りの老人デイサービスセンターまで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -43,7 +44,7 @@ const data = await getMuniDaycareData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">デイサービスが近い世帯の割合の推移</p>
-        <canvas id="daycareChart" height="120"></canvas>
+        <canvas id="daycareChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -285,4 +286,5 @@ const data = await getMuniDaycareData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

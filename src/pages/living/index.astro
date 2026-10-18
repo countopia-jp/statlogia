@@ -17,6 +17,7 @@ import HeroFig from '../../components/HeroFig.astro';
 const liv = await getLivingData();
 const years = [...new Set(liv.indicators.map((i) => i.year).filter(Boolean))].sort();
 const yearNote = years.join('・');
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
 <BaseLayout title="暮らしの見積所｜稼ぎと住まい｜Countopia Stats" description="都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書にまとめてご覧いただける窓口。全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
@@ -66,7 +67,7 @@ const yearNote = years.join('・');
     <section id="lineSec" class="liv-line-sec" hidden aria-label="最低賃金の推移">
       <h2 id="lineTitle">最低賃金の推移</h2>
       <div class="liv-line-wrap">
-        <canvas id="wageLineChart" height="120"></canvas>
+        <canvas id="wageLineChart" data-growth="level" height="120"></canvas>
       </div>
     </section>
 
@@ -447,4 +448,5 @@ const yearNote = years.join('・');
     .liv-cross a { color: #b23a2f; }
     .liv-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

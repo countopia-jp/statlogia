@@ -12,6 +12,7 @@ const edu = {
   note: '学校数・児童生徒数・教員数は統計表の値をそのまま使っています。「小学校1校あたりの児童数」は、児童数を学校数で割ってこちらで計算したものです。学校が1校もない町では計算していません。',
 };
 const yearNote = '2024年度';
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
 <BaseLayout title="学びの登記所｜幼稚園から高校までの数字｜Countopia Stats" description="全国の市区町村を選んで、幼稚園から高校までの学校数・児童生徒数・教員数をご覧いただける窓口。小学校児童数の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
@@ -57,7 +58,7 @@ const yearNote = '2024年度';
 
       <div class="edu-line-wrap">
         <p class="edu-line-title">小学校児童数の推移</p>
-        <canvas id="studentLineChart" height="120"></canvas>
+        <canvas id="studentLineChart" data-growth="level" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine">町を選ぶと、台帳を読み上げます。</span></Talk>
@@ -363,4 +364,5 @@ const yearNote = '2024年度';
 
     .edu-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

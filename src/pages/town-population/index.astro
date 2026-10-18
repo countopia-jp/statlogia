@@ -6,6 +6,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniPopulationData } from '../../lib/muni-population.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniPopulationData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の人口｜Countopia Stats" description="市区町村を選んで、総人口・高齢化率・年少人口率・世帯数と将来の推計人口をご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -44,7 +45,7 @@ const data = await getMuniPopulationData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">総人口の推移</p>
-        <canvas id="tpChart" height="120"></canvas>
+        <canvas id="tpChart" data-growth="level" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -309,4 +310,5 @@ const data = await getMuniPopulationData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

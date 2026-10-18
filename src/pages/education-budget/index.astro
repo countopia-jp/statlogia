@@ -17,6 +17,7 @@ import HeroFig from '../../components/HeroFig.astro';
 const edb = await getEducationBudgetData();
 const years = [...new Set(edb.indicators.map((i) => i.year).filter(Boolean))].sort();
 const yearNote = years.join('・');
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
 <BaseLayout title="教育の帳場｜財政力と教育費｜Countopia Stats" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/annex/" backLabel="暮らしの台帳">
@@ -53,7 +54,7 @@ const yearNote = years.join('・');
 
       <div class="edb-chart-wrap">
         <p class="edb-chart-title">財政力指数の推移</p>
-        <canvas id="edbChart" height="120"></canvas>
+        <canvas id="edbChart" data-growth="diff" height="120"></canvas>
       </div>
 
       <Talk speaker="shiori"><span id="keiLine">県を選ぶと、帳簿の欄が埋まりますよ。</span> <span id="toukoLine"></span></Talk>
@@ -347,4 +348,5 @@ const yearNote = years.join('・');
     .edb-cross a { color: #b23a2f; }
     .edb-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

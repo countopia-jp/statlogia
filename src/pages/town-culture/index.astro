@@ -8,6 +8,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCultureData } from '../../lib/muni-culture.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCultureData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="わが町の図書館と公民館｜Countopia Stats" description="市区町村を選んで、図書館と公民館の数、図書館は「何人に1館か」をご覧いただける窓口。公民館の数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -49,7 +50,7 @@ const data = await getMuniCultureData();
 
       <div class="tp-chart-wrap" id="chartWrap">
         <p class="tp-chart-title">公民館の数の移りかわり</p>
-        <canvas id="culChart" height="120"></canvas>
+        <canvas id="culChart" data-growth="level" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -254,4 +255,5 @@ const data = await getMuniCultureData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>

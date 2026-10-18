@@ -5,6 +5,7 @@ import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCommuteData } from '../../lib/muni-commute.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCommuteData();
+import GrowthTool from '../../components/GrowthTool.astro';
 ---
 <BaseLayout title="通勤の足は、何か｜Countopia Stats" description="市区町村を選んで、自宅の外へ通う人のうち自家用車で通う人・公共交通で通う人の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -43,7 +44,7 @@ const data = await getMuniCommuteData();
 
       <div class="tp-chart-wrap">
         <p class="tp-chart-title">自家用車で通う人の割合の推移</p>
-        <canvas id="commuteChart" height="120"></canvas>
+        <canvas id="commuteChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
       <Talk speaker="kei"><span id="keiLine"></span></Talk>
@@ -286,4 +287,5 @@ const data = await getMuniCommuteData();
     .tp-cross a { color: #b23a2f; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
+  <GrowthTool />
 </BaseLayout>
