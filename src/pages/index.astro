@@ -734,4 +734,9 @@ h1 .num{color:var(--stamp)}
   .hero .stamp-area{justify-content:center;padding-right:0}
   .hero .hero-chara{width:46%;max-width:190px;right:53%;bottom:-22px}
 }
+/* 10-18 スマホ：入場券は京・橙子に重ねない（縮めて右へ寄せる） */
+@media(max-width:760px){
+  .hero .hero-side .tk{transform:rotate(-3deg) scale(.64);transform-origin:right center;margin-right:1%}
+  .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.64) translateY(-3px)}
+}
 </style>
