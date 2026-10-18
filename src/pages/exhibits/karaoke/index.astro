@@ -76,12 +76,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="カラオケと楽器の行動者率｜Countopia Stats" description="都道府県別・カラオケと楽器の演奏の行動者率。カラオケと楽器、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="karaoke">
         <span class="no">EXHIBIT 29</span>
         <h1><span class="h1a">カラオケと楽器、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">つくる・遊ぶ広場｜カラオケ・楽器の演奏の行動者率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="karaoke" />
+      </ExhibitHero>
 
       <Talk speaker="kei">29番目の展示は「カラオケ」です。1年のあいだにカラオケをした人が、どのくらいいるか。全国では{fmt(avg)}、およそ{perPeople}人にひとりです。</Talk>
       <Talk speaker="touko">からおけ？ それはどういうものなの？</Talk>

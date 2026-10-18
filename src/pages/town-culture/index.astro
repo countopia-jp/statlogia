@@ -6,21 +6,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCultureData } from '../../lib/muni-culture.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCultureData();
 ---
 <BaseLayout title="わが町の図書館と公民館｜Countopia Stats" description="市区町村を選んで、図書館と公民館の数、図書館は「何人に1館か」をご覧いただける窓口。公民館の数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-      {hasHero && <img class="tp-hero-figure" src="/images/icon/town-culture-large.webp" alt="木の床と本棚の並ぶ図書館の窓辺で本を読む人々と、窓の外の公民館で寄り合いの支度をする住民の水彩画" width="1400" height="788" loading="lazy" />}
+    <HeroFig src="/images/icon/town-culture-large.webp" alt="木の床と本棚の並ぶ図書館の窓辺で本を読む人々と、窓の外の公民館で寄り合いの支度をする住民の水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>わが町の図書館と公民館</h1>
       <p class="tp-lead">
         市区町村を選んで、その町に図書館と公民館がいくつあるかをご覧ください。<br />
         本を借りる場所と、人が集まる場所。その町にある数を、そのまま。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは図書館と公民館の窓口です。その町にいくつあるか、そのままの数と、図書館だけは「何人に1館あるか」もお出しします。

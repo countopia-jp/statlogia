@@ -61,12 +61,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="将棋と囲碁の行動者率｜Countopia Stats" description="都道府県別・将棋と囲碁の行動者率。将棋と囲碁、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="board-games">
         <span class="no">EXHIBIT 20</span>
         <h1><span class="h1a">将棋と囲碁、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">つくる・遊ぶ広場｜将棋・囲碁の行動者率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="board-games" />
+      </ExhibitHero>
 
       <Talk speaker="kei">20番目の展示は「将棋」です。1年のあいだに将棋を指した人が、どのくらいいるか。全国では{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">将棋なら、わたくしの時代にもありますわ。縁台で、おじさまたちが。</Talk>

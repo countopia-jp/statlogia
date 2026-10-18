@@ -58,12 +58,11 @@ const sameFaces = readBothTop.length >= 5;
 <BaseLayout title="本とマンガを読む人の割合｜Countopia Stats" description="都道府県別・過去1年間に読書またはマンガを読んだ人の割合。本とマンガ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="reading">
         <span class="no">EXHIBIT 15</span>
         <h1><span class="h1a">本とマンガ、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">見る・聴く広場｜過去1年間に趣味としての読書・マンガを読んだ人の割合（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="reading" />
+      </ExhibitHero>
 
       <Talk speaker="kei">15番目の展示は「読書」です。過去1年のあいだに、趣味として本を読んだ人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">{perPeople(avg)}人にひとりくらいなのねえ。</Talk>

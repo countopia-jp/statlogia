@@ -91,12 +91,11 @@ const shareTouko = share ? (over.length ? a.short + 'のほうに多く使って
 <BaseLayout title={pageTitle} description={description} backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug={slug}>
         <span class="no">EXHIBIT {no}</span>
         <h1>{splitTitle(title)[1] ? <><span class="h1a">{splitTitle(title)[0]}</span><span class="h1b">{splitTitle(title)[1]}</span></> : title}</h1>
         <p class="sub">{sub}（{data.year}）</p>
-      </div>
-      <ExhibitHero slug={slug} />
+      </ExhibitHero>
 
       {introLines.map(([who, s]) => <Talk speaker={who}>{s}</Talk>)}
 

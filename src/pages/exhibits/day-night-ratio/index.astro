@@ -26,12 +26,11 @@ const topExcess = (top.minutes - 100).toFixed(1);
 <BaseLayout title="昼夜間人口比率｜Countopia Stats" description="都道府県別・昼夜間人口比率。日本一「昼に人が集まる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="day-night-ratio">
         <span class="no">EXHIBIT 09</span>
         <h1><span class="h1a">日本一「昼に人が集まる」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">暮らしの広場｜昼夜間人口比率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="day-night-ratio" />
+      </ExhibitHero>
 
       <Talk speaker="kei">9つめの展示は「昼夜間人口比率」です。夜間（住んでいる人）の数を100としたとき、昼間（通勤・通学で来る人も含む）の人口が何％になるかという数字です。</Talk>
       <Talk speaker="touko">100より多いと、昼間に人が集まってくる県、ということかしら。</Talk>

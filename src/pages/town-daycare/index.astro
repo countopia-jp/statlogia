@@ -3,21 +3,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniDaycareData } from '../../lib/muni-daycare.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniDaycareData();
 ---
 <BaseLayout title="介護は、近いか｜Countopia Stats" description="市区町村を選んで、最寄りの老人デイサービスセンターまで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-    <img class="tp-hero-figure" src="/images/icon/town-daycare-large.webp" alt="介助を受けながら小径を歩く高齢女性と、デイサービスセンターでお茶を楽しむ人々の水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-daycare-large.webp" alt="介助を受けながら小径を歩く高齢女性と、デイサービスセンターでお茶を楽しむ人々の水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>介護は、近いか</h1>
       <p class="tp-lead">
         市区町村を選んで、最寄りの老人デイサービスセンターまでの近さをご覧ください。<br />
         介護の足もとを、世帯の割合という数字で。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは老人デイサービスの窓口です。デイサービスセンターは、お年寄りが日中に通って、食事や入浴、運動などの世話を受けるところです。最寄りのセンターまで500m未満の世帯の割合で、その町の「介護の近さ」が分かります。

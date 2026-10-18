@@ -12,6 +12,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getIctData } from '../../lib/ict.js';
+import HeroFig from '../../components/HeroFig.astro';
 
 const ict = await getIctData();
 const years = [...new Set(ict.indicators.map((i) => i.year).filter(Boolean))].sort();
@@ -20,15 +21,14 @@ const yearNote = years.join('・');
 
 <BaseLayout title="情報化の帳場｜学校のデジタル化｜Countopia Stats" description="都道府県を選んで、学校の学習用パソコン・大型提示装置・デジタル教科書の整備状況を小・中・高ごとに、以前の調査の電子黒板などとあわせてご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="ict-dash">
-    <header class="ict-hero">
-    <img class="ict-hero-figure" src="/images/icon/ict-large.webp" alt="古い帳場机に並ぶ、タブレット端末・電子黒板・デジタル教科書と算盤や筆" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/ict-large.webp" alt="古い帳場机に並ぶ、タブレット端末・電子黒板・デジタル教科書と算盤や筆" width={1400} height={788}>
       <p class="ict-kicker">ダッシュボード</p>
       <h1>情報化の帳場</h1>
       <p class="ict-lead">
         学習用のパソコン、大きな画面、デジタル教科書。<br />
         あなたの県の学校に、どんな機器がそろっているかをご覧ください。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       当帳場では、学校のデジタル化を小・中・高それぞれで見積もります。GIGAスクールを経て、教室の風景はずいぶん変わりました。

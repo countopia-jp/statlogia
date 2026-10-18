@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="全国平均と単純平均はなぜ違うのか｜統計の歩き方 - Countopia Stats" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
-    <img class="art-hero-figure" src="/images/icon/average-vs-national-large.webp" alt="明るい事務室の窓辺で、京が天秤の片方に大きな積み木、もう片方に小さな積み木をのせて量りくらべる水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/average-vs-national-large.webp" alt="明るい事務室の窓辺で、京が天秤の片方に大きな積み木、もう片方に小さな積み木をのせて量りくらべる水彩画" width={1400} height={788}>
       <p class="art-kicker">HOW TO READ</p>
       <h1>全国平均と単純平均はなぜ違うのか</h1>
-    </header>
+    </HeroFig>
 
     <Talk speaker="touko">
       ねえ京、いろんな窓口に「平均は47都道府県の単純平均であり、全国値とは一致しません」って書いてあるけど、平均って一つじゃないの？

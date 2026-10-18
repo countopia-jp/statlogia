@@ -14,6 +14,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getPopulationData } from '../../lib/population.js';
+import HeroFig from '../../components/HeroFig.astro';
 
 const pop = await getPopulationData();
 const years = [...new Set(pop.indicators.map((i) => i.year).filter(Boolean))].sort();
@@ -24,15 +25,14 @@ const yearNote = years.join('・');
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="pop-dash">
-    <header class="pop-hero">
-    <img class="pop-hero-figure" src="/images/icon/population-large.webp" alt="丘の上から見おろす、屋根の連なる町並みと遠い山" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/population-large.webp" alt="丘の上から見おろす、屋根の連なる町並みと遠い山" width={1400} height={788}>
       <p class="pop-kicker">ダッシュボード</p>
       <h1>国勢の間</h1>
       <p class="pop-lead">
         総人口、高齢化率、世帯数、出生率、婚姻率。<br />
         あなたの県の「人のかたち」を、数字でご覧ください。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       当所では、県の人口と世帯のすがたをまとめて見ていただけます。国の基本、と言えば大げさですが。

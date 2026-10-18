@@ -4,6 +4,7 @@ import { splitTitle } from '../../lib/split-title.js';
 import { exhibits, PLACES } from '../../data/exhibits.js';
 import fs from 'node:fs';
 import path from 'node:path';
+import HeroFig from '../../components/HeroFig.astro';
 // 展示の扉絵の縮小版（public/images/exhibits/<slug>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (href) => {
   const src = `/images/exhibits/${href.split('/').filter(Boolean).pop()}-thumb.webp`;
@@ -20,16 +21,11 @@ const groups = Object.entries(PLACES).map(([key, name]) => ({
 <BaseLayout title="展示一覧｜Countopia" description="Countopiaの展示一覧。数字の風景を、ひとつずつ。" backHref="/" backLabel="玄関">
   <main>
     <section class="exhibits">
-      <div class="sec-head">
+      <HeroFig src="/images/icon/exhibits-gallery.webp" alt="展示室の回廊で、額に入った図表を見上げる京と橙子" width={1400} height={788} eager>
         <span class="no">EXHIBITS</span>
         <h1>展示一覧</h1>
         <p class="sub">数字の風景を、広場ごとに。全{exhibits.length}展示。</p>
-      </div>
-
-      <figure class="ex-hero">
-        <img src="/images/icon/exhibits-gallery.webp" alt="展示室の回廊で、額に入った図表を見上げる京と橙子"
-             width="1400" height="788" loading="lazy" decoding="async" />
-      </figure>
+      </HeroFig>
 
       <nav class="ex-jump" aria-label="広場へ移動">
         {groups.map((g) => <a href={`#${g.key}`}>{g.name}<small>{g.items.length}</small></a>)}

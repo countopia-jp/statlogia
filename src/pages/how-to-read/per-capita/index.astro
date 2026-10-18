@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="人口あたりで見るということ｜統計の歩き方 - Countopia Stats" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
-    <img class="art-hero-figure" src="/images/icon/per-capita-large.webp" alt="障子を開け放った明るい座敷で、橙子が虫眼鏡で、建物のひしめく町と茅葺きの村の二つの模型をのぞきこむ水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/per-capita-large.webp" alt="障子を開け放った明るい座敷で、橙子が虫眼鏡で、建物のひしめく町と茅葺きの村の二つの模型をのぞきこむ水彩画" width={1400} height={788}>
       <p class="art-kicker">HOW TO READ</p>
       <h1>人口あたりで見るということ</h1>
-    </header>
+    </HeroFig>
 
     <Talk speaker="touko">
       ねえ京、この前の展示で「飲食店の数」を比べていたけど、人口千人当たりって書いてあったわ。なんでそのまま数を比べないの？

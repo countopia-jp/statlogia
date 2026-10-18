@@ -34,12 +34,11 @@ const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
 <BaseLayout title="釣りをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に釣りをした人の割合。日本一「釣りをする」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="fishing">
         <span class="no">EXHIBIT 10</span>
         <h1><span class="h1a">日本一「釣りをする」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">スポーツの広場｜過去1年間に釣りをした人の割合（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="fishing" />
+      </ExhibitHero>
 
       <Talk speaker="kei">10番目の展示は「釣り」です。過去1年のあいだに、一度でも釣りをした人の割合を県ごとに並べました。</Talk>
       <Talk speaker="touko">釣り？　海の近くに住んでいたら、みんなやるものじゃないの？</Talk>

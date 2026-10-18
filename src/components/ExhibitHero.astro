@@ -2,6 +2,7 @@
 // 展示の扉絵：public/images/exhibits/<slug>-large.webp を置けば出る（無いあいだは出さない）
 import fs from 'node:fs';
 import path from 'node:path';
+import HeroFig from './HeroFig.astro';
 // 絵の説明（代替テキスト）。絵を足したらここにも1行足す
 const ALTS = {
   sleep: '夜更けの住宅地と、窓の灯りの下で布団に入ろうとする子どもの水彩画',
@@ -70,8 +71,8 @@ const { slug } = Astro.props;
 const alt = Astro.props.alt ?? ALTS[slug] ?? '';
 const src = `/images/exhibits/${slug}-large.webp`;
 const has = fs.existsSync(path.join(process.cwd(), 'public', src));
+// 10-18 題は扉絵の上に重ねる（位置は src/data/hero-pos.js）。絵が無い展示は、これまでどおり絵の上の見出しだけ
 ---
-{has && <img class="exhibit-hero" src={src} alt={alt} width="1400" height="788" loading="lazy" />}
-<style>
-.exhibit-hero{display:block;width:100%;max-width:780px;height:auto;border-radius:6px;margin:4px auto 28px}
-</style>
+{has
+  ? <HeroFig src={src} alt={alt} eager><slot /></HeroFig>
+  : <div class="sec-head"><slot /></div>}

@@ -3,21 +3,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniNurseryData } from '../../lib/muni-nursery.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniNurseryData();
 ---
 <BaseLayout title="保育所は、近いか｜Countopia Stats" description="市区町村を選んで、最寄りの保育所まで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-    <img class="tp-hero-figure" src="/images/icon/town-nursery-large.webp" alt="親子が手をつないで保育所へ向かう住宅街の水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-nursery-large.webp" alt="親子が手をつないで保育所へ向かう住宅街の水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>保育所は、近いか</h1>
       <p class="tp-lead">
         市区町村を選んで、最寄りの保育所までの近さをご覧ください。<br />
         子育ての足もとを、世帯の割合という数字で。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは保育所の窓口です。最寄りの保育所まで500m未満の世帯の割合で、その町の「保育所の近さ」が分かります。

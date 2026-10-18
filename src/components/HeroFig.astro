@@ -1,0 +1,21 @@
+---
+// =====================================================
+// Countopia Stats - 扉絵（絵の上に題と説明を重ねる）
+// src/components/HeroFig.astro
+//
+// <HeroFig src="/images/icon/xxx-large.webp" alt="…">
+//   <p class="xx-kicker">閲覧室</p><h1>題</h1><p class="xx-lead">説明</p>
+// </HeroFig>
+// 位置は src/data/hero-pos.js（pos で上書きもできる）。絵が無いときは文字だけ出す。
+// =====================================================
+import fs from 'node:fs';
+import path from 'node:path';
+import { heroPosOf } from '../data/hero-pos.js';
+const { src, alt = '', width = 1400, height = 788, pos, eager = false, class: cls = '' } = Astro.props;
+const has = !!src && fs.existsSync(path.join(process.cwd(), 'public', src));
+const p = pos || heroPosOf(src);
+---
+<header class:list={['hf', has ? `hf--${p}` : 'hf--noimg', cls]}>
+  {has && <img class="hf-img" src={src} alt={alt} width={width} height={height} loading={eager ? 'eager' : 'lazy'} />}
+  <div class="hf-text"><slot /></div>
+</header>

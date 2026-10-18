@@ -84,12 +84,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="柔道と剣道の行動者率｜Countopia Stats" description="都道府県別・柔道と剣道の行動者率。柔道と剣道、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="budo">
         <span class="no">EXHIBIT 26</span>
         <h1><span class="h1a">柔道と剣道、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">スポーツの広場｜柔道・剣道の行動者率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="budo" />
+      </ExhibitHero>
 
       <Talk speaker="kei">26番目の展示は「柔道」です。1年のあいだに柔道をした人が、どのくらいいるか。全国では{fmt(avg)}、1000人に{per1000(avg)}人ほどです。</Talk>
       <Talk speaker="touko">柔道なら、わたくしの時代には学校でも教えておりますわ。男の子たちが道場で。</Talk>

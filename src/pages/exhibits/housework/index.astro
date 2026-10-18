@@ -36,12 +36,11 @@ const sameGapText = sameGap.length > 0 ? `、${sameGap.map((r) => r.pref).join('
 <BaseLayout title="家事時間の男女差｜Countopia Stats" description="都道府県別・家事時間の男女差。いちばん差が大きい県、小さい県は？" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="housework">
         <span class="no">EXHIBIT 03</span>
         <h1><span class="h1a">家事時間の男女差、</span><span class="h1b">いちばん大きい県は</span></h1>
         <p class="sub">時間の広場｜家事時間（男女別）の都道府県比較（2021年）</p>
-      </div>
-      <ExhibitHero slug="housework" />
+      </ExhibitHero>
 
       <Talk speaker="kei">3つめの展示は、1日の家事時間です。今回は男女別に見てみましょう。全国平均で、女性が約{fmt(avgWomen)}、男性が約{fmt(avgMen)}。</Talk>
       <Talk speaker="touko">えっ、男の人も家事をするの！？　わたくしの時代では考えられないわ……。</Talk>

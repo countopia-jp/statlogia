@@ -32,12 +32,11 @@ const bigInMost = most.filter((r) => BIG_CITY_PREFS.includes(r.n)).length;
 <BaseLayout title="飲食店の多さ｜Countopia Stats" description="都道府県別・人口千人当たりの飲食店数。日本一の「外食の街」はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="food">
         <span class="no">EXHIBIT 08</span>
         <h1><span class="h1a">日本一の「外食の街」</span><span class="h1b">はどの県だ</span></h1>
         <p class="sub">食卓の広場｜人口千人当たりの飲食店数（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="food" />
+      </ExhibitHero>
 
       <Talk speaker="kei">8つめの展示は「飲食店の多さ」です。人口千人あたり、街に何軒の飲食店があるかという数字です。</Talk>
       <Talk speaker="touko">お店が多いと、外で食べるのが楽しそうねえ。</Talk>

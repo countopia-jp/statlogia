@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/surveys-large.webp'));
 
 // この国の数字のもとになっている主な調査。kind: all=全数 / sample=標本 / record=業務記録・届け出 / derived=加工統計
@@ -35,11 +36,10 @@ const KIND = {
 ---
 <BaseLayout title="数字のもとになった調査｜統計の歩き方 - Countopia Stats" description="この国の数字は、どんな調査から来ているのか。国勢調査・家計調査・社会生活基本調査など、主な調査を、だれが・何を・どのくらいの間隔で調べているかで紹介します。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
-      {hasHero && <img class="art-hero-figure" src="/images/icon/surveys-large.webp" alt="日ざしの明るい坂の住宅街で、腕章をつけた調査員が玄関先の人に封筒を手渡し、向かいの役所の大きな窓の中では職員たちが調査票の束をそろえている水彩画" width="1400" height="788" loading="lazy" />}
+    <HeroFig src="/images/icon/surveys-large.webp" alt="日ざしの明るい坂の住宅街で、腕章をつけた調査員が玄関先の人に封筒を手渡し、向かいの役所の大きな窓の中では職員たちが調査票の束をそろえている水彩画" width={1400} height={788}>
       <p class="art-kicker">HOW TO READ</p>
       <h1>数字のもとになった調査</h1>
-    </header>
+    </HeroFig>
 
     <Talk speaker="touko">
       ねえ京、この国の数字は、e-Statという窓口から写しているのでしょう。では、その前は？　だれがどうやって数えたのかしら。

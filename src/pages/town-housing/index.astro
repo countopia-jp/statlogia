@@ -3,21 +3,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniHousingData } from '../../lib/muni-housing.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniHousingData();
 ---
 <BaseLayout title="わが町の住まい｜Countopia Stats" description="市区町村を選んで、空き家率・持ち家率・共同住宅の割合・1軒あたりの広さ・家賃をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-      <img class="tp-hero-figure" src="/images/icon/town-housing-large.webp" alt="軒を連ねる木造の家並みと、暖簾のかかった家、雨戸を閉じた家を描いた水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-housing-large.webp" alt="軒を連ねる木造の家並みと、暖簾のかかった家、雨戸を閉じた家を描いた水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>わが町の住まい</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の住まいの数字をご覧ください。<br />
         空き家、持ち家、広さ、家賃。住むところを、数字で。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは住まいの窓口です。空き家がどれだけあるか、家を買っている人が多いか借りている人が多いか、1軒あたりの広さはどのくらいか。町ごとに引けます。

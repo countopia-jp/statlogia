@@ -75,7 +75,11 @@ async function direct(table, code, areas) {
   const key = `${table}|${code}|${areas ? areas.join(',') : 'all'}`;
   if (_direct.has(key)) return _direct.get(key);
   // 社会生活統計指標の表（7〜8桁目が02）はコードに#が要る
-  const params = { appId: appId(), lang: 'J', statsDataId: table, cdCat01: table.slice(6, 8) === '02' ? `#${code}` : code, metaGetFlg: 'Y', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0' };
+  // 10-18 経済センサスなどの表は code が 'E|cat02=0|tab=158-2021' の形（room-engine.js の parseCode と同じ）
+  const [c1, ...rest] = String(code).split('|');
+  const extra = Object.fromEntries(rest.map((x) => x.split('=')));
+  const params = { appId: appId(), lang: 'J', statsDataId: table, cdCat01: table.slice(6, 8) === '02' ? `#${c1}` : c1, metaGetFlg: 'Y', cntGetFlg: 'N', annotationGetFlg: 'N', explanationGetFlg: 'N', replaceSpChars: '0' };
+  for (const [n, x] of Object.entries(extra)) params[`cd${n[0].toUpperCase()}${n.slice(1)}`] = x;
   if (areas) params.cdArea = areas.join(',');
   let json = null;
   for (let i = 0; i < 3 && !json; i++) {
@@ -87,6 +91,7 @@ async function direct(table, code, areas) {
     const timeObj = asArray(sd.CLASS_INF.CLASS_OBJ).find((o) => o['@id'] === 'time');
     const tName = Object.fromEntries(asArray(timeObj?.CLASS).map((c) => [c['@code'], c['@name']]));
     for (const v of asArray(sd.DATA_INF.VALUE)) {
+      if (Object.entries(extra).some(([n2, x]) => v[`@${n2}`] !== undefined && v[`@${n2}`] !== x)) continue;
       const n = Number(String(v['$'] ?? '').replace(/,/g, ''));
       if (v['$'] === '' || v['$'] === '-' || v['$'] === 'X' || v['$'] === '***' || !Number.isFinite(n)) continue;
       (out[v['@area']] ??= {})[tName[v['@time']] || v['@time']] = n;

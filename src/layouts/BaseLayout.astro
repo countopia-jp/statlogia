@@ -35,7 +35,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <header class="site">
     <div class="nav">
       <a class="logo" href="/">
-        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small><small class="xf">site transformation</small></span>
+        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small><small class="kaiso">改装中</small><small class="xf">site transformation</small></span>
         <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
       </a>
       <nav aria-label="主要メニュー">
@@ -45,6 +45,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
           <li><a href="/tower/" aria-current={cur('/tower/')}>展望塔</a></li>
           <li><a href="/dashboard/" aria-current={cur('/dashboard/')}>閲覧室</a></li>
           <li><a href="/compare/" aria-current={cur('/compare/')}>見くらべ</a></li>
+          <li><a href="/analysis/" aria-current={cur('/analysis/')}>読み解き</a></li>
           <li><a href="/how-to-read/" aria-current={cur('/how-to-read/')}>歩き方</a></li>
           <li><a href="/guide/" aria-current={cur('/guide/')}>案内人</a></li>
         </ul>

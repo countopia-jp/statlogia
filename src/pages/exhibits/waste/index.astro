@@ -69,12 +69,11 @@ const bothHigh = rows
 <BaseLayout title="1人1日当たりのごみ排出量｜Countopia Stats" description="都道府県別・1人1日当たりのごみ排出量とリサイクル率。日本一ごみを出す県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="waste">
         <span class="no">EXHIBIT 17</span>
         <h1><span class="h1a">日本一「ごみを出す」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">暮らしの広場｜1人が1日に出すごみの量（{data.year}年度）</p>
-      </div>
-      <ExhibitHero slug="waste" />
+      </ExhibitHero>
 
       <Talk speaker="kei">17番目の展示は「ごみ」です。1人が1日に出すごみの量を、県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">{fmt(avg)}……{avg >= 900 ? 'かなりの' : avg >= 700 ? 'それなりの' : 'ちょっとした'}重さねえ。毎日それだけ捨てているの。</Talk>

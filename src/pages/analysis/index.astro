@@ -6,14 +6,15 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { THEMES, PLANNED } from '../../data/analysis.js';
+import HeroFig from '../../components/HeroFig.astro';
 ---
 <BaseLayout title="読み解きの間｜目的別の分析｜Countopia Stats" description="教育、暮らしなど、目的を決めて統計を読み解く部屋。国の統計の手引きにならい、問い・計画・データ・分析・結論の順に進めます。" backHref="/" backLabel="玄関">
   <main class="ai">
-    <header class="ai-hero">
+    <HeroFig src="/images/icon/analysis-large.webp" alt="木造の閲覧室。窓辺の机で帳面を開いた京が虫めがねを手に橙子のほうを向いてほほえみ、橙子が壁に糸で掛かった5枚の札を指さす水彩画" width={1376} height={768}>
       <p class="ai-kicker">ANALYSIS</p>
       <h1>読み解きの間</h1>
       <p class="ai-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。<br />県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">数字を一つずつ眺めるのと、問いを立ててから組で読むのとでは、見えるものがちがいます。ここでは、総務省統計局の手引きにある「PPDAC」という進め方にならっています。</Talk>
     <Talk speaker="touko">ぴーぴーでぃーえーしー。呪文みたいね。</Talk>
@@ -58,6 +59,7 @@ import { THEMES, PLANNED } from '../../data/analysis.js';
     .ai { max-width: 980px; margin: 0 auto; padding: 0 16px 56px; }
     .ai > section { padding: 0; }
     .ai-hero { text-align: center; padding: 32px 0 8px; }
+    .ai-hero-figure { display: block; width: 100%; max-width: 860px; height: auto; border-radius: 6px; margin: 0 auto 20px; }
     .ai-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .76rem; color: #b23a2f; }
     .ai-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
     .ai-lead { color: #555; line-height: 1.9; }

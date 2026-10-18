@@ -3,21 +3,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCommuteData } from '../../lib/muni-commute.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCommuteData();
 ---
 <BaseLayout title="通勤の足は、何か｜Countopia Stats" description="市区町村を選んで、自宅の外へ通う人のうち自家用車で通う人・公共交通で通う人の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-    <img class="tp-hero-figure" src="/images/icon/town-commute-large.webp" alt="朝の通勤風景。自家用車の列と、駅へ向かう人々を描いた水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-commute-large.webp" alt="朝の通勤風景。自家用車の列と、駅へ向かう人々を描いた水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>通勤の足は、何か</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の人が主に何で通うのかをご覧ください。<br />
         自家用車で通う人の割合と、鉄道・バスで通う人の割合を、数字で。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは通勤の足の窓口です。自宅の外へ通う人が、主に何を使って移動しているか。その割合で、その町の「足」の姿が見えてきます。

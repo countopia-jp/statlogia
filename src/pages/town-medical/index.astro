@@ -7,21 +7,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniMedicalData } from '../../lib/muni-medical.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniMedicalData();
 ---
 <BaseLayout title="わが町の医療｜Countopia Stats" description="市区町村を選んで、病院・診療所・歯科・お医者さん・薬剤師・病床の数をそのままご覧いただける窓口。お医者さんの数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-      {hasHero && <img class="tp-hero-figure" src="/images/icon/town-medical-large.webp" alt="診療所の前の通りを、看護師や近所の人、子どもたちが行き交う水彩画" width="1400" height="788" loading="lazy" />}
+    <HeroFig src="/images/icon/town-medical-large.webp" alt="診療所の前の通りを、看護師や近所の人、子どもたちが行き交う水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>わが町の医療</h1>
       <p class="tp-lead">
         市区町村を選んで、その町にどれだけの医療があるかをご覧ください。<br />
         病院、診療所、お医者さん。その町にある数を、そのまま。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは医療の窓口です。病院や診療所がいくつあるか、お医者さんや薬剤師さんが何人いるか。その町にある数を、そのままお出しします。

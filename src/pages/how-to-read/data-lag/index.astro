@@ -1,14 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="いちばん新しい数字が、数年前なわけ｜統計の歩き方 - Countopia Stats" description="国の統計はなぜ数年前の数字なのか。調査の周期と、公表までの時間の話。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
-      <img class="art-hero-figure" src="/images/icon/data-lag-large.webp" alt="初夏の緑がのぞく窓辺の机に、秋のもみじをはさんだ帳簿と卓上カレンダー、湯気の立つお茶が置かれ、白いカーテンが風にゆれる水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/data-lag-large.webp" alt="初夏の緑がのぞく窓辺の机に、秋のもみじをはさんだ帳簿と卓上カレンダー、湯気の立つお茶が置かれ、白いカーテンが風にゆれる水彩画" width={1400} height={788}>
       <p class="art-kicker">HOW TO READ</p>
       <h1>いちばん新しい数字が、数年前なわけ</h1>
-    </header>
+    </HeroFig>
 
     <Talk speaker="touko">
       ねえ京、窓口に「2018年度」って書いてあったのだけれど。ずいぶん前の数字ではないの？

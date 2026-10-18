@@ -45,6 +45,9 @@ header.site{
 /* 10-18 本格的な統計サイトへの改装中であることを、サイト名に付記する */
 .xf{display:inline-block;margin-left:.9em;font-family:"IBM Plex Mono",monospace;font-size:.36em;font-weight:500;letter-spacing:.12em;color:var(--stamp);vertical-align:.55em;line-height:1.5;white-space:nowrap;opacity:.85}
 .xf--foot{font-size:.6rem;margin-left:.6em;vertical-align:.15em;color:#f0b78a;opacity:1}
+/* 10-18 site transformation はロゴの下、STATSの右端にそろえる */
+.logo .mark{display:inline-block;width:max-content;align-self:flex-start}
+.logo .mark .xf{display:block;margin:2px 0 0;text-align:right;font-size:.42em;vertical-align:baseline;line-height:1.2;letter-spacing:.12em}
 .logo .sub{font-size:.78rem;color:var(--ink-soft);letter-spacing:.2em}
 nav ul{display:flex;gap:26px;list-style:none;flex-wrap:nowrap}
 nav li{flex:0 0 auto}
@@ -156,3 +159,39 @@ body.annex .rr-kicker, body.annex .rm-kicker{ color:var(--annex-ink) !important;
 body.annex .rr-group-title{ border-left-color:var(--annex-ink) !important; }
 body.annex main a{ color:var(--annex-navy); }
 @media (max-width:600px){ body.annex main{ margin-left:8px !important; margin-right:8px !important; padding-left:26px !important; } }
+
+/* =====================================================
+   10-18 扉絵：絵の上に題と説明を白いもやで重ねる（別館と同じ仕様）
+   位置は src/data/hero-pos.js。人物に重ならない空や壁に置く
+   ===================================================== */
+.hf{position:relative;max-width:868px;margin:20px auto 12px !important;padding:0 !important;text-align:center}
+.hf .hf-img{display:block;width:100% !important;max-width:none !important;height:auto;margin:0 !important;border-radius:8px;box-shadow:0 6px 18px rgba(60,40,20,.14)}
+.hf .hf-text{position:absolute;box-sizing:border-box;padding:18px 26px 16px;text-align:center;border-radius:14px;
+  background:radial-gradient(ellipse at center,rgba(255,253,247,.94) 0%,rgba(255,253,247,.86) 55%,rgba(255,253,247,.66) 100%);
+  box-shadow:0 0 36px 22px rgba(255,253,247,.55);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.hf .hf-text > *{margin-left:auto;margin-right:auto}
+.hf .hf-text > p{margin-top:0;margin-bottom:0;max-width:none}
+.hf .hf-text h1{margin:2px auto 8px;font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.4rem,3vw,2.1rem);line-height:1.35}
+.hf .hf-text > p:last-child:not(:first-child){font-size:clamp(.8rem,1.45vw,.95rem);line-height:1.8;color:#3d3528}
+.hf .hf-text .h1a,.hf .hf-text .h1b{display:block}
+.hf .hf-text h1 .h1b{font-size:.78em}
+.hf .hf-text .no{display:block;font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600;font-size:.76rem;letter-spacing:.24em}
+.hf--t .hf-text{left:50%;top:4%;transform:translateX(-50%);width:min(66%,600px)}
+.hf--c .hf-text{left:50%;top:50%;transform:translate(-50%,-50%);width:min(72%,640px)}
+.hf--tl .hf-text{left:3%;top:5%;width:46%}
+.hf--tr .hf-text{right:3%;top:5%;width:46%}
+.hf--l .hf-text{left:3%;top:50%;transform:translateY(-50%);width:44%}
+.hf--r .hf-text{right:3%;top:50%;transform:translateY(-50%);width:44%}
+.hf--tl .hf-text,.hf--tr .hf-text,.hf--l .hf-text,.hf--r .hf-text{padding:14px 18px 12px}
+.hf--tl .hf-text br,.hf--tr .hf-text br,.hf--l .hf-text br,.hf--r .hf-text br{display:none}
+.hf--tl .hf-text h1,.hf--tr .hf-text h1,.hf--l .hf-text h1,.hf--r .hf-text h1{font-size:clamp(1.1rem,2.1vw,1.5rem);margin:2px auto 6px}
+.hf--tl .hf-text > p:last-child:not(:first-child),.hf--tr .hf-text > p:last-child:not(:first-child),.hf--l .hf-text > p:last-child:not(:first-child),.hf--r .hf-text > p:last-child:not(:first-child){font-size:clamp(.74rem,1.25vw,.85rem);line-height:1.7}
+.hf--under .hf-text{position:relative;width:auto;margin:-22px 16px 0;padding:16px 20px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
+.hf--noimg{padding:28px 0 8px !important}
+.hf--noimg .hf-text{position:static;transform:none;width:auto;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+@media(max-width:760px){
+  .hf .hf-text{position:relative;left:auto;right:auto;top:auto;transform:none;width:auto;margin:-22px 12px 0;padding:14px 16px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
+  .hf .hf-text br{display:none}
+}
+/* 10-18 改装中の札（タイトルの横） */
+.logo .mark .kaiso{display:inline-block;margin-left:.7em;padding:.18em .6em .14em;border-radius:999px;background:var(--stamp);color:#fff;font-family:"Zen Kaku Gothic New",sans-serif;font-size:.42em;font-weight:700;letter-spacing:.14em;vertical-align:.5em;line-height:1.3}

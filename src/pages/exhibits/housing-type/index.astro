@@ -86,12 +86,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="一戸建てと木の家の割合｜Countopia Stats" description="都道府県別・住まいに占める一戸建ての割合と、一戸建てのうち木造の割合。一戸建てと木の家、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="housing-type">
         <span class="no">EXHIBIT 27</span>
         <h1><span class="h1a">一戸建てと木の家、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">住まいの広場｜住まいの建て方（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="housing-type" />
+      </ExhibitHero>
 
       <Talk speaker="kei">27番目の展示は「住まいの建て方」です。人の住んでいる家のうち、一戸建てがどのくらいあるか。全国では{fmt(avg)}、10軒に{per10(avg)}軒ほどです。</Talk>
       <Talk speaker="touko">わたくしの時代では、家といえばたいてい一戸建てですわ。長屋もありますけれど。</Talk>

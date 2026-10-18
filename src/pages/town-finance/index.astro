@@ -3,21 +3,21 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniFinanceData } from '../../lib/muni-finance.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniFinanceData();
 ---
 <BaseLayout title="わが町の財政と教育費｜Countopia Stats" description="市区町村を選んで、財政力指数と住民1人あたりの教育費をご覧いただける窓口。財政力指数の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
-    <header class="tp-hero">
-    <img class="tp-hero-figure" src="/images/icon/town-finance-large.webp" alt="算盤と帳簿、赤いランドセルが並ぶ窓辺の水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-finance-large.webp" alt="算盤と帳簿、赤いランドセルが並ぶ窓辺の水彩画" width={1400} height={788}>
       <p class="tp-kicker">別館・暮らしの台帳</p>
       <h1>わが町の財政と教育費</h1>
       <p class="tp-lead">
         市区町村を選んで、町の財政力指数と、住民1人あたりの教育費をご覧ください。<br />
         「教育の帳場」の市区町村版。あなたの町の数字を、全国の並びと一緒に。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="shiori">
       うちの帳場では、歳入と歳出の帳簿を、毎晩金庫にしまってから帰るんです。ここは市区町村の財政の帳場ですよ。財政力指数は、町の標準的な収入を標準的な支出で割った数なんです。1を超えると、収入が支出を上回る計算になります。

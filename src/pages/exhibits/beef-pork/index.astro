@@ -86,12 +86,11 @@ const overLine = beefOver.length > 0
 <BaseLayout title="牛肉と豚肉にかけるお金｜Countopia Stats" description="都市別・1世帯当たりの牛肉と豚肉の年間支出額。牛肉と豚肉、日本一はどの市か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="beef-pork">
         <span class="no">EXHIBIT 30</span>
         <h1><span class="h1a">牛肉と豚肉、</span><span class="h1b">日本一はどの市だ</span></h1>
         <p class="sub">食卓の広場｜1世帯当たりの牛肉・豚肉の年間支出額（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="beef-pork" />
+      </ExhibitHero>
 
       <Talk speaker="kei">30番目の展示は「牛肉」です。1世帯が1年間に牛肉へ使ったお金を、市ごとに並べました。全国では{yen(data.national)}です。</Talk>
       <Talk speaker="touko">牛肉なら知っていてよ。牛鍋はハイカラなごちそうですもの。</Talk>

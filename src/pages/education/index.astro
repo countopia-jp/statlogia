@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
+import HeroFig from '../../components/HeroFig.astro';
 
 // 重いe-Stat取得は /data/education.json.js（ビルド時生成）に集約。
 // このページはフッター表示用の定数だけ持つ（budgetページと同じ流儀）。
@@ -17,15 +18,14 @@ const yearNote = '2024年度';
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <main class="edu-dash">
-    <header class="edu-hero">
-      <img class="edu-hero-figure" src="/images/icon/school-large.webp" alt="山あいの木造校舎、校庭の一本桜" width="1400" height="781" loading="lazy" />
+    <HeroFig src="/images/icon/school-large.webp" alt="山あいの木造校舎、校庭の一本桜" width={1400} height={781}>
       <p class="edu-kicker">ダッシュボード</p>
       <h1>学びの登記所</h1>
       <p class="edu-lead">
         あなたの町に、学校はいくつあるでしょう。<br />
         全国の市区町村から選んで、幼稚園から高校までの数字を確かめられる窓口です。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       当登記所には全国の市区町村の学校数が記録されています。まずは調べたい町を選んでください。

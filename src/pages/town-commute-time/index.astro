@@ -3,19 +3,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getMuniCommuteTimeData } from '../../lib/muni-commute-time.js';
+import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCommuteTimeData();
 ---
 <BaseLayout title="通勤に、どれだけかかるか｜Countopia Stats" description="市区町村を選んで、片道の通勤時間が30分未満・1時間以上・1時間30分以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="tp">
-    <header class="tp-hero">
-      <img class="tp-hero-figure" src="/images/icon/town-commute-time-large.webp" alt="朝の郊外の駅のホーム。通勤鞄を提げた人と、電車を待つ人々。遠くまで伸びる線路を描いた水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/town-commute-time-large.webp" alt="朝の郊外の駅のホーム。通勤鞄を提げた人と、電車を待つ人々。遠くまで伸びる線路を描いた水彩画" width={1400} height={788}>
       <p class="tp-kicker">閲覧室</p>
       <h1>通勤に、どれだけかかるか</h1>
       <p class="tp-lead">
         市区町村を選んで、その町から通う人が、片道にどれだけの時間をかけているかをご覧ください。<br />
         30分未満で着く町か、1時間以上かかる町か。通勤の長さを、割合という数字で。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       こちらは通勤時間の窓口です。働きに出ている世帯を、片道の通勤時間の長さで4つに分けています。となりの窓口が「何で通うか」なら、こちらは「どれだけかかるか」です。

@@ -221,12 +221,28 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
           <span class="cmp-feature-go">見くらべの間へ →</span>
         </span>
       </a>
-      <div class="cmp-ana">
-        <span class="cmp-ana-k">ANALYSIS</span>
-        <span class="cmp-ana-t">目的を決めて読み解く</span>
-        <a href="/analysis/education/">教育を読み解く →</a>
-        <a href="/analysis/living/">暮らしを読み解く →</a>
-        <a class="cmp-ana-all" href="/analysis/">読み解きの間について</a>
+    </section>
+
+    <!-- 読み解きの間 -->
+    <section id="analysis">
+      <div class="sec-head">
+        <img class="sec-icon" src="/images/icon/analysis-icon.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
+        <div class="sec-text">
+          <span class="no">ANALYSIS</span>
+          <h2>読み解きの間</h2>
+        </div>
+      </div>
+      <div class="ana-feature">
+        <img class="ana-feature-img" src="/images/icon/analysis-large.webp" alt="木造の閲覧室。窓辺の机で帳面を開いた京が虫めがねを手に橙子のほうを向いてほほえみ、橙子が壁に糸で掛かった5枚の札を指さす水彩画" width="1376" height="768" loading="lazy" />
+        <div class="ana-feature-body">
+          <p class="ana-feature-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
+          <div class="ana-themes">
+            <a class="ana-theme" href="/analysis/education/"><b>教育を読み解く</b><span>学校の大きさ、先生の数、かけているお金、学びの道具、卒業したあとの進路</span><i aria-hidden="true">→</i></a>
+            <a class="ana-theme" href="/analysis/living/"><b>暮らしを読み解く</b><span>稼ぎ、物価、家賃、家の広さ、家計のやりくり</span><i aria-hidden="true">→</i></a>
+            <div class="ana-theme ana-theme--soon"><b>産業の稼ぐ力</b><span>準備中</span></div>
+          </div>
+          <a class="ana-feature-go" href="/analysis/">読み解きの間へ →</a>
+        </div>
       </div>
     </section>
 
@@ -508,12 +524,22 @@ h1 .num{color:var(--stamp)}
 .cmp-feature-list b{display:block;font-family:"Shippori Mincho",serif;font-size:.98rem;color:var(--ink)}
 .cmp-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem}
 @media(max-width:760px){.cmp-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
-.cmp-ana{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-top:14px;padding:14px 18px;border:1px dashed var(--line);border-radius:10px}
-.cmp-ana-k{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.24em;color:var(--stamp)}
-.cmp-ana-t{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1rem;margin-right:6px}
-.cmp-ana a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid var(--stamp)}
-.cmp-ana a:hover{color:var(--stamp)}
-.cmp-ana .cmp-ana-all{font-weight:400;font-size:.85rem;color:var(--ink-soft);border-bottom-color:var(--line)}
+/* 10-18 読み解きの間の区画 */
+.ana-feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:center;padding:20px;border:1px solid var(--line);border-left:5px solid var(--ink);border-radius:12px;background:#fffdf7}
+.ana-feature-img{display:block;width:100%;height:auto;border-radius:8px}
+.ana-feature-body{display:flex;flex-direction:column;gap:14px;justify-content:center}
+.ana-feature-lead{margin:0;font-size:1rem;line-height:1.9;color:var(--ink)}
+.ana-themes{display:flex;flex-direction:column;gap:10px}
+.ana-theme{position:relative;display:block;padding:12px 40px 12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s,border-color .15s}
+a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-color:var(--ink);box-shadow:0 6px 16px rgba(30,40,30,.1)}
+.ana-theme b{display:block;font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.05rem;color:var(--ink)}
+.ana-theme span{display:block;margin-top:2px;font-size:.82rem;line-height:1.7;color:var(--ink-soft)}
+.ana-theme i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-weight:700;color:var(--stamp)}
+.ana-theme--soon{background:transparent;border-style:dashed}
+.ana-theme--soon b{color:var(--ink-soft)}
+.ana-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem;text-decoration:none}
+.ana-feature-go:hover{text-decoration:underline}
+@media(max-width:760px){.ana-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
 .more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
 .more-btn{
   display:inline-block;padding:11px 22px;border-radius:8px;

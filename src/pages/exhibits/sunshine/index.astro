@@ -64,12 +64,11 @@ const twist = !sunSameTop && bothTop.length <= 2;
 <BaseLayout title="日照時間と快晴日数｜Countopia Stats" description="都道府県別の年間日照時間と快晴日数。日本でいちばん日が差す県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="sunshine">
         <span class="no">EXHIBIT 18</span>
         <h1><span class="h1a">日本一「晴れる」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">暮らしの広場｜1年間に日が差した時間（{sun.year}年）</p>
-      </div>
-      <ExhibitHero slug="sunshine" />
+      </ExhibitHero>
 
       <Talk speaker="kei">18番目の展示は「晴れ」です。1年のあいだに日が差した時間を、県ごとに並べました。47県の平均は{fmt(avg)}。</Talk>
       <Talk speaker="touko">お日さまの出ている時間を、一年ぶん足すのねえ。</Talk>

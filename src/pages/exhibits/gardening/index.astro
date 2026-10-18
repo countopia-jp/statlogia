@@ -76,12 +76,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="園芸と日曜大工の行動者率｜Countopia Stats" description="都道府県別・園芸と日曜大工の行動者率。庭いじりと日曜大工、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="gardening">
         <span class="no">EXHIBIT 21</span>
         <h1><span class="h1a">庭いじりと日曜大工、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">つくる・遊ぶ広場｜園芸・日曜大工の行動者率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="gardening" />
+      </ExhibitHero>
 
       <Talk speaker="kei">21番目の展示は「園芸・庭いじり・ガーデニング」です。1年のあいだに土をいじった人が、どのくらいいるか。全国では{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">{perPerson}人にひとり。思ったより多いのねえ。</Talk>

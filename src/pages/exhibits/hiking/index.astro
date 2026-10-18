@@ -31,12 +31,11 @@ const bottomGap = (r1(second.minutes) - r1(bottom.minutes)).toFixed(1);
 <BaseLayout title="登山・ハイキングをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に登山やハイキングをした人の割合。日本一「山を歩く」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="hiking">
         <span class="no">EXHIBIT 13</span>
         <h1><span class="h1a">日本一「山を歩く」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">スポーツの広場｜過去1年間に登山・ハイキングをした人の割合（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="hiking" />
+      </ExhibitHero>
 
       <Talk speaker="kei">13番目の展示は「登山・ハイキング」です。過去1年のあいだに、一度でも山を歩いた人の割合を県ごとに並べました。全国平均は{fmt(avg)}です。</Talk>
       <Talk speaker="touko">それなら、山の深い県が上に来るのでしょうね。</Talk>

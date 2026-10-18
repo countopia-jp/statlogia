@@ -27,12 +27,11 @@ const perHouses = (v) => Math.round(100 / v);
 <BaseLayout title="空き家率｜Countopia Stats" description="都道府県別・総住宅数に占める空き家の割合。日本一「空き家が多い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="vacancy">
         <span class="no">EXHIBIT 06</span>
         <h1><span class="h1a">日本一「空き家が多い」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">住まいの広場｜総住宅数に占める空き家の割合（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="vacancy" />
+      </ExhibitHero>
 
       <Talk speaker="kei">6つめの展示は「空き家率」です。誰も住んでいない住宅が、全体の何％を占めるかという数字です。</Talk>
       <Talk speaker="touko">お家が余っているということ？</Talk>

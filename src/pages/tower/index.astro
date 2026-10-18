@@ -5,6 +5,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import AreaLedgerStyle from '../../components/AreaLedgerStyle.astro';
 import { getPrefLedger, nationalRows } from '../../lib/area-ledger.js';
+import HeroFig from '../../components/HeroFig.astro';
 const pl = await getPrefLedger();
 const nat = nationalRows(pl);
 const natCount = nat.reduce((n, g) => n + g.rows.length, 0);
@@ -13,12 +14,11 @@ const fmt = (v, d) => (typeof v === 'number' && Number.isFinite(v) ? v.toLocaleS
 <BaseLayout title="展望塔｜Countopia Stats" description="日本全体の数字を計器盤で一望し、都道府県や市区町村を選んで、人口・気候・物価・給与・住まい・施設など、いろいろな数字を一覧で見られる展望塔。" backHref="/" backLabel="玄関">
   <AreaLedgerStyle />
   <main class="al">
-    <img class="tw-figure" src="/images/icon/tower-large.webp" alt="アーチ窓から広がる川と町を、指さす橙子と見つめる京の水彩画" width="1400" height="788" />
-    <div class="sec-head">
+    <HeroFig src="/images/icon/tower-large.webp" alt="アーチ窓から広がる川と町を、指さす橙子と見つめる京の水彩画" width={1400} height={788} eager>
       <span class="no">OBSERVATORY</span>
       <h1>この国を、展望塔から見渡す</h1>
       <p class="sub">閲覧室は「数字を選んで、土地を見る」窓口です。展望塔は逆に「土地を選んで、いろいろな数字を見る」ところです。</p>
-    </div>
+    </HeroFig>
 
     <section class="tw-picker">
       <label>

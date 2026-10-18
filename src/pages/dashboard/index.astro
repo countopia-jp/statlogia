@@ -5,19 +5,19 @@ import path from 'node:path';
 const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${id}-thumb.webp`)) ? `/images/icon/${id}-thumb.webp` : null);
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import HeroFig from '../../components/HeroFig.astro';
 ---
 <BaseLayout title="閲覧室｜Countopia Stats" description="都道府県・市区町村を選んで、学校・人口・住まい・医療・通勤などの数字を自分の手で引き出す閲覧室。各窓口の案内一覧です。" backHref="/" backLabel="玄関">
   <main class="rr">
-    <header class="rr-hero">
-      <img class="rr-figure" src="/images/icon/reading-room-large.webp" alt="木造の書庫で、開いた台帳を指さす橙子と、のぞきこむ京の水彩画" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/reading-room-large.webp" alt="木造の書庫で、開いた台帳を指さす橙子と、のぞきこむ京の水彩画" width={1400} height={788}>
       <p class="rr-kicker">閲覧室</p>
       <h1>自分の手で、数字を引き出す部屋</h1>
      <p class="rr-lead">
         展示はこちらが選んだ数字の物語。閲覧室では、あなたが選びます。<br />
         知りたい町を指定して、台帳から数字を取り寄せてください。
       </p>
-      <p class="rr-note">※窓口カードの「出典」の年度は、窓口を置いた時点のものです。<br />お調べいただく数字は、最新の統計に自動で更新されています。</p>
-    </header>
+    </HeroFig>
+    <p class="rr-note">※窓口カードの「出典」の年度は、窓口を置いた時点のものです。<br />お調べいただく数字は、最新の統計に自動で更新されています。</p>
     <form class="rr-search" action="/search/" role="search" onsubmit="location.href='/search/#q='+encodeURIComponent(this.querySelector('input').value);return false">
       <label for="rrQ">どの窓口か分からないときは、言葉でたずねてください</label>
       <div class="rr-search-row"><input id="rrQ" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" /><button type="submit">たずねる</button></div>
@@ -324,6 +324,36 @@ import Talk from '../../components/Talk.astro';
             都道府県を選んで、製造業・卸売業・小売業で働く人1人あたりの付加価値額や販売額と、情報通信業で働く人の割合を。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（工業統計・商業統計・経済センサス・国勢調査・県民経済計算）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/pref-value/">
+          {thumbOf('pref-value') && <img class="rr-card-img" src={thumbOf('pref-value')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>県の稼ぎの顔ぶれ</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、事業所が生み出した額（純付加価値額）のうち、製造業・卸売小売業・医療などの業種が占める割合と特化係数を。
+          </p>
+          <p class="rr-card-meta">出典：経済センサス‐活動調査（令和3年）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/pref-workers/">
+          {thumbOf('pref-workers') && <img class="rr-card-img" src={thumbOf('pref-workers')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>県の働き手の顔ぶれ</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、事業所で働く人のうち、それぞれの業種で働く人の割合と特化係数を。
+          </p>
+          <p class="rr-card-meta">出典：経済センサス‐活動調査（令和3年）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/pref-productivity/">
+          {thumbOf('pref-productivity') && <img class="rr-card-img" src={thumbOf('pref-productivity')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>業種ごとの1人あたりの稼ぎ</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、働く人1人あたりの純付加価値額（労働生産性）を、全産業と業種ごとに。
+          </p>
+          <p class="rr-card-meta">出典：経済センサス‐活動調査（令和3年）</p>
           </div>
         </a>
         <a class="rr-card" href="/farm-sea/">

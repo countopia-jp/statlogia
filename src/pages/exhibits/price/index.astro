@@ -51,12 +51,11 @@ const twist = topChanged && foodBothTop.length <= 2;
 <BaseLayout title="物価の高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数。日本一「物価が高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="price">
         <span class="no">EXHIBIT 12</span>
         <h1><span class="h1a">日本一「物価が高い」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">値段の広場｜消費者物価地域差指数・総合（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="price" />
+      </ExhibitHero>
 
       <Talk speaker="kei">12番目の展示は「物価」です。同じものを買っても、住む場所によって値段が違う。それを数字にしたのが消費者物価地域差指数です。</Talk>
       <Talk speaker="touko">同じお米でも、土地によってお値段が変わるということ？</Talk>

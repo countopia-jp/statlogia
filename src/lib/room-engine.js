@@ -56,9 +56,17 @@ const UNIT_FIX = { 'ｈａ': 'ha', 'ｍｍ': 'mm', 'ｃｍ': 'cm', 'ｍ2': '㎡'
 const fixUnit = (u) => (u in UNIT_FIX ? UNIT_FIX[u] : u || '');
 
 const rawCache = new Map();
+// 10-18 社会・人口統計体系でない表（経済センサスなど）は、code を 'E|cat02=0|tab=158-2021' のように書く。
+//   先頭が cat01、続く「名前=値」が cdCat02・cdTab などの絞り込み（応答もその値の行だけを使う）
+function parseCode(code) {
+  const [c1, ...rest] = String(code).split('|');
+  const extra = Object.fromEntries(rest.map((s) => s.split('=')));
+  return { c1, extra };
+}
 async function fetchRaw(table, code) {
   const k = `${table}:${code}`;
   if (rawCache.has(k)) return rawCache.get(k);
+  const { c1, extra } = parseCode(code);
   // 1回の応答は10万件まで。市区町村×長い年数だと溢れるので、NEXT_KEY で続きを取る
   const values = [];
   let root;
@@ -66,7 +74,8 @@ async function fetchRaw(table, code) {
   for (let page = 0; page < 20; page++) {
     const params = {
       statsDataId: table,
-      cdCat01: code,
+      cdCat01: c1,
+      ...Object.fromEntries(Object.entries(extra).map(([n, v]) => [`cd${n[0].toUpperCase()}${n.slice(1)}`, v])),
       metaGetFlg: page === 0 ? 'Y' : 'N',
       cntGetFlg: 'N',
       annotationGetFlg: 'N',
@@ -91,11 +100,12 @@ async function fetchRaw(table, code) {
   for (const c of asArray(objs.find((o) => o['@id'] === 'area')?.CLASS)) areaNames[c['@code']] = (c['@name'] || '').trim();
   const timeNames = {};
   for (const c of asArray(objs.find((o) => o['@id'] === 'time')?.CLASS)) timeNames[c['@code']] = (c['@name'] || '').trim();
-  const cat = asArray(objs.find((o) => o['@id'] === 'cat01')?.CLASS).find((c) => c['@code'] === code);
+  const cat = asArray(objs.find((o) => o['@id'] === 'cat01')?.CLASS).find((c) => c['@code'] === c1);
   const byTime = {};
   const dash = {}; // 「-」（該当なし）だった欄。窓口の設定 dashAsZero:true のときだけ0として扱う
   for (const v of values) {
-    if (v['@cat01'] && v['@cat01'] !== code) continue;
+    if (v['@cat01'] && v['@cat01'] !== c1) continue;
+    if (Object.entries(extra).some(([n, x]) => v[`@${n}`] !== undefined && v[`@${n}`] !== x)) continue;
     const raw = v['$'];
     if (raw === '-') { (dash[v['@time']] ??= {})[v['@area']] = true; continue; }
     if (raw === undefined || raw === null || raw === '' || raw === '-' || raw === '***' || raw === 'X') continue;
@@ -306,7 +316,7 @@ export async function getRoomData(room) {
     id: room.id,
     scope,
     generated: new Date().toISOString().slice(0, 10),
-    source: `政府統計の総合窓口(e-Stat) 社会・人口統計体系 ${scope === 'pref' ? '都道府県' : '市区町村'}データ（表番号${tables.join('・')}）`,
+    source: room.source || `政府統計の総合窓口(e-Stat) 社会・人口統計体系 ${scope === 'pref' ? '都道府県' : '市区町村'}データ（表番号${tables.join('・')}）`,
     indicators: indicatorsOut,
     national: scope === 'pref' ? national : undefined,
     nationalLatest: scope === 'town' && Object.keys(national).length ? national : undefined,

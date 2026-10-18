@@ -3,22 +3,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import fs from 'node:fs';
 import path from 'node:path';
+import HeroFig from '../../components/HeroFig.astro';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
 <BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。15の窓口があります。">
   <main class="rr">
-    <header class="rr-hero rr-hero--fig">
-      <img class="rr-hero-img" src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width="1400" height="788" />
-      <div class="rr-hero-text">
+    <HeroFig src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width={1400} height={788} eager>
         <p class="rr-kicker">別館</p>
         <h1>暮らしの台帳</h1>
         <p class="rr-lead">
           財政や人の出入り、所得や家計、土地の値段や働き方など、<br />お金と暮らしの内側に関わる数字です。<br />
           本館とは別に、台帳としてここに綴じました。
         </p>
-      </div>
-    </header>
+    </HeroFig>
 
     <section class="rr-shiori" aria-label="案内人のことば">
       <div class="rr-shiori-say">
@@ -259,7 +257,7 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
     .rr-lead { color: #555; line-height: 1.9; }
     .rr-group { margin: 0; padding: 20px 0 8px; }
     /* 10-18 扉絵を上に大きく置き、題と説明を白いもやの上に重ねる */
-    .rr-hero--fig { position: relative; max-width: 1080px; margin: 20px auto 8px; padding: 0; }
+    .rr-hero--fig { position: relative; max-width: 868px; margin: 20px auto 8px; padding: 0; }
     .rr-hero-img { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 6px 18px rgba(60,40,20,.14); }
     .rr-hero-text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(72%, 640px); padding: 22px 30px 18px; text-align: center; border-radius: 14px;
       background: radial-gradient(ellipse at center, rgba(255,253,247,.94) 0%, rgba(255,253,247,.86) 55%, rgba(255,253,247,.62) 100%);

@@ -12,6 +12,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getLivingData } from '../../lib/living.js';
+import HeroFig from '../../components/HeroFig.astro';
 
 const liv = await getLivingData();
 const years = [...new Set(liv.indicators.map((i) => i.year).filter(Boolean))].sort();
@@ -20,15 +21,14 @@ const yearNote = years.join('・');
 
 <BaseLayout title="暮らしの見積所｜稼ぎと住まい｜Countopia Stats" description="都道府県を選んで、給与・最低賃金・家賃・家の広さ・持ち家率を一枚の見積書にまとめてご覧いただける窓口。全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
   <main class="liv-dash">
-    <header class="liv-hero">
-      <img class="liv-hero-figure" src="/images/icon/living-large.webp" alt="窓辺の机に広げられた家の間取り図、物差しと虫眼鏡、算盤と帳簿" width="1400" height="788" loading="lazy" />
+    <HeroFig src="/images/icon/living-large.webp" alt="窓辺の机に広げられた家の間取り図、物差しと虫眼鏡、算盤と帳簿" width={1400} height={788}>
       <p class="liv-kicker">別館</p>
       <h1>暮らしの見積所</h1>
       <p class="liv-lead">
         給与、最低賃金、家賃、家の広さ、持ち家率。<br />
         あなたの県の「稼ぎ」と「住まい」を、同じ台の上に並べてご覧ください。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="shiori">
       うちの係でも、お給料袋が配られる日はみんなそわそわするんですよ。この見積所では、稼ぎと住まいを一緒に見積もります。給与・最低賃金・家賃・家の広さ・持ち家率を、一枚の見積書に並べますね。

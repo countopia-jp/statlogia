@@ -16,6 +16,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import CompareAddon from '../../components/CompareAddon.astro';
 import { getPriceLedgerData } from '../../lib/price-ledger.js';
+import HeroFig from '../../components/HeroFig.astro';
 
 const pl = await getPriceLedgerData();
 const lastYear = pl.years[pl.years.length - 1];
@@ -23,15 +24,14 @@ const lastYear = pl.years[pl.years.length - 1];
 
 <BaseLayout title="物価の帳場｜Countopia Stats" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="pl-dash">
-    <header class="pl-hero">
-      {hasHero && <img class="pl-hero-figure" src="/images/icon/prices-large.webp" alt="商店街の八百屋と魚屋で、買い物かごを手に品物を選ぶ人々の水彩画" width="1400" height="788" loading="lazy" />}
+    <HeroFig src="/images/icon/prices-large.webp" alt="商店街の八百屋と魚屋で、買い物かごを手に品物を選ぶ人々の水彩画" width={1400} height={788}>
       <p class="pl-kicker">閲覧室</p>
       <h1>物価の帳場</h1>
       <p class="pl-lead">
         食料、住居、光熱・水道、教育……。<br />
         あなたの県の値段の水準を、分類ごとに一枚の帳面に並べます。
       </p>
-    </header>
+    </HeroFig>
 
     <Talk speaker="kei">
       当所では、値段の水準を分類ごとに並べます。全国平均を100として、100より大きければ全国より高く、小さければ安い、という見方です。

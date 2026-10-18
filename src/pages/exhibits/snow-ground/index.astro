@@ -62,12 +62,11 @@ const twist = !sameTop && bothTop.length <= 2;
 <BaseLayout title="スキーとグラウンドゴルフの行動者率｜Countopia Stats" description="都道府県別・スキーとグラウンドゴルフの行動者率。スキーとグラウンドゴルフ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="snow-ground">
         <span class="no">EXHIBIT 24</span>
         <h1><span class="h1a">スキーとグラウンドゴルフ、</span><span class="h1b">日本一はどの県だ</span></h1>
         <p class="sub">スポーツの広場｜スキー・グラウンドゴルフの行動者率（{data.year}）</p>
-      </div>
-      <ExhibitHero slug="snow-ground" />
+      </ExhibitHero>
 
       <Talk speaker="kei">24番目の展示は「スキーとグラウンドゴルフ」です。まずはスキー・スノーボードから。1年のあいだに滑った人は、全国で{fmt(avg)}でした。</Talk>
       <Talk speaker="touko">雪の上を、板で滑るのでしょう。それなら、行ける土地は決まっていそうねえ。</Talk>

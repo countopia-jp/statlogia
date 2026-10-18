@@ -33,12 +33,11 @@ const sameTop = most.filter((r) => totalMost.some((t) => t.n === r.n)).map((r) =
 <BaseLayout title="光熱・水道の物価が高い県｜Countopia Stats" description="都道府県別・消費者物価地域差指数（光熱・水道）。日本一「電気やガスが高い」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
     <section class="exhibit">
-      <div class="sec-head">
+      <ExhibitHero slug="utility">
         <span class="no">EXHIBIT 14</span>
         <h1><span class="h1a">日本一「電気やガスが高い」</span><span class="h1b">県はどこだ</span></h1>
         <p class="sub">値段の広場｜消費者物価地域差指数・光熱・水道（{data.heat.year}）</p>
-      </div>
-      <ExhibitHero slug="utility" />
+      </ExhibitHero>
 
       <Talk speaker="kei">14番目の展示は「光熱・水道」です。電気、ガス、水道、灯油。同じものを買うのに、県によって値段の水準がどれだけ違うかを並べました。</Talk>
       <Talk speaker="touko">同じ電気なのに、値段が違うの？</Talk>
