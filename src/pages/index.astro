@@ -221,6 +221,13 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
           <span class="cmp-feature-go">見くらべの間へ →</span>
         </span>
       </a>
+      <div class="cmp-ana">
+        <span class="cmp-ana-k">ANALYSIS</span>
+        <span class="cmp-ana-t">目的を決めて読み解く</span>
+        <a href="/analysis/education/">教育を読み解く →</a>
+        <a href="/analysis/living/">暮らしを読み解く →</a>
+        <a class="cmp-ana-all" href="/analysis/">読み解きの間について</a>
+      </div>
     </section>
 
     <!-- 案内人 -->
@@ -501,6 +508,12 @@ h1 .num{color:var(--stamp)}
 .cmp-feature-list b{display:block;font-family:"Shippori Mincho",serif;font-size:.98rem;color:var(--ink)}
 .cmp-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem}
 @media(max-width:760px){.cmp-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
+.cmp-ana{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;margin-top:14px;padding:14px 18px;border:1px dashed var(--line);border-radius:10px}
+.cmp-ana-k{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.24em;color:var(--stamp)}
+.cmp-ana-t{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1rem;margin-right:6px}
+.cmp-ana a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1px solid var(--stamp)}
+.cmp-ana a:hover{color:var(--stamp)}
+.cmp-ana .cmp-ana-all{font-weight:400;font-size:.85rem;color:var(--ink-soft);border-bottom-color:var(--line)}
 .more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
 .more-btn{
   display:inline-block;padding:11px 22px;border-radius:8px;

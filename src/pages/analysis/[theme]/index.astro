@@ -1,0 +1,351 @@
+---
+// =====================================================
+// Countopia Stats - 目的別の分析（読み解きの間）テーマのページ
+// src/pages/analysis/[theme]/index.astro
+// 設定は src/data/analysis.js。PPDAC（問い→計画→データ→分析→結論）の順に組む。
+// ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。全セレクタ .an- 接頭辞。
+// =====================================================
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import { THEMES } from '../../../data/analysis.js';
+export function getStaticPaths() {
+  return THEMES.map((t) => ({ params: { theme: t.id }, props: { t } }));
+}
+const { t } = Astro.props;
+const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends };
+---
+<BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <main class="an">
+    <header class="an-hero">
+      <p class="an-kicker">ANALYSIS｜{t.kicker}</p>
+      <h1>{t.title}</h1>
+      <p class="an-lead">{t.lead}</p>
+    </header>
+
+    <Talk speaker="kei">ここでは、国の統計の手引きにならって「問い→計画→データ→分析→結論」の順に読み進めます。県を選ぶと、下の段がすべてその県で埋まります。</Talk>
+
+    <section class="an-pick" aria-label="県を選ぶ">
+      <label><span>読み解く県</span><select id="anPref"><option value="">選んでください</option></select></label>
+      <p class="an-sim" id="anSim" hidden></p>
+      <ul class="an-chips" id="anChips"></ul>
+    </section>
+
+    <section class="an-step">
+      <p class="an-step-no"><b>1</b>PROBLEM｜問い</p>
+      <h2>{t.question}</h2>
+      <ul class="an-qs">{t.subQuestions.map((q) => <li>{q}</li>)}</ul>
+    </section>
+
+    <section class="an-step">
+      <p class="an-step-no"><b>2</b>PLAN｜計画</p>
+      <h2>何と比べるか</h2>
+      <ul class="an-plan">
+        <li><b>全国の中の位置</b>：47都道府県の中で、各項目が平均からどれだけ離れているかを偏差値で並べます（平均50、標準偏差10）。</li>
+        <li><b>似た県</b>：この組の項目の偏差値の並びがいちばん近い県を、計算で3つ挙げます（標準化した値どうしの距離が近い県）。似た県と見くらべると、全国と比べるだけでは見えない差が分かります。</li>
+        <li><b>関係</b>：組の中の二つの項目を散布図に置き、相関係数と回帰直線で、そろって動くかを確かめます。</li>
+        <li><b>時間</b>：毎年の数字がある項目は、最初の年を100にそろえて、全国と伸び方をくらべます。</li>
+      </ul>
+    </section>
+
+    <section class="an-step">
+      <p class="an-step-no"><b>3</b>DATA｜データ</p>
+      <h2>使う項目と、その素性</h2>
+      <div class="an-wrap"><table class="an-data" id="anData"><thead><tr><th>項目</th><th>年</th><th>単位</th><th>注意</th></tr></thead><tbody>
+        {t.indicators.map((i) => <tr data-id={i.id}><th scope="row">{i.short}</th><td class="an-y">—</td><td class="an-u">—</td><td>{i.note || ''}</td></tr>)}
+      </tbody></table></div>
+      <ul class="an-cautions">{t.cautions.map((c) => <li>{c}</li>)}</ul>
+    </section>
+
+    <section class="an-step" id="anAnalysis">
+      <p class="an-step-no"><b>4</b>ANALYSIS｜分析</p>
+      <h2>全国の中の位置（偏差値のプロフィール）</h2>
+      <p class="an-note">棒は平均（50）からの離れ方です。右へのびるほど値が大きく、左へのびるほど小さいことを示します。大きいことが良いとはかぎりません。</p>
+      <div class="an-prof" id="anProf"><p class="an-empty">県を選ぶと、ここにプロフィールが出ます。</p></div>
+
+      <h3 class="an-h3">二つの項目の関係</h3>
+      <div class="an-pairs" id="anPairs"></div>
+
+      <h3 class="an-h3">伸び方</h3>
+      <div class="an-trends" id="anTrends"></div>
+    </section>
+
+    <section class="an-step">
+      <p class="an-step-no"><b>5</b>CONCLUSION｜結論</p>
+      <h2>言えること</h2>
+      <ul class="an-can" id="anCan"><li>県を選ぶと、数字から言えることをここにまとめます。</li></ul>
+      <h2>言えないこと</h2>
+      <ul class="an-cannot">{t.cannot.map((c) => <li>{c}</li>)}</ul>
+    </section>
+
+    <Talk speaker="touko">数字を並べたあとに「ここまでは言えて、ここからは言えない」と書いておくのね。</Talk>
+    <Talk speaker="kei">はい。言えないことを書いておくのも、読み解きのうちです。</Talk>
+
+    <p class="an-cross">あわせて見る：<a href="/compare/">見くらべの間</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a></p>
+    <footer class="an-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」「家計調査」「消費者物価地域差指数」ほか）。分析の進め方は、総務省統計局『データ利活用実践ガイドブック EBPMのための』のPPDACサイクルにならっています。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
+  </main>
+
+  <script is:inline define:vars={{ CFG: cfg }}>
+  (async function () {
+    const COLORS = ['#b23a2f', '#2d6a4f', '#4a6fa5', '#c99a2e'];
+    const IND = CFG.indicators;
+    // ---- 読みこみ（同じファイルは1回だけ） ----
+    const files = {};
+    const urlOf = (i) => (i.src === 'room' ? `/data/room-${i.room}.json` : i.src === 'price' ? '/data/price-ledger.json' : `/data/${i.file}.json`);
+    await Promise.all([...new Set(IND.map(urlOf))].map(async (u) => { try { files[u] = await (await fetch(u)).json(); } catch (e) { files[u] = null; } }));
+    // ---- 項目ごとに { label, unit, year, dec, val:{県コード:値}, series } にそろえる ----
+    const decOf = (vals) => { let d = 0; for (const v of vals) if (typeof v === 'number' && !Number.isInteger(v)) d = Math.max(d, Math.min((String(v).split('.')[1] || '').length, 2)); return d; };
+    const M = {};
+    for (const i of IND) {
+      const D = files[urlOf(i)];
+      if (!D) continue;
+      const m = { id: i.id, short: i.short, val: {}, series: null };
+      if (i.src === 'room') {
+        const ind = D.indicators.find((x) => x.key === i.key);
+        if (!ind) continue;
+        const L = ind.years.length - 1;
+        m.unit = ind.unit; m.year = ind.yearLabels[L]; m.dec = ind.decimals;
+        for (const a of D.areas) if (!a.x && a.v[i.key]) m.val[a.c] = a.v[i.key][L];
+        const natArr = D.nationalIsAvg && (D.nationalIsAvg[i.key] || (D.nationalIsTotal && D.nationalIsTotal[i.key])) ? D.prefAverage[i.key] : D.national[i.key];
+        m.series = { years: ind.years, by: Object.fromEntries(D.areas.map((a) => [a.c, a.v[i.key]])), nat: natArr };
+      } else if (i.src === 'price') {
+        const L = D.years.length - 1;
+        m.unit = ''; m.year = D.yearLabel || D.years[L] + '年'; m.dec = 1;
+        for (const a of D.areas) { const s = a.v[i.code]; if (s) m.val[a.c] = s[L]; }
+        m.series = { years: D.years, by: Object.fromEntries(D.areas.map((a) => [a.c, a.v[i.code]])), nat: D.years.map(() => 100) };
+      } else {
+        const k = D.indicators.findIndex((x) => x.code === i.code);
+        if (k < 0) continue;
+        const ind = D.indicators[k];
+        m.unit = ind.unit === '‐' || ind.unit === '-' ? '' : ind.unit === '%' ? '％' : ind.unit; m.year = ind.year || '';
+        for (const a of D.areas) if (!a.x && /^\d{2}000$/.test(a.c)) m.val[a.c] = a.v[k];
+        m.dec = decOf(Object.values(m.val));
+      }
+      const vs = Object.values(m.val).filter((v) => typeof v === 'number');
+      m.n = vs.length;
+      m.mean = vs.reduce((s, v) => s + v, 0) / m.n;
+      m.sd = Math.sqrt(vs.reduce((s, v) => s + (v - m.mean) ** 2, 0) / m.n);
+      M[i.id] = m;
+    }
+    const IDS = IND.map((i) => i.id).filter((id) => M[id]);
+    // データの段に、年と単位を書き入れる
+    for (const id of IDS) { const tr = document.querySelector(`#anData tr[data-id="${id}"]`); if (tr) { tr.querySelector('.an-y').textContent = M[id].year || '—'; tr.querySelector('.an-u').textContent = M[id].unit || '指数'; } }
+    // 県の一覧（最初に読めた項目から）
+    const prefList = Object.keys(M[IDS[0]].val).sort();
+    const NAMES = {};
+    for (const D of Object.values(files)) if (D && D.areas) for (const a of D.areas) if (/^\d{2}000$/.test(a.c) && a.n) NAMES[a.c] = a.n;
+    const sel = document.getElementById('anPref');
+    for (const c of prefList) { const o = document.createElement('option'); o.value = c; o.textContent = NAMES[c] || c; sel.appendChild(o); }
+    const fmt = (m, v) => (typeof v === 'number' ? v.toLocaleString('ja-JP', { minimumFractionDigits: m.dec, maximumFractionDigits: m.dec }) + (m.unit || '') : '—');
+    const dev = (m, v) => (m.sd > 0 && typeof v === 'number' ? 50 + (10 * (v - m.mean)) / m.sd : null);
+    const rankOf = (m, v) => Object.values(m.val).filter((x) => typeof x === 'number' && x > v + 1e-12).length + 1;
+    // 似た県：標準化した値（z）の並びの距離が近い県
+    const zOf = (id, c) => { const m = M[id]; const v = m.val[c]; return m.sd > 0 && typeof v === 'number' ? (v - m.mean) / m.sd : null; };
+    const similar = (c) => prefList.filter((d) => d !== c).map((d) => {
+      let s = 0, n = 0;
+      for (const id of IDS) { const a = zOf(id, c), b = zOf(id, d); if (a !== null && b !== null) { s += (a - b) ** 2; n++; } }
+      return { c: d, dist: n ? Math.sqrt(s / n) : Infinity };
+    }).sort((x, y) => x.dist - y.dist).slice(0, 3);
+
+    let main = null;
+    let others = [];
+    const charts = [];
+    sel.addEventListener('change', () => { main = sel.value || null; others = others.filter((c) => c !== main); draw(); });
+
+    function chips() {
+      const ul = document.getElementById('anChips');
+      ul.innerHTML = '';
+      [main, ...others].filter(Boolean).forEach((c, k) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<i style="background:${COLORS[k]}"></i>${NAMES[c]}`;
+        if (k > 0) { const b = document.createElement('button'); b.type = 'button'; b.textContent = '×'; b.setAttribute('aria-label', `${NAMES[c]}を外す`); b.addEventListener('click', () => { others = others.filter((x) => x !== c); draw(); }); li.appendChild(b); }
+        ul.appendChild(li);
+      });
+      const sim = document.getElementById('anSim');
+      if (!main) { sim.hidden = true; return; }
+      sim.hidden = false;
+      const s = similar(main);
+      sim.innerHTML = 'この組で似た県：' + s.map((x) => `<button type="button" data-c="${x.c}"${others.includes(x.c) ? ' disabled' : ''}>${NAMES[x.c]}を足す</button>`).join('');
+      sim.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { if (others.length < 3 && !others.includes(b.dataset.c)) { others.push(b.dataset.c); draw(); } }));
+    }
+
+    function profile() {
+      const box = document.getElementById('anProf');
+      const who = [main, ...others];
+      box.innerHTML = IDS.map((id) => {
+        const m = M[id];
+        const v = m.val[main];
+        const d = dev(m, v);
+        const marks = who.map((c, k) => { const dd = dev(m, m.val[c]); if (dd === null) return ''; const x = Math.max(0, Math.min(100, ((dd - 20) / 60) * 100)); return `<span class="an-mk" style="left:${x}%;background:${COLORS[k]}" title="${NAMES[c]} 偏差値${dd.toFixed(1)}"></span>`; }).join('');
+        const bar = d === null ? '' : (() => { const x = Math.max(0, Math.min(100, ((d - 20) / 60) * 100)); const l = Math.min(50, x), w = Math.abs(x - 50); return `<span class="an-bar" style="left:${l}%;width:${w}%"></span>`; })();
+        return `<div class="an-row"><div class="an-lab">${m.short}<small>${m.year || ''}</small></div><div class="an-val">${fmt(m, v)}<small>${typeof v === 'number' ? rankOf(m, v) + '位／' + m.n : ''}</small></div><div class="an-track"><span class="an-mid"></span>${bar}${marks}</div><div class="an-dev">${d === null ? '—' : d.toFixed(1)}</div></div>`;
+      }).join('') + '<div class="an-scale"><span>20</span><span>35</span><span>50</span><span>65</span><span>80</span></div>';
+    }
+
+    function pairs() {
+      const box = document.getElementById('anPairs');
+      charts.forEach((c) => c.destroy()); charts.length = 0;
+      box.innerHTML = '';
+      const out = [];
+      CFG.pairs.forEach((p, k) => {
+        const X = M[p.x], Y = M[p.y];
+        if (!X || !Y) return;
+        const pts = prefList.map((c) => ({ c, x: X.val[c], y: Y.val[c] })).filter((d) => typeof d.x === 'number' && typeof d.y === 'number');
+        const n = pts.length, mx = pts.reduce((s, d) => s + d.x, 0) / n, my = pts.reduce((s, d) => s + d.y, 0) / n;
+        const sxx = pts.reduce((s, d) => s + (d.x - mx) ** 2, 0), syy = pts.reduce((s, d) => s + (d.y - my) ** 2, 0), sxy = pts.reduce((s, d) => s + (d.x - mx) * (d.y - my), 0);
+        const r = sxx > 0 && syy > 0 ? sxy / Math.sqrt(sxx * syy) : 0;
+        const b = sxx > 0 ? sxy / sxx : 0, a = my - b * mx;
+        const ar = Math.abs(r);
+        const word = ar >= 0.7 ? '強い' : ar >= 0.4 ? 'はっきりした' : ar >= 0.2 ? '弱い' : 'ほとんど見えない';
+        const dir = ar < 0.2 ? '' : r > 0 ? '右上がりの' : '右下がりの';
+        const me = pts.find((d) => d.c === main);
+        let res = '';
+        if (me && ar >= 0.2) {
+          const e = me.y - (a + b * me.x);
+          const ses = Math.sqrt(pts.reduce((s, d) => s + (d.y - (a + b * d.x)) ** 2, 0) / Math.max(1, n - 2));
+          const z = ses > 0 ? e / ses : 0;
+          const eu = Y.unit === '％' ? 'ポイント' : (Y.unit || '');
+          res = Math.abs(z) < 1 ? `${NAMES[main]}は、直線のそば（横の値から見込まれるとおり）にあります。` : `${NAMES[main]}は、横の値から見込まれるより${e > 0 ? '大きい' : '小さい'}側にあります（直線から ${e > 0 ? '+' : '−'}${Math.abs(e).toLocaleString('ja-JP', { minimumFractionDigits: Y.dec, maximumFractionDigits: Y.dec })}${eu}）。`;
+        }
+        out.push({ p, r, word, dir, res });
+        const card = document.createElement('div');
+        card.className = 'an-pair';
+        card.innerHTML = `<p class="an-pair-q">${p.why}</p><canvas height="230"></canvas><p class="an-pair-r">相関係数 <b>${r.toFixed(2)}</b>（${n}都道府県）。${dir}${word}関係です。${res}</p>`;
+        box.appendChild(card);
+        const who = [main, ...others];
+        charts.push(new Chart(card.querySelector('canvas'), {
+          type: 'scatter',
+          data: { datasets: [
+            { data: pts.map((d) => ({ x: d.x, y: d.y, n: NAMES[d.c] })), backgroundColor: pts.map((d) => { const k2 = who.indexOf(d.c); return k2 >= 0 ? COLORS[k2] : 'rgba(27,67,50,.35)'; }), pointRadius: pts.map((d) => (who.includes(d.c) ? 6 : 3.5)) },
+            ...(ar >= 0.2 ? [{ type: 'line', data: [{ x: Math.min(...pts.map((d) => d.x)), y: a + b * Math.min(...pts.map((d) => d.x)) }, { x: Math.max(...pts.map((d) => d.x)), y: a + b * Math.max(...pts.map((d) => d.x)) }], borderColor: '#c99a2e', borderWidth: 2, pointRadius: 0 }] : []),
+          ] },
+          options: { responsive: true, aspectRatio: window.innerWidth < 600 ? 1.1 : 1.35, plugins: { legend: { display: false }, tooltip: { filter: (it) => it.datasetIndex === 0, callbacks: { label: (c) => `${c.raw.n}：${fmt(X, c.raw.x)}、${fmt(Y, c.raw.y)}` } } },
+            scales: { x: { title: { display: true, text: X.short } }, y: { title: { display: true, text: Y.short } } } },
+        }));
+      });
+      return out;
+    }
+
+    function trends() {
+      const box = document.getElementById('anTrends');
+      box.innerHTML = '';
+      const out = [];
+      CFG.trends.forEach((id) => {
+        const m = M[id];
+        if (!m || !m.series) return;
+        const ys = m.series.years;
+        const who = [main, ...others];
+        // 割合（％）の項目は、指数にすると大げさに見えるので、値そのままで描く（結論ではポイントの差で言う）
+        const share = m.unit === '％';
+        const idx = (arr) => { if (!arr) return null; const k0 = ys.findIndex((_, k) => typeof arr[k] === 'number' && who.every((c) => m.series.by[c] && typeof m.series.by[c][k] === 'number') && typeof m.series.nat[k] === 'number'); if (k0 < 0) return null; const b0 = arr[k0]; return { k0, data: arr.map((v, k) => (k < k0 || typeof v !== 'number' || (!share && !b0) ? null : share ? v : (v / b0) * 100)) }; };
+        const sets = who.map((c, k) => { const r = idx(m.series.by[c]); return r && { label: NAMES[c], data: r.data, borderColor: COLORS[k], backgroundColor: COLORS[k], pointRadius: 1.5, tension: 0.2, spanGaps: true, k0: r.k0 }; }).filter(Boolean);
+        const nat = idx(m.series.nat);
+        if (!sets.length || !nat) return;
+        sets.push({ label: '全国（平均）', data: nat.data, borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: true });
+        const last = (arr) => { for (let k = arr.length - 1; k >= 0; k--) if (typeof arr[k] === 'number') return arr[k]; return null; };
+        const first = (arr) => { for (let k = 0; k < arr.length; k++) if (typeof arr[k] === 'number') return arr[k]; return null; };
+        out.push({ m, share, me: last(sets[0].data), me0: first(sets[0].data), nat: last(nat.data), nat0: first(nat.data), y0: ys[sets[0].k0], y1: ys[ys.length - 1] });
+        const card = document.createElement('div');
+        card.className = 'an-trend';
+        card.innerHTML = `<p class="an-pair-q">${m.short}<small>${share ? '割合なので、値そのままで描いています' : '最初の年を100にそろえています'}</small></p><canvas height="200"></canvas>`;
+        box.appendChild(card);
+        charts.push(new Chart(card.querySelector('canvas'), { type: 'line', data: { labels: ys, datasets: sets }, options: { responsive: true, aspectRatio: window.innerWidth < 600 ? 1.3 : 1.6, plugins: { legend: { labels: { boxWidth: 12 } }, tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${Number(c.raw).toFixed(1)}` } } } } }));
+      });
+      return out;
+    }
+
+    function conclude(P, T) {
+      const ul = document.getElementById('anCan');
+      if (!main) return;
+      const nm = NAMES[main];
+      const hi = IDS.filter((id) => (dev(M[id], M[id].val[main]) ?? 50) >= 60).map((id) => M[id].short);
+      const lo = IDS.filter((id) => (dev(M[id], M[id].val[main]) ?? 50) <= 40).map((id) => M[id].short);
+      const li = [];
+      li.push(`${nm}は、この組の${IDS.length}項目のうち、偏差値60以上（全国の中で大きいほう）が${hi.length}項目${hi.length ? `（${hi.join('、')}）` : ''}、40以下（小さいほう）が${lo.length}項目${lo.length ? `（${lo.join('、')}）` : ''}です。残りは全国の中ほどにあります。`);
+      const s = similar(main);
+      li.push(`この組の数字の並びが${nm}に近いのは、${s.map((x) => NAMES[x.c]).join('・')}です。`);
+      for (const q of P) li.push(`${q.p.why.replace(/か。$/, '')}——47都道府県では、相関係数${q.r.toFixed(2)}の${q.dir}${q.word}関係でした。${q.res}`);
+      for (const q of T) if (q.me !== null && q.nat !== null) li.push(q.share
+        ? `${q.m.short}は、${q.y0}年から${q.y1}年にかけて、${nm}が${(q.me - q.me0) >= 0 ? '+' : '−'}${Math.abs(q.me - q.me0).toFixed(1)}ポイント、全国（平均）が${(q.nat - q.nat0) >= 0 ? '+' : '−'}${Math.abs(q.nat - q.nat0).toFixed(1)}ポイント動きました。`
+        : `${q.m.short}は、${q.y0}年を100とすると${q.y1}年に${nm}が${q.me.toFixed(1)}、全国（平均）が${q.nat.toFixed(1)}です。`);
+      ul.innerHTML = li.map((x) => `<li>${x}</li>`).join('');
+    }
+
+    function draw() {
+      chips();
+      if (!main) return;
+      profile();
+      const P = pairs();
+      const T = trends();
+      conclude(P, T);
+    }
+    // 県を選ぶ前でも、散布図は全国の並びで見せておく
+    pairs();
+  })();
+  </script>
+
+  <style is:global>
+    .an { max-width: 980px; margin: 0 auto; padding: 0 16px 56px; }
+    .an > section { padding: 0; }
+    .an-hero { text-align: center; padding: 32px 0 8px; }
+    .an-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .24em; font-size: .74rem; color: #b23a2f; }
+    .an-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .an-lead { color: #555; line-height: 1.9; max-width: 40em; margin: 0 auto; }
+    .an-pick { position: sticky; top: 0; z-index: 5; background: rgba(247,245,239,.95); backdrop-filter: blur(4px); margin: 20px -16px 8px; padding: 12px 16px; border-bottom: 1px solid #e0e0d8; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+    .an-pick label { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: #555; }
+    .an-pick select { padding: 8px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; min-width: 160px; }
+    .an-sim { margin: 0; font-size: .8rem; color: #555; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .an-sim button { font: inherit; font-size: .78rem; padding: 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; cursor: pointer; color: #2d6a4f; }
+    .an-sim button:disabled { opacity: .45; cursor: default; }
+    .an-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; width: 100%; }
+    .an-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .82rem; }
+    .an-chips i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .an-chips button { border: 0; background: none; cursor: pointer; color: #888; font-size: 1rem; min-width: 26px; min-height: 26px; }
+    .an-step { margin: 36px 0 0; padding-top: 18px; border-top: 1px solid #e0e0d8; }
+    .an-step-no { font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .2em; color: #2d6a4f; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+    .an-step-no b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1b4332; color: #fff; letter-spacing: 0; font-size: .8rem; }
+    .an-step h2 { font-family: "Shippori Mincho", serif; font-size: 1.2rem; margin: 0 0 12px; line-height: 1.6; }
+    .an-h3 { font-family: "Shippori Mincho", serif; font-size: 1.02rem; margin: 30px 0 10px; }
+    .an-qs, .an-plan, .an-cautions, .an-can, .an-cannot { margin: 0; padding-left: 1.2em; line-height: 1.95; font-size: .92rem; color: #333; }
+    .an-plan b { color: #1b4332; }
+    .an-cautions { margin-top: 12px; font-size: .82rem; color: #666; }
+    .an-note { font-size: .8rem; color: #666; margin: 0 0 10px; }
+    .an-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; }
+    .an-data { width: 100%; border-collapse: collapse; font-size: .82rem; }
+    .an-data th, .an-data td { padding: 8px 10px; border-bottom: 1px solid #ecece4; text-align: left; vertical-align: top; }
+    .an-data thead th { background: #f6f8f4; color: #1b4332; font-weight: 600; white-space: nowrap; }
+    .an-data tbody th { font-weight: 400; color: #2d6a4f; min-width: 12em; }
+    .an-data td.an-y, .an-data td.an-u { white-space: nowrap; color: #555; }
+    .an-prof { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 6px 14px 10px; }
+    .an-empty { color: #888; text-align: center; padding: 20px 0; margin: 0; }
+    .an-row { display: grid; grid-template-columns: minmax(10em, 1.5fr) minmax(7em, .9fr) minmax(140px, 2fr) 3.2em; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0efe8; font-size: .84rem; }
+    .an-lab { color: #2d6a4f; }
+    .an-lab small, .an-val small { display: block; font-size: .68rem; color: #999; }
+    .an-val { text-align: right; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+    .an-track { position: relative; height: 16px; background: linear-gradient(90deg, #f6f3ea 0 25%, #fbfaf5 25% 75%, #f6f3ea 75%); border-radius: 3px; }
+    .an-mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: #1b4332; opacity: .5; }
+    .an-bar { position: absolute; top: 4px; height: 8px; background: #b23a2f; opacity: .28; border-radius: 2px; }
+    .an-mk { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; transform: translate(-50%, -50%); border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.15); }
+    .an-dev { text-align: right; font-family: "IBM Plex Mono", monospace; color: #b23a2f; font-weight: 600; }
+    .an-scale { display: grid; grid-template-columns: minmax(10em, 1.5fr) minmax(7em, .9fr) minmax(140px, 2fr) 3.2em; gap: 10px; font-size: .66rem; color: #999; padding-top: 4px; }
+    .an-scale span { display: none; }
+    .an-pairs, .an-trends { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .an-pair, .an-trend { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px; }
+    .an-pair-q { margin: 0 0 6px; font-size: .85rem; color: #1b4332; font-weight: 600; }
+    .an-pair-q small { display: block; font-weight: 400; font-size: .7rem; color: #888; }
+    .an-pair-r { margin: 8px 0 0; font-size: .8rem; line-height: 1.8; color: #444; }
+    .an-pair-r b { font-family: "IBM Plex Mono", monospace; color: #b23a2f; }
+    .an-can li, .an-cannot li { margin-bottom: 6px; }
+    .an-cannot { color: #555; }
+    .an-cross { margin-top: 36px; font-size: .88rem; text-align: center; line-height: 1.9; }
+    .an-cross a { color: #b23a2f; }
+    .an-source { margin-top: 28px; font-size: .74rem; color: #888; line-height: 1.8; }
+    @media (max-width: 720px) {
+      .an-pairs, .an-trends { grid-template-columns: 1fr; }
+      .an-row { grid-template-columns: 1fr auto; }
+      .an-track { grid-column: 1 / -1; }
+      .an-dev { grid-column: 2; }
+      .an-scale { display: none; }
+    }
+  </style>
+</BaseLayout>

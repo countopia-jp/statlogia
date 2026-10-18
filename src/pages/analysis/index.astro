@@ -1,0 +1,88 @@
+---
+// =====================================================
+// Countopia Stats - 読み解きの間（目的別の分析の入口）
+// src/pages/analysis/index.astro
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Talk from '../../components/Talk.astro';
+import { THEMES, PLANNED } from '../../data/analysis.js';
+---
+<BaseLayout title="読み解きの間｜目的別の分析｜Countopia Stats" description="教育、暮らしなど、目的を決めて統計を読み解く部屋。国の統計の手引きにならい、問い・計画・データ・分析・結論の順に進めます。" backHref="/" backLabel="玄関">
+  <main class="ai">
+    <header class="ai-hero">
+      <p class="ai-kicker">ANALYSIS</p>
+      <h1>読み解きの間</h1>
+      <p class="ai-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。<br />県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
+    </header>
+
+    <Talk speaker="kei">数字を一つずつ眺めるのと、問いを立ててから組で読むのとでは、見えるものがちがいます。ここでは、総務省統計局の手引きにある「PPDAC」という進め方にならっています。</Talk>
+    <Talk speaker="touko">ぴーぴーでぃーえーしー。呪文みたいね。</Talk>
+
+    <section class="ai-ppdac" aria-label="読み解きの進め方">
+      <ol>
+        <li><b>Problem</b><span>問い</span><em>何を知りたいかを、言葉にする</em></li>
+        <li><b>Plan</b><span>計画</span><em>何と比べ、どの数字を使うかを決める</em></li>
+        <li><b>Data</b><span>データ</span><em>数字の年・単位・素性を確かめる</em></li>
+        <li><b>Analysis</b><span>分析</span><em>位置・関係・伸び方を見る</em></li>
+        <li><b>Conclusion</b><span>結論</span><em>言えることと、言えないことを分ける</em></li>
+      </ol>
+    </section>
+
+    <section class="ai-themes" aria-label="テーマ">
+      {THEMES.map((t) => (
+        <a class="ai-card" href={`/analysis/${t.id}/`}>
+          <span class="ai-card-k">{t.kicker}</span>
+          <span class="ai-card-t">{t.title}</span>
+          <span class="ai-card-q">問い：{t.question}</span>
+          <span class="ai-card-l">{t.lead}</span>
+          <span class="ai-card-n">{t.indicators.length}項目・関係{t.pairs.length}組・伸び方{t.trends.length}項目</span>
+        </a>
+      ))}
+      {PLANNED.map((p) => (
+        <div class="ai-card ai-card--soon">
+          <span class="ai-card-k">PREPARING</span>
+          <span class="ai-card-t">{p.title}</span>
+          <span class="ai-card-l">{p.note}</span>
+        </div>
+      ))}
+    </section>
+
+    <section class="ai-rule" aria-label="この部屋の決まり">
+      <h2>点数はつけません</h2>
+      <p>いくつもの項目を足しあわせた「総合点」や「暮らしやすさランキング」は作りません。どの項目をどれだけ重く見るかで順位はいくらでも動き、県に点数をつけることになるからです。並べた数字から何を読み取るかは、読む人にお任せします。そのかわり、各テーマの最後に「この数字からは言えないこと」を書いています。</p>
+    </section>
+
+    <footer class="ai-source"><p>分析の進め方は、総務省統計局 統計データ利活用センター『データ利活用実践ガイドブック EBPMのための』のPPDACサイクルにならっています。数字は各窓口の出典のとおりです。</p></footer>
+  </main>
+  <style>
+    .ai { max-width: 980px; margin: 0 auto; padding: 0 16px 56px; }
+    .ai > section { padding: 0; }
+    .ai-hero { text-align: center; padding: 32px 0 8px; }
+    .ai-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .76rem; color: #b23a2f; }
+    .ai-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
+    .ai-lead { color: #555; line-height: 1.9; }
+    .ai-ppdac { margin: 28px 0 8px; }
+    .ai-ppdac ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; counter-reset: s; }
+    .ai-ppdac li { counter-increment: s; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px 10px; text-align: center; position: relative; }
+    .ai-ppdac li::before { content: counter(s); display: grid; place-items: center; width: 22px; height: 22px; margin: 0 auto 6px; border-radius: 50%; background: #1b4332; color: #fff; font-size: .74rem; }
+    .ai-ppdac b { display: block; font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .1em; color: #b23a2f; }
+    .ai-ppdac span { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem; margin: 2px 0 4px; }
+    .ai-ppdac em { display: block; font-style: normal; font-size: .74rem; color: #666; line-height: 1.6; }
+    @media (max-width: 720px) { .ai-ppdac ol { grid-template-columns: 1fr; } .ai-ppdac li { display: grid; grid-template-columns: 26px 7em 1fr; align-items: center; gap: 8px; text-align: left; } .ai-ppdac li::before { margin: 0; } }
+    .ai-themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 32px 0 0; }
+    @media (max-width: 720px) { .ai-themes { grid-template-columns: 1fr; } }
+    .ai-card { display: flex; flex-direction: column; gap: 8px; padding: 18px 20px; border: 1px solid #c9d3c6; border-left: 5px solid #1b4332; border-radius: 10px; background: #fffdf7; color: inherit; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+    a.ai-card:hover, a.ai-card:focus-visible { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(30,40,30,.1); }
+    .ai-card-k { font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .24em; color: #b23a2f; }
+    .ai-card-t { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.25rem; color: #1b4332; }
+    .ai-card-q { font-size: .88rem; color: #1b4332; line-height: 1.7; }
+    .ai-card-l { font-size: .84rem; color: #555; line-height: 1.8; }
+    .ai-card-n { font-family: "IBM Plex Mono", monospace; font-size: .72rem; color: #888; }
+    .ai-card--soon { border-left-color: #c9d3c6; background: #f8f7f2; }
+    .ai-card--soon .ai-card-t { color: #6b7a70; }
+    .ai-rule { margin: 36px 0 0; padding: 18px 20px; border: 1px dashed #c9d3c6; border-radius: 10px; }
+    .ai-rule h2 { font-family: "Shippori Mincho", serif; font-size: 1.05rem; margin: 0 0 8px; }
+    .ai-rule p { font-size: .88rem; line-height: 1.95; color: #444; margin: 0; }
+    .ai-source { margin-top: 28px; font-size: .74rem; color: #888; line-height: 1.8; }
+  </style>
+</BaseLayout>
