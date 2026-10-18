@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="小さな町の1位は、あてにならない｜統計の歩き方 - Countopia Stats" description="人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロット、見込みの数との比、経験ベイズ推定の読み方。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/small-towns-large.webp" alt="山あいの村と遠くの町を見下ろす丘の上の机で、大きな升と、豆がこぼれる小さな升を橙子がのぞきこむ水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
-      <h1>小さな町の1位は、あてにならない</h1>
-    </header>
+      <h1><span class="nw">小さな町の1位は、</span><span class="nw">あてにならない</span></h1>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、人口10万人あたりの順位を見たら、上のほうに知らない小さな村ばかり並んでいるの。

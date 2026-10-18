@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="伸び方は、そろえてから比べる｜統計の歩き方 - Countopia Stats" description="大きさのちがう地域の移りかわりは、最初の年を100にそろえて比べます。年平均の伸び率と、割合の「ポイント」の読み方。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/growth-large.webp" alt="窓辺の白木の机で、大きさのちがう二つの鉢植えの若木の横に紙の帯を置き、京が物差しを当てて測る水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
-      <h1>伸び方は、そろえてから比べる</h1>
-    </header>
+      <h1><span class="nw">伸び方は、</span><span class="nw">そろえてから比べる</span></h1>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、二つの町の移りかわりを重ねてみたら、小さいほうの町の線がぺたんと寝てしまったわ。

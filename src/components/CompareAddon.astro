@@ -33,6 +33,7 @@ const word = isPref ? '県' : '市区町村';
     <label><span>都道府県</span><select class="cmpx-pref"><option value="">{isPref ? '足す県を選ぶ' : '選んでください'}</option></select></label>
     {!isPref && <label><span>市区町村</span><select class="cmpx-town" disabled><option value="">まず都道府県を選ぶ</option></select></label>}
   </div>
+  <p class="cmpx-sim" hidden></p>
   <ul class="cmpx-chips"></ul>
   <div class="cmpx-wrap" hidden><table class="cmpx-table"></table></div>
   <p class="cmpx-note cmpx-foot" hidden>順位は{isPref ? '47都道府県の中' : '全国の市区町村の中'}での、値の大きい順の順位です。</p>
@@ -170,6 +171,39 @@ const word = isPref ? '県' : '市区町村';
       });
       cTown.addEventListener('change', () => { add(cTown.value); cTown.value = ''; });
     }
+    // 10-18 似た地域：県は人口の規模だけ、市区町村は総務省の類似団体にならい「人口＋産業の構成（第2次＋第3次の割合、第3次の割合）」で近い順に4つ
+    let SIM_IND = null;
+    if (!isPref) fetch('/data/room-town-work.json').then((r) => r.json()).then((W) => {
+      const k2 = W.indicators.findIndex((i) => i.key === 'secondary'), k3 = W.indicators.findIndex((i) => i.key === 'tertiary');
+      if (k2 < 0 || k3 < 0) return;
+      const last = (arr) => { if (!arr) return null; for (let i = arr.length - 1; i >= 0; i--) if (typeof arr[i] === 'number') return arr[i]; return null; };
+      SIM_IND = {};
+      for (const a of W.areas) { const s2 = last(a.v.secondary), s3 = last(a.v.tertiary); if (s2 !== null && s3 !== null) SIM_IND[a.c] = { s23: s2 + s3, s3 }; }
+      SIM_IND.__year = W.indicators[k3].yearLabels.at(-1);
+      SIM_HOOK();
+    }).catch(() => {});
+    function simNear(cur, pool, pop) {
+      const p0 = pop && pop[cur.c];
+      if (!p0) return null;
+      const cand = pool.filter((b) => !b.x && b.c !== cur.c && pop[b.c] > 0);
+      const me = SIM_IND && SIM_IND[cur.c];
+      if (isPref || !me) return { list: cand.map((b) => ({ b, d: Math.abs(Math.log(pop[b.c] / p0)) })).sort((x, y) => x.d - y.d).slice(0, 4).map((x) => x.b), withInd: false };
+      // それぞれの物差しを市区町村全体の標準偏差でそろえてから距離をとる
+      const rows = cand.filter((b) => SIM_IND[b.c]).map((b) => ({ b, lp: Math.log(pop[b.c]), s23: SIM_IND[b.c].s23, s3: SIM_IND[b.c].s3 }));
+      const sd = (k) => { const v = rows.map((r) => r[k]); const m = v.reduce((s, x) => s + x, 0) / v.length; return Math.sqrt(v.reduce((s, x) => s + (x - m) ** 2, 0) / v.length) || 1; };
+      const S = { lp: sd('lp'), s23: sd('s23'), s3: sd('s3') };
+      const lp0 = Math.log(p0);
+      const list = rows.map((r) => ({ b: r.b, d: Math.hypot((r.lp - lp0) / S.lp, (r.s23 - me.s23) / S.s23, (r.s3 - me.s3) / S.s3) })).sort((x, y) => x.d - y.d).slice(0, 4).map((x) => x.b);
+      return { list, withInd: true };
+    }
+    function simHtml(near, full, compare, nameOf, pop) {
+      const head = near.withInd ? '人口と産業の構成が近い市区町村' : `人口の規模が近い${isPref ? '県' : '市区町村'}`;
+      return `<span>${head}：</span>` + near.list.map((b) => {
+        const sub = near.withInd ? `${Math.round(pop[b.c]).toLocaleString('ja-JP')}人・第3次${SIM_IND[b.c].s3.toFixed(0)}％` : `${Math.round(pop[b.c]).toLocaleString('ja-JP')}人`;
+        return `<button type="button" data-c="${b.c}"${full || compare.some((x) => x.c === b.c) ? ' disabled' : ''}>${nameOf(b)}<small>${sub}</small></button>`;
+      }).join('');
+    }
+    const SIM_HOOK = () => { if (current) render(); };
     function add(code) {
       const a = byCode[code];
       if (!a || !current || a.c === current.c || compare.some((b) => b.c === a.c) || compare.length >= MAXCMP) return;
@@ -191,6 +225,13 @@ const word = isPref ? '県' : '市区町村';
       const full = compare.length >= MAXCMP;
       cPref.disabled = full;
       if (cTown) cTown.disabled = full || !cPref.value;
+      const simBox = sec.querySelector('.cmpx-sim');
+      const near = simBox ? simNear(current, AREAS, POP) : null;
+      if (simBox && near && near.list.length) {
+        simBox.hidden = false;
+        simBox.innerHTML = simHtml(near, full, compare, nameOf, POP);
+        simBox.querySelectorAll('button').forEach((bt) => bt.addEventListener('click', () => add(bt.dataset.c)));
+      } else if (simBox) simBox.hidden = true;
       const chips = sec.querySelector('.cmpx-chips');
       chips.innerHTML = '';
       const all = [current, ...compare];
@@ -252,6 +293,11 @@ const word = isPref ? '県' : '市区町村';
 </script>
 
 <style is:global>
+  .cmpx-sim { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; margin: 4px 0 10px; font-size: .8rem; color: #555; }
+  .cmpx-sim button { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; color: #1b4332; font-size: .8rem; cursor: pointer; line-height: 1.3; }
+  .cmpx-sim button small { font-size: .64rem; color: #888; }
+  .cmpx-sim button:hover:not(:disabled) { border-color: #1b4332; background: #f6f8f4; }
+  .cmpx-sim button:disabled { opacity: .45; cursor: default; }
   .cmpx { max-width: 860px; margin: 40px auto 0; }
   .cmpx h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
   .cmpx-note { text-align: center; font-size: .82rem; color: #666; line-height: 1.8; margin: 0 0 12px; }

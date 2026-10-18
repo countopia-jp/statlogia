@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="町の得意を測る物差し｜統計の歩き方 - Countopia Stats" description="働く人の割合を全国とくらべる「特化係数」の読み方。割合の大きさと、かたよりの大きさは別のもの。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/specialization-large.webp" alt="瓦屋根の町並みを高いところから見た水彩画。八百屋、町工場、旅館、本屋が並び、町工場の大きな建物が続く通りを京と橙子が歩く" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
-      <h1>町の得意を測る物差し</h1>
-    </header>
+      <h1><span class="nw">町の得意を</span><span class="nw">測る物差し</span></h1>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、この町は医療・福祉で働く人が13％もいて、情報通信業で働く人は1％にも届かないんですって。医療・福祉で働く人の多い町、ということかしら。

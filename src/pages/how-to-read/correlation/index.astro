@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="二つの数字が、そろって動くとき｜統計の歩き方 - Countopia Stats" description="散布図、相関係数、回帰直線、残差の読み方。そろって動くことと、理由になっていることは別のもの。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/correlation-large.webp" alt="縁側のある庭で、背の高さのちがう向日葵と大きさのちがうじょうろが並び、いちばん背の高い向日葵を橙子が見上げる水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
-      <h1>二つの数字が、そろって動くとき</h1>
-    </header>
+      <h1><span class="nw">二つの数字が、</span><span class="nw">そろって動くとき</span></h1>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、見くらべの間で二つの項目を並べたら、点がきれいに右上がりに並んだの。図書館の多い県ほど、病院も多いのですって。

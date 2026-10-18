@@ -12,7 +12,7 @@ export function getStaticPaths() {
   return THEMES.map((t) => ({ params: { theme: t.id }, props: { t } }));
 }
 const { t } = Astro.props;
-const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.lq || null };
+const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.lq || null, ss: !!t.shiftShare };
 ---
 <BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
@@ -45,6 +45,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         <li><b>似た県</b>：この組の項目の偏差値の並びがいちばん近い県を、計算で3つ挙げます（標準化した値どうしの距離が近い県）。似た県と見くらべると、全国と比べるだけでは見えない差が分かります。</li>
         <li><b>関係</b>：組の中の二つの項目を散布図に置き、相関係数と回帰直線で、そろって動くかを確かめます。</li>
         {t.lq && <li><b>特化係数</b>：業種ごとに「県の割合÷全国の割合」を、生み出した額（純付加価値額）と働く人の両方で出し、1人あたりの額も全国を1としてくらべます（地域経済分析システム RESAS の「稼ぐ力分析」と同じ見方です）。</li>}
+        {t.shiftShare && <li><b>増減の分解（シフトシェア分析）</b>：2016年から2021年に働く人が増えた（減った）分を、「全国の流れ」「産業の構成」「地域の分」の3つに分けます。産業の構成は、全国で伸びた業種を多く持っていたかどうか、地域の分は、同じ業種でも全国より伸びたかどうかを示します。</li>}
         {t.trends.length > 0 && <li><b>時間</b>：毎年の数字がある項目は、最初の年を100にそろえて、全国と伸び方をくらべます。</li>}
       </ul>
     </section>
@@ -68,6 +69,12 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         <h3 class="an-h3">稼ぐ力の見取り図（特化係数）</h3>
         <p class="an-note">業種ごとに、全国の割合を1としたときの倍率です。<b class="an-lqk an-lqk--va">額</b>は生み出した額（純付加価値額）、<b class="an-lqk an-lqk--wk">人</b>は働く人、<b class="an-lqk an-lqk--pr">1人</b>は働く人1人あたりの額。縦の線が1（全国と同じ）です。生み出した額の倍率が大きい順に並べています。</p>
         <div class="an-lq" id="anLq"><p class="an-empty">県を選ぶと、ここに業種ごとの特化係数が出ます。</p></div>
+      </>}
+
+      {t.shiftShare && <>
+        <h3 class="an-h3">働く人の増減を分ける（シフトシェア分析）</h3>
+        <p class="an-note">2016年から2021年にかけての、県の事業所で働く人の増減を3つに分けます。<b class="an-lqk an-ssk--n">全国</b>は全国と同じ割合で増えたとしたときの分、<b class="an-lqk an-ssk--m">構成</b>は業種の顔ぶれによる分、<b class="an-lqk an-ssk--r">地域</b>はそれ以外（同じ業種でも全国より伸びた・伸びなかった分）です。</p>
+        <div class="an-ss" id="anSS"><p class="an-empty">県を選ぶと、ここに増減の分け方が出ます。</p></div>
       </>}
 
       <h3 class="an-h3">二つの項目の関係</h3>
@@ -266,7 +273,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       return out;
     }
 
-    function conclude(P, T, Q) {
+    function conclude(P, T, Q, SSr) {
       const ul = document.getElementById('anCan');
       if (!main) return;
       const nm = NAMES[main];
@@ -283,6 +290,11 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         else li.push(`${nm}には、生み出した額の特化係数が1.2以上の業種はなく、業種の割合は全国に近い並びです。`);
         if (both.length) li.push(`生み出した額と働く人の両方で特化係数が1を超えるのは、${both.join('、')}です。`);
         if (typeof Q.allPr === 'number') li.push(`全産業の1人あたりの額は、全国を1とすると${Q.allPr.toFixed(2)}です。`);
+      }
+      if (SSr) {
+        const fp = (v) => `${v >= 0 ? '+' : '−'}${Math.abs((v / SSr.E0) * 100).toFixed(1)}％`;
+        li.push(`2016年から2021年の働く人の増減（${fp(SSr.E1 - SSr.E0)}）を分けると、全国の流れが${fp(SSr.ns)}、産業の構成が${fp(SSr.im)}、地域の分が${fp(SSr.rs)}でした。`);
+        li.push(`地域の分が大きかったのは${SSr.up.map((r) => r.n).join('、')}、小さかったのは${SSr.down.map((r) => r.n).join('、')}です。`);
       }
       for (const q of P) li.push(`${q.p.why.replace(/か。$/, '')}——47都道府県では、相関係数${q.r.toFixed(2)}の${q.dir}${q.word}関係でした。${q.res}`);
       for (const q of T) if (q.me !== null && q.nat !== null) li.push(q.share
@@ -316,14 +328,49 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       return { rows, allPr };
     }
 
+    // ---- シフトシェア分析（事業従事者数、2016→2021） ----
+    let SS = null;
+    if (CFG.ss) { try { SS = await (await fetch('/data/shift-share.json')).json(); } catch (e) { SS = null; } }
+    function ssView() {
+      const box = document.getElementById('anSS');
+      if (!box || !SS || !main) return null;
+      const n = SS.industries.length;
+      const sum = (arr) => arr.reduce((s, x) => s + (typeof x === 'number' ? x : 0), 0);
+      const N0 = SS.industries.map((_, i) => sum(SS.areas.map((a) => a.e0[i])));
+      const N1 = SS.industries.map((_, i) => sum(SS.areas.map((a) => a.e1[i])));
+      const gN = sum(N1) / sum(N0) - 1;
+      const a = SS.areas.find((x) => x.c === main);
+      if (!a) return null;
+      let ns = 0, im = 0, rs = 0;
+      const rows = SS.industries.map((ind, i) => {
+        const e0 = a.e0[i] || 0, e1 = a.e1[i] || 0;
+        const gi = N0[i] > 0 ? N1[i] / N0[i] - 1 : 0;
+        const r = { n: ind.n, e0, e1, d: e1 - e0, ns: e0 * gN, im: e0 * (gi - gN), rs: e1 - e0 * (1 + gi) };
+        ns += r.ns; im += r.im; rs += r.rs; return r;
+      });
+      const E0 = sum(a.e0), E1 = sum(a.e1);
+      const pct = (v) => ((v / E0) * 100);
+      const f = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(Math.round(v)).toLocaleString('ja-JP')}人`;
+      const fp = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(pct(v)).toFixed(1)}％`;
+      const mx = Math.max(Math.abs(pct(ns)), Math.abs(pct(im)), Math.abs(pct(rs)), Math.abs(pct(E1 - E0)), 1);
+      const bar = (v, cls, label) => { const w = (Math.abs(pct(v)) / mx) * 50; return `<div class="an-ssr"><span class="an-ssl">${label}</span><span class="an-sst"><span class="an-ssmid"></span><i class="${cls}" style="${v >= 0 ? `left:50%` : `right:50%`};width:${w}%"></i></span><b>${fp(v)}</b><small>${f(v)}</small></div>`; };
+      const top = [...rows].sort((x, y) => y.rs - x.rs);
+      const pick = (arr) => arr.map((r) => `<li><span>${r.n}</span><b>${f(r.rs)}</b><small>${r.e0.toLocaleString('ja-JP')}→${r.e1.toLocaleString('ja-JP')}人</small></li>`).join('');
+      box.innerHTML = `<div class="an-ssbars">${bar(E1 - E0, 'an-ssb--t', '増減の合計')}${bar(ns, 'an-ssb--n', '全国の流れ')}${bar(im, 'an-ssb--m', '産業の構成')}${bar(rs, 'an-ssb--r', '地域の分')}</div>
+        <p class="an-ssnote">${SS.y0}の${E0.toLocaleString('ja-JP')}人から、${SS.y1}の${E1.toLocaleString('ja-JP')}人へ。全国は${(gN * 100).toFixed(1)}％の増え方でした。割合は${SS.y0}の人数に対するものです。</p>
+        <div class="an-sslists"><div><h4>地域の分が大きかった業種</h4><ol>${pick(top.slice(0, 3))}</ol></div><div><h4>地域の分が小さかった業種</h4><ol>${pick(top.slice(-3).reverse())}</ol></div></div>`;
+      return { ns, im, rs, E0, E1, gN, up: top.slice(0, 2), down: top.slice(-2).reverse() };
+    }
+
     function draw() {
       chips();
       if (!main) return;
       profile();
       const Q = lqView();
+      const SSr = ssView();
       const P = pairs();
       const T = trends();
-      conclude(P, T, Q);
+      conclude(P, T, Q, SSr);
     }
     // 県を選ぶ前でも、散布図は全国の並びで見せておく
     pairs();
@@ -331,6 +378,27 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
   </script>
 
   <style is:global>
+    .an-ss { margin: 8px 0 20px; }
+    .an-ssbars { display: flex; flex-direction: column; gap: 6px; }
+    .an-ssr { display: grid; grid-template-columns: 7em 1fr 5em 7.5em; gap: 10px; align-items: center; font-size: .86rem; }
+    .an-ssl { color: #1b4332; font-weight: 700; }
+    .an-sst { position: relative; height: 16px; background: #f4f1e8; border-radius: 3px; }
+    .an-ssmid { position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1.5px dashed #555; }
+    .an-sst i { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+    .an-ssr b { font-family: "IBM Plex Mono", monospace; text-align: right; }
+    .an-ssr small { font-family: "IBM Plex Mono", monospace; color: #777; font-size: .74rem; text-align: right; }
+    .an-ssb--t, .an-ssk--t { background: #555; }
+    .an-ssb--n, .an-ssk--n { background: #8a9a8f; }
+    .an-ssb--m, .an-ssk--m { background: #4a6fa5; }
+    .an-ssb--r, .an-ssk--r { background: #b23a2f; }
+    .an-ssnote { font-size: .78rem; color: #666; margin: 8px 0 12px; }
+    .an-sslists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .an-sslists h4 { margin: 0 0 6px; font-size: .86rem; color: #1b4332; }
+    .an-sslists ol { margin: 0; padding-left: 1.4em; font-size: .84rem; }
+    .an-sslists li { margin: 3px 0; }
+    .an-sslists li b { font-family: "IBM Plex Mono", monospace; margin-left: 8px; }
+    .an-sslists li small { display: block; color: #888; font-size: .72rem; }
+    @media (max-width: 600px) { .an-ssr { grid-template-columns: 6em 1fr 4.5em; } .an-ssr small { display: none; } .an-sslists { grid-template-columns: 1fr; } }
     .an-lq { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 20px; }
     .an-lqr { display: grid; grid-template-columns: 13em 1fr; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e0dccf; }
     .an-lqn { font-size: .86rem; font-weight: 700; color: #1b4332; line-height: 1.4; }

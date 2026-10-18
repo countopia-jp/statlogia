@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="10位は、近いのか遠いのか｜統計の歩き方 - Countopia Stats" description="順位だけでは、差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/position-large.webp" alt="明るい座敷で、高さ順に一列に立てた竹の物差しのなかほどの1本を、京が指でそっと示す水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
-      <h1>10位は、近いのか遠いのか</h1>
-    </header>
+      <h1><span class="nw">10位は、</span><span class="nw">近いのか遠いのか</span></h1>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、帳面に「10位」とあったわ。1位とは、ずいぶん離れているのでしょう？
