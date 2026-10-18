@@ -1,9 +1,9 @@
 ---
 // =====================================================
-// Countopia Stats - くらべる台（窓口をまたいで、項目を並べる）
+// Countopia Stats - 見くらべの間（窓口をまたいで、項目を並べる）※10-18 「くらべる台」から改名し、閲覧室から独立（玄関の別館の札の横に置く）
 // src/pages/compare/index.astro
 //
-// 共通エンジンで動く本館の県の窓口（scope:'pref'、別館は除く）から、項目を4つまで選び、
+// 共通エンジンで動く県の窓口（scope:'pref'。10-18から別館の窓口も「別館｜棚」として含める）から、項目を4つまで選び、
 // 47都道府県の値と順位を一つの表に並べる。データは各窓口の /data/room-<id>.json を画面で読む。
 // 並べるだけで、理由や良し悪しは言わない（並びが似ていても因果とはかぎらない、と京が断る）。
 // =====================================================
@@ -12,20 +12,22 @@ import Talk from '../../components/Talk.astro';
 import { ROOMS } from '../../data/rooms/index.js';
 const SHELF_ORDER = ['人と住まい', '近くにあるもの', '働く・通う・暮らす', '空と大地', '仕事と産業', 'わが町をくわしく', '学校と学び', '文化と余暇'];
 const rooms = Object.values(ROOMS)
-  .filter((r) => r.scope === 'pref' && !r.annex)
-  .map((r) => ({ id: r.id, title: r.title, shelf: r.shelf || 'そのほか' }));
-const shelves = [...new Set([...SHELF_ORDER, ...rooms.map((r) => r.shelf)])].filter((s) => rooms.some((r) => r.shelf === s));
+  .filter((r) => r.scope === 'pref')
+  .map((r) => ({ id: r.id, title: r.title, shelf: r.annex ? `別館｜${r.shelf || '暮らしの台帳'}` : r.shelf || 'そのほか' }));
+const shelves = [...new Set([...SHELF_ORDER, ...rooms.map((r) => r.shelf)])]
+  .filter((s) => rooms.some((r) => r.shelf === s))
+  .sort((a, b) => Number(a.startsWith('別館')) - Number(b.startsWith('別館')));
 const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shelf === s) }));
 ---
-<BaseLayout title="くらべる台｜Countopia Stats" description="閲覧室の窓口をまたいで、気温・住まい・医療などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べてくらべる台です。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="見くらべの間｜Countopia Stats" description="閲覧室と別館の窓口をまたいで、気温・住まい・医療・家計などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べて見くらべる部屋です。" backHref="/" backLabel="玄関">
   <main class="cp">
     <header class="cp-hero">
-      <p class="cp-kicker">閲覧室｜くらべる台</p>
-      <h1>くらべる台</h1>
+      <p class="cp-kicker">COMPARE</p>
+      <h1>見くらべの間</h1>
       <p class="cp-lead">窓口をまたいで、項目を4つまで選び、<br />47都道府県の値と順位を一つの表に並べます。</p>
     </header>
 
-    <Talk speaker="kei">窓口ごとの帳面から、ちがう項目を同じ表に写して並べる台です。項目を選ぶと、47都道府県の値と順位が横に並びます。</Talk>
+    <Talk speaker="kei">窓口ごとの帳面から、ちがう項目を同じ表に写して並べる部屋です。別館の台帳の項目も選べます。項目を選ぶと、47都道府県の値と順位が横に並びます。</Talk>
     <Talk speaker="touko">わたくしの頃は、帳面を何冊も机に広げて、指でたどってくらべたものよ。</Talk>
     <Talk speaker="kei">並べると、よく似た並びの項目が見つかることもあります。ただ、並びが似ていても、片方がもう片方の理由とはかぎりません。</Talk>
 
@@ -47,6 +49,12 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     </section>
 
     <section class="cp-opts" aria-label="表の見かた">
+      <label><span>表に出す値</span><select id="cpMode">
+        <option value="value">値と順位</option>
+        <option value="pc">数の項目は人口あたりに</option>
+        <option value="dev">偏差値</option>
+        <option value="pct">上位◯％</option>
+      </select></label>
       <label><span>色をつける県</span><select id="cpMine"><option value="">選ばない</option></select></label>
       <button type="button" id="cpClear" class="cp-btn">選んだ項目を外す</button>
     </section>
@@ -57,11 +65,25 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     </div>
     <p class="cp-note" id="cpNote" hidden>見出しの項目名を押すと、その項目の値の順に並べかえます（もう一度押すと逆の順）。都道府県の見出しを押すと、北から順にもどります。順位は47都道府県の中での順位で、同じ値は同じ順位です。項目ごとに、いちばん新しい年の値です。</p>
 
-    <p class="cp-cross">あわせて見る：<a href="/dashboard/">閲覧室の窓口の一覧</a>｜<a href="/search/">たずね窓口</a>｜<a href="/how-to-read/">統計の歩き方</a></p>
+    <section class="cp-sc" id="cpSc" hidden aria-label="二つの項目の関係">
+      <h2>二つの項目の関係を見る</h2>
+      <p class="cp-sc-lead">選んだ項目のうち二つを、横と縦にとって47都道府県を点で並べます。右上がりなら「一方が大きい県ほど、もう一方も大きい」傾向、右下がりならその逆です。</p>
+      <div class="cp-sc-sel">
+        <label><span>横の軸</span><select id="cpScX"></select></label>
+        <label><span>縦の軸</span><select id="cpScY"></select></label>
+      </div>
+      <div class="cp-sc-chart"><canvas id="cpScChart" height="300"></canvas></div>
+      <p class="cp-sc-read" id="cpScRead"></p>
+      <div class="cp-sc-res" id="cpScRes"></div>
+      <p class="cp-note">斜めの線は、横の値から縦の値をいちばんよく言い当てる直線（最小二乗法による回帰直線）です。相関係数は−1から1の値で、1に近いほど右上がり、−1に近いほど右下がりにそろって並び、0に近いほど関係が見えないことを表します。「直線から見た差」は、横の値から見込まれる縦の値と、実際の値との差（残差）です。二つの項目がそろって動いていても、片方がもう片方の理由とはかぎりません。人口の多さなど、別のものが両方を動かしていることがあります。</p>
+    </section>
+
+    <p class="cp-cross">あわせて見る：<a href="/dashboard/">閲覧室の窓口の一覧</a>｜<a href="/search/">たずね窓口</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/">統計の歩き方</a></p>
     <footer class="cp-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」ほか）。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
   </main>
 </BaseLayout>
 
+<script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script is:inline>
 (function () {
   const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5'];
@@ -119,17 +141,110 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     const s = a && a.v[p.ind.key];
     return s ? s[L(p.ind)] : null;
   }
+  // 10-18 人口あたり（数の項目だけ。窓口のデータに総人口があるとき）
+  const hasPc = (p) => !!(p.ind.perCap && p.D.pop);
+  const pcRaw = (p, code) => { const v = valOf(p, code); const n = p.D.pop && p.D.pop[code]; if (v === null || v === undefined || !n) return null; return p.ind.perCap === 'man' ? (v * 1e4) / n : (v / n) * 1e5; };
+  // 見せ方は窓口と同じ：人口10万人あたりが大きすぎる項目は、人の数なら「人口に対する割合」、それ以外は「1人あたり」に直す
+  const PCK = {};
+  const pcKind = (p) => {
+    const k = `${p.room}~${p.ind.key}`;
+    if (PCK[k]) return PCK[k];
+    if (p.ind.perCap === 'man') return (PCK[k] = { f: 1, label: '1人あたり・万円' });
+    const vs = p.D.areas.filter((a) => !a.x).map((a) => pcRaw(p, a.c)).filter((v) => v !== null).sort((x, y) => x - y);
+    const med = vs.length ? vs[Math.floor(vs.length / 2)] : 0;
+    if (p.ind.unit === '人' && med >= 1000) return (PCK[k] = { f: 1 / 1000, label: '人口に対する割合・％' });
+    if (med >= 100000) return (PCK[k] = { f: 1e-5, label: `1人あたり・${p.ind.unit}` });
+    return (PCK[k] = { f: 1, label: `人口10万人あたり・${p.ind.unit}` });
+  };
+  const pcVal = (p, code) => { const v = pcRaw(p, code); return v === null ? null : v * pcKind(p).f; };
+  const pcLabel = (p) => pcKind(p).label;
+  const modeSel = document.getElementById('cpMode');
+  modeSel.addEventListener('change', draw);
+  // その列で使う値：人口あたりを選んでいて数の項目なら人口あたり、そうでなければ値そのもの
+  const useVal = (c, code) => (modeSel.value !== 'value' && hasPc(c) ? pcVal(c, code) : valOf(c, code));
+  const statsOf = (c) => {
+    const vs = prefList.map((p) => useVal(c, p.c)).filter((v) => v !== null && v !== undefined);
+    const n = vs.length, mean = vs.reduce((s, v) => s + v, 0) / (n || 1);
+    const sd = Math.sqrt(vs.reduce((s, v) => s + (v - mean) ** 2, 0) / (n || 1));
+    const skew = sd > 0 ? vs.reduce((s, v) => s + ((v - mean) / sd) ** 3, 0) / n : 0;
+    return { vs, n, mean, sd, skew };
+  };
+  const fmtPc = (v) => (v === null || v === undefined ? '—' : v.toLocaleString('ja-JP', { maximumFractionDigits: Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2, minimumFractionDigits: Math.abs(v) >= 100 ? 0 : Math.abs(v) >= 10 ? 1 : 2 }));
+  // ---- 10-18 散布図・相関係数・回帰直線・残差（直線から見た差） ----
+  const scSec = document.getElementById('cpSc');
+  const scX = document.getElementById('cpScX');
+  const scY = document.getElementById('cpScY');
+  let scChart = null;
+  let scKeys = '';
+  scX.addEventListener('change', () => drawScatter(lastCols));
+  scY.addEventListener('change', () => drawScatter(lastCols));
+  let lastCols = [];
+  function drawScatter(cols) {
+    lastCols = cols;
+    if (cols.length < 2) { scSec.hidden = true; if (scChart) { scChart.destroy(); scChart = null; } return; }
+    scSec.hidden = false;
+    const keys = cols.map((c) => c.k).join(',');
+    if (keys !== scKeys) {
+      const opts = cols.map((c, j) => `<option value="${j}">${c.ind.label}</option>`).join('');
+      const px = scX.value, py = scY.value;
+      scX.innerHTML = opts; scY.innerHTML = opts;
+      scX.value = px !== '' && cols[px] ? px : '0';
+      scY.value = py !== '' && cols[py] && py !== scX.value ? py : '1';
+      scKeys = keys;
+    }
+    const cx = cols[Number(scX.value)], cy = cols[Number(scY.value)];
+    const lab = (c) => c.ind.label + (modeSel.value !== 'value' && hasPc(c) ? `（${pcLabel(c)}）` : c.ind.unit ? `（${c.ind.unit}）` : '');
+    const pts = prefList.map((p) => ({ p, x: useVal(cx, p.c), y: useVal(cy, p.c) })).filter((d) => d.x !== null && d.x !== undefined && d.y !== null && d.y !== undefined);
+    const n = pts.length;
+    const mx = pts.reduce((s, d) => s + d.x, 0) / n, my = pts.reduce((s, d) => s + d.y, 0) / n;
+    const sxx = pts.reduce((s, d) => s + (d.x - mx) ** 2, 0), syy = pts.reduce((s, d) => s + (d.y - my) ** 2, 0), sxy = pts.reduce((s, d) => s + (d.x - mx) * (d.y - my), 0);
+    const rr = sxx > 0 && syy > 0 ? sxy / Math.sqrt(sxx * syy) : 0;
+    const b = sxx > 0 ? sxy / sxx : 0, a = my - b * mx;
+    const xs = pts.map((d) => d.x);
+    const x0 = Math.min(...xs), x1 = Math.max(...xs);
+    const mine = mineSel.value;
+    const same = cx === cy;
+    if (scChart) scChart.destroy();
+    scChart = new Chart(document.getElementById('cpScChart'), {
+      type: 'scatter',
+      data: { datasets: [
+        { label: '47都道府県', data: pts.map((d) => ({ x: d.x, y: d.y, n: d.p.n })), backgroundColor: pts.map((d) => (d.p.c === mine ? '#b23a2f' : 'rgba(27,67,50,.45)')), pointRadius: pts.map((d) => (d.p.c === mine ? 7 : 4)), pointHoverRadius: 7 },
+        ...(same ? [] : [{ type: 'line', label: '回帰直線', data: [{ x: x0, y: a + b * x0 }, { x: x1, y: a + b * x1 }], borderColor: '#c99a2e', borderWidth: 2, pointRadius: 0 }]),
+      ] },
+      options: {
+        responsive: true, aspectRatio: window.innerWidth < 600 ? 1 : 1.6, parsing: true,
+        plugins: { legend: { display: false }, tooltip: { filter: (it) => it.datasetIndex === 0, callbacks: { label: (c) => `${c.raw.n}：横 ${Number(c.raw.x).toLocaleString('ja-JP')}、縦 ${Number(c.raw.y).toLocaleString('ja-JP')}` } } },
+        scales: { x: { title: { display: true, text: lab(cx) } }, y: { title: { display: true, text: lab(cy) } } },
+      },
+    });
+    const read = document.getElementById('cpScRead');
+    const res = document.getElementById('cpScRes');
+    if (same) { read.textContent = '横と縦に、ちがう項目を選んでください。'; res.innerHTML = ''; return; }
+    const ar = Math.abs(rr);
+    const word = ar >= 0.7 ? '強い' : ar >= 0.4 ? 'はっきりした' : ar >= 0.2 ? '弱い' : 'ほとんど見えない';
+    const dir = ar < 0.2 ? '' : rr > 0 ? '右上がりの' : '右下がりの';
+    read.innerHTML = `相関係数 <b>${rr.toFixed(2)}</b>（${n}都道府県）。${dir}${word}関係です。横の値で、縦の値のちらばりの <b>${Math.round(rr * rr * 100)}％</b> を言い当てられる計算です（決定係数 ${(rr * rr).toFixed(2)}）。`;
+    const resid = pts.map((d) => ({ n: d.p.n, c: d.p.c, e: d.y - (a + b * d.x), y: d.y })).sort((p, q) => q.e - p.e);
+    const fy = (v) => (modeSel.value !== 'value' && hasPc(cy) ? fmtPc(v) : fmt(cy.ind, v));
+    const li = (d) => `<li${d.c === mine ? ' class="is-mine"' : ''}><span>${d.n}</span><span>${fy(d.y)}</span><span>${d.e >= 0 ? '+' : '−'}${fy(Math.abs(d.e))}</span></li>`;
+    res.innerHTML = `<div><h3>直線より上にある県（縦の値が、横の値からの見込みより大きい）</h3><ol>${resid.slice(0, 5).map(li).join('')}</ol></div><div><h3>直線より下にある県（見込みより小さい）</h3><ol>${resid.slice(-5).reverse().map(li).join('')}</ol></div>`;
+  }
+
   function draw() {
     const cols = picked.map((p, k) => (p ? { ...p, k } : null)).filter(Boolean);
     const wrap = document.getElementById('cpWrap');
     document.getElementById('cpEmpty').hidden = cols.length > 0;
     wrap.hidden = document.getElementById('cpNote').hidden = cols.length === 0;
-    if (!cols.length || !prefList) return;
+    if (!cols.length || !prefList) { drawScatter([]); return; }
     // 値と順位
-    const rows = prefList.map((p) => ({ ...p, vals: cols.map((c) => valOf(c, p.c)) }));
+    const mode = modeSel.value;
+    const rows = prefList.map((p) => ({ ...p, vals: cols.map((c) => useVal(c, p.c)) }));
+    const ST = cols.map((c) => statsOf(c));
+    const isPcCol = (c) => mode !== 'value' && hasPc(c);
     const ranks = cols.map((c, j) => {
-      const vs = rows.map((row) => row.vals[j]).filter((v) => v !== null && v !== undefined).map((v) => r(c.ind, v));
-      return (v) => (v === null || v === undefined ? null : vs.filter((x) => x > r(c.ind, v)).length + 1);
+      const rr = (v) => (isPcCol(c) ? Number(v.toFixed(6)) : r(c.ind, v));
+      const vs = rows.map((row) => row.vals[j]).filter((v) => v !== null && v !== undefined).map(rr);
+      return (v) => (v === null || v === undefined ? null : vs.filter((x) => x > rr(v)).length + 1);
     });
     if (sortKey !== null && cols[sortKey]) {
       rows.sort((a, b) => {
@@ -142,17 +257,31 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     const mine = mineSel.value;
     const head = cols.map((c, j) => {
       const arrow = sortKey === j ? (sortDir < 0 ? ' ▼' : ' ▲') : '';
-      return `<th scope="col"><button type="button" data-sort="${j}"><i style="background:${COLORS[c.k]}"></i>${c.ind.label}${arrow}</button><small>${c.ind.yearLabels[L(c.ind)]}・${c.roomTitle}</small><small>順位は${c.ind.rankWord}</small></th>`;
+      const skewNote = mode === 'dev' && Math.abs(ST[j].skew) >= 1 ? '<small class="cp-warn">分布の偏りが大きく、偏差値は目安です</small>' : '';
+      const pcNote = isPcCol(c) ? `<small>${pcLabel(c)}（総人口 ${c.D.popYear || ''}）</small>` : '';
+      return `<th scope="col"><button type="button" data-sort="${j}"><i style="background:${COLORS[c.k]}"></i>${c.ind.label}${arrow}</button><small>${c.ind.yearLabels[L(c.ind)]}・${c.roomTitle}</small>${pcNote}<small>順位は${c.ind.rankWord}</small>${skewNote}</th>`;
     }).join('');
-    const natRow = '<tr class="cp-nat"><th scope="row">' + (cols.every((c) => !c.D.nationalIsAvg[c.ind.key] && !(c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key])) ? '全国' : '全国／平均') + '</th>' + cols.map((c) => {
+    const natRow = mode !== 'value' ? '<tr class="cp-nat"><th scope="row">47都道府県の平均</th>' + cols.map((c, j) => `<td>${mode === 'dev' ? '<b>50.0</b>' : ''}<small>${isPcCol(c) ? fmtPc(ST[j].mean) : fmt(c.ind, ST[j].mean)}</small></td>`).join('') + '</tr>' : '<tr class="cp-nat"><th scope="row">' + (cols.every((c) => !c.D.nationalIsAvg[c.ind.key] && !(c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key])) ? '全国' : '全国／平均') + '</th>' + cols.map((c) => {
       const avg = c.D.nationalIsAvg[c.ind.key] || (c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key]);
       const v = avg && c.D.prefAverage ? c.D.prefAverage[c.ind.key][L(c.ind)] : c.D.national[c.ind.key][L(c.ind)];
       return `<td>${fmt(c.ind, v)}${avg ? '<small>47都道府県の平均</small>' : ''}</td>`;
     }).join('') + '</tr>';
-    const body = rows.map((row) => `<tr${row.c === mine ? ' class="is-mine"' : ''}><th scope="row">${row.n}</th>` + cols.map((c, j) => {
-      const v = row.vals[j]; const rk = ranks[j](v);
-      return `<td><b>${fmt(c.ind, v)}</b>${rk ? `<small>${rk}位</small>` : ''}</td>`;
-    }).join('') + '</tr>').join('');
+    const cell = (c, j, v) => {
+      if (v === null || v === undefined) return '<td>—</td>';
+      const rk = ranks[j](v);
+      const S = ST[j];
+      const main = isPcCol(c) ? fmtPc(v) : fmt(c.ind, v);
+      if (mode === 'dev') {
+        const dev = S.sd > 0 ? 50 + (10 * (v - S.mean)) / S.sd : 50;
+        return `<td><b>${dev.toFixed(1)}</b><small>${main}</small></td>`;
+      }
+      if (mode === 'pct') {
+        const pTop = Math.ceil((rk / S.n) * 100), pBot = Math.ceil(((S.n - rk + 1) / S.n) * 100);
+        return `<td><b>${pTop <= 50 ? `上位${pTop}％` : `下位${pBot}％`}</b><small>${main}・${rk}位</small></td>`;
+      }
+      return `<td><b>${main}</b>${rk ? `<small>${rk}位</small>` : ''}</td>`;
+    };
+    const body = rows.map((row) => `<tr${row.c === mine ? ' class="is-mine"' : ''}><th scope="row">${row.n}</th>` + cols.map((c, j) => cell(c, j, row.vals[j])).join('') + '</tr>').join('');
     const t = document.getElementById('cpTable');
     t.innerHTML = `<thead><tr><th scope="col"><button type="button" data-sort="pref">都道府県${sortKey === null ? ' ▼' : ''}</button></th>${head}</tr></thead><tbody>${natRow}${body}</tbody>`;
     t.querySelectorAll('button[data-sort]').forEach((b) => b.addEventListener('click', () => {
@@ -161,6 +290,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
       else { const j = Number(s); if (sortKey === j) sortDir = -sortDir; else { sortKey = j; sortDir = -1; } }
       draw();
     }));
+    drawScatter(cols);
     // いまの選びかたをアドレスに残す（共有用。選んだ県は残さない）
     const q = cols.map((c) => `${c.room}~${c.ind.key}`).join(',');
     history.replaceState(null, '', q ? `?i=${encodeURIComponent(q)}` : location.pathname);
@@ -219,6 +349,25 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
   .cp-table tr.cp-nat th, .cp-table tr.cp-nat td { background: #fbfaf3; color: #4A6355; }
   .cp-table tr.is-mine th, .cp-table tr.is-mine td { background: #fbe9e5; }
   .cp-note { font-size: .8rem; color: #666; line-height: 1.8; margin-top: 10px; }
+  .cp-warn { color: #b23a2f !important; }
+  .cp-sc { margin-top: 40px; }
+  .cp-sc h2 { text-align: center; font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 8px; }
+  .cp-sc-lead { font-size: .85rem; color: #555; line-height: 1.8; text-align: center; margin: 0 0 14px; }
+  .cp-sc-sel { display: flex; flex-wrap: wrap; gap: 12px 20px; justify-content: center; margin: 0 0 14px; }
+  .cp-sc-sel label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: #555; width: 280px; max-width: 100%; }
+  .cp-sc-sel select { padding: 9px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .9rem; }
+  .cp-sc-chart { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px; }
+  .cp-sc-read { font-size: .92rem; line-height: 1.9; margin: 12px 0; }
+  .cp-sc-read b { font-family: "IBM Plex Mono", monospace; color: #b23a2f; }
+  .cp-sc-res { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .cp-sc-res { grid-template-columns: 1fr; } }
+  .cp-sc-res h3 { font-size: .8rem; color: #2d6a4f; margin: 0 0 6px; font-weight: 600; }
+  .cp-sc-res ol { list-style: none; margin: 0; padding: 4px 10px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+  .cp-sc-res li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; padding: 7px 2px; border-bottom: 1px solid #ecece4; font-size: .85rem; }
+  .cp-sc-res li:last-child { border-bottom: 0; }
+  .cp-sc-res li span:nth-child(2), .cp-sc-res li span:nth-child(3) { font-family: "IBM Plex Mono", monospace; text-align: right; }
+  .cp-sc-res li span:nth-child(3) { color: #b23a2f; min-width: 5em; }
+  .cp-sc-res li.is-mine { background: #fbe9e5; }
   .cp-cross { margin-top: 32px; font-size: .9rem; text-align: center; line-height: 1.9; }
   .cp-cross a { color: #b23a2f; }
   .cp-source { margin-top: 32px; font-size: .75rem; color: #888; line-height: 1.8; }

@@ -21,6 +21,12 @@ const isPref = level === 'pref';
 const word = isPref ? '県' : '市区町村';
 ---
 <section class="cmpx" hidden aria-label="ほかの地域とならべる" data-level={level} data-select={selectId} data-src={src} data-global={global} data-adapter={adapter}>
+  <div class="cmpx-pos" hidden>
+    <h2>散らばりの中の位置</h2>
+    <p class="cmpx-note">選んだ{word}が、{isPref ? '47都道府県' : '全国の市区町村'}の中のどのあたりにあるかを項目ごとに示します。{isPref ? '点は47都道府県の値（近い値は上に積んでいます）' : '箱は全国の市区町村の真ん中半分、線は5〜95％の範囲'}で、赤がこの{isPref ? '県' : '町'}です。</p>
+    <div class="cmpx-pos-list"></div>
+    <p class="cmpx-note cmpx-foot2">「上位◯％」は値の大きい順に並べたときの位置です。偏差値は、分布の偏りが小さい項目にだけ出しています。数の項目は、総人口で割った「人口あたり」でも位置を示します。読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
+  </div>
   <h2>ほかの{word}とならべる</h2>
   <p class="cmpx-note">{word}を4つまで足して、数字を横に並べます。</p>
   <div class="cmpx-sel">
@@ -73,6 +79,78 @@ const word = isPref ? '県' : '市区町村';
       return (v) => (typeof v === 'number' ? vals.indexOf(v) + 1 : null);
     });
 
+    // ---- 10-18 散らばりの中の位置 ----
+    const PCU = new Set(['人', 'か所', '所', '施設', '件', '戸', '台', '事業所', '店', '校', '館', '棟', '世帯', '事業体', '人泊', '者', '法人', '講座', '園', '署', '団', '億円', '病院', '診療所', '床']);
+    const isCount = (ind) => PCU.has(ind.unit) && !/あたり|当たり|割合|率|平均|倍|1人|１人|1か月|1校|1園|1学級|1住宅|1戸|千人|万人/.test(ind.label);
+    let POP = null;
+    const popUrl = isPref ? '/data/population.json' : '/data/town-population.json';
+    fetch(popUrl).then((r) => r.json()).then((P) => { POP = Object.fromEntries(P.areas.map((a) => [a.c, a.v[0]])); DIST.length = 0; render(); }).catch(() => {});
+    const pcOf = (a, i) => { const v = a.v[i]; const n = POP && POP[a.c]; if (typeof v !== 'number' || !n) return null; return IND[i].unit === '億円' ? (v * 1e4) / n : (v / n) * 1e5; };
+    const DIST = [];
+    const distOf = (i, pc) => {
+      const k = i * 2 + (pc ? 1 : 0);
+      if (DIST[k]) return DIST[k];
+      const vals = AREAS.filter((a) => !a.x).map((a) => (pc ? pcOf(a, i) : a.v[i])).filter((v) => typeof v === 'number' && Number.isFinite(v)).sort((x, y) => x - y);
+      const n = vals.length, mean = vals.reduce((t, v) => t + v, 0) / (n || 1);
+      const sd = Math.sqrt(vals.reduce((t, v) => t + (v - mean) ** 2, 0) / (n || 1));
+      const skew = sd > 0 ? vals.reduce((t, v) => t + ((v - mean) / sd) ** 3, 0) / n : 0;
+      const q = (p) => { const h = (n - 1) * p; const lo = Math.floor(h); return vals[lo] + (vals[Math.min(lo + 1, n - 1)] - vals[lo]) * (h - lo); };
+      return (DIST[k] = { vals, n, mean, sd, skew, q });
+    };
+    const posText = (S, v) => {
+      const rk = S.vals.filter((x) => x > v + 1e-12).length + 1;
+      const pTop = Math.ceil((rk / S.n) * 100), pBot = Math.ceil(((S.n - rk + 1) / S.n) * 100);
+      const dev = S.sd > 0 && Math.abs(S.skew) < 1 ? Math.round(50 + (10 * (v - S.mean)) / S.sd) : null;
+      return { rk, text: (pTop <= 50 ? `上位${pTop}％` : `下位${pBot}％`) + (dev === null ? '' : `・偏差値${dev}`) };
+    };
+    const strip = (S, v) => {
+      const W = 200, PAD = 6;
+      let lo, hi;
+      if (isPref) { lo = S.vals[0]; hi = S.vals[S.n - 1]; } else { lo = S.q(0.01); hi = S.q(0.99); }
+      if (!(hi > lo)) return '';
+      const X = (x) => PAD + ((Math.min(Math.max(x, lo), hi) - lo) / (hi - lo)) * (W - PAD * 2);
+      if (isPref) {
+        const R = 2.5, STEP = R * 2 + 0.5, bins = {};
+        const placed = S.vals.map((x) => { const b = Math.round((X(x) - PAD) / STEP); const k = (bins[b] = (bins[b] ?? -1) + 1); return { b, k, x }; });
+        const maxK = Math.max(...placed.map((p) => p.k)), base = 4 + R + maxK * STEP, H = base + R + 4;
+        const me = placed.find((p) => Math.abs(p.x - v) < 1e-9);
+        const dots = placed.map((p) => (p === me ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1b4332" fill-opacity=".38"/>`)).join('');
+        const mx = me ? PAD + me.b * STEP : X(v), my = me ? base - me.k * STEP : base;
+        return `<svg viewBox="0 0 ${W} ${H.toFixed(1)}" aria-hidden="true"><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1b4332" stroke-opacity=".2"/>${dots}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#b23a2f" stroke="#fff" stroke-width="1"/></svg>`;
+      }
+      const p5 = X(S.q(0.05)), p25 = X(S.q(0.25)), p50 = X(S.q(0.5)), p75 = X(S.q(0.75)), p95 = X(S.q(0.95));
+      return `<svg viewBox="0 0 ${W} 18" aria-hidden="true"><line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1b4332" stroke-opacity=".35"/><rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1b4332" fill-opacity=".14" stroke="#1b4332" stroke-opacity=".35"/><line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1b4332" stroke-opacity=".6"/><circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#b23a2f" stroke="#fff" stroke-width="1.2"/></svg>`;
+    };
+    function renderPos() {
+      const box = sec.querySelector('.cmpx-pos');
+      if (!current) { box.hidden = true; return; }
+      box.hidden = false;
+      const list = sec.querySelector('.cmpx-pos-list');
+      if (current.x) { list.innerHTML = '<p class="cmpx-note">政令指定都市の区は、全国の市区町村の順位や位置には入れていません。</p>'; return; }
+      list.innerHTML = IND.map((ind, i) => {
+        const v = current.v[i];
+        if (typeof v !== 'number') return `<div class="cmpx-pos-row"><div class="cmpx-pos-lab">${ind.label}</div><div class="cmpx-pos-val">—</div><div></div><div></div></div>`;
+        const S = distOf(i, false);
+        if (S.n < 5) return '';
+        const P = posText(S, v);
+        let row = `<div class="cmpx-pos-row"><div class="cmpx-pos-lab">${ind.label}${ind.year ? `<small>${ind.year}</small>` : ''}</div><div class="cmpx-pos-val">${fmt(i, v)}<small>${P.rk}位／${S.n}</small></div><div class="cmpx-pos-svg">${strip(S, v)}</div><div class="cmpx-pos-txt">${P.text}</div></div>`;
+        if (isCount(ind) && POP && !/人口/.test(ind.label)) {
+          const pv = pcOf(current, i);
+          if (pv !== null) {
+            const S2 = distOf(i, true);
+            const P2 = posText(S2, pv);
+            const med = S2.q(0.5);
+            let lab = IND[i].unit === '億円' ? '1人あたり' : '人口10万人あたり', shown = pv, u = IND[i].unit === '億円' ? '万円' : IND[i].unit;
+            if (IND[i].unit === '人' && med >= 1000) { lab = '人口に対する割合'; shown = pv / 1000; u = '％'; }
+            else if (IND[i].unit !== '億円' && med >= 100000) { lab = '1人あたり'; shown = pv / 1e5; }
+            const d = Math.abs(shown) >= 100 ? 0 : Math.abs(shown) >= 10 ? 1 : 2;
+            row += `<div class="cmpx-pos-row cmpx-pos-row--pc"><div class="cmpx-pos-lab">　${lab}</div><div class="cmpx-pos-val">${shown.toLocaleString('ja-JP', { minimumFractionDigits: d, maximumFractionDigits: d })}${u}<small>${P2.rk}位／${S2.n}</small></div><div class="cmpx-pos-svg">${strip(S2, pv)}</div><div class="cmpx-pos-txt">${P2.text}</div></div>`;
+          }
+        }
+        return row;
+      }).join('');
+    }
+
     let current = null;
     let compare = [];
     const sel = document.getElementById(sec.dataset.select);
@@ -109,6 +187,7 @@ const word = isPref ? '県' : '市区町村';
     function render() {
       if (!current) { sec.hidden = true; return; }
       sec.hidden = false;
+      renderPos();
       const full = compare.length >= MAXCMP;
       cPref.disabled = full;
       if (cTown) cTown.disabled = full || !cPref.value;
@@ -196,5 +275,18 @@ const word = isPref ? '県' : '市区町村';
   .cmpx-table tbody th { font-weight: 400; color: #2d6a4f; min-width: 9em; position: sticky; left: 0; background: #fff; }
   .cmpx-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
   .cmpx-table small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
+  .cmpx-pos { margin: 0 0 36px; }
+  .cmpx-pos-list { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 4px 12px; }
+  .cmpx-pos-row { display: grid; grid-template-columns: minmax(8em, 1.4fr) minmax(7em, 1fr) minmax(120px, 1.6fr) minmax(7em, 1fr); gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid #ecece4; font-size: .85rem; }
+  .cmpx-pos-row:last-child { border-bottom: 0; }
+  .cmpx-pos-row--pc { border-top: 0; padding-top: 0; font-size: .8rem; color: #2d6a4f; }
+  .cmpx-pos-lab { color: #2d6a4f; }
+  .cmpx-pos-lab small, .cmpx-pos-val small { display: block; font-size: .68rem; color: #888; }
+  .cmpx-pos-val { font-family: "IBM Plex Mono", monospace; font-weight: 600; text-align: right; }
+  .cmpx-pos-svg svg { display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto; }
+  .cmpx-pos-txt { font-size: .75rem; color: #555; }
+  .cmpx-foot2 { text-align: left; font-size: .74rem; color: #888; margin-top: 8px; }
+  .cmpx-foot2 a { color: #b23a2f; }
+  @media (max-width: 600px) { .cmpx-pos-row { grid-template-columns: 1fr auto; } .cmpx-pos-svg { grid-column: 1 / -1; } .cmpx-pos-txt { grid-column: 1 / -1; text-align: center; } }
   @media (max-width: 600px) { .cmpx-table { font-size: .8rem; } .cmpx-table tbody th { min-width: 6.5em; } .cmpx-table th, .cmpx-table td { padding: 8px 7px; } .cmpx-sel select { min-width: 150px; } }
 </style>

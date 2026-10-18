@@ -35,7 +35,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <header class="site">
     <div class="nav">
       <a class="logo" href="/">
-        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small></span>
+        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small><small class="xf">site transformation</small></span>
         <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
       </a>
       <nav aria-label="主要メニュー">
@@ -58,6 +58,25 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <slot />
   {here === '/' && (
     <div class="annex-banner-wrap">
+      <a class="annex-banner cmp-banner" href="/compare/">
+        <svg class="ab-icon cb-icon" viewBox="0 0 120 120" aria-hidden="true">
+          <rect x="4" y="4" width="112" height="112" rx="12" fill="#f3ead2"/>
+          <rect x="18" y="22" width="84" height="76" rx="4" fill="#fffdf7" stroke="#b9a77a"/>
+          <line x1="18" y1="40" x2="102" y2="40" stroke="#b9a77a"/>
+          <line x1="46" y1="22" x2="46" y2="98" stroke="#d8ccaa"/>
+          <line x1="74" y1="22" x2="74" y2="98" stroke="#d8ccaa"/>
+          <rect x="24" y="74" width="16" height="18" rx="2" fill="#b23a2f"/>
+          <rect x="52" y="56" width="16" height="36" rx="2" fill="#2d6a4f"/>
+          <rect x="80" y="64" width="16" height="28" rx="2" fill="#c99a2e"/>
+          <circle cx="32" cy="31" r="4" fill="#b23a2f"/><circle cx="60" cy="31" r="4" fill="#2d6a4f"/><circle cx="88" cy="31" r="4" fill="#c99a2e"/>
+        </svg>
+        <span class="ab-body">
+          <span class="ab-label">COMPARE</span>
+          <span class="ab-title">見くらべの間</span>
+          <span class="ab-note"><span class="ab-ph">閲覧室と別館の窓口をまたいで、項目を4つまで選び、</span><span class="ab-ph">47都道府県の値と順位を一つの表に並べます。</span></span>
+        </span>
+        <span class="ab-arrow">→</span>
+      </a>
       <a class="annex-banner" href="/annex/">
         <img class="ab-icon" src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" />
         <span class="ab-body">
@@ -72,7 +91,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <footer class="site">
     <div class="foot">
       <div class="foot-brand">
-        <span class="mono">COUNTOPIA STATS</span>
+        <span class="mono">COUNTOPIA STATS</span> <span class="xf xf--foot">site transformation</span>
         <span class="since">since 2026.7</span>
         <p class="tag">Japan in Numbers — 数字の国、カウントピア</p>
       </div>
@@ -165,7 +184,15 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
 
     /* 別館への案内：フッターの直上、紙の地に置く（玄関＝トップページだけ） */
-    .annex-banner-wrap { max-width: 1280px; margin: 32px auto 36px; padding: 0 16px; }
+    .annex-banner-wrap { max-width: 1280px; margin: 32px auto 36px; padding: 0 16px; display: flex; justify-content: center; align-items: stretch; gap: 18px; flex-wrap: wrap; }
+    /* 10-18 見くらべの間は閲覧室から独立。玄関の別館の札の横に、一回り大きく置く */
+    .annex-banner-wrap .annex-banner { margin: 0; }
+    .cmp-banner { border-left-color: #b23a2f; padding: 16px 26px 16px 16px; max-width: 600px; }
+    .cmp-banner .ab-label { color: #b23a2f; }
+    .cmp-banner .ab-title { font-size: 1.22rem; }
+    .cmp-banner .ab-note { font-size: .82rem; }
+    .cmp-banner .cb-icon { width: 120px; height: 120px; }
+    @media (max-width: 1100px) { .annex-banner-wrap { flex-direction: column; align-items: center; } .annex-banner-wrap .annex-banner { width: 100%; max-width: 640px; box-sizing: border-box; } }
     .annex-banner {
       display: flex; align-items: center; gap: 18px;
       width: fit-content; max-width: 720px; margin: 0 auto;
@@ -187,6 +214,9 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     @media (max-width: 560px) {
       .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }
       .ab-icon { width: 84px; height: 84px; }
+      .cmp-banner .cb-icon { width: 96px; height: 96px; }
+      .annex-banner-wrap { flex-direction: column; align-items: stretch; gap: 12px; }
+      .annex-banner-wrap .annex-banner { width: auto; max-width: none; }
       .ab-arrow { display: none; }
     }
 

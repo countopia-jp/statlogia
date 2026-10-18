@@ -42,6 +42,9 @@ header.site{
 }
 .logo .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.45rem;letter-spacing:.06em;color:var(--ink)}
 .logo .mark b{color:var(--stamp)}
+/* 10-18 本格的な統計サイトへの改装中であることを、サイト名に付記する */
+.xf{display:inline-block;margin-left:.7em;padding:2px 7px 1px;border:1px solid var(--stamp);border-radius:3px;font-family:"IBM Plex Mono",monospace;font-size:.5em;font-weight:500;letter-spacing:.14em;color:var(--stamp);vertical-align:middle;line-height:1.4;white-space:nowrap;transform:rotate(-2deg)}
+.xf--foot{font-size:.62rem;margin-left:.5em;color:#f0b78a;border-color:#f0b78a}
 .logo .sub{font-size:.78rem;color:var(--ink-soft);letter-spacing:.2em}
 nav ul{display:flex;gap:26px;list-style:none;flex-wrap:nowrap}
 nav li{flex:0 0 auto}

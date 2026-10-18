@@ -8,17 +8,19 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
 ---
 <BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。15の窓口があります。">
   <main class="rr">
-    <header class="rr-hero">
-      <p class="rr-kicker">別館</p>
-      <h1>暮らしの台帳</h1>
-      <p class="rr-lead">
-        財政や人の出入り、所得や家計、土地の値段や働き方など、<br />お金と暮らしの内側に関わる数字です。<br />
-        本館とは別に、台帳としてここに綴じました。
-      </p>
+    <header class="rr-hero rr-hero--fig">
+      <img class="rr-hero-img" src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width="1400" height="788" />
+      <div class="rr-hero-text">
+        <p class="rr-kicker">別館</p>
+        <h1>暮らしの台帳</h1>
+        <p class="rr-lead">
+          財政や人の出入り、所得や家計、土地の値段や働き方など、<br />お金と暮らしの内側に関わる数字です。<br />
+          本館とは別に、台帳としてここに綴じました。
+        </p>
+      </div>
     </header>
 
     <section class="rr-shiori" aria-label="案内人のことば">
-      <img class="rr-shiori-desk" src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width="1400" height="788" loading="lazy" />
       <div class="rr-shiori-say">
         <span class="rr-shiori-name">栞（昭和の帳場から来た子）</span>
         <p class="rr-shiori-bubble">ようこそ、別館「暮らしの台帳」へ。昭和36年の市役所で、統計係をしている栞です。わたしたちBGは、毎日この帳簿とにらめっこなんですよ。ここには、お金や働き方、ひとの出入りや災害など、暮らしの内側の数字の台帳を綴じてあります。欄の名前をひとつずつ確かめながら、読んでいきましょうね。</p>
@@ -228,19 +230,18 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
-    .rr-shiori { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 1280px; margin: 8px auto 28px; }
-    .rr-shiori-desk { flex: none; width: 420px; height: auto; border-radius: 6px; display: block; margin-right: 22px; }
+    .rr-shiori { display: flex; align-items: center; justify-content: center; gap: 8px; max-width: 980px; margin: 8px auto 28px; }
     .rr-shiori-say { flex: 1; min-width: 0; }
-    @media (max-width: 1180px) { .rr-shiori-desk { width: 320px; } }
     .rr-shiori-name { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .12em; color: #2c4a7a; margin-bottom: 4px; }
     .rr-shiori-bubble { position: relative; background: #e3eef7; color: #222; border-radius: 12px; padding: 18px 22px; font-size: 1.02rem; line-height: 1.95; margin: 0; }
     .rr-shiori-bubble::after { content: ""; position: absolute; top: 40%; right: -8px; border: 8px solid transparent; border-right: 0; border-left-color: #e3eef7; }
     .rr-shiori-link { text-align: right; font-size: .85rem; margin: 10px 0 0; }
     .rr-shiori-link a { color: #2c4a7a; }
-    .rr-shiori-fig { flex: none; width: auto; height: 456px; display: block; }
+    .rr-shiori-fig { flex: none; width: auto; height: 400px; display: block; }
+    /* 10-18 上下の空白を詰める（全体の section の余白56pxを打ち消す） */
+    .rr-shiori { padding: 12px 0 0; margin-bottom: 4px; }
     @media (max-width: 900px) {
       .rr-shiori { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px 10px; }
-      .rr-shiori-desk { grid-column: 1 / -1; justify-self: center; width: 100%; max-width: 620px; margin: 0 0 8px; }
       .rr-shiori-fig { height: 380px; }
     }
     /* 10-18 タブレット：栞の手先が吹き出しの角に来るように */
@@ -257,6 +258,19 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
     .rr-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; }
     .rr-lead { color: #555; line-height: 1.9; }
     .rr-group { margin: 0; padding: 20px 0 8px; }
+    /* 10-18 扉絵を上に大きく置き、題と説明を白いもやの上に重ねる */
+    .rr-hero--fig { position: relative; max-width: 1080px; margin: 20px auto 8px; padding: 0; }
+    .rr-hero-img { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 6px 18px rgba(60,40,20,.14); }
+    .rr-hero-text { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(72%, 640px); padding: 22px 30px 18px; text-align: center; border-radius: 14px;
+      background: radial-gradient(ellipse at center, rgba(255,253,247,.94) 0%, rgba(255,253,247,.86) 55%, rgba(255,253,247,.62) 100%);
+      box-shadow: 0 0 40px 26px rgba(255,253,247,.55); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); }
+    .rr-hero-text .rr-kicker { margin: 0; }
+    .rr-hero-text h1 { margin: 2px 0 8px; font-size: clamp(1.5rem, 3.2vw, 2.2rem); color: #3a2a1a; }
+    .rr-hero-text .rr-lead { margin: 0; color: #3d3528; font-size: clamp(.82rem, 1.5vw, .98rem); line-height: 1.85; }
+    @media (max-width: 760px) {
+      .rr-hero-text { position: relative; left: auto; top: auto; transform: none; width: auto; margin: -36px 12px 0; padding: 16px 16px 12px; box-shadow: 0 4px 14px rgba(60,40,20,.12); background: rgba(255,253,247,.96); }
+      .rr-hero-text .rr-lead br { display: none; }
+    }
 
     .ledger-grid {
       display: grid;
