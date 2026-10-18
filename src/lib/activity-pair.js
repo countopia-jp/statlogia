@@ -54,6 +54,8 @@ async function fetchOne(cat03, statsId) {
   return { national, rows };
 }
 
+import { seActivity } from './sampling-error.js';
+
 export async function getActivityPair(codeA, codeB, statsId = STATS_DATA_ID) {
   const key = `${statsId}-${codeA}-${codeB}`;
   if (_cache.has(key)) return _cache.get(key);
@@ -64,7 +66,8 @@ export async function getActivityPair(codeA, codeB, statsId = STATS_DATA_ID) {
     year: '2021年',
     national: a.national,
     rows: a.rows,
-    second: b,
+    second: { ...b, se: seActivity(statsId, codeB) },
+    se: seActivity(statsId, codeA), seKey: 'c', seKind: 'shakai',
   };
   _cache.set(key, out);
   return out;

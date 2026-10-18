@@ -16,6 +16,8 @@ import ExhibitHero from './ExhibitHero.astro';
 import { splitTitle } from '../lib/split-title.js';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Talk from './Talk.astro';
+import ErrorBand from './ErrorBand.astro';
+import { withBands } from '../lib/sampling-error.js';
 
 const { data, unit, area, no, slug, title, sub, pageTitle, description, a, b, genre, intro, secondAsk, shareLabel, notes, cross } = Astro.props;
 
@@ -58,6 +60,11 @@ const swapA = aLeast.map((r) => r.n).filter((n) => bTop10.includes(n));
 const swapB = bLeast.map((r) => r.n).filter((n) => aTop10.includes(n));
 const hasSwap = swapA.length > 0 || swapB.length > 0;
 const swapName = swapA[0] || swapB[0] || '';
+
+// 標本調査の誤差の幅（lib から se が来ているときだけ）
+const aBand = data.se ? withBands(aMost, data.se, data.seKey) : null;
+const bBand = data.second.se ? withBands(bMost, data.second.se, data.seKey) : null;
+const ebUnit = isYen ? 'yen' : 'pct';
 
 const fill = (s) => s
   .replaceAll('{A_NAT}', data.national === null ? '' : fmt(data.national))
@@ -120,6 +127,7 @@ const shareTouko = share ? (over.length ? a.short + 'のほうに多く使って
           <li><span class="pos">{aRank(r.minutes)}</span><span class="pref">{r.n}</span><span class="bar" style={`--w:${(r.minutes / aMax) * 100}%`}></span><span class="min">{fmt(r.minutes)}</span></li>
         ))}
       </ol>
+      {aBand && <ErrorBand rows={aBand} unit={ebUnit} area={areaWord} kind={data.seKind} label={a.label} />}
       <h2>{a.label}が少ない{areaWord} TOP5</h2>
       <ol class="rank low">
         {aLeast.map((r) => (
@@ -141,6 +149,7 @@ const shareTouko = share ? (over.length ? a.short + 'のほうに多く使って
           <li><span class="pos">{bRank(r.minutes)}</span><span class="pref">{r.n}</span><span class="bar" style={`--w:${(r.minutes / bMax) * 100}%`}></span><span class="min">{fmt(r.minutes)}</span></li>
         ))}
       </ol>
+      {bBand && <ErrorBand rows={bBand} unit={ebUnit} area={areaWord} kind={data.seKind} label={b.label} />}
       <h2>{b.label}が少ない{areaWord} TOP5</h2>
       <ol class="rank low">
         {bLeast.map((r) => (

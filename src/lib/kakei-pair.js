@@ -35,6 +35,8 @@ function toNumber(raw) {
   return Number.isFinite(n) ? n : null;
 }
 
+import { seKakei } from './sampling-error.js';
+
 export async function getKakeiPair(codeA, codeB) {
   const key = `${codeA}-${codeB}`;
   if (_cache.has(key)) return _cache.get(key);
@@ -76,7 +78,8 @@ export async function getKakeiPair(codeA, codeB) {
     cityCount: rows.length,
     national: mA.get(nat) ?? null,
     rows,
-    second: { national: mB.get(nat) ?? null, rows: listOf(mB) },
+    second: { national: mB.get(nat) ?? null, rows: listOf(mB), se: seKakei(codeB) },
+    se: seKakei(codeA), seKey: 'n', seKind: 'kakei',
     share: { national: sh.get(nat) ?? null, rows: listOf(sh) },
   };
   _cache.set(key, out);

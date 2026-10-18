@@ -1,0 +1,72 @@
+---
+// =====================================================
+// 標本調査の「誤差の幅」（95％の目安）を上位の地域について見せる共通部品
+// src/components/ErrorBand.astro
+//
+// rows   = withBands()（lib/sampling-error.js）を通した {n, minutes, lo, hi} の並び（表示する順）
+// unit   = 'pct'（行動者率、小数第1位の％）／'yen'（1世帯の年間支出額）／'min'（1日の分）
+// area   = '県'／'市'
+// kind   = 'shakai'（社会生活基本調査）／'kakei'（家計調査）
+// take   = 上から何件見せるか（既定5）
+// label  = 見出しに入れる言葉（例：「カラオケをした人」）
+// 評価の言葉は使わず、幅が重なるかどうかだけを書く
+// =====================================================
+import { SE_SOURCES } from '../lib/sampling-error.js';
+
+const { rows, unit = 'pct', area = '県', kind = 'shakai', take = 5, label = '' } = Astro.props;
+const list = (rows || []).slice(0, take).filter((r) => r.lo !== null && r.hi !== null);
+const ok = list.length >= 2;
+const fmt = (v) => (unit === 'yen' ? Math.round(v).toLocaleString() + '円' : unit === 'min' ? Math.round(v) + '分' : v.toFixed(1) + '％');
+const half = (r) => (unit === 'yen' ? Math.round(r.hi - r.minutes).toLocaleString() + '円' : unit === 'min' ? (r.hi - r.minutes).toFixed(1) + '分' : (r.hi - r.minutes).toFixed(1) + 'ポイント');
+const lo = ok ? Math.min(...list.map((r) => r.lo)) : 0;
+const hi = ok ? Math.max(...list.map((r) => r.hi)) : 1;
+const pad = (hi - lo) * 0.04 || 1;
+const L = lo - pad, W = hi - lo + pad * 2;
+const pos = (v) => ((v - L) / W) * 100;
+const top = list[0];
+const overlap = ok ? list.slice(1).filter((r) => r.lo <= top.hi && r.hi >= top.lo) : [];
+const who = kind === 'kakei' ? '世帯' : '人';
+const lead = kind === 'kakei'
+  ? 'この数字は、市ごとに選んだ一部の世帯（多くの市で90世帯ほど）の家計簿から出した値です。選ばれる世帯が変われば、値も動きます。横の線は、その動く幅の目安（95％）です。'
+  : 'この数字は、選んだ一部の人に聞いた標本調査の値です。選ばれる人が変われば、値も動きます。横の線は、その動く幅の目安（95％）です。';
+const sum = !ok ? '' : overlap.length
+  ? top.n + 'の幅は、' + overlap.map((r) => r.n).join('・') + 'の幅と重なっています。重なっている' + area + 'どうしの順番は、調べ直すと入れかわることがあります。'
+  : top.n + 'の幅は、2番目の' + list[1].n + 'の幅と重なっていません。';
+const src = kind === 'kakei' ? SE_SOURCES.kakei : SE_SOURCES.shakai;
+---
+{ok && (
+  <div class="eb">
+    <p class="eb-h">誤差の幅（目安）{label ? '｜' + label : ''}</p>
+    <p class="eb-lead">{lead}</p>
+    <ul class="eb-list">
+      {list.map((r) => (
+        <li>
+          <span class="eb-n">{r.n}</span>
+          <span class="eb-track" aria-hidden="true">
+            <span class="eb-w" style={`left:${pos(r.lo)}%;width:${pos(r.hi) - pos(r.lo)}%`}></span>
+            <span class="eb-d" style={`left:${pos(r.minutes)}%`}></span>
+          </span>
+          <span class="eb-v">{fmt(r.minutes)}<small>±{half(r)}</small></span>
+        </li>
+      ))}
+    </ul>
+    <p class="eb-sum">{sum}</p>
+    <p class="eb-src">幅は「値 ± 1.96 × 標準誤差」。{src}。一部の{who}を調べたことによる誤差だけの目安で、答えちがいなどの誤差は含みません。</p>
+  </div>
+)}
+<style>
+.eb{margin:20px 0 8px;border:1px dashed var(--line);border-radius:12px;padding:14px 16px;background:#fdfcf8}
+.eb-h{font-size:.82rem;letter-spacing:.12em;color:var(--ink-soft);font-weight:600}
+.eb-lead{font-size:.8rem;color:var(--ink-soft);line-height:1.8;margin-top:6px}
+.eb-list{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
+.eb-list li{display:grid;grid-template-columns:6.5em 1fr auto;align-items:center;gap:10px}
+.eb-n{font-size:.88rem}
+.eb-track{position:relative;height:14px;background:linear-gradient(#e6e1d6,#e6e1d6) center/100% 1px no-repeat}
+.eb-w{position:absolute;top:3px;height:8px;border-radius:4px;background:rgba(178,58,47,.22);border-left:2px solid rgba(178,58,47,.7);border-right:2px solid rgba(178,58,47,.7)}
+.eb-d{position:absolute;top:2px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:var(--stamp)}
+.eb-v{font-family:"IBM Plex Mono",monospace;font-size:.8rem;color:var(--ink-soft);white-space:nowrap}
+.eb-v small{margin-left:4px;font-size:.72rem;opacity:.85}
+.eb-sum{margin-top:12px;font-size:.86rem;line-height:1.8}
+.eb-src{margin-top:8px;font-size:.72rem;color:var(--ink-soft);line-height:1.7}
+@media(max-width:560px){.eb-list li{grid-template-columns:5.5em 1fr;row-gap:2px}.eb-v{grid-column:2;text-align:right}}
+</style>
