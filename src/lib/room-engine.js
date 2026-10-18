@@ -242,7 +242,29 @@ export async function getRoomData(room) {
 
     // 10-18 市区町村の窓口でも、全国の値があれば持っておく（特化係数＝その町の割合÷全国の割合 に使う）
     if (scope === 'town') {
-      const natT = calcAt('00000', useTimes[useTimes.length - 1]);
+      const tLast = useTimes[useTimes.length - 1];
+      let natT = calcAt('00000', tLast);
+      // 市区町村の表に全国の行が無いときは、計算で作る項目（分子・分母のコードがある割合）に限り、
+      // 全市区町村（政令市の区を除く）のもとの数を足し上げてから同じ計算をして、全国の値とする
+      if (natT === null && room.indicators.find((x) => x.key === ind.key)?.needs) {
+        const sums = {};
+        const sumOf = (code) => {
+          if (code in sums) return sums[code];
+          let tot = 0, n = 0;
+          for (const a of areaList) {
+            if (a.x) continue;
+            const v = getter(a.c, tLast)(code);
+            if (typeof v === 'number') { tot += v; n++; }
+          }
+          return (sums[code] = n ? tot : null);
+        };
+        try {
+          const v = ind.calc(sumOf);
+          natT = typeof v === 'number' && Number.isFinite(v) ? v * (ind.scale ?? 1) : null;
+        } catch {
+          natT = null;
+        }
+      }
       if (natT !== null) national[ind.key] = roundTo(natT, d + 1);
     }
     const unit = ind.unit ?? raws[baseCodes[0]].unit;

@@ -219,7 +219,21 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const X = (x) => PAD + ((Math.min(Math.max(x, lo), hi) - lo) / (hi - lo)) * (W - PAD * 2);
     let body = '';
     if (isPref) {
-      body = S.vals.map((x) => `<circle cx="${X(x).toFixed(1)}" cy="9" r="2.4" fill="#1b4332" fill-opacity=".22"/>`).join('');
+      // 10-18 47県は「積み上げた点」で描く：近い値の点は重ねずに上へ積む（重なって滲んで見えないように）
+      const R = 2.5, STEP = R * 2 + 0.5;
+      const bins = {};
+      let selBin = null, selRow = null;
+      const placed = S.vals.map((x) => { const b = Math.round((X(x) - PAD) / STEP); const k = (bins[b] = (bins[b] ?? -1) + 1); return { b, k, x }; });
+      const maxK = Math.max(...placed.map((p) => p.k));
+      const base = 4 + R + maxK * STEP;
+      const Hp = base + R + 4;
+      const vRounded = v;
+      for (const p of placed) if (selBin === null && Math.abs(p.x - vRounded) < 1e-9) { selBin = p.b; selRow = p.k; }
+      body = placed.map((p) => (p.b === selBin && p.k === selRow ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1b4332" fill-opacity=".38"/>`)).join('');
+      const mx = selBin === null ? X(v) : PAD + selBin * STEP;
+      const my = selBin === null ? base : base - selRow * STEP;
+      const tipP = '47都道府県の値を、近いものは上に積んで点で並べたもの。赤がこの県';
+      return `<svg class="rm-dist" viewBox="0 0 ${W} ${Hp.toFixed(1)}" role="img" aria-label="${tipP}"><title>${tipP}</title><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1b4332" stroke-opacity=".2"/>${body}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#b23a2f" stroke="#fff" stroke-width="1"/></svg>`;
     } else {
       const p5 = X(S.q(0.05)), p25 = X(S.q(0.25)), p50 = X(S.q(0.5)), p75 = X(S.q(0.75)), p95 = X(S.q(0.95));
       body = `<line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1b4332" stroke-opacity=".35"/>` +
