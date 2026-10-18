@@ -40,11 +40,11 @@ header.site{
   max-width:1280px;margin:0 auto;padding:14px 20px;
   display:flex;align-items:center;justify-content:space-between;gap:16px;
 }
-.logo .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.45rem;letter-spacing:.06em;color:var(--ink)}
+.logo .mark{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.45rem;letter-spacing:.06em;color:var(--ink);white-space:nowrap}
 .logo .mark b{color:var(--stamp)}
 /* 10-18 本格的な統計サイトへの改装中であることを、サイト名に付記する */
-.xf{display:inline-block;margin-left:.7em;padding:2px 7px 1px;border:1px solid var(--stamp);border-radius:3px;font-family:"IBM Plex Mono",monospace;font-size:.5em;font-weight:500;letter-spacing:.14em;color:var(--stamp);vertical-align:middle;line-height:1.4;white-space:nowrap;transform:rotate(-2deg)}
-.xf--foot{font-size:.62rem;margin-left:.5em;color:#f0b78a;border-color:#f0b78a}
+.xf{display:inline-block;margin-left:.9em;padding:1px 6px 0;border:1px solid currentColor;border-radius:2px;font-family:"IBM Plex Mono",monospace;font-size:.36em;font-weight:500;letter-spacing:.12em;color:var(--stamp);vertical-align:.55em;line-height:1.5;white-space:nowrap;transform:rotate(-3deg);opacity:.85}
+.xf--foot{font-size:.6rem;margin-left:.6em;vertical-align:.15em;color:#f0b78a;opacity:1}
 .logo .sub{font-size:.78rem;color:var(--ink-soft);letter-spacing:.2em}
 nav ul{display:flex;gap:26px;list-style:none;flex-wrap:nowrap}
 nav li{flex:0 0 auto}
@@ -52,6 +52,14 @@ nav a{color:var(--ink);text-decoration:none;font-size:1rem;font-weight:500;white
 nav a:hover{color:var(--stamp)}
 nav a:focus-visible,.btn:focus-visible{outline:2px solid var(--stamp);outline-offset:3px}
 
+/* 10-18 メニューが7つになったので、タブレットでは少し詰め、それでも入らない幅では横にすべらせる */
+@media(min-width:761px) and (max-width:1100px){
+  .logo .mark{font-size:1.25rem}
+  nav{min-width:0;overflow-x:auto;scrollbar-width:none}
+  nav::-webkit-scrollbar{display:none}
+  nav ul{gap:16px}
+  nav a{font-size:.92rem}
+}
 @media(max-width:760px){
   .nav{gap:10px;padding:12px 16px}
   .logo .mark{font-size:1.15rem;white-space:nowrap}   /* ← これを追加 */

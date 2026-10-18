@@ -14,7 +14,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </figcaption>
       </figure>
 
-        <div class="cards">
+        <h2 class="how-sec"><span class="how-sec-no">BASICS</span>数字を読む前に</h2>
+      <p class="how-sec-lead">平均、割合、指数、調査の素性。窓口や展示の数字を読むときの、土台になる話です。</p>
+      <div class="cards">
         <a class="card" href="/how-to-read/median-vs-mean/">
           <img class="card-img" src="/images/icon/median-vs-mean-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>平均のところに、誰もいない</h3>
@@ -55,6 +57,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <h3>数字のもとになった調査</h3>
           <p>国勢調査、家計調査、社会生活基本調査……。この国の数字は、だれが、何を、どう数えたものなのか。主な調査を、京がご案内します。</p>
         </a>
+      </div>
+
+      <h2 class="how-sec"><span class="how-sec-no">TOOLS</span>統計の道具を使う</h2>
+      <p class="how-sec-lead">閲覧室や見くらべの間に置いた、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰。</p>
+      <div class="cards">
         <a class="card" href="/how-to-read/position/">
           <img class="card-img" src="/images/icon/position-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>10位は、近いのか遠いのか</h3>
@@ -120,6 +127,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .how-overlay .sub{font-size:.9rem;color:var(--ink-soft)}
 }
 
+.how-sec{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.3rem;margin:40px 0 6px;padding-left:12px;border-left:4px solid var(--ink);display:flex;align-items:baseline;gap:12px}
+.how-sec:first-of-type{margin-top:8px}
+.how-sec-no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.24em;color:var(--stamp);font-weight:600}
+.how-sec-lead{font-size:.88rem;color:var(--ink-soft);line-height:1.8;margin:0 0 18px}
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 @media(max-width:900px){
   .cards{grid-template-columns:repeat(2,minmax(0,1fr))}

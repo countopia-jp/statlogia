@@ -200,6 +200,29 @@ const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
       </div>
     </section>
 
+    <!-- 見くらべの間（10-18 閲覧室から独立。閲覧室・展望塔と並ぶ入口） -->
+    <section id="compare">
+      <div class="sec-head">
+        <img class="sec-icon" src="/images/icon/compare-icon.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
+        <div class="sec-text">
+          <span class="no">COMPARE</span>
+          <h2>見くらべの間</h2>
+        </div>
+      </div>
+      <a class="cmp-feature" href="/compare/">
+        <img class="cmp-feature-img" src="/images/icon/compare-large.webp" alt="窓の大きな木造の閲覧室。長い机に色ちがいのしおり紐をはさんだ帳面が4冊開いて並び、京が指でなぞり、橙子がのぞきこむ水彩画" width="1376" height="768" loading="lazy" />
+        <span class="cmp-feature-body">
+          <span class="cmp-feature-lead">閲覧室と別館の窓口をまたいで、項目を4つまで選び、47都道府県の値と順位を一つの表に並べます。</span>
+          <span class="cmp-feature-list">
+            <span><b>偏差値・上位◯％</b>単位のちがう項目を、同じ物差しで並べる</span>
+            <span><b>人口あたり</b>数の項目を、人口の大きさをそろえて見る</span>
+            <span><b>散布図と相関</b>二つの項目がそろって動くかを確かめる</span>
+          </span>
+          <span class="cmp-feature-go">見くらべの間へ →</span>
+        </span>
+      </a>
+    </section>
+
     <!-- 案内人 -->
     <section id="guide">
       <div class="sec-head">
@@ -467,6 +490,17 @@ h1 .num{color:var(--stamp)}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
 .card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
 .c-place{font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
+/* 10-18 見くらべの間：閲覧室・展望塔と並ぶ入口として、絵と道具の一覧を大きく置く */
+.cmp-feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:center;padding:20px;border:1px solid var(--line);border-left:5px solid var(--stamp);border-radius:12px;background:#fffdf7;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s}
+.cmp-feature:hover,.cmp-feature:focus-visible{transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,40,30,.1)}
+.cmp-feature-img{display:block;width:100%;height:auto;border-radius:8px}
+.cmp-feature-body{display:flex;flex-direction:column;gap:14px}
+.cmp-feature-lead{font-size:1rem;line-height:1.9;color:var(--ink)}
+.cmp-feature-list{display:flex;flex-direction:column;gap:8px}
+.cmp-feature-list span{display:block;font-size:.85rem;line-height:1.7;color:var(--ink-soft);padding-left:12px;border-left:3px solid #e6dcc4}
+.cmp-feature-list b{display:block;font-family:"Shippori Mincho",serif;font-size:.98rem;color:var(--ink)}
+.cmp-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem}
+@media(max-width:760px){.cmp-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
 .more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
 .more-btn{
   display:inline-block;padding:11px 22px;border-radius:8px;
