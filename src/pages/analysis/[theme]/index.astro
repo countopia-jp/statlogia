@@ -46,6 +46,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         <li><b>関係</b>：組の中の二つの項目を散布図に置き、相関係数と回帰直線で、そろって動くかを確かめます。</li>
         {t.lq && <li><b>特化係数</b>：業種ごとに「県の割合÷全国の割合」を、生み出した額（純付加価値額）と働く人の両方で出し、1人あたりの額も全国を1としてくらべます（地域経済分析システム RESAS の「稼ぐ力分析」と同じ見方です）。</li>}
         {t.shiftShare && <li><b>増減の分解（シフトシェア分析）</b>：2016年から2021年に働く人が増えた（減った）分を、「全国の流れ」「産業の構成」「地域の分」の3つに分けます。産業の構成は、全国で伸びた業種を多く持っていたかどうか、地域の分は、同じ業種でも全国より伸びたかどうかを示します。</li>}
+        {t.shiftShare && <li><b>業種の集まり方（ハーフィンダール指数）</b>：働く人が少ない業種に集まっているか、多くの業種に散らばっているかを、業種ごとの割合の2乗の合計で表します。</li>}
         {t.trends.length > 0 && <li><b>時間</b>：毎年の数字がある項目は、最初の年を100にそろえて、全国と伸び方をくらべます。</li>}
       </ul>
     </section>
@@ -81,6 +82,10 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
           <p class="an-note">全国の流れ・業種ごとの全国の伸び方は、県と同じもの（47都道府県の合計）を使います。市区町村では、人数が伏せられている（秘匿）業種があり、2回のどちらかの数字が無い業種は分解から外します。</p>
           <div class="an-ss" id="anSSTown"></div>
         </div>
+
+        <h3 class="an-h3">業種の集まり方（ハーフィンダール指数）</h3>
+        <p class="an-note">働く人が、いくつかの業種に集まっているか、たくさんの業種に散らばっているかを1つの数で表します。業種ごとの割合を2乗して足したもの（ハーフィンダール指数）で、大きいほど少ない業種に集まっています。わかりやすくするため、「同じ大きさの業種が何個あるのと同じか」（指数の逆数）でも示します。集まっていることも、散らばっていることも、それだけで良し悪しは決まりません。</p>
+        <div class="an-hhi" id="anHHI"><p class="an-empty">県を選ぶと、ここに業種の集まり方が出ます。</p></div>
       </>}
 
       <h3 class="an-h3">二つの項目の関係</h3>
@@ -292,7 +297,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       return out;
     }
 
-    function conclude(P, T, Q, SSr) {
+    function conclude(P, T, Q, SSr, H) {
       const ul = document.getElementById('anCan');
       if (!main) return;
       const nm = NAMES[main];
@@ -320,6 +325,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         li.push(`2016年から2021年の働く人の増減（${fp(SSr.E1 - SSr.E0)}）を分けると、全国の流れが${fp(SSr.ns)}、産業の構成が${fp(SSr.im)}、地域の分が${fp(SSr.rs)}でした。`);
         li.push(`地域の分が大きかったのは${SSr.up.map((r) => r.n).join('、')}、小さかったのは${SSr.down.map((r) => r.n).join('、')}です。`);
       }
+      if (H) li.push(`${nm}の働く人の業種の集まり方は、同じ大きさの業種が${H.eq1.toFixed(1)}個あるのと同じで（全国${H.nat.toFixed(1)}個）、47都道府県で集まり方が${H.rank}番目に大きい県です。いちばん割合が大きい業種は${H.top.n}（${(H.top.x * 100).toFixed(1)}％）です。`);
       for (const q of P) li.push(`${q.p.why.replace(/か。$/, '')}——47都道府県では、相関係数${q.r.toFixed(2)}の${q.dir}${q.word}関係でした。${q.res}`);
       for (const q of T) if (q.me !== null && q.nat !== null) li.push(q.share
         ? `${q.m.short}は、${q.y0}年から${q.y1}年にかけて、${nm}が${(q.me - q.me0) >= 0 ? '+' : '−'}${Math.abs(q.me - q.me0).toFixed(1)}ポイント、全国（平均）が${(q.nat - q.nat0) >= 0 ? '+' : '−'}${Math.abs(q.nat - q.nat0).toFixed(1)}ポイント動きました。`
@@ -416,7 +422,51 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       }
       const t = D.towns.find((x) => x.c === sel.value);
       if (!t) { box.innerHTML = ''; return; }
-      box.innerHTML = `<p class="an-sstown-name">${t.n}</p>` + ssHtml(t.e0, t.e1, true).html;
+      box.innerHTML = `<p class="an-sstown-name">${t.n}</p>` + ssHtml(t.e0, t.e1, true).html + hhiTownLine(t);
+    }
+
+    // ---- 業種の集まり方（ハーフィンダール指数、事業従事者数・産業大分類17業種） ----
+    function hhiOf(es) {
+      const v = es.map((x) => (typeof x === 'number' ? x : 0));
+      const T = v.reduce((a, b) => a + b, 0);
+      if (!(T > 0)) return null;
+      const sh = v.map((x) => x / T);
+      return { h: sh.reduce((a, x) => a + x * x, 0), sh };
+    }
+    let HHA = null;
+    function hhiAll() {
+      if (HHA || !SS) return HHA;
+      const { N0, N1 } = ssNat();
+      HHA = { nat0: hhiOf(N0), nat1: hhiOf(N1), areas: SS.areas.map((a) => ({ c: a.c, h0: hhiOf(a.e0), h1: hhiOf(a.e1) })).filter((a) => a.h1) };
+      return HHA;
+    }
+    function hhiView() {
+      const box = document.getElementById('anHHI');
+      const A = hhiAll();
+      if (!box || !A || !main) return null;
+      const me = A.areas.find((a) => a.c === main);
+      if (!me) return null;
+      const sorted = [...A.areas].sort((x, y) => y.h1.h - x.h1.h);
+      const rank = sorted.findIndex((a) => a.h1.h === me.h1.h) + 1;
+      const eq = (o) => 1 / o.h;
+      const lo = Math.min(...A.areas.map((a) => eq(a.h1))), hi = Math.max(...A.areas.map((a) => eq(a.h1)));
+      const x0 = Math.floor(lo), x1 = Math.ceil(hi);
+      const pos = (v) => ((v - x0) / (x1 - x0)) * 100;
+      const dots = A.areas.map((a) => `<i class="an-hhid${a.c === main ? ' is-me' : ''}" style="left:${pos(eq(a.h1)).toFixed(2)}%" title="${NAMES[a.c]} ${eq(a.h1).toFixed(1)}"></i>`).join('');
+      const ticks = Array.from({ length: x1 - x0 + 1 }, (_, i) => `<span style="left:${pos(x0 + i)}%">${x0 + i}</span>`).join('');
+      const top3 = me.h1.sh.map((x, i) => ({ n: SS.industries[i].n, x })).sort((a, b) => b.x - a.x).slice(0, 3);
+      const d = eq(me.h1) - eq(me.h0);
+      const html = `<div class="an-hhinum"><div><span>同じ大きさの業種が</span><b>${eq(me.h1).toFixed(1)}個</b><span>あるのと同じ</span></div><div><span>指数</span><b>${me.h1.h.toFixed(3)}</b><span>47都道府県で集まり方が${rank}番目に大きい</span></div><div><span>全国</span><b>${eq(A.nat1).toFixed(1)}個</b><span>指数 ${A.nat1.h.toFixed(3)}</span></div></div>
+        <div class="an-hhistrip"><div class="an-hhiline">${dots}</div><div class="an-hhiticks">${ticks}</div><p>点は47都道府県（${SS.y1}）。左ほど少ない業種に集まり、右ほど散らばっています。赤い点が${NAMES[main]}です。</p></div>
+        <p class="an-ssnote">割合の大きい業種：${top3.map((r) => `${r.n} ${(r.x * 100).toFixed(1)}％`).join('、')}。${SS.y0}は${eq(me.h0).toFixed(1)}個でした（${SS.y1}までに${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(1)}個）。業種は経済センサスの産業大分類17区分で数えています。区分を細かくすると、数は変わります。</p>`;
+      box.innerHTML = html;
+      return { eq1: eq(me.h1), eq0: eq(me.h0), nat: eq(A.nat1), rank, top: top3[0] };
+    }
+    function hhiTownLine(t) {
+      const o = hhiOf(t.e1);
+      if (!o) return '';
+      const miss = t.e1.filter((x) => typeof x !== 'number').length;
+      return `<p class="an-ssnote">業種の集まり方：${SS.y1}は同じ大きさの業種が${(1 / o.h).toFixed(1)}個あるのと同じ（指数 ${o.h.toFixed(3)}）。${miss ? `数字が無い${miss}業種を除いて計算しています。` : ''}</p>`;
     }
     document.getElementById('anSSTownSel')?.addEventListener('change', ssTown);
 
@@ -427,9 +477,10 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       profile();
       const Q = lqView();
       const SSr = ssView();
+      const H = hhiView();
       const P = pairs();
       const T = trends();
-      conclude(P, T, Q, SSr);
+      conclude(P, T, Q, SSr, H);
     }
     // 県を選ぶ前でも、散布図は全国の並びで見せておく
     pairs();
@@ -457,6 +508,19 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
     .an-ssb--m, .an-ssk--m { background: #4a6fa5; }
     .an-ssb--r, .an-ssk--r { background: #b23a2f; }
     .an-ssnote { font-size: .78rem; color: #666; margin: 8px 0 12px; }
+    .an-hhi { margin: 8px 0 20px; }
+    .an-hhinum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .an-hhinum > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+    .an-hhinum span { font-size: .76rem; color: #555; }
+    .an-hhinum b { font-size: 1.3rem; color: #1b4332; }
+    .an-hhistrip { margin: 14px 4px 4px; }
+    .an-hhiline { position: relative; height: 22px; border-bottom: 1px solid #9aa79d; }
+    .an-hhid { position: absolute; bottom: 4px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: rgba(74,111,165,.45); }
+    .an-hhid.is-me { background: #b23a2f; width: 13px; height: 13px; margin-left: -6.5px; bottom: 2px; z-index: 2; }
+    .an-hhiticks { position: relative; height: 18px; font-size: .72rem; color: #666; }
+    .an-hhiticks span { position: absolute; transform: translateX(-50%); top: 2px; }
+    .an-hhistrip p { font-size: .78rem; color: #666; margin: 6px 0 0; }
+    @media (max-width: 600px) { .an-hhinum { grid-template-columns: 1fr; } }
     .an-sslists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     .an-sslists h4 { margin: 0 0 6px; font-size: .86rem; color: #1b4332; }
     .an-sslists ol { margin: 0; padding-left: 1.4em; font-size: .84rem; }

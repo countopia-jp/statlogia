@@ -204,3 +204,4 @@ body.annex main a{ color:var(--annex-navy); }
 .hf--tt .hf-text{left:50%;top:2.5%;transform:translate(-50%);width:min(72%,660px);padding:8px 18px 6px;box-shadow:0 0 16px 8px rgba(255,253,247,.55)}
 .hf--tt .hf-text h1{font-size:clamp(1.15rem,2.4vw,1.75rem);margin:0 auto 2px}
 }
+.logo .mark .xf{margin-top:-.9em}
