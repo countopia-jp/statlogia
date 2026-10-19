@@ -71,8 +71,11 @@ const { slug } = Astro.props;
 const alt = Astro.props.alt ?? ALTS[slug] ?? '';
 const src = `/images/exhibits/${slug}-large.webp`;
 const has = fs.existsSync(path.join(process.cwd(), 'public', src));
+// 10-20 題の前半（.h1a）は「と」「・」「、」の後ろでだけ折り返す（「グラウンドゴル／フ」のような語の途中の折れを防ぐ）
+const raw = await Astro.slots.render('default');
+const body = raw.replace(/(<span class="h1a"[^>]*>)([^<]+)(<\/span>)/, (_, a, t, c) => a + t.split(/(?<=[と・、])/).map((x) => `<span class="nw">${x}</span>`).join('') + c);
 // 10-18 題は扉絵の上に重ねる（位置は src/data/hero-pos.js）。絵が無い展示は、これまでどおり絵の上の見出しだけ
 ---
 {has
-  ? <HeroFig src={src} alt={alt} eager><slot /></HeroFig>
-  : <div class="sec-head"><slot /></div>}
+  ? <HeroFig src={src} alt={alt} eager><Fragment set:html={body} /></HeroFig>
+  : <div class="sec-head"><Fragment set:html={body} /></div>}

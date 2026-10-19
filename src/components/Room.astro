@@ -109,6 +109,14 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     <p class="rm-note">名前を押すと、その{isPref ? '県' : '町'}の帳面を開きます。同じ値は同じ順位として並べています。</p>
   </section>
 
+  {!isPref && (
+    <section class="rm-spread" aria-label="県の中のばらつき">
+      <h2>県の中のばらつき</h2>
+      <p class="rm-note rm-spread-lead">上の「項目」と「くらべる範囲」に合わせて、同じ県の市区町村どうしで、値がどれだけ散らばっているかを出します。値を小さい順に並べたとき、真ん中の半分の町が入る幅（四分位範囲）で測り、47都道府県で比べます。</p>
+      <div id="rmSpread"></div>
+    </section>
+  )}
+
   {room.outro && room.outro.map(([who, text]) => <Talk speaker={who}>{text}</Talk>)}
 
   {room.cross && room.cross.length > 0 && (
@@ -312,6 +320,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   }
   function render(a) {
     current = a;
+    if (!isPref && document.getElementById('rmSpread')) setTimeout(() => showRank(), 0);
     compare = compare.filter((b) => b.c !== a.c);
     document.getElementById('rmResult').hidden = false;
     document.getElementById('rmTitle').textContent = `${a.n}の帳面`;
@@ -773,6 +782,68 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     };
     fill(document.getElementById('rmHi'), hi, (b) => rankIn(ind, b, pool));
     fill(document.getElementById('rmLo'), lo, loRank);
+    showSpread(ind, pref);
+  }
+
+  // ---- 10-20 県の中のばらつき（四分位範囲。人数や件数の項目は人口あたりに直す） ----
+  const SPREAD = {};
+  function spreadView(ind) {
+    if (ind.perCap && POP) {
+      const S = distOf(ind);
+      const med = S.q(0.5) || 0;
+      if (ind.perCap === 'p100k' && ind.unit === '人' && med >= 1000) return { label: '人口に対する割合', unit: '％', k: 1 / 1000, dec: 1 };
+      if (ind.perCap === 'p100k' && med >= 100000) { const m = med / 1e5; return { label: '1人あたり', unit: ind.unit, k: 1 / 1e5, dec: m >= 100 ? 0 : m >= 10 ? 1 : 2 }; }
+      return { label: pcLabel(ind), unit: pcUnit(ind), k: 1, dec: S.dec };
+    }
+    return { label: '', unit: ind.unit || '', k: 1, dec: ind.decimals };
+  }
+  function spreadAll(ind) {
+    if (SPREAD[ind.key]) return SPREAD[ind.key];
+    const V = spreadView(ind);
+    const by = {};
+    for (const a of AREAS) {
+      if (a.x) continue;
+      const m = metricOf(a, ind);
+      if (m === null || !Number.isFinite(m)) continue;
+      (by[prefOf(a)] ??= []).push({ a, v: m * V.k });
+    }
+    const prefs = [];
+    for (const [p, list] of Object.entries(by)) {
+      if (list.length < 5) continue;
+      list.sort((x, y) => x.v - y.v);
+      const n = list.length;
+      const q = (t) => { const h = (n - 1) * t; const lo = Math.floor(h); return list[lo].v + (list[Math.min(lo + 1, n - 1)].v - list[lo].v) * (h - lo); };
+      prefs.push({ p, list, n, q25: q(0.25), q50: q(0.5), q75: q(0.75), iqr: q(0.75) - q(0.25) });
+    }
+    prefs.sort((x, y) => y.iqr - x.iqr);
+    return (SPREAD[ind.key] = { V, prefs });
+  }
+  function showSpread(ind, pref) {
+    const box = document.getElementById('rmSpread');
+    if (!box) return;
+    const { V, prefs } = spreadAll(ind);
+    const f = (v) => v.toLocaleString('ja-JP', { minimumFractionDigits: V.dec, maximumFractionDigits: V.dec }) + V.unit;
+    const head = `<p class="rm-spread-ind">${ind.label}${V.label ? `（${V.label}）` : ''}</p>`;
+    if (prefs.length < 5) { box.innerHTML = head + '<p class="rm-note">県ごとに比べられるだけの数字がありません。</p>'; return; }
+    const rankOf = (P) => prefs.filter((x) => x.iqr > P.iqr + 1e-12).length + 1;
+    if (!pref) {
+      const li = (P) => `<li><button type="button" data-p="${P.p}">${PREF_NAMES[P.p]}</button><b>${f(P.iqr)}</b><small>${f(P.q25)}〜${f(P.q75)}</small></li>`;
+      box.innerHTML = head + `<div class="rm-spread-cols"><div><h3>幅が大きい県</h3><ol>${prefs.slice(0, 3).map(li).join('')}</ol></div><div><h3>幅が小さい県</h3><ol>${prefs.slice(-3).reverse().map(li).join('')}</ol></div></div><p class="rm-note">「くらべる範囲」で県を選ぶと、その県の中の並びが出ます。</p>`;
+      box.querySelectorAll('button[data-p]').forEach((b) => b.addEventListener('click', () => { if (scopeSel) { scopeSel.innerHTML = '<option value="all">全国の市区町村</option>' + `<option value="${b.dataset.p}">${PREF_NAMES[b.dataset.p]}の市区町村</option>`; scopeSel.value = b.dataset.p; showRank(); } }));
+      return;
+    }
+    const P = prefs.find((x) => x.p === pref);
+    if (!P) { box.innerHTML = head + `<p class="rm-note">${PREF_NAMES[pref]}は、値のある市区町村が少ないため出していません。</p>`; return; }
+    const lo = P.list[0], hi = P.list[P.n - 1];
+    const W = 600, PAD = 10, x0 = lo.v, x1 = hi.v;
+    const X = (v) => (x1 > x0 ? PAD + ((v - x0) / (x1 - x0)) * (W - PAD * 2) : W / 2);
+    const cur = current && prefOf(current) === pref ? current.c : null;
+    const dots = P.list.map((o) => `<circle cx="${X(o.v).toFixed(1)}" cy="22" r="${o.a.c === cur ? 6 : 4}" fill="${o.a.c === cur ? '#b23a2f' : '#1b4332'}" fill-opacity="${o.a.c === cur ? 1 : 0.35}"${o.a.c === cur ? ' stroke="#fff" stroke-width="1.2"' : ''}><title>${shortName(o.a)} ${f(o.v)}</title></circle>`).join('');
+    const svg = `<svg class="rm-spread-svg" viewBox="0 0 ${W} 44" role="img" aria-label="${PREF_NAMES[pref]}の市区町村の値を点で並べた図。箱は真ん中の半分の範囲"><rect x="${X(P.q25).toFixed(1)}" y="10" width="${Math.max(1, X(P.q75) - X(P.q25)).toFixed(1)}" height="24" fill="#c99a2e" fill-opacity=".18" stroke="#c99a2e" stroke-opacity=".7"/><line x1="${X(P.q50).toFixed(1)}" y1="6" x2="${X(P.q50).toFixed(1)}" y2="38" stroke="#c99a2e"/>${dots}</svg>`;
+    const curO = cur ? P.list.find((o) => o.a.c === cur) : null;
+    box.innerHTML = head + `<div class="rm-spread-tiles"><div><span>真ん中の半分の幅</span><b>${f(P.iqr)}</b><span>${f(P.q25)}〜${f(P.q75)}</span></div><div><span>真ん中の町の値（中央値）</span><b>${f(P.q50)}</b><span>${P.n}の市区町村</span></div>${(() => { const rk = rankOf(P), rs = prefs.filter((x) => x.iqr < P.iqr - 1e-12).length + 1; return rk <= rs ? `<div><span>${prefs.length}都道府県で、幅が大きいほうから</span><b>${rk}番目</b><span>いちばん大きいのは${PREF_NAMES[prefs[0].p]}（${f(prefs[0].iqr)}）</span></div>` : `<div><span>${prefs.length}都道府県で、幅が小さいほうから</span><b>${rs}番目</b><span>いちばん小さいのは${PREF_NAMES[prefs[prefs.length - 1].p]}（${f(prefs[prefs.length - 1].iqr)}）</span></div>`; })()}</div>
+      ${svg}<p class="rm-spread-ends"><span>${shortName(lo.a)} ${f(lo.v)}</span><span>${shortName(hi.a)} ${f(hi.v)}</span></p>
+      <p class="rm-note">点は${PREF_NAMES[pref]}の市区町村、箱は真ん中の半分、縦の線は中央値です。${curO ? `赤い点が${shortName(curO.a)}です。` : ''}人口の少ない町は値が大きく揺れやすいので、両端の町だけで県の散らばりを判断しないでください。幅の大小に良し悪しはありません。</p>`;
   }
   indSel.addEventListener('change', showRank);
   if (scopeSel) scopeSel.addEventListener('change', showRank);
@@ -872,6 +943,22 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   .rm-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
 
   .rm-ranking { margin-top: 44px; }
+  .rm-spread { margin-top: 40px; }
+  .rm-spread h2 { text-align: center; font-family: "Shippori Mincho", serif; }
+  .rm-spread-ind { font-weight: 700; color: #1b4332; margin: 12px 0 8px; }
+  .rm-spread-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .rm-spread-tiles > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .rm-spread-tiles span { font-size: .76rem; color: #555; }
+  .rm-spread-tiles b { font-size: 1.2rem; color: #1b4332; }
+  .rm-spread-svg { display: block; width: 100%; height: auto; margin: 14px 0 2px; }
+  .rm-spread-ends { display: flex; justify-content: space-between; gap: 12px; font-size: .78rem; color: #555; margin: 0 0 6px; }
+  .rm-spread-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .rm-spread-cols h3 { font-size: .9rem; margin: 0 0 6px; color: #1b4332; }
+  .rm-spread-cols ol { margin: 0; padding-left: 1.4em; font-size: .86rem; }
+  .rm-spread-cols li { margin: 4px 0; }
+  .rm-spread-cols li button { background: none; border: 0; padding: 0; color: #b23a2f; text-decoration: underline; cursor: pointer; font: inherit; margin-right: 8px; }
+  .rm-spread-cols li small { display: block; color: #777; font-size: .74rem; }
+  @media (max-width: 600px) { .rm-spread-tiles, .rm-spread-cols { grid-template-columns: 1fr; } }
   .rm-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
   .rm-rank-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 600px) { .rm-rank-cols { grid-template-columns: 1fr; } }

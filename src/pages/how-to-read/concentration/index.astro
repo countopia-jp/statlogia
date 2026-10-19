@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+---
+<BaseLayout title="同じ大きさの業種が、いくつあるか｜統計の歩き方 - Countopia Stats" description="働く人が少ない業種に集まっているか、多くの業種に散らばっているかを1つの数で表すハーフィンダール指数の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <header class="art-hero">
+      <p class="art-kicker">HOW TO READ</p>
+      <h1><span class="nw">同じ大きさの業種が、</span><span class="nw">いくつあるか</span></h1>
+    </header>
+
+    <Talk speaker="touko">
+      京、町によって、工場で働く人ばかりのところと、いろいろなお店や会社に分かれて働いているところがあるでしょう。その分かれ方は、数で言えるのかしら。
+    </Talk>
+    <Talk speaker="kei">
+      言えます。業種ごとの割合を2乗して足すと、働く人がどれだけ少ない業種に集まっているかが、1つの数になります。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="割合が50・30・20％の町は指数0.38で業種2.6個分、4つの業種が25％ずつの町は指数0.25で業種4個分であることを示す図">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">業種の割合と、集まり方の数</text>
+        <text x="0" y="58" font-size="13" font-weight="700" fill="#1b4332">A町</text>
+        <rect x="60" y="44" width="200" height="22" fill="#4a6fa5"/><rect x="260" y="44" width="120" height="22" fill="#8a9a8f"/><rect x="380" y="44" width="80" height="22" fill="#c99a2e"/>
+        <text x="160" y="60" text-anchor="middle" font-size="12" fill="#fff">50％</text><text x="320" y="60" text-anchor="middle" font-size="12" fill="#fff">30％</text><text x="420" y="60" text-anchor="middle" font-size="12" fill="#fff">20％</text>
+        <text x="60" y="88" font-size="12" fill="#555">0.5²＋0.3²＋0.2²＝0.38 → 1÷0.38＝約2.6個分</text>
+        <text x="0" y="132" font-size="13" font-weight="700" fill="#1b4332">B町</text>
+        <rect x="60" y="118" width="100" height="22" fill="#4a6fa5"/><rect x="160" y="118" width="100" height="22" fill="#8a9a8f"/><rect x="260" y="118" width="100" height="22" fill="#c99a2e"/><rect x="360" y="118" width="100" height="22" fill="#b23a2f"/>
+        <text x="110" y="134" text-anchor="middle" font-size="12" fill="#fff">25％</text><text x="210" y="134" text-anchor="middle" font-size="12" fill="#fff">25％</text><text x="310" y="134" text-anchor="middle" font-size="12" fill="#fff">25％</text><text x="410" y="134" text-anchor="middle" font-size="12" fill="#fff">25％</text>
+        <text x="60" y="162" font-size="12" fill="#555">0.25²×4＝0.25 → 1÷0.25＝4個分</text>
+        <text x="0" y="200" font-size="12" fill="#777">指数が大きいほど、少ない業種に集まっている。1業種だけなら1、</text>
+        <text x="0" y="218" font-size="12" fill="#777">17業種が同じ大きさなら1÷17＝約0.059（いちばん小さい値）</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>割合を2乗して足す</h2>
+      <p>
+        この数を<b>ハーフィンダール指数</b>といいます。業種ごとの割合（全体を1とする）を2乗して、すべて足したものです。
+        2乗すると、大きな割合ほど強く効くので、ひとつの業種に働く人が集まっているほど、指数は大きくなります。
+        もともとは、ある市場が少ない会社に占められているかどうかを測るために使われてきた数で、公正取引委員会が会社どうしの合併を調べるときにも使っています。
+      </p>
+      <p>
+        指数の逆数（1÷指数）は、「同じ大きさの業種が何個あるのと同じか」を表します。図のA町は業種が3つありますが、大きさがそろっていないので、同じ大きさの業種が約2.6個あるのと同じです。B町は4つの業種がそろっているので、ちょうど4個です。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>読むときの注意</h2>
+      <p>
+        集まっていることも、散らばっていることも、それだけで良し悪しは決まりません。
+        数は、業種の分け方で変わります。この国では、経済センサス‐活動調査の事業所で働く人を、産業の大きな分類17区分で数えています。区分を細かくすると、同じ町でも個数は大きくなります。
+        ちがう分け方で出した数どうしは、比べられません。
+      </p>
+      <p>
+        どの業種に集まっているかは、指数だけでは分かりません。業種ごとの割合や、全国の割合で割った<a href="/how-to-read/specialization/">特化係数</a>と合わせて見ます。
+        市区町村では、人数が伏せられている業種を除いて計算しています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>どこで見られるか</h2>
+      <p>
+        <a href="/analysis/industry/">読み解きの間「産業の稼ぐ力を読み解く」</a>で、県を選ぶと、指数と個数、47都道府県の中の位置、2016年からの動きが出ます。県の中の市区町村を選ぶと、その町の個数も出ます。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      業種が3つあっても、3個分とはかぎらないのね。
+    </Talk>
+    <Talk speaker="kei">
+      はい。数えた業種の数ではなく、大きさのそろい方まで入れて数えるのが、この物差しです。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/specialization/">町の得意を測る物差し →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>
