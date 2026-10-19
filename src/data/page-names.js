@@ -17,6 +17,7 @@ export const ROOM_NAMES = {
   '/analysis/finance/': '読み解きの間　県のお金を読み解く',
   '/analysis/care/': '読み解きの間　医療と介護を読み解く',
   '/analysis/living/': '読み解きの間　暮らしを読み解く',
+  '/analysis/leisure/': '読み解きの間　余暇と地域のつながりを読み解く',
   '/living/': '別館　暮らしの見積所',
   '/prices/': '閲覧室　物価の帳場',
   '/sky/': '閲覧室　空の帳場',

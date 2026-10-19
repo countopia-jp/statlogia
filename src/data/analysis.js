@@ -280,6 +280,49 @@ export const THEMES = [
       '医療の質や、待ち時間、介護を受ける人の満足は、この組に入っていません。',
     ],
   },
+  {
+    id: 'leisure',
+    tag: 'スポーツと旅行、ボランティア、体育館や博物館、図書館と公民館、NPO',
+    title: '余暇と地域のつながりを読み解く',
+    kicker: 'LEISURE & COMMUNITY',
+    lead: 'スポーツや旅行に出かける人、ボランティアをする人と、それを受けとめる施設や集まり。県の余暇と地域のつながりを、一つの組で読み解きます。',
+    question: 'この県の人は、余暇と地域の活動にどう関わっているか。',
+    subQuestions: [
+      'スポーツをする人、旅行に出かける人、ボランティアをする人の割合は、全国と比べてどうか。',
+      '体育館や公民館、図書館などの場の多さと、そこで活動する人の多さは、そろって動いているか。',
+      'NPO法人や老人クラブなど、地域の集まりの多さはどうか。',
+    ],
+    indicators: [
+      { id: 'sport', src: 'room', room: 'leisure', key: 'sport', short: 'スポーツをした人の割合（10歳以上）', note: '社会生活基本調査（一部の人を調べた値）。誤差の目安を添えています。' },
+      { id: 'trip', src: 'room', room: 'leisure', key: 'tripall', short: '旅行・行楽をした人の割合（10歳以上）', note: '社会生活基本調査（一部の人を調べた値）。' },
+      { id: 'volAll', src: 'room', room: 'volunteer', key: 'all', short: 'ボランティア活動をした人の割合（10歳以上）', note: '社会生活基本調査（一部の人を調べた値）。' },
+      { id: 'volTown', src: 'room', room: 'volunteer', key: 'town', short: 'まちづくりのための活動をした人の割合', note: '社会生活基本調査（一部の人を調べた値）。' },
+      { id: 'sportsFac', src: 'room', room: 'culture', key: 'sports', short: '体育館・運動場など（人口10万人あたり）' },
+      { id: 'museums', src: 'room', room: 'culture', key: 'museums', short: '博物館（人口10万人あたり）' },
+      { id: 'libs', src: 'room', room: 'library', key: 'libs', short: '図書館（人口10万人あたり）' },
+      { id: 'lend', src: 'room', room: 'library', key: 'lend', short: '図書館で借りた本（1人あたり）' },
+      { id: 'hallJoin', src: 'room', room: 'learning-places', key: 'hallJoin', short: '公民館の集まりに参加した延べ人数（人口100人あたり）' },
+      { id: 'npo', src: 'room', room: 'learning-places', key: 'npo', short: 'NPO法人（人口10万人あたり）' },
+      { id: 'oldClub', src: 'room', room: 'learning-places', key: 'oldClub', short: '老人クラブに入っている人の割合（65歳以上）' },
+    ],
+    pairs: [
+      { x: 'sportsFac', y: 'sport', why: '体育館や運動場が多い県ほど、スポーツをする人も多いか。' },
+      { x: 'hallJoin', y: 'volAll', why: '公民館の集まりに参加する人が多い県ほど、ボランティアをする人も多いか。' },
+      { x: 'npo', y: 'volTown', why: 'NPO法人が多い県ほど、まちづくりの活動をする人も多いか。' },
+      { x: 'libs', y: 'lend', why: '図書館が多い県ほど、本もよく借りられているか。' },
+    ],
+    trends: ['sport', 'volAll', 'lend'],
+    cautions: [
+      'スポーツ・旅行・ボランティアの割合は、社会生活基本調査（5年ごと、一部の人を調べた調査）の値で、県どうしの小さな差には調べ方によるゆれが含まれます。2021年の値には誤差の目安を添えています。',
+      '2021年の調査は、出かける遊びや集まりが控えられがちだった時期にあたります。',
+      '施設の数は人口あたりの値です。人口の少ない県ほど1施設の重みが大きく、多めに出やすくなります。',
+    ],
+    cannot: [
+      'どの県の人が「活動的」か、どの県の地域が「つながっている」かは、この組からは言えません。何を良しとするかは、数字の外の判断です。',
+      '施設が多いことが、活動する人を増やした理由だとは言えません（人口の少なさや土地の広さなど、別のものが両方を動かしていることがあります）。',
+      '活動の中身や、参加した人の満足は、この組に入っていません。',
+    ],
+  },
 ];
 
 export const PLANNED = [];

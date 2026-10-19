@@ -215,7 +215,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         const d = dev(m, v);
         const marks = who.map((c, k) => { const dd = dev(m, m.val[c]); if (dd === null) return ''; const x = Math.max(0, Math.min(100, ((dd - 20) / 60) * 100)); return `<span class="an-mk" style="left:${x}%;background:${COLORS[k]}" title="${NAMES[c]} 偏差値${dd.toFixed(1)}"></span>`; }).join('');
         const bar = d === null ? '' : (() => { const x = Math.max(0, Math.min(100, ((d - 20) / 60) * 100)); const l = Math.min(50, x), w = Math.abs(x - 50); return `<span class="an-bar" style="left:${l}%;width:${w}%"></span>`; })();
-        return `<div class="an-row"><div class="an-lab">${m.short}<small>${m.year || ''}</small></div><div class="an-val">${fmt(m, v)}<small>${typeof v === 'number' ? rankOf(m, v) + '位／' + m.n : ''}</small>${seHalf(m, main) !== null ? `<small class="an-se">±${fmt(m, seHalf(m, main))}</small>` : ''}</div><div class="an-track"><span class="an-mid"></span>${bar}${marks}</div><div class="an-dev">${d === null ? '—' : d.toFixed(1)}</div></div>`;
+        return `<div class="an-row"><div class="an-lab">${m.short}<small>${m.year || ''}</small></div><div class="an-val">${fmt(m, v)}<small>${typeof v === 'number' ? rankOf(m, v) + '位／' + m.n : ''}</small>${seHalf(m, main) !== null ? `<small class="an-se">±${fmt(m, seHalf(m, main)).replace(/％$/, 'ポイント')}</small>` : ''}</div><div class="an-track"><span class="an-mid"></span>${bar}${marks}</div><div class="an-dev">${d === null ? '—' : d.toFixed(1)}</div></div>`;
       }).join('') + '<div class="an-scale"><span>20</span><span>35</span><span>50</span><span>65</span><span>80</span></div>';
     }
 
