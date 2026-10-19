@@ -3,11 +3,14 @@
 // src/data/hero-pos.js
 //
 // 絵の名前（-large.webp を除いた部分）→ 位置。
-// t 上 / tl 左上 / tr 右上 / l 左 / r 右 / c 中央 / under 絵の下（人物が多く重ねる場所がない絵）
+// tt 上の細い帯（題だけを小さく、人物の頭が高い絵向け） / t 上 / tl 左上 / tr 右上 / l 左 / r 右 / c 中央 / under 絵の下（人物が多く重ねる場所がない絵）
 // 人物（京・橙子・栞や、絵の主役の人）に重ならない、空や壁など静かなところを選んである。
 // 絵を足したら、ここにも1行足す（書かなければ t）。
 // =====================================================
 export const HERO_POS = {
+  'similar': 'tr',
+  'shift-share': 'tt',
+  'sampling-error': 'tt',
   'correlation': 'tl',
   'growth': 'tl',
   'position': 'tr',

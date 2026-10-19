@@ -767,8 +767,15 @@ a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-co
 }
 
 @media(min-width:761px) and (max-width:1100px){
-  .ana-feature{grid-template-columns:1fr;gap:20px;padding:20px 24px}
-  .ana-feature-img{max-width:620px;margin:0 auto}
-  .ana-themes{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ana-feature{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px 28px;padding:20px;align-items:center}
+  .ana-feature-img{grid-column:1;grid-row:1}
+  .ana-feature-body{display:contents}
+  .ana-feature-lead{grid-column:2;grid-row:1}
+  .ana-themes{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .ana-feature-go{grid-column:1/-1;grid-row:3}
+  .ana-theme{padding:11px 30px 11px 12px}
+  .ana-theme b{font-size:.9rem;white-space:nowrap}
+  .ana-theme span{font-size:.76rem}
+  .ana-theme i{right:10px}
 }
 </style>

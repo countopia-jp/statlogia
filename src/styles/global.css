@@ -199,3 +199,8 @@ body.annex main a{ color:var(--annex-navy); }
 .logo .mark{position:relative;margin-right:2.4em}
 .logo .mark .kaiso{position:absolute;left:100%;top:.55em;margin-left:.7em;white-space:nowrap}
 .logo .mark .xf{margin-right:-.12em}
+/* 10-19 扉絵の上の細い帯（人物の頭が高い絵）。スマホは他と同じく絵の下に札 */
+@media(min-width:761px){
+.hf--tt .hf-text{left:50%;top:2.5%;transform:translate(-50%);width:min(72%,660px);padding:8px 18px 6px;box-shadow:0 0 16px 8px rgba(255,253,247,.55)}
+.hf--tt .hf-text h1{font-size:clamp(1.15rem,2.4vw,1.75rem);margin:0 auto 2px}
+}
