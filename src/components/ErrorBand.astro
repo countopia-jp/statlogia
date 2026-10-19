@@ -9,11 +9,12 @@
 // kind   = 'shakai'（社会生活基本調査）／'kakei'（家計調査）
 // take   = 上から何件見せるか（既定5）
 // label  = 見出しに入れる言葉（例：「カラオケをした人」）
+// note   = 出典の行に足す一言（差の誤差の出し方など）
 // 評価の言葉は使わず、幅が重なるかどうかだけを書く
 // =====================================================
 import { SE_SOURCES } from '../lib/sampling-error.js';
 
-const { rows, unit = 'pct', area = '県', kind = 'shakai', take = 5, label = '' } = Astro.props;
+const { rows, unit = 'pct', area = '県', kind = 'shakai', take = 5, label = '', note = '' } = Astro.props;
 const list = (rows || []).slice(0, take).filter((r) => r.lo !== null && r.hi !== null);
 const ok = list.length >= 2;
 const hm = (v) => { const m = Math.round(v); return m >= 60 ? Math.floor(m / 60) + '時間' + (m % 60) + '分' : m + '分'; };
@@ -52,7 +53,7 @@ const src = kind === 'kakei' ? SE_SOURCES.kakei : SE_SOURCES.shakai;
       ))}
     </ul>
     <p class="eb-sum">{sum}</p>
-    <p class="eb-src">幅は「値 ± 1.96 × 標準誤差」。{src}。一部の{who}を調べたことによる誤差だけの目安で、答えちがいなどの誤差は含みません。読み方は<a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか</a>。</p>
+    <p class="eb-src">幅は「値 ± 1.96 × 標準誤差」。{src}。一部の{who}を調べたことによる誤差だけの目安で、答えちがいなどの誤差は含みません。{note}読み方は<a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか</a>。</p>
   </div>
 )}
 <style>

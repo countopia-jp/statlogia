@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seTime } from '../../../lib/sampling-error.js';
 import { fetchHouseworkBySex } from '../../../lib/estat.js';
 
 const rows = await fetchHouseworkBySex(); // 男女差の大きい順
@@ -32,6 +34,16 @@ const allWomenLonger = menLonger.length === 0 && sameGap.length === 0;
 const womenLongerCount = rows.length - menLonger.length - sameGap.length;
 const menLongerText = menLonger.length > 0 ? `、${menLonger.map((r) => r.pref).join('・')}では男性のほうが長い` : '';
 const sameGapText = sameGap.length > 0 ? `、${sameGap.map((r) => r.pref).join('・')}では男女が同じ` : '';
+
+// 標本調査の誤差の幅：差の標準誤差は、女性と男性それぞれの標準誤差を二乗して足した平方根（二つを独立とみた目安）
+const seW = seTime('家事', 'female'), seM = seTime('家事', 'male');
+const ebGap = biggestGap.map((r) => {
+  const nm = String(r.pref).replace(/^\d+_?\s*/, '');
+  const sw = seW[nm], sm = seM[nm];
+  if (typeof sw !== 'number' || typeof sm !== 'number') return { n: r.pref, minutes: r.gap, lo: null, hi: null };
+  const h = 1.96 * Math.sqrt((sw * r.women / 100) ** 2 + (sm * r.men / 100) ** 2);
+  return { n: r.pref, minutes: r.gap, lo: r.gap - h, hi: r.gap + h };
+});
 ---
 <BaseLayout title="家事時間の男女差｜Countopia Stats" description="都道府県別・家事時間の男女差。いちばん差が大きい県、小さい県は？" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -89,6 +101,7 @@ const sameGapText = sameGap.length > 0 ? `、${sameGap.map((r) => r.pref).join('
           </li>
         ))}
       </ol>
+      <ErrorBand rows={ebGap} unit="min" area="県" kind="shakai" label="家事の時間の男女差" note="差の幅は、女性と男性それぞれの標準誤差を二つを独立とみて合わせた目安です（同じ世帯の男女を調べているので、実際の幅はこれより小さいことがあります）。" />
 
       <h2>男女差が小さい県 TOP5</h2>
       <ol class="rank">

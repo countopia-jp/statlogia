@@ -233,16 +233,18 @@ import { THEMES } from '../data/analysis.js';
           <h2>読み解きの間</h2>
         </div>
       </div>
-      <div class="ana-feature">
-        <img class="ana-feature-img" src="/images/icon/analysis-large.webp" alt="木造の閲覧室。窓辺の机で帳面を開いた京が虫めがねを手に橙子のほうを向いてほほえみ、橙子が壁に糸で掛かった5枚の札を指さす水彩画" width="1376" height="768" loading="lazy" />
-        <div class="ana-feature-body">
-          <p class="ana-feature-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
-          <div class="ana-themes">
-            {THEMES.map((t) => <a class="ana-theme" href={`/analysis/${t.id}/`}><b>{t.title}</b><span>{t.tag}</span><i aria-hidden="true">→</i></a>)}
-          </div>
-          <a class="ana-feature-go" href="/analysis/">読み解きの間へ →</a>
-        </div>
-      </div>
+      <a class="cmp-feature cmp-feature--ana" href="/analysis/">
+        <img class="cmp-feature-img" src="/images/icon/analysis-large.webp" alt="木造の閲覧室。窓辺の机で帳面を開いた京が虫めがねを手に橙子のほうを向いてほほえみ、橙子が壁に糸で掛かった5枚の札を指さす水彩画" width="1376" height="768" loading="lazy" />
+        <span class="cmp-feature-body">
+          <span class="cmp-feature-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。県を一つ選ぶと、問いから結論までが一枚にそろいます。</span>
+          <span class="cmp-feature-list">
+            <span><b>問いから結論まで</b>国の手引きにならい、問い→計画→データ→分析→結論の順に読む</span>
+            <span><b>似た県と並べる</b>数字の並びが近い県を挙げ、全国とくらべるだけでは見えない差を見る</span>
+            <span><b>言えないことも書く</b>数字から言えることと、言えないことを分けて示す</span>
+          </span>
+          <span class="cmp-feature-go">読み解きの間へ（全{THEMES.length}テーマ） →</span>
+        </span>
+      </a>
     </section>
 
     <!-- 案内人 -->
@@ -523,23 +525,7 @@ h1 .num{color:var(--stamp)}
 .cmp-feature-list b{display:block;font-family:"Shippori Mincho",serif;font-size:.98rem;color:var(--ink)}
 .cmp-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem}
 @media(max-width:760px){.cmp-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
-/* 10-18 読み解きの間の区画 */
-.ana-feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:center;padding:20px;border:1px solid var(--line);border-left:5px solid var(--ink);border-radius:12px;background:#fffdf7}
-.ana-feature-img{display:block;width:100%;height:auto;border-radius:8px}
-.ana-feature-body{display:flex;flex-direction:column;gap:14px;justify-content:center}
-.ana-feature-lead{margin:0;font-size:1rem;line-height:1.9;color:var(--ink)}
-.ana-themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-@media(max-width:600px){.ana-themes{grid-template-columns:1fr}}
-.ana-theme{position:relative;display:block;padding:12px 40px 12px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s,border-color .15s}
-a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-color:var(--ink);box-shadow:0 6px 16px rgba(30,40,30,.1)}
-.ana-theme b{display:block;font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.05rem;color:var(--ink)}
-.ana-theme span{display:block;margin-top:2px;font-size:.82rem;line-height:1.7;color:var(--ink-soft)}
-.ana-theme i{position:absolute;right:14px;top:50%;transform:translateY(-50%);font-style:normal;font-weight:700;color:var(--stamp)}
-.ana-theme--soon{background:transparent;border-style:dashed}
-.ana-theme--soon b{color:var(--ink-soft)}
-.ana-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem;text-decoration:none}
-.ana-feature-go:hover{text-decoration:underline}
-@media(max-width:760px){.ana-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
+.cmp-feature--ana{border-left-color:var(--ink)}
 .more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
 .more-btn{
   display:inline-block;padding:11px 22px;border-radius:8px;
@@ -766,16 +752,4 @@ a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-co
   .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.64) translateY(-3px)}
 }
 
-@media(min-width:761px) and (max-width:1100px){
-  .ana-feature{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px 28px;padding:20px;align-items:center}
-  .ana-feature-img{grid-column:1;grid-row:1}
-  .ana-feature-body{display:contents}
-  .ana-feature-lead{grid-column:2;grid-row:1}
-  .ana-themes{grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,minmax(0,1fr))}
-  .ana-feature-go{grid-column:1/-1;grid-row:3}
-  .ana-theme{padding:11px 30px 11px 12px}
-  .ana-theme b{font-size:.9rem;white-space:nowrap}
-  .ana-theme span{font-size:.76rem}
-  .ana-theme i{right:10px}
-}
 </style>

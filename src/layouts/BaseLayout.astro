@@ -179,17 +179,20 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       display: flex; align-items: center; gap: 18px;
       width: fit-content; max-width: 720px; margin: 0 auto;
       padding: 12px 22px 12px 12px;
-      border: 1px solid #c9d3c7; border-left: 4px solid #2d6a4f; border-radius: 10px;
-      background: #fbfaf5; text-decoration: none; color: #1f3a2e;
+      border: 1px solid #cdb48e; border-left: 4px solid #5a3e26; border-radius: 10px;
+      /* 10-19 別館の板張り（annex-wood）に、薄いクリームの紙を重ねた木目調 */
+      background: linear-gradient(rgba(251,246,236,.5), rgba(251,246,236,.5)), #efe3cf url("/images/icon/annex-wood.webp") center / 600px auto;
+      text-decoration: none; color: #3b2a1a;
+      box-shadow: 0 2px 8px rgba(90,62,38,.10);
       transition: background .15s, transform .15s, box-shadow .15s;
     }
-    .annex-banner:hover, .annex-banner:focus-visible { background: #fff; transform: translateY(-1px); box-shadow: 0 3px 10px rgba(31,58,46,.08); }
+    .annex-banner:hover, .annex-banner:focus-visible { background: linear-gradient(rgba(251,246,236,.68), rgba(251,246,236,.68)), #efe3cf url("/images/icon/annex-wood.webp") center / 600px auto; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(90,62,38,.16); }
     /* 10-18 館の絵を大きく */
     .ab-icon { flex-shrink: 0; width: 104px; height: 104px; border-radius: 8px; display: block; }
     .ab-body { flex: 1; min-width: 0; }
-    .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #2d6a4f; }
+    .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #5a3e26; }
     .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
-    .ab-note { display: block; font-size: .78rem; color: #5a645c; margin-top: 3px; line-height: 1.6; }
+    .ab-note { display: block; font-size: .78rem; color: #5a4a3a; margin-top: 3px; line-height: 1.6; }
     .ab-ph { display: block; }
     @media (max-width: 600px) { .ab-ph { display: inline; } }
     .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
