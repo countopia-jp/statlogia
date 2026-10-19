@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="似た町と並べてみる｜統計の歩き方 - Countopia Stats" description="人口と産業の構成が近い町と並べる「類似団体」の考え方。全国の平均だけでは見えない差を読む。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <HeroFig src="/images/icon/similar-large.webp" alt="人口や町並みの似た二つの町の地図を机に並べて見くらべる京と橙子の水彩画" width={1400} height={782} eager>
+      <p class="art-kicker">HOW TO READ</p>
+      <h1><span class="nw">似た町と</span><span class="nw">並べてみる</span></h1>
+    </HeroFig>
+
+    <Talk speaker="touko">
+      京、わたくしの町の数字を47都道府県の平均とくらべたら、ずいぶん離れていたの。でも、東京や大阪とくらべるのは、そもそも無理があるのではないかしら。
+    </Talk>
+    <Talk speaker="kei">
+      そのとおりです。人の数も、働き方も大きくちがう町と並べると、差の大部分は、もともとの町の大きさや顔ぶれのちがいで説明されてしまいます。そこで、条件の似た町を選んで並べる方法があります。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="横に人口、縦に第3次産業で働く人の割合をとった図。選んだ町のまわりの近い4つの町を丸で囲んでいる">
+        <text x="0" y="16" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">人口と産業の構成で見た、町の並び</text>
+        <line x1="60" y1="235" x2="610" y2="235" stroke="#999"/><line x1="60" y1="40" x2="60" y2="235" stroke="#999"/>
+        <text x="610" y="252" text-anchor="end" font-size="11" fill="#666">人口（少ない → 多い）</text>
+        <text x="66" y="36" font-size="11" fill="#666">↑ 第3次産業で働く人の割合</text>
+        <circle cx="330" cy="130" r="58" fill="#2d6a4f" fill-opacity="0.06" stroke="#2d6a4f" stroke-dasharray="5 4"/>
+        <circle cx="100" cy="180" r="5" fill="#9aa59c"/><circle cx="140" cy="90" r="5" fill="#9aa59c"/><circle cx="180" cy="200" r="5" fill="#9aa59c"/><circle cx="220" cy="70" r="5" fill="#9aa59c"/><circle cx="250" cy="175" r="5" fill="#9aa59c"/><circle cx="290" cy="215" r="5" fill="#9aa59c"/><circle cx="280" cy="70" r="5" fill="#9aa59c"/><circle cx="410" cy="60" r="5" fill="#9aa59c"/><circle cx="525" cy="222" r="5" fill="#9aa59c"/><circle cx="460" cy="110" r="5" fill="#9aa59c"/><circle cx="500" cy="80" r="5" fill="#9aa59c"/><circle cx="540" cy="170" r="5" fill="#9aa59c"/><circle cx="580" cy="120" r="5" fill="#9aa59c"/><circle cx="190" cy="130" r="5" fill="#9aa59c"/><circle cx="120" cy="215" r="5" fill="#9aa59c"/><circle cx="470" cy="215" r="5" fill="#9aa59c"/><circle cx="300" cy="150" r="6" fill="#2d6a4f"/><circle cx="355" cy="105" r="6" fill="#2d6a4f"/><circle cx="372" cy="152" r="6" fill="#2d6a4f"/><circle cx="312" cy="104" r="6" fill="#2d6a4f"/>
+        <circle cx="330" cy="130" r="7" fill="#b23a2f"/>
+        <text x="342" y="134" font-size="12" font-weight="700" fill="#b23a2f">選んだ町</text>
+        <text x="392" y="196" font-size="11" fill="#2d6a4f">いちばん近い4つ</text>
+        <text x="0" y="266" font-size="12" fill="#777">→ 物差しをそれぞれの散らばりでそろえ、距離の近い順に選ぶ（図は物差しが二つの場合）</text>
+      </svg>
+      <p class="art-diagram-note">※点の位置は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>国も使っている「類似団体」の考え方</h2>
+      <p>
+        総務省は、市区町村の財政をくらべるときに、人口と産業の構成が近い団体をひとまとめにした「類似団体」を使っています。
+        人口の規模と、第2次・第3次産業で働く人の割合で町を分け、同じ組の中でくらべるやり方です。
+        全国の平均とくらべるより、自分の町の位置がずっと読みやすくなります。
+      </p>
+      <p>
+        この国の窓口では、これにならって、市区町村なら総人口（大きさのちがいをならすため対数をとります）と、第2次＋第3次産業で働く人の割合、第3次産業で働く人の割合の三つを使っています。
+        三つの物差しは単位も散らばりもちがうので、それぞれの散らばり（標準偏差）でそろえてから、距離の近い順に4つを選びます。
+        都道府県は数が少ないので、人口の近さだけで選んでいます。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>似ているのは、選んだ物差しの上だけ</h2>
+      <p>
+        ここでいう「似た町」は、人口と産業の構成という物差しの上で近い町です。
+        気候も、歴史も、町の広さも見ていません。似た町との差が大きい項目があっても、それはどこが違うのかを考える手がかりで、理由そのものではありません。
+      </p>
+      <p>
+        読み解きの間では、選んだ組の項目の並びそのもの（偏差値）が近い県を挙げています。こちらは、物差しを項目ごとに変えた「似た県」です。
+        どちらも、くらべる相手を選ぶための目安としてお使いください。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>窓口での見え方</h2>
+      <p>
+        窓口の「ほかの地域とならべる」に、人口と産業の構成が近い地域を4つ、ボタンで出しています。押すと並べる相手に加わります。
+        <a href="/compare/">見くらべの間</a>と<a href="/analysis/">読み解きの間</a>でも、似た県を足して並べられます。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      似た町と並べてみて、それでも離れている数字があったら、そこを見ればいいのね。
+    </Talk>
+    <Talk speaker="kei">
+      はい。似た町とのちがいは、自分の町をくわしく見るための入り口になります。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/shift-share/">増えた分を、三つに分ける →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

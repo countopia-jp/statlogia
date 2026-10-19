@@ -73,8 +73,14 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
 
       {t.shiftShare && <>
         <h3 class="an-h3">働く人の増減を分ける（シフトシェア分析）</h3>
-        <p class="an-note">2016年から2021年にかけての、県の事業所で働く人の増減を3つに分けます。<b class="an-lqk an-ssk--n">全国</b>は全国と同じ割合で増えたとしたときの分、<b class="an-lqk an-ssk--m">構成</b>は業種の顔ぶれによる分、<b class="an-lqk an-ssk--r">地域</b>はそれ以外（同じ業種でも全国より伸びた・伸びなかった分）です。</p>
+        <p class="an-note">2016年から2021年にかけての、県の事業所で働く人の増減を3つに分けます。<b class="an-lqk an-ssk--n">全国</b>は全国と同じ割合で増えたとしたときの分、<b class="an-lqk an-ssk--m">構成</b>は業種の顔ぶれによる分、<b class="an-lqk an-ssk--r">地域</b>はそれ以外（同じ業種でも全国より伸びた・伸びなかった分）です。読み方は<a href="/how-to-read/shift-share/">増えた分を、三つに分ける</a>。</p>
         <div class="an-ss" id="anSS"><p class="an-empty">県を選ぶと、ここに増減の分け方が出ます。</p></div>
+        <div class="an-sstown">
+          <p class="an-sstown-h">市区町村でも分ける</p>
+          <label><span>市区町村</span><select id="anSSTownSel" disabled><option value="">先に県を選んでください</option></select></label>
+          <p class="an-note">全国の流れ・業種ごとの全国の伸び方は、県と同じもの（47都道府県の合計）を使います。市区町村では、人数が伏せられている（秘匿）業種があり、2回のどちらかの数字が無い業種は分解から外します。</p>
+          <div class="an-ss" id="anSSTown"></div>
+        </div>
       </>}
 
       <h3 class="an-h3">二つの項目の関係</h3>
@@ -123,6 +129,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         if (!ind) continue;
         const L = ind.years.length - 1;
         m.unit = ind.unit; m.year = ind.yearLabels[L]; m.dec = ind.decimals;
+        if (ind.se && (!ind.se.y || ind.years[L] === ind.se.y)) m.se = ind.se.r; // 標本調査の誤差（県コード→標準誤差率％）
         for (const a of D.areas) if (!a.x && a.v[i.key]) m.val[a.c] = a.v[i.key][L];
         const natArr = D.nationalIsAvg && (D.nationalIsAvg[i.key] || (D.nationalIsTotal && D.nationalIsTotal[i.key])) ? D.prefAverage[i.key] : D.national[i.key];
         m.series = { years: ind.years, by: Object.fromEntries(D.areas.map((a) => [a.c, a.v[i.key]])), nat: natArr };
@@ -185,8 +192,20 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       const s = similar(main);
       sim.innerHTML = 'この組で似た県：' + s.map((x) => `<button type="button" data-c="${x.c}"${others.includes(x.c) ? ' disabled' : ''}>${NAMES[x.c]}を足す</button>`).join('');
       sim.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => { if (others.length < 3 && !others.includes(b.dataset.c)) { others.push(b.dataset.c); draw(); } }));
+      // 似た県のほかに、どの県でも足せる（並べるのは選んだ県＋3県まで）
+      const full = others.length >= 3;
+      const rest = prefList.filter((c) => c !== main && !others.includes(c));
+      const pick = document.createElement('select');
+      pick.className = 'an-sim-any';
+      pick.setAttribute('aria-label', 'ほかの県を足す');
+      pick.disabled = full;
+      pick.innerHTML = `<option value="">${full ? '並べられるのは3県までです' : 'ほかの県を足す'}</option>` + rest.map((c) => `<option value="${c}">${NAMES[c]}</option>`).join('');
+      pick.addEventListener('change', () => { const c = pick.value; if (c && others.length < 3 && !others.includes(c)) { others.push(c); draw(); } });
+      sim.appendChild(pick);
     }
 
+    // 標本調査の項目：誤差の目安（95％）の半分の幅。値と同じ単位
+    const seHalf = (m, c) => { const v = m.val[c], r = m.se && m.se[c]; return typeof v === 'number' && typeof r === 'number' ? (1.96 * r * v) / 100 : null; };
     function profile() {
       const box = document.getElementById('anProf');
       const who = [main, ...others];
@@ -196,7 +215,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         const d = dev(m, v);
         const marks = who.map((c, k) => { const dd = dev(m, m.val[c]); if (dd === null) return ''; const x = Math.max(0, Math.min(100, ((dd - 20) / 60) * 100)); return `<span class="an-mk" style="left:${x}%;background:${COLORS[k]}" title="${NAMES[c]} 偏差値${dd.toFixed(1)}"></span>`; }).join('');
         const bar = d === null ? '' : (() => { const x = Math.max(0, Math.min(100, ((d - 20) / 60) * 100)); const l = Math.min(50, x), w = Math.abs(x - 50); return `<span class="an-bar" style="left:${l}%;width:${w}%"></span>`; })();
-        return `<div class="an-row"><div class="an-lab">${m.short}<small>${m.year || ''}</small></div><div class="an-val">${fmt(m, v)}<small>${typeof v === 'number' ? rankOf(m, v) + '位／' + m.n : ''}</small></div><div class="an-track"><span class="an-mid"></span>${bar}${marks}</div><div class="an-dev">${d === null ? '—' : d.toFixed(1)}</div></div>`;
+        return `<div class="an-row"><div class="an-lab">${m.short}<small>${m.year || ''}</small></div><div class="an-val">${fmt(m, v)}<small>${typeof v === 'number' ? rankOf(m, v) + '位／' + m.n : ''}</small>${seHalf(m, main) !== null ? `<small class="an-se">±${fmt(m, seHalf(m, main))}</small>` : ''}</div><div class="an-track"><span class="an-mid"></span>${bar}${marks}</div><div class="an-dev">${d === null ? '—' : d.toFixed(1)}</div></div>`;
       }).join('') + '<div class="an-scale"><span>20</span><span>35</span><span>50</span><span>65</span><span>80</span></div>';
     }
 
@@ -283,6 +302,11 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
       li.push(`${nm}は、この組の${IDS.length}項目のうち、偏差値60以上（全国の中で大きいほう）が${hi.length}項目${hi.length ? `（${hi.join('、')}）` : ''}、40以下（小さいほう）が${lo.length}項目${lo.length ? `（${lo.join('、')}）` : ''}です。残りは全国の中ほどにあります。`);
       const s = similar(main);
       li.push(`この組の数字の並びが${nm}に近いのは、${s.map((x) => NAMES[x.c]).join('・')}です。`);
+      const seIds = IDS.filter((id) => seHalf(M[id], main) !== null && M[id].sd > 0);
+      if (seIds.length) {
+        const parts = seIds.map((id) => `${M[id].short}は±${(10 * seHalf(M[id], main) / M[id].sd).toFixed(1)}`);
+        li.push(`一部の世帯や人を調べた項目は、値に誤差があります。${nm}の誤差の目安（95％）を偏差値に直すと、${parts.join('、')}です。偏差値の差がこれより小さい県どうしは、並びが入れかわることがあります。`);
+      }
       if (Q && Q.rows) {
         const big = Q.rows.filter((r) => (r.va ?? 0) >= 1.2).slice(0, 3);
         const both = Q.rows.filter((r) => (r.va ?? 0) > 1 && (r.wk ?? 0) > 1).map((r) => r.name);
@@ -331,39 +355,74 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
     // ---- シフトシェア分析（事業従事者数、2016→2021） ----
     let SS = null;
     if (CFG.ss) { try { SS = await (await fetch('/data/shift-share.json')).json(); } catch (e) { SS = null; } }
-    function ssView() {
-      const box = document.getElementById('anSS');
-      if (!box || !SS || !main) return null;
-      const n = SS.industries.length;
-      const sum = (arr) => arr.reduce((s, x) => s + (typeof x === 'number' ? x : 0), 0);
+    let SSN = null;
+    function ssNat() {
+      if (SSN || !SS) return SSN;
+      const sum = (arr) => arr.reduce((t, x) => t + (typeof x === 'number' ? x : 0), 0);
       const N0 = SS.industries.map((_, i) => sum(SS.areas.map((a) => a.e0[i])));
       const N1 = SS.industries.map((_, i) => sum(SS.areas.map((a) => a.e1[i])));
-      const gN = sum(N1) / sum(N0) - 1;
-      const a = SS.areas.find((x) => x.c === main);
-      if (!a) return null;
-      let ns = 0, im = 0, rs = 0;
-      const rows = SS.industries.map((ind, i) => {
-        const e0 = a.e0[i] || 0, e1 = a.e1[i] || 0;
+      SSN = { N0, N1, gN: sum(N1) / sum(N0) - 1 };
+      return SSN;
+    }
+    // e0s・e1s は業種ごとの人数。skip のときは、どちらかが数字でない業種を分解から外す（市区町村の秘匿）
+    function ssHtml(e0s, e1s, skip) {
+      const { N0, N1, gN } = ssNat();
+      const ok = (i) => !skip || (typeof e0s[i] === 'number' && typeof e1s[i] === 'number');
+      const excluded = SS.industries.filter((_, i) => !ok(i)).map((x) => x.n);
+      let ns = 0, im = 0, rs = 0, E0 = 0, E1 = 0;
+      const rows = [];
+      SS.industries.forEach((ind, i) => {
+        if (!ok(i)) return;
+        const e0 = e0s[i] || 0, e1 = e1s[i] || 0;
         const gi = N0[i] > 0 ? N1[i] / N0[i] - 1 : 0;
         const r = { n: ind.n, e0, e1, d: e1 - e0, ns: e0 * gN, im: e0 * (gi - gN), rs: e1 - e0 * (1 + gi) };
-        ns += r.ns; im += r.im; rs += r.rs; return r;
+        ns += r.ns; im += r.im; rs += r.rs; E0 += e0; E1 += e1; rows.push(r);
       });
-      const E0 = sum(a.e0), E1 = sum(a.e1);
+      if (!(E0 > 0)) return { html: '<p class="an-empty">分けられる数字がありません。</p>', res: null };
       const pct = (v) => ((v / E0) * 100);
       const f = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(Math.round(v)).toLocaleString('ja-JP')}人`;
       const fp = (v) => `${v >= 0 ? '+' : '−'}${Math.abs(pct(v)).toFixed(1)}％`;
       const mx = Math.max(Math.abs(pct(ns)), Math.abs(pct(im)), Math.abs(pct(rs)), Math.abs(pct(E1 - E0)), 1);
       const bar = (v, cls, label) => { const w = (Math.abs(pct(v)) / mx) * 50; return `<div class="an-ssr"><span class="an-ssl">${label}</span><span class="an-sst"><span class="an-ssmid"></span><i class="${cls}" style="${v >= 0 ? `left:50%` : `right:50%`};width:${w}%"></i></span><b>${fp(v)}</b><small>${f(v)}</small></div>`; };
       const top = [...rows].sort((x, y) => y.rs - x.rs);
+      const k = Math.min(3, Math.floor(top.length / 2));
       const pick = (arr) => arr.map((r) => `<li><span>${r.n}</span><b>${f(r.rs)}</b><small>${r.e0.toLocaleString('ja-JP')}→${r.e1.toLocaleString('ja-JP')}人</small></li>`).join('');
-      box.innerHTML = `<div class="an-ssbars">${bar(E1 - E0, 'an-ssb--t', '増減の合計')}${bar(ns, 'an-ssb--n', '全国の流れ')}${bar(im, 'an-ssb--m', '産業の構成')}${bar(rs, 'an-ssb--r', '地域の分')}</div>
-        <p class="an-ssnote">${SS.y0}の${E0.toLocaleString('ja-JP')}人から、${SS.y1}の${E1.toLocaleString('ja-JP')}人へ。全国は${(gN * 100).toFixed(1)}％の増え方でした。割合は${SS.y0}の人数に対するものです。</p>
-        <div class="an-sslists"><div><h4>地域の分が大きかった業種</h4><ol>${pick(top.slice(0, 3))}</ol></div><div><h4>地域の分が小さかった業種</h4><ol>${pick(top.slice(-3).reverse())}</ol></div></div>`;
-      return { ns, im, rs, E0, E1, gN, up: top.slice(0, 2), down: top.slice(-2).reverse() };
+      const html = `<div class="an-ssbars">${bar(E1 - E0, 'an-ssb--t', '増減の合計')}${bar(ns, 'an-ssb--n', '全国の流れ')}${bar(im, 'an-ssb--m', '産業の構成')}${bar(rs, 'an-ssb--r', '地域の分')}</div>
+        <p class="an-ssnote">${SS.y0}の${E0.toLocaleString('ja-JP')}人から、${SS.y1}の${E1.toLocaleString('ja-JP')}人へ。全国は${(gN * 100).toFixed(1)}％の増え方でした。割合は${SS.y0}の人数に対するものです。${excluded.length ? `数字が無いため外した業種：${excluded.join('、')}（人数の合計もこれらを除いたものです）。` : ''}</p>
+        ${k > 0 ? `<div class="an-sslists"><div><h4>地域の分が大きかった業種</h4><ol>${pick(top.slice(0, k))}</ol></div><div><h4>地域の分が小さかった業種</h4><ol>${pick(top.slice(-k).reverse())}</ol></div></div>` : ''}`;
+      return { html, res: { ns, im, rs, E0, E1, gN, up: top.slice(0, 2), down: top.slice(-2).reverse() } };
     }
+    function ssView() {
+      const box = document.getElementById('anSS');
+      if (!box || !SS || !main) return null;
+      const a = SS.areas.find((x) => x.c === main);
+      if (!a) return null;
+      const { html, res } = ssHtml(a.e0, a.e1, false);
+      box.innerHTML = html;
+      return res;
+    }
+    // ---- 市区町村のシフトシェア（県を選んだあとで市区町村を選ぶ） ----
+    const SST = {};
+    async function ssTown() {
+      const sel = document.getElementById('anSSTownSel'), box = document.getElementById('anSSTown');
+      if (!sel || !box || !SS) return;
+      if (!main) { sel.innerHTML = '<option value="">先に県を選んでください</option>'; sel.disabled = true; sel.dataset.pref = ''; box.innerHTML = ''; return; }
+      if (!(main in SST)) { try { SST[main] = await (await fetch(`/data/shift-share-town/${main}.json`)).json(); } catch (e) { SST[main] = null; } }
+      const D = SST[main];
+      if (!D) { box.innerHTML = '<p class="an-empty">市区町村の数字を読みこめませんでした。</p>'; return; }
+      if (sel.dataset.pref !== main) {
+        sel.innerHTML = '<option value="">市区町村を選んでください</option>' + D.towns.map((t) => `<option value="${t.c}">${t.n}</option>`).join('');
+        sel.dataset.pref = main; sel.disabled = false; box.innerHTML = '';
+      }
+      const t = D.towns.find((x) => x.c === sel.value);
+      if (!t) { box.innerHTML = ''; return; }
+      box.innerHTML = `<p class="an-sstown-name">${t.n}</p>` + ssHtml(t.e0, t.e1, true).html;
+    }
+    document.getElementById('anSSTownSel')?.addEventListener('change', ssTown);
 
     function draw() {
       chips();
+      ssTown();
       if (!main) return;
       profile();
       const Q = lqView();
@@ -379,6 +438,12 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
 
   <style is:global>
     .an-ss { margin: 8px 0 20px; }
+    .an-sstown { margin: 4px 0 24px; padding: 14px 16px; border: 1px dashed #c9c2ae; border-radius: 10px; background: #fdfcf6; }
+    .an-sstown-h { font-weight: 700; color: #1b4332; font-size: .9rem; margin: 0 0 8px; }
+    .an-sstown label { display: flex; align-items: center; gap: 10px; font-size: .86rem; flex-wrap: wrap; }
+    .an-sstown select { padding: 6px 8px; border: 1px solid #c9c2ae; border-radius: 8px; font-size: .9rem; background: #fff; min-width: 12em; }
+    .an-sstown .an-note { margin: 8px 0 4px; }
+    .an-sstown-name { font-weight: 700; margin: 10px 0 6px; }
     .an-ssbars { display: flex; flex-direction: column; gap: 6px; }
     .an-ssr { display: grid; grid-template-columns: 7em 1fr 5em 7.5em; gap: 10px; align-items: center; font-size: .86rem; }
     .an-ssl { color: #1b4332; font-weight: 700; }
@@ -425,6 +490,8 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
     .an-sim { margin: 0; font-size: .8rem; color: #555; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
     .an-sim button { font: inherit; font-size: .78rem; padding: 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; cursor: pointer; color: #2d6a4f; }
     .an-sim button:disabled { opacity: .45; cursor: default; }
+    .an-sim-any { font: inherit; font-size: .78rem; padding: 3px 8px; border: 1px dashed #c9d3c6; border-radius: 999px; background: #fff; color: #2d6a4f; max-width: 100%; }
+    .an-sim-any:disabled { opacity: .55; }
     .an-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; width: 100%; }
     .an-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .82rem; }
     .an-chips i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }

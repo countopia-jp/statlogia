@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seKakei, withBands } from '../../../lib/sampling-error.js';
 import { getBeefPorkData } from '../../../lib/beef-pork.js';
 
 const data = await getBeefPorkData();
@@ -82,6 +84,10 @@ const swapLine = 'あら、' + swapName + 'は' + (swapPorkHigh ? '牛肉では'
 const overLine = beefOver.length > 0
   ? '牛肉のほうに多く使っている市は、' + beefOver.length + '市あるのね。' + (beefOverNames.length <= 8 ? beefOverNames.join('、') + '。' : '')
   : '牛肉のほうに多く使っている市は、ひとつもないのね。';
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seKakei('010310010'), 'n');
+const eb1 = withBands(pMost, seKakei('010310020'), 'n');
 ---
 <BaseLayout title="牛肉と豚肉にかけるお金｜Countopia Stats" description="都市別・1世帯当たりの牛肉と豚肉の年間支出額。牛肉と豚肉、日本一はどの市か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -126,6 +132,7 @@ const overLine = beefOver.length > 0
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="yen" area="市" kind="kakei" label="牛肉に使ったお金" />
 
       <h2>牛肉に使うお金が少ない市 TOP5</h2>
       <ol class="rank low">
@@ -162,6 +169,7 @@ const overLine = beefOver.length > 0
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="yen" area="市" kind="kakei" label="豚肉に使ったお金" />
 
       <h2>豚肉に使うお金が少ない市 TOP5</h2>
       <ol class="rank low">

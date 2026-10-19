@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getGardeningData } from '../../../lib/gardening.js';
 import { BIG_CITY_PREFS, regionsOf } from '../../../data/geo.js';
 
@@ -72,6 +74,10 @@ const ratio = diy.national > 0 ? Math.round(r1(avg) / r1(diy.national)) : 0;
 const ratioText = ratio >= 2 ? `庭いじりのおよそ${ratio}分の1です。` : '庭いじりと同じくらいの数字です。';
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456573', '21'), 'c');
+const eb1 = withBands(diyMost, seActivity('0003456573', '22'), 'c');
 ---
 <BaseLayout title="園芸と日曜大工の行動者率｜Countopia Stats" description="都道府県別・園芸と日曜大工の行動者率。庭いじりと日曜大工、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -112,6 +118,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="園芸・庭いじりをした人" />
 
       <Talk speaker="touko">上のほうは、{topRegions.join('と')}の県が並んでいるのねえ。</Talk>
 
@@ -149,6 +156,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="日曜大工をした人" />
 
       <Talk speaker="touko">庭いじりで一番だった{topNames.join('と')}は、こちらでは何番目なの。</Talk>
       <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInDiy}です。かわりに一番なのは${diyTopNames.join('と')}で、庭いじりでは${diyTopInGarden}でした。`}</Talk>

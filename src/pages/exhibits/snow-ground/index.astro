@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getSnowGroundData } from '../../../lib/snow-ground.js';
 import { regionsOf } from '../../../data/geo.js';
 
@@ -58,6 +60,10 @@ const topRegions = regionsOf(most);
 const groundRegions = regionsOf(groundMost);
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456409', '16'), 'c');
+const eb1 = withBands(groundMost, seActivity('0003456409', '10'), 'c');
 ---
 <BaseLayout title="スキーとグラウンドゴルフの行動者率｜Countopia Stats" description="都道府県別・スキーとグラウンドゴルフの行動者率。スキーとグラウンドゴルフ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -98,6 +104,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="スキー・スノーボードをした人" />
 
       <Talk speaker="touko">{topRegions.length > 1 ? `${topRegions.join('と')}の県が並んでいるのねえ。` : `${topRegions[0]}の県ばかりねえ。`}</Talk>
 
@@ -137,6 +144,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="グラウンドゴルフをした人" />
 
       <Talk speaker="touko">{groundRegions.length > 1 ? `こちらは${groundRegions.join('と')}なのねえ。` : `こちらは${groundRegions[0]}ばかりなのねえ。`}</Talk>
       <Talk speaker="kei">{groundTopTie ? `${groundTopNames.join('と')}が${fmt(groundTop.minutes)}で並んでいます。` : `${groundTop.n}が${fmt(groundTop.minutes)}。2番目の${groundSecondNames.join('・')}に${groundGap}ポイントの差をつけています。`}</Talk>

@@ -79,7 +79,7 @@ import { THEMES } from '../data/analysis.js';
             <div class="hero-title-row">
               <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
             </div>
-            <p class="lead"><span><span>Countopia Stats</span><span>（カウントピア・スタッツ）は、</span></span><span><span>都道府県・</span><span>市区町村で引ける、</span><span>暮らしの統計サイト。</span></span><span><span>難しい話はしません。</span></span><span><span>数字の景色を、</span><span>案内人と一緒に</span><span>歩いてください。</span></span></p>
+            <p class="lead"><span><span>Countopia Stats</span><span>（カウントピア・スタッツ）は、</span></span><span><span>都道府県・</span><span>市区町村で引ける、</span><span>暮らしの統計サイト。</span></span><span><span>難しい話は、</span><span>案内人がほどきます。</span></span><span><span>数字の景色を、</span><span>一緒に歩いてください。</span></span></p>
             <p class="api-count">現在 e-Stat の <b>{publishedCount}</b> 指標をご覧になれます</p>
           </div>
           <div class="hero-side">
@@ -749,11 +749,11 @@ a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-co
 }
 /* 10-18 タブレット：入場券は京・橙子とスタンプの下（気持ち小さく）。京・橙子はスタンプを基準に置く */
 @media(min-width:761px) and (max-width:1024px){
-  .hero>div:first-child{padding-right:24px}
+  .hero>div:first-child{padding-right:24px;align-self:center;padding-top:24px}
   .hero .hero-side .tk{top:auto;bottom:0;left:auto;right:calc(min(240px,27vw)*.5675 + 51px);transform:translateX(50%) rotate(-3deg) scale(.8);transform-origin:center bottom}
   .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:translateX(50%) rotate(-2deg) scale(.8) translateY(-3px)}
-  .hero .hero-chara{width:77.4%;max-width:248px;left:auto;right:calc(min(240px,27vw)*1.135 - 108px);bottom:76px}
-  .hero .hero-side{min-height:440px}
+  .hero .hero-chara{width:77.4%;max-width:212px;left:auto;right:calc(min(240px,27vw)*1.135 - 108px);bottom:76px}
+  .hero .hero-side{min-height:420px}
 }
 /* 10-18 スマホ：スタンプを画面の中央に */
 @media(max-width:600px){
@@ -764,5 +764,11 @@ a.ana-theme:hover,a.ana-theme:focus-visible{transform:translateY(-2px);border-co
 @media(max-width:760px){
   .hero .hero-side .tk{transform:rotate(-3deg) scale(.64);transform-origin:right center;margin-right:1%}
   .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.64) translateY(-3px)}
+}
+
+@media(min-width:761px) and (max-width:1100px){
+  .ana-feature{grid-template-columns:1fr;gap:20px;padding:20px 24px}
+  .ana-feature-img{max-width:620px;margin:0 auto}
+  .ana-themes{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>

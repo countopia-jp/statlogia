@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seTime, withBands } from '../../../lib/sampling-error.js';
 import { fetchStudyByPrefecture, fetchHobbyByPrefecture } from '../../../lib/estat.js';
 
 const rows = await fetchStudyByPrefecture(); // 長い順
@@ -24,6 +26,9 @@ const hobbyRows = await fetchHobbyByPrefecture();
 const hobbyAvg = Math.round(hobbyRows.reduce((s, r) => s + r.minutes, 0) / hobbyRows.length);
 const ratio = avg > 0 ? (hobbyAvg / avg).toFixed(1) : '—';
 const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`);
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seTime('学習・自己啓発'), 'n');
 ---
 <BaseLayout title="学習・自己啓発の時間｜Countopia Stats" description="都道府県別・学習や自己啓発にあてる時間。日本人（10歳以上）は1日何分学んでいるか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -69,6 +74,7 @@ const fmt = (m) => (m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}�
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="min" area="県" kind="shakai" label="学習・自己啓発・訓練の時間" />
 
       <h2>学ぶ時間が短い県 TOP5</h2>
       <ol class="rank alt">

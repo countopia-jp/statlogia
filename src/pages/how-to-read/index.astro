@@ -60,7 +60,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
 
       <h2 class="how-sec"><span class="how-sec-no">TOOLS</span>統計の道具を使う</h2>
-      <p class="how-sec-lead">閲覧室や見くらべの間に置いた、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰。</p>
+      <p class="how-sec-lead">閲覧室や見くらべの間に置いた、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰、似た町、増減の分解、誤差の幅。</p>
       <div class="cards">
         <a class="card" href="/how-to-read/position/">
           <img class="card-img" src="/images/icon/position-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
@@ -86,6 +86,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <img class="card-img" src="/images/icon/correlation-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>二つの数字が、そろって動くとき</h3>
           <p>図書館の多い県ほど、病院も多い。けれど理由はそこにはありません。散布図・相関係数・回帰直線の読み方を、京が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/similar/">
+          <h3>似た町と並べてみる</h3>
+          <p>大きさも働き方もちがう町と比べても、差の多くは町の顔ぶれのちがいです。人口と産業の構成が近い町を選ぶ「類似団体」の考え方を、京が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/shift-share/">
+          <h3>増えた分を、三つに分ける</h3>
+          <p>働く人がふえたのは、町の力か、全国の流れか。増減を全国の流れ・産業の構成・地域の分に分けるシフトシェア分析を、京が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/sampling-error/">
+          <h3>調べ直したら、順位は入れかわるか</h3>
+          <p>一部の人を調べた統計の値には、幅があります。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方を、京が説明します。</p>
         </a>
       </div>
     </section>
@@ -148,4 +160,11 @@ a.card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
 .card-img{display:block;width:calc(100% + 48px);max-width:none;height:auto;aspect-ratio:16/9;object-fit:cover;margin:-24px -24px 6px;border-bottom:1px solid var(--line)}
 .card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
 .card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
+
+@media(max-width:720px){
+  .how-overlay{position:absolute;inset:8% 17% 10% 27%;margin:0;justify-content:flex-start;padding-top:1.5%}
+  .how-overlay .no{font-size:clamp(8px,2.1vw,12px);letter-spacing:.22em}
+  .how-overlay h1{font-size:clamp(15px,4.9vw,28px);margin:.15em 0 0}
+  .how-overlay .sub{font-size:clamp(9.5px,2.55vw,14px);line-height:1.6;margin:.5em 0 0 37%;color:#4a4a4a}
+}
 </style>

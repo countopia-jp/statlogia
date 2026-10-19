@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getHikingData } from '../../../lib/hiking.js';
 
 const data = await getHikingData();
@@ -27,6 +29,9 @@ const bottomNames = bottomTies.map((r) => r.n).join('と');
 const second = [...rows].reverse().find((r) => r.minutes.toFixed(1) !== bottom.minutes.toFixed(1)) ?? rows[rows.length - 2];
 const bottomGap = (r1(second.minutes) - r1(bottom.minutes)).toFixed(1);
 
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456409', '17'), 'c');
 ---
 <BaseLayout title="登山・ハイキングをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に登山やハイキングをした人の割合。日本一「山を歩く」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -70,6 +75,7 @@ const bottomGap = (r1(second.minutes) - r1(bottom.minutes)).toFixed(1);
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="登山・ハイキングをした人" />
 
 
       <h2>山を歩く人が少ない県 TOP5</h2>

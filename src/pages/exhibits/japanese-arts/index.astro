@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getJapaneseArtsData } from '../../../lib/japanese-arts.js';
 import { BIG_CITY_PREFS, regionsOf } from '../../../data/geo.js';
 
@@ -75,6 +77,11 @@ const bigCityAvg = bigCity.length
 const topRegions = regionsOf(most);
 const kadoRegions = regionsOf(kadoMost);
 const sadoRegions = regionsOf(sadoMost);
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456573', '15'), 'c');
+const eb1 = withBands(kadoMost, seActivity('0003456573', '16'), 'c');
+const eb2 = withBands(sadoMost, seActivity('0003456573', '17'), 'c');
 ---
 <BaseLayout title="書道・華道・茶道の行動者率｜Countopia Stats" description="都道府県別・書道と華道と茶道の行動者率。筆と花とお茶、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -121,6 +128,7 @@ const sadoRegions = regionsOf(sadoMost);
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="書道をした人" />
 
       <Talk speaker="touko">{topRegions.length > 1 ? `${topRegions.join('と')}の県が並んでいるのねえ。` : `${topRegions[0]}の県が並んでいるのねえ。`}</Talk>
 
@@ -145,6 +153,7 @@ const sadoRegions = regionsOf(sadoMost);
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="華道をした人" />
 
       <Talk speaker="touko">こちらは{kadoRegions.join('・')}なのねえ。{kadoAgain.length > 0 ? `${kadoAgain.join('と')}は、書道にも出ていたわ。` : '書道とは、顔ぶれが違うわ。'}</Talk>
 
@@ -169,6 +178,7 @@ const sadoRegions = regionsOf(sadoMost);
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb2} unit="pct" area="県" kind="shakai" label="茶道をした人" />
 
       <Talk speaker="touko">{sadoRegions.join('・')}。{sadoAgain.length > 0 ? `${sadoAgain.join('と')}は、さきほども出ていたわね。` : 'ここにも、また別の県が出てくるのねえ。'}</Talk>
 

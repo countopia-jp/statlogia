@@ -71,6 +71,9 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       </a>
     </div>
   )}
+  {here !== '/terms/' && (
+    <p class="disclaimer-line">掲載している数値は正確を期していますが、内容を保証するものではありません。くわしくは<a href="/terms/#disclaimer">「利用規約・免責」</a>をご覧ください。</p>
+  )}
   <footer class="site">
     <div class="foot">
       <div class="foot-brand">
@@ -167,6 +170,8 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
 
     /* 別館への案内：フッターの直上、紙の地に置く（玄関＝トップページだけ） */
+    .disclaimer-line { max-width: 860px; margin: 28px auto 20px; padding: 0 16px; text-align: center; font-size: .75rem; line-height: 1.8; color: var(--ink-soft); }
+    .disclaimer-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
     .annex-banner-wrap { max-width: 1280px; margin: 32px auto 36px; padding: 0 16px; display: flex; justify-content: center; align-items: stretch; gap: 18px; flex-wrap: wrap; }
     .annex-banner-wrap .annex-banner { margin: 0; }
     @media (max-width: 1100px) { .annex-banner-wrap { flex-direction: column; align-items: center; } .annex-banner-wrap .annex-banner { width: 100%; max-width: 640px; box-sizing: border-box; } }

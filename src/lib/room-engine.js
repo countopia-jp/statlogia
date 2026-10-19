@@ -143,6 +143,7 @@ function perCapKind(room, ind, unit) {
   if (/あたり|当たり|割合|率|平均|倍|1人|１人|1か月|1校|1園|1学級|1住宅|1戸/.test(ind.label || '')) return null;
   return unit === '億円' ? 'man' : 'p100k';
 }
+import { seForRoom } from './sampling-error.js';
 const cache = new Map();
 
 export async function getRoomData(room) {
@@ -290,6 +291,8 @@ export async function getRoomData(room) {
       yearLabels: useTimes.map(timeNameOf),
       ...(perCapKind(room, ind, unit) ? { perCap: perCapKind(room, ind, unit) } : {}),
       ...((ind.lq ?? room.lq) && unit === '％' ? { lq: true } : {}),
+      // 標本調査の誤差の目安（ind.se = [表, 項目, 年] か ['kakei', 行]。県の標準誤差率％。年があればその年の値にだけ添える）
+      ...(ind.se ? { se: seForRoom(ind.se) } : {}),
     });
   }
 

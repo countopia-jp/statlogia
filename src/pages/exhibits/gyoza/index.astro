@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seKakei, withBands } from '../../../lib/sampling-error.js';
 import { getGyozaData } from '../../../lib/gyoza.js';
 
 const data = await getGyozaData();
@@ -49,6 +51,9 @@ const chartData = {
     pointRadius: 0,
   })),
 };
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seKakei('010920070'), 'n');
 ---
 <BaseLayout title="餃子にかけるお金｜Countopia Stats" description="都市別・1世帯当たりの餃子年間支出額。日本一「餃子が好き」な市はどこか。" ogImage="/images/icon/gyoza-large.webp" backHref="/exhibits/" backLabel="展示一覧">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -97,6 +102,7 @@ const chartData = {
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="yen" area="市" kind="kakei" label="餃子に使ったお金" />
 
       <h2>この{years.length}年の移り変わり</h2>
       <div class="chart-wrap"><canvas id="gyozaChart"></canvas></div>

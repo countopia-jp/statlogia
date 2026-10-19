@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seTime, withBands } from '../../../lib/sampling-error.js';
 import { fetchCommuteByPrefecture, fetchSleepByPrefecture } from '../../../lib/estat.js';
 
 const rows = await fetchCommuteByPrefecture(); // 長い順
@@ -27,6 +29,9 @@ const rankOfName = (list, name) => {
 const sleepRanksOfTop = topNames.map((n) => `${n}が${rankOfName(sleepRows, n)}位`).join('、');
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 const maxMin = top.minutes;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(longest, seTime('通勤・通学'), 'n');
 ---
 <BaseLayout title={`通勤・通学時間ランキング｜Countopia Stats`} description="都道府県別・通勤・通学時間ランキング。日本一「通勤に時間がかかる」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -70,6 +75,7 @@ const maxMin = top.minutes;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="min" area="県" kind="shakai" label="通勤・通学の時間" />
 
       <h2>通勤・通学が短い県 TOP5</h2>
       <ol class="rank alt">

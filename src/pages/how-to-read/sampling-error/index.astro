@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="調べ直したら、順位は入れかわるか｜統計の歩き方 - Countopia Stats" description="一部を調べた統計（標本調査）の値には幅がある。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <HeroFig src="/images/icon/sampling-error-large.webp" alt="たくさんの家の中から何軒かに札を立てて調べる様子を、京と橙子が見ている水彩画" width={1400} height={782} eager>
+      <p class="art-kicker">HOW TO READ</p>
+      <h1><span class="nw">調べ直したら、</span><span class="nw">順位は入れかわるか</span></h1>
+    </HeroFig>
+
+    <Talk speaker="touko">
+      京、この展示ではA県が1位で51.0％、B県が2位で49.5％なのね。A県のほうが、たしかに多いということかしら。
+    </Talk>
+    <Talk speaker="kei">
+      この数字は、県に住むすべての人ではなく、選ばれた一部の人に聞いた結果です。選ばれる人が変われば、値も少し動きます。その動きうる幅をいっしょに見てみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="三つの県の値と、その値が動きうる幅を横の帯で示した図。1位と2位の帯は重なり、3位の帯は離れている">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">値と、調べ直したときに動きうる幅（95％）</text>
+        <line x1="110" y1="40" x2="110" y2="160" stroke="#eee"/><text x="110" y="176" text-anchor="middle" font-size="10" fill="#999">40％</text><line x1="230" y1="40" x2="230" y2="160" stroke="#eee"/><text x="230" y="176" text-anchor="middle" font-size="10" fill="#999">44％</text><line x1="350" y1="40" x2="350" y2="160" stroke="#eee"/><text x="350" y="176" text-anchor="middle" font-size="10" fill="#999">48％</text><line x1="470" y1="40" x2="470" y2="160" stroke="#eee"/><text x="470" y="176" text-anchor="middle" font-size="10" fill="#999">52％</text><line x1="590" y1="40" x2="590" y2="160" stroke="#eee"/><text x="590" y="176" text-anchor="middle" font-size="10" fill="#999">56％</text>
+        <text x="0" y="67" font-size="13" font-weight="700" fill="#1b4332">A県（1位）</text><rect x="356" y="57" width="168" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="440" cy="62" r="6" fill="#b23a2f"/><text x="635" y="67" text-anchor="end" font-size="12" fill="#555">51.0％ ±2.8</text><text x="0" y="107" font-size="13" font-weight="700" fill="#1b4332">B県（2位）</text><rect x="305" y="97" width="180" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="395" cy="102" r="6" fill="#b23a2f"/><text x="635" y="107" text-anchor="end" font-size="12" fill="#555">49.5％ ±3.0</text><text x="0" y="147" font-size="13" font-weight="700" fill="#1b4332">C県（3位）</text><rect x="164" y="137" width="132" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="230" cy="142" r="6" fill="#b23a2f"/><text x="635" y="147" text-anchor="end" font-size="12" fill="#555">44.0％ ±2.2</text>
+        <text x="0" y="202" font-size="12" fill="#555">A県とB県の帯は重なる → 調べ直すと、順番が入れかわることがある</text>
+        <text x="0" y="222" font-size="12" fill="#555">B県とC県の帯は重ならない → この差は、調べ方のゆれだけでは説明しにくい</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>全部を数えた数字と、一部を調べた数字</h2>
+      <p>
+        国勢調査や経済センサスは、すべての人や事業所を数える調査です。いっぽう、社会生活基本調査や家計調査は、一部の世帯を選んで調べ、全体を推し量る調査（標本調査）です。
+        標本調査の値には、どの世帯が選ばれたかによる「ゆれ」があります。これを標本誤差といいます。
+      </p>
+      <p>
+        国は、調査ごとに、このゆれの大きさの目安（標準誤差、値に対する割合にしたものが標準誤差率）を公表しています。
+        この国では、値に標準誤差の1.96倍を足し引きした幅を「誤差の幅（95％の目安）」として添えています。同じ調べ方を何度もくり返したとき、およそ95％の回で本当の値がこの幅に入る、という意味の幅です。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>幅が重なるかどうかを見る</h2>
+      <p>
+        図では、A県とB県の幅が重なっています。この二つは、調べ直すと順番が入れかわることがあります。1位と2位という言い方ほどには、差がはっきりしていないということです。
+        B県とC県の幅は重なっていません。こちらの差は、調べ方のゆれだけでは説明しにくい差です。
+      </p>
+      <p>
+        家計調査は、多くの市で90世帯ほどしか調べていないので、幅が大きくなります。展示の上位5市の幅がすべて重なっていることも、めずらしくありません。
+        なお、ここでいう誤差は、一部を調べたことによるゆれだけです。答えちがいや、調査に答えなかった人による誤差は含みません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>どこで見られるか</h2>
+      <p>
+        社会生活基本調査と家計調査を使った展示では、上位の値の下に「誤差の幅（目安）」の欄を置いています。
+        窓口の「余暇の過ごし方」「ボランティア」、別館の「家計の帳場」のカード、<a href="/compare/">見くらべの間</a>の表、<a href="/analysis/living/">読み解きの間「暮らしを読み解く」</a>にも、「±」で同じ目安を添えています。
+      </p>
+      <p>
+        社会生活基本調査は、総務省統計局が公表している都道府県別の標準誤差率を使っています。家計調査は、市ごとの標準誤差率が公表されていないので、統計局が示している近似のしかた（変動係数と調べた世帯の数から出す方法）で求めた目安です。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      順位がついていても、その順番がかならず決まっているとは限らないのね。
+    </Talk>
+    <Talk speaker="kei">
+      はい。とくに上位が僅差のときは、幅が重なっていないかを、いっしょに見てください。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/surveys/">数字のもとになった調査 →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

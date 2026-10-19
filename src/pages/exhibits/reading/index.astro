@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getReadingData } from '../../../lib/reading.js';
 
 const data = await getReadingData();
@@ -54,6 +56,10 @@ const readBothTop = most.map((r) => r.n).filter((n) => mangaMost.some((r) => r.n
 const twist = !readSameTop && readBothTop.length <= 2;
 // 上位5県の顔ぶれがそのまま残っているか
 const sameFaces = readBothTop.length >= 5;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456573', '27'), 'c');
+const eb1 = withBands(mangaMost, seActivity('0003456573', '28'), 'c');
 ---
 <BaseLayout title="本とマンガを読む人の割合｜Countopia Stats" description="都道府県別・過去1年間に読書またはマンガを読んだ人の割合。本とマンガ、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -94,6 +100,7 @@ const sameFaces = readBothTop.length >= 5;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="趣味として読書をした人" />
 
       <h2>本を読む人が少ない県 TOP5</h2>
       <ol class="rank low">
@@ -135,6 +142,7 @@ const sameFaces = readBothTop.length >= 5;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="マンガを読んだ人" />
 
       {sameFaces ? (
         <Talk speaker="touko">上のほうの顔ぶれは、さっきと同じなのね。</Talk>

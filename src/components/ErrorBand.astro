@@ -16,7 +16,8 @@ import { SE_SOURCES } from '../lib/sampling-error.js';
 const { rows, unit = 'pct', area = '県', kind = 'shakai', take = 5, label = '' } = Astro.props;
 const list = (rows || []).slice(0, take).filter((r) => r.lo !== null && r.hi !== null);
 const ok = list.length >= 2;
-const fmt = (v) => (unit === 'yen' ? Math.round(v).toLocaleString() + '円' : unit === 'min' ? Math.round(v) + '分' : v.toFixed(1) + '％');
+const hm = (v) => { const m = Math.round(v); return m >= 60 ? Math.floor(m / 60) + '時間' + (m % 60) + '分' : m + '分'; };
+const fmt = (v) => (unit === 'yen' ? Math.round(v).toLocaleString() + '円' : unit === 'min' ? hm(v) : v.toFixed(1) + '％');
 const half = (r) => (unit === 'yen' ? Math.round(r.hi - r.minutes).toLocaleString() + '円' : unit === 'min' ? (r.hi - r.minutes).toFixed(1) + '分' : (r.hi - r.minutes).toFixed(1) + 'ポイント');
 const lo = ok ? Math.min(...list.map((r) => r.lo)) : 0;
 const hi = ok ? Math.max(...list.map((r) => r.hi)) : 1;
@@ -36,7 +37,7 @@ const src = kind === 'kakei' ? SE_SOURCES.kakei : SE_SOURCES.shakai;
 ---
 {ok && (
   <div class="eb">
-    <p class="eb-h">誤差の幅（目安）{label ? '｜' + label : ''}</p>
+    <p class="eb-h">誤差の幅（目安）{label && <span class="eb-lb">｜{label}</span>}</p>
     <p class="eb-lead">{lead}</p>
     <ul class="eb-list">
       {list.map((r) => (
@@ -51,12 +52,13 @@ const src = kind === 'kakei' ? SE_SOURCES.kakei : SE_SOURCES.shakai;
       ))}
     </ul>
     <p class="eb-sum">{sum}</p>
-    <p class="eb-src">幅は「値 ± 1.96 × 標準誤差」。{src}。一部の{who}を調べたことによる誤差だけの目安で、答えちがいなどの誤差は含みません。</p>
+    <p class="eb-src">幅は「値 ± 1.96 × 標準誤差」。{src}。一部の{who}を調べたことによる誤差だけの目安で、答えちがいなどの誤差は含みません。読み方は<a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか</a>。</p>
   </div>
 )}
 <style>
 .eb{margin:20px 0 8px;border:1px dashed var(--line);border-radius:12px;padding:14px 16px;background:#fdfcf8}
 .eb-h{font-size:.82rem;letter-spacing:.12em;color:var(--ink-soft);font-weight:600}
+.eb-lb{display:inline-block}
 .eb-lead{font-size:.8rem;color:var(--ink-soft);line-height:1.8;margin-top:6px}
 .eb-list{list-style:none;padding:0;margin:12px 0 0;display:flex;flex-direction:column;gap:8px}
 .eb-list li{display:grid;grid-template-columns:6.5em 1fr auto;align-items:center;gap:10px}
@@ -68,5 +70,6 @@ const src = kind === 'kakei' ? SE_SOURCES.kakei : SE_SOURCES.shakai;
 .eb-v small{margin-left:4px;font-size:.72rem;opacity:.85}
 .eb-sum{margin-top:12px;font-size:.86rem;line-height:1.8}
 .eb-src{margin-top:8px;font-size:.72rem;color:var(--ink-soft);line-height:1.7}
+.eb-src a{color:var(--stamp)}
 @media(max-width:560px){.eb-list li{grid-template-columns:5.5em 1fr;row-gap:2px}.eb-v{grid-column:2;text-align:right}}
 </style>

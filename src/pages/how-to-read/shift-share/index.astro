@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="増えた分を、三つに分ける｜統計の歩き方 - Countopia Stats" description="働く人の増減を、全国の流れ・産業の構成・地域の分の三つに分けるシフトシェア分析の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <HeroFig src="/images/icon/shift-share-large.webp" alt="町の工場と商店街を見下ろす丘で、三色の積み木を並べて説明する京と、それを見る橙子の水彩画" width={1400} height={782} eager>
+      <p class="art-kicker">HOW TO READ</p>
+      <h1><span class="nw">増えた分を、</span><span class="nw">三つに分ける</span></h1>
+    </HeroFig>
+
+    <Talk speaker="touko">
+      京、この町では5年で働く人が30人ふえたのですって。町のがんばりで、ふえたということかしら。
+    </Talk>
+    <Talk speaker="kei">
+      そうとは限りません。全国で働く人がふえていれば、どの町も同じ割合でふえる分があります。どの産業が多い町かによっても、ふえ方は変わります。その分を差し引いてみましょう。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ある町の働く人の増加30人を、全国の流れ40人、産業の構成マイナス14人、地域の分4人に分けた図">
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">働く人の増減を三つに分ける（1000人の町）</text>
+        <line x1="330" y1="38" x2="330" y2="178" stroke="#555" stroke-dasharray="4 3"/>
+        <text x="0" y="58" font-size="13" font-weight="700" fill="#1b4332">増減の合計</text><rect x="330" y="46" width="120" height="16" rx="2" fill="#555555"/><text x="635" y="58" text-anchor="end" font-size="13" font-weight="700" fill="#555555">+30人</text><text x="0" y="94" font-size="13" font-weight="700" fill="#1b4332">全国の流れ</text><rect x="330" y="82" width="160" height="16" rx="2" fill="#8a9a8f"/><text x="635" y="94" text-anchor="end" font-size="13" font-weight="700" fill="#8a9a8f">+40人</text><text x="0" y="130" font-size="13" font-weight="700" fill="#1b4332">産業の構成</text><rect x="274" y="118" width="56" height="16" rx="2" fill="#4a6fa5"/><text x="635" y="130" text-anchor="end" font-size="13" font-weight="700" fill="#4a6fa5">−14人</text><text x="0" y="166" font-size="13" font-weight="700" fill="#1b4332">地域の分</text><rect x="330" y="154" width="16" height="16" rx="2" fill="#b23a2f"/><text x="635" y="166" text-anchor="end" font-size="13" font-weight="700" fill="#b23a2f">+4人</text>
+        <text x="0" y="204" font-size="12" fill="#555">製造業 600人→588人（全国の製造業は−1％）</text>
+        <text x="0" y="222" font-size="12" fill="#555">サービス業 400人→442人（全国のサービス業は+8％）／全国の働く人は全体で+4％</text>
+        <text x="0" y="244" font-size="12" fill="#777">→ 40（全国の流れ）−14（産業の構成）＋4（地域の分）＝30（増減の合計）</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>三つの分け方</h2>
+      <p>
+        <b>全国の流れ</b>は、町の働く人が全国と同じ割合でふえたとしたときの分です。図の町は1000人で、全国は+4％なので、40人です。
+      </p>
+      <p>
+        <b>産業の構成</b>は、全国で伸びた産業を多く持っていたかどうかによる分です。
+        図の町は、全国で減った製造業の割合が大きいので、その分だけ下がって−14人になります（製造業600人×（−1％−4％）＋サービス業400人×（8％−4％））。
+      </p>
+      <p>
+        <b>地域の分</b>は、それ以外の分です。同じ産業どうしで、全国より伸びたか、伸びなかったかを表します。
+        図の町の製造業は、全国並みなら594人のところ588人で−6人、サービス業は432人のところ442人で+10人、合わせて+4人です。
+      </p>
+      <p>
+        この分け方をシフトシェア分析といい、地域の雇用や産業の動きを見るときに、国や自治体の分析でもよく使われています。
+        三つを足すと、かならず増減の合計にもどります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>読むときの注意</h2>
+      <p>
+        地域の分は「全国の流れと産業の構成では説明できない分」です。町の取り組みの成果を測ったものではなく、その中身は、工場の新設や閉鎖、統計の数え方のちがいなど、さまざまです。
+        また、産業を細かく分けるほど、構成の分と地域の分の割り振りは変わります。この国では、産業を17の大きな分類で分けています。
+      </p>
+      <p>
+        使っているのは経済センサス‐活動調査の2016年と2021年の、事業所で働く人の数です。2回の調査は数え方が少しちがうので、全国の伸びにも、その違いの分が含まれます。
+        市区町村では、人数が伏せられている産業を外して計算しています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>どこで見られるか</h2>
+      <p>
+        <a href="/analysis/industry/">読み解きの間「産業の稼ぐ力を読み解く」</a>で、県を選ぶとこの分け方が出ます。その下で、県の中の市区町村も選べます。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      ふえた数だけを見ていたら、町のがんばりと、全国の流れの区別がつかないのね。
+    </Talk>
+    <Talk speaker="kei">
+      はい。合計の数字を、意味のちがう部分に分けてから読む。統計ではよく使う考え方です。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

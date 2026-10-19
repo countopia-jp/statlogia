@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getBoardGamesData } from '../../../lib/board-games.js';
 
 const data = await getBoardGamesData();
@@ -57,6 +59,10 @@ const bothTop = mostNames.filter((n) => goMostNames.includes(n));
 const hasBothTop = bothTop.length > 0;
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456573', '30'), 'c');
+const eb1 = withBands(goMost, seActivity('0003456573', '29'), 'c');
 ---
 <BaseLayout title="将棋と囲碁の行動者率｜Countopia Stats" description="都道府県別・将棋と囲碁の行動者率。将棋と囲碁、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -97,6 +103,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="将棋をした人" />
 
       <h2>将棋を指す人が少ない県 TOP5</h2>
       <ol class="rank low">
@@ -132,6 +139,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="囲碁をした人" />
 
       <Talk speaker="touko">将棋で一番だった{topNames.join('と')}は、碁では何番目なの。</Talk>
       <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `${topInGo}です。かわりに碁で一番なのは${goTopNames.join('と')}で、将棋では${goTopInShogi}でした。`}</Talk>

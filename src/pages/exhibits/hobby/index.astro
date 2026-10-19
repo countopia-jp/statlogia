@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seTime, withBands } from '../../../lib/sampling-error.js';
 import { fetchHobbyByPrefecture, fetchCommuteByPrefecture } from '../../../lib/estat.js';
 
 const rows = await fetchHobbyByPrefecture(); // 長い順
@@ -28,6 +30,9 @@ const rankOfName = (list, name) => {
 const commuteRanksOfTop = topNames.map((n) => `${n}が${rankOfName(commuteRows, n)}位`).join('、');
 const fmt = (m) => m >= 60 ? `${Math.floor(m / 60)}時間${m % 60}分` : `${m}分`;
 const maxMin = top.minutes;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seTime('趣味・娯楽'), 'n');
 ---
 <BaseLayout title="趣味に生きる県はどこだ｜Countopia Stats" description="都道府県別・趣味・娯楽時間ランキング。趣味・娯楽にいちばん時間を使う県はどこ？" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -72,6 +77,7 @@ const maxMin = top.minutes;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="min" area="県" kind="shakai" label="趣味・娯楽の時間" />
 
       <h2>趣味の時間が短い県 TOP5</h2>
       <ol class="rank alt">

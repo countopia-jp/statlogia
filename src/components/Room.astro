@@ -122,7 +122,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       {data.pop && <>「人口10万人あたり」「1人あたり」「人口に対する割合」は、各地域の総人口（{data.popYear}{isPref ? '' : '・国勢調査'}）で割った値です。年のずれがあるため目安としてご覧ください。<br /></>}
       「上位◯％」は、{isPref ? '47都道府県' : '全国の市区町村'}を値の大きい順に並べたときの位置です。偏差値は、分布の偏りが小さい項目にだけ出しています（平均50、標準偏差10に換算）。<br />
       グラフの「年平均の伸び」は、最初の年から最後の年までを複利でならした1年あたりの伸び率です。割合の項目は、動いた幅をポイントで示しています。<br />
-      読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>{!isPref && data.pop && data.indicators.some((i) => i.perCap === 'p100k') && <>｜<a href="/how-to-read/small-towns/">小さな町の1位は、あてにならない</a></>}{data.indicators.some((i) => i.lq) && <>｜<a href="/how-to-read/specialization/">町の得意を測る物差し</a></>}<br />
+      読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>{!isPref && data.pop && data.indicators.some((i) => i.perCap === 'p100k') && <>｜<a href="/how-to-read/small-towns/">小さな町の1位は、あてにならない</a></>}{data.indicators.some((i) => i.lq) && <>｜<a href="/how-to-read/specialization/">町の得意を測る物差し</a></>}｜<a href="/how-to-read/similar/">似た町と並べてみる</a>{data.indicators.some((i) => i.se) && <>｜<a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか</a></>}<br />
       このページはe-Stat APIで取得した統計データを独自に加工して作成しています。
     </p>
   </footer>
@@ -301,6 +301,15 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     if (svg) h += `<div class="rm-card-dist">${svg}<div class="rm-card-pos">${ind.perCap && POP ? '人口あたりで ' : ''}${pos}</div></div>`;
     return h;
   }
+  // 標本調査の誤差の目安（95％）：その年の値にだけ。％の項目はポイントで
+  function seOf(ind, a, lk) {
+    if (!ind.se || !lk || (ind.se.y && ind.years[lk.i] !== ind.se.y)) return '';
+    const r = ind.se.r[a.c];
+    if (typeof r !== 'number' || typeof lk.v !== 'number') return '';
+    const h = (1.96 * r * lk.v) / 100;
+    const dec = ind.decimals ?? 1;
+    return `<div class="rm-card-meta rm-card-meta--soft rm-card-se">誤差の目安 <span>±${h.toLocaleString('ja-JP', { minimumFractionDigits: dec, maximumFractionDigits: dec })}${ind.unit === '％' ? 'ポイント' : (ind.unit || '')}</span></div>`;
+  }
   function render(a) {
     current = a;
     compare = compare.filter((b) => b.c !== a.c);
@@ -340,7 +349,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       d.innerHTML =
         `<div class="rm-card-label">${ind.label}</div>` +
         `<div class="rm-card-num">${lk ? fmt(ind, lk.v) : '—'}</div>` +
-        `<div class="rm-card-year">${lk ? ind.yearLabels[lk.i] : ''}</div>` + meta + extraOf(ind, a, isLatest) +
+        `<div class="rm-card-year">${lk ? ind.yearLabels[lk.i] : ''}</div>` + meta + seOf(ind, a, lk) + extraOf(ind, a, isLatest) +
         (ind.note ? `<div class="rm-card-note">${ind.note}</div>` : '');
       cards.appendChild(d);
     }

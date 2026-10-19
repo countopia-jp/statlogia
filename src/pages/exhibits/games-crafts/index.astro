@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getGamesCraftsData } from '../../../lib/games-crafts.js';
 import { regionsOf } from '../../../data/geo.js';
 
@@ -52,6 +54,10 @@ const ratio = crafts.national > 0 ? Math.round(r1(avg) / r1(crafts.national)) : 
 const ratioText = ratio >= 2 ? `ゲームのおよそ${ratio}分の1です。` : 'ゲームと同じくらいの数字です。';
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456573', '32'), 'c');
+const eb1 = withBands(craftsMost, seActivity('0003456573', '19'), 'c');
 ---
 <BaseLayout title="テレビゲームと編み物の行動者率｜Countopia Stats" description="都道府県別・テレビゲームと編み物・手芸の行動者率。ゲームと編み物、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -92,6 +98,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="ゲームをした人" />
 
       <Talk speaker="touko">{topRegions.length > 1 ? `${topRegions.join('と')}の県が並んでいるのねえ。` : `${topRegions[0]}の県が並んでいるのねえ。`}</Talk>
 
@@ -129,6 +136,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="編み物・手芸をした人" />
 
       <Talk speaker="touko">{craftsRegions.length > 1 ? `こちらは${craftsRegions.join('と')}なのねえ。` : `こちらは${craftsRegions[0]}ばかりなのねえ。`}</Talk>
       <Talk speaker="kei">{sameTop ? `${top.n}が、どちらも一番です。` : `ゲームで一番だった${topInCrafts}。編み物で一番だった${craftsTopInGame}でした。`}</Talk>

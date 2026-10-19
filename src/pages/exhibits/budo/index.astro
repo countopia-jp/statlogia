@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getBudoData } from '../../../lib/budo.js';
 
 const data = await getBudoData();
@@ -80,6 +82,10 @@ const swapJdRank = hasSwap ? jdRankOfName(swapName) : 0;
 const swapKdRank = hasSwap ? kdRankOfName(swapName) : 0;
 // 見出しの接続詞：一番が違い、上位5の重なりが2県以下なら「ところが」、似ていれば「こんどは」
 const twist = !sameTop && bothTop.length <= 2;
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456409', '11'), 'c');
+const eb1 = withBands(kdMost, seActivity('0003456409', '12'), 'c');
 ---
 <BaseLayout title="柔道と剣道の行動者率｜Countopia Stats" description="都道府県別・柔道と剣道の行動者率。柔道と剣道、日本一はどの県か。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -120,6 +126,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="柔道をした人" />
 
       {topRuns && (
         <Talk speaker="touko">{top.n}だけ、ずいぶん飛び抜けているのねえ。2番目は、同じ数字の県が並んでいるわ。</Talk>
@@ -163,6 +170,7 @@ const twist = !sameTop && bothTop.length <= 2;
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb1} unit="pct" area="県" kind="shakai" label="剣道をした人" />
 
       <h2>剣道をする人が少ない県 TOP5</h2>
       <ol class="rank low">

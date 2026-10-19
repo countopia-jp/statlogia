@@ -57,3 +57,48 @@ export async function getShiftShareData() {
   };
   return cache;
 }
+
+// ---- 市区町村版（/data/shift-share-town/<県コード>.json） ----
+// 同じ2つの表の市区町村の行。県と同じく事業従事者数・産業大分類17業種。
+// 秘匿（X）などで値の無い業種は null のまま出し、ページの側で分解から外す。
+// 2016年と2021年のあいだに市制施行でコードが変わった町は、2016年のコードで引く。
+const CODE_2016 = { '04216': '04423', '40231': '40305' }; // 富谷市（富谷町）、那珂川市（那珂川町）
+let townCache = null;
+async function areaNames(statsDataId) {
+  const qs = new URLSearchParams({ appId: appId(), lang: 'J', statsDataId });
+  const j = await (await fetch(`https://api.e-stat.go.jp/rest/3.0/app/json/getMetaInfo?${qs}`)).json();
+  const o = asArray(j.GET_META_INFO?.METADATA_INF?.CLASS_INF?.CLASS_OBJ).find((x) => x['@id'] === 'area');
+  return Object.fromEntries(asArray(o?.CLASS).map((c) => [c['@code'], String(c['@name']).trim()]));
+}
+export async function getShiftShareTownData() {
+  if (townCache) return townCache;
+  const raw0 = await get({ statsDataId: '0003218722', cdCat01: '000', cdTab: '817' });
+  const raw1 = await get({ statsDataId: '0004006340', cdCat02: '0', cdTab: '148-2021' });
+  const names = await areaNames('0004006340');
+  const e0 = {}, e1 = {};
+  for (const v of raw0) (e0[v['@area']] ??= {})[v['@cat02']] = num(v['$']);
+  for (const v of raw1) if (v['@tab'] === '148-2021' && v['@cat02'] === '0') (e1[v['@area']] ??= {})[v['@cat01']] = num(v['$']);
+  townCache = { e0, e1, names };
+  return townCache;
+}
+export async function getShiftShareTownPref(pref) {
+  const { e0, e1, names } = await getShiftShareTownData();
+  const p2 = pref.slice(0, 2);
+  const towns = Object.keys(e1).filter((c) => c.slice(0, 2) === p2 && !c.endsWith('000')).sort();
+  const out = [];
+  for (const c of towns) {
+    const old = e0[c] ? c : CODE_2016[c];
+    if (!old || !e0[old]) continue;
+    out.push({
+      c, n: names[c] || c,
+      e0: SS_INDUSTRIES.map(([, , h]) => e0[old]?.[h] ?? null),
+      e1: SS_INDUSTRIES.map(([k]) => e1[c]?.[k] ?? null),
+    });
+  }
+  return {
+    source: '政府統計の総合窓口(e-Stat) 平成28年・令和3年経済センサス‐活動調査 事業所に関する集計（表番号0003218722・0004006340）',
+    y0: '2016年', y1: '2021年', pref,
+    industries: SS_INDUSTRIES.map(([k, n]) => ({ k, n })),
+    towns: out,
+  };
+}

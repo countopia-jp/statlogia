@@ -2,6 +2,8 @@
 import ExhibitHero from '../../../components/ExhibitHero.astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import ErrorBand from '../../../components/ErrorBand.astro';
+import { seActivity, withBands } from '../../../lib/sampling-error.js';
 import { getFishingData } from '../../../lib/fishing.js';
 import { LANDLOCKED } from '../../../data/geo.js';
 
@@ -30,6 +32,9 @@ const perPerson = Math.round(100 / avg);
 // 海に面していない8県。下位の顔ぶれを実データから判定する
 const landlockedInLeast = least.filter((r) => LANDLOCKED.includes(r.n));
 const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
+
+// 標本調査の誤差の幅（lib/sampling-error.js）
+const eb0 = withBands(most, seActivity('0003456409', '14'), 'c');
 ---
 <BaseLayout title="釣りをする人の割合｜Countopia Stats" description="都道府県別・過去1年間に釣りをした人の割合。日本一「釣りをする」県はどこか。" backHref="/exhibits/" backLabel="展示一覧">
   <main>
@@ -74,6 +79,7 @@ const coastalInLeast = least.filter((r) => !LANDLOCKED.includes(r.n));
           </li>
         ))}
       </ol>
+      <ErrorBand rows={eb0} unit="pct" area="県" kind="shakai" label="つりをした人" />
 
       <h2>釣りをする人が少ない県 TOP5</h2>
       <ol class="rank low">

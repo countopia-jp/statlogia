@@ -64,7 +64,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     <div class="cp-wrap" id="cpWrap" hidden>
       <table class="cp-table" id="cpTable"></table>
     </div>
-    <p class="cp-note" id="cpNote" hidden>見出しの項目名を押すと、その項目の値の順に並べかえます（もう一度押すと逆の順）。都道府県の見出しを押すと、北から順にもどります。順位は47都道府県の中での順位で、同じ値は同じ順位です。項目ごとに、いちばん新しい年の値です。</p>
+    <p class="cp-note" id="cpNote" hidden>見出しの項目名を押すと、その項目の値の順に並べかえます（もう一度押すと逆の順）。都道府県の見出しを押すと、北から順にもどります。順位は47都道府県の中での順位で、同じ値は同じ順位です。項目ごとに、いちばん新しい年の値です。一部の人や世帯を選んで調べた項目（社会生活基本調査・家計調査）には、値の下に「±」で誤差の目安（95％）を添えています。</p>
 
     <section class="cp-sc" id="cpSc" hidden aria-label="二つの項目の関係">
       <h2>二つの項目の関係を見る</h2>
@@ -242,6 +242,15 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     const rows = prefList.map((p) => ({ ...p, vals: cols.map((c) => useVal(c, p.c)) }));
     const ST = cols.map((c) => statsOf(c));
     const isPcCol = (c) => mode !== 'value' && hasPc(c);
+    // 標本調査の誤差の目安（窓口のデータに se があり、その年の値のとき。人口あたりにした列には出さない）
+    const seOn = (c) => !!(c.ind.se && !isPcCol(c) && (!c.ind.se.y || c.ind.years[L(c.ind)] === c.ind.se.y));
+    const seTxt = (c, code, v) => {
+      if (!seOn(c)) return '';
+      const rt = c.ind.se.r[code];
+      if (typeof rt !== 'number') return '';
+      const h = (1.96 * rt * v) / 100, d = c.ind.decimals ?? 1;
+      return `<small class="cp-se">±${h.toLocaleString('ja-JP', { minimumFractionDigits: d, maximumFractionDigits: d })}${c.ind.unit === '％' ? 'ポイント' : (c.ind.unit || '')}</small>`;
+    };
     const ranks = cols.map((c, j) => {
       const rr = (v) => (isPcCol(c) ? Number(v.toFixed(6)) : r(c.ind, v));
       const vs = rows.map((row) => row.vals[j]).filter((v) => v !== null && v !== undefined).map(rr);
@@ -260,14 +269,14 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
       const arrow = sortKey === j ? (sortDir < 0 ? ' ▼' : ' ▲') : '';
       const skewNote = mode === 'dev' && Math.abs(ST[j].skew) >= 1 ? '<small class="cp-warn">分布の偏りが大きく、偏差値は目安です</small>' : '';
       const pcNote = isPcCol(c) ? `<small>${pcLabel(c)}（総人口 ${c.D.popYear || ''}）</small>` : '';
-      return `<th scope="col"><button type="button" data-sort="${j}"><i style="background:${COLORS[c.k]}"></i>${c.ind.label}${arrow}</button><small>${c.ind.yearLabels[L(c.ind)]}・${c.roomTitle}</small>${pcNote}<small>順位は${c.ind.rankWord}</small>${skewNote}</th>`;
+      return `<th scope="col"><button type="button" data-sort="${j}"><i style="background:${COLORS[c.k]}"></i>${c.ind.label}${arrow}</button><small>${c.ind.yearLabels[L(c.ind)]}・${c.roomTitle}</small>${pcNote}<small>順位は${c.ind.rankWord}</small>${mode === 'value' && seOn(c) ? '<small>±は誤差の目安（95％）</small>' : ''}${skewNote}</th>`;
     }).join('');
     const natRow = mode !== 'value' ? '<tr class="cp-nat"><th scope="row">47都道府県の平均</th>' + cols.map((c, j) => `<td>${mode === 'dev' ? '<b>50.0</b>' : ''}<small>${isPcCol(c) ? fmtPc(ST[j].mean) : fmt(c.ind, ST[j].mean)}</small></td>`).join('') + '</tr>' : '<tr class="cp-nat"><th scope="row">' + (cols.every((c) => !c.D.nationalIsAvg[c.ind.key] && !(c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key])) ? '全国' : '全国／平均') + '</th>' + cols.map((c) => {
       const avg = c.D.nationalIsAvg[c.ind.key] || (c.D.nationalIsTotal && c.D.nationalIsTotal[c.ind.key]);
       const v = avg && c.D.prefAverage ? c.D.prefAverage[c.ind.key][L(c.ind)] : c.D.national[c.ind.key][L(c.ind)];
       return `<td>${fmt(c.ind, v)}${avg ? '<small>47都道府県の平均</small>' : ''}</td>`;
     }).join('') + '</tr>';
-    const cell = (c, j, v) => {
+    const cell = (c, j, v, code) => {
       if (v === null || v === undefined) return '<td>—</td>';
       const rk = ranks[j](v);
       const S = ST[j];
@@ -280,9 +289,9 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
         const pTop = Math.ceil((rk / S.n) * 100), pBot = Math.ceil(((S.n - rk + 1) / S.n) * 100);
         return `<td><b>${pTop <= 50 ? `上位${pTop}％` : `下位${pBot}％`}</b><small>${main}・${rk}位</small></td>`;
       }
-      return `<td><b>${main}</b>${rk ? `<small>${rk}位</small>` : ''}</td>`;
+      return `<td><b>${main}</b>${rk ? `<small>${rk}位</small>` : ''}${seTxt(c, code, v)}</td>`;
     };
-    const body = rows.map((row) => `<tr${row.c === mine ? ' class="is-mine"' : ''}><th scope="row">${row.n}</th>` + cols.map((c, j) => cell(c, j, row.vals[j])).join('') + '</tr>').join('');
+    const body = rows.map((row) => `<tr${row.c === mine ? ' class="is-mine"' : ''}><th scope="row">${row.n}</th>` + cols.map((c, j) => cell(c, j, row.vals[j], row.c)).join('') + '</tr>').join('');
     const t = document.getElementById('cpTable');
     t.innerHTML = `<thead><tr><th scope="col"><button type="button" data-sort="pref">都道府県${sortKey === null ? ' ▼' : ''}</button></th>${head}</tr></thead><tbody>${natRow}${body}</tbody>`;
     t.querySelectorAll('button[data-sort]').forEach((b) => b.addEventListener('click', () => {
