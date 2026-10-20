@@ -4,10 +4,11 @@ import Talk from '../../components/Talk.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 import HeroFig from '../../components/HeroFig.astro';
+import { ANNEX_COUNT } from '../../data/page-names.js';
 // 窓口の扉絵の縮小版（public/images/icon/<窓口>-thumb.webp）。置いてあればカードに出す
 const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images/icon', `${slug}-thumb.webp`)) ? `/images/icon/${slug}-thumb.webp` : null);
 ---
-<BaseLayout title="暮らしの台帳｜Countopia Stats" description="財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。16の窓口があります。">
+<BaseLayout title="暮らしの台帳｜Countopia Stats" description={`財政や人の出入り、所得や家計、土地の値段や働き方、自然災害の被害など、お金と暮らしの内側に関わる数字をまとめた別館です。${ANNEX_COUNT}の窓口があります。`}>
   <main class="rr">
     <HeroFig src="/images/icon/annex-large.webp" alt="昭和の市役所の書庫。札の下がった台帳の棚と鉄の書類キャビネット、壁の柱時計と窓辺の扇風機、机にしおりをはさんだ台帳と帳票、算盤、黒電話が置かれた水彩画" width={1400} height={788} eager>
         <p class="rr-kicker">別館</p>

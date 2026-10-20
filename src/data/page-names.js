@@ -89,3 +89,9 @@ export const ROOM_NAMES = {
   '/town-medical/': '閲覧室　わが町の医療',
   '/town-culture/': '閲覧室　わが町の図書館と公民館',
 };
+
+// 10-20 窓口の数（玄関・閲覧室・別館の案内で使う）。名前の頭の「閲覧室」「別館」で数えるので、窓口を足して上に1行足せば自動で増える
+// 別館は /annex/ 配下（別館トップ・栞の紹介）を除く
+const _names = Object.entries(ROOM_NAMES);
+export const ROOM_COUNT = _names.filter(([, n]) => n.startsWith('閲覧室　')).length;
+export const ANNEX_COUNT = _names.filter(([p, n]) => n.startsWith('別館　') && !p.startsWith('/annex/')).length;

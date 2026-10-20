@@ -575,6 +575,16 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
     .an-data thead th { background: #f6f8f4; color: #1b4332; font-weight: 600; white-space: nowrap; }
     .an-data tbody th { font-weight: 400; color: #2d6a4f; min-width: 12em; }
     .an-data td.an-y, .an-data td.an-u { white-space: nowrap; color: #555; }
+    /* 10-20 スマホは表をやめて、項目ごとのまとまり（項目名／年・単位／注意）に */
+    @media (max-width: 600px) {
+      .an-data, .an-data tbody { display: block; }
+      .an-data thead { display: none; }
+      .an-data tr { display: grid; grid-template-columns: auto auto 1fr; column-gap: 14px; row-gap: 2px; padding: 10px 12px; border-bottom: 1px solid #ecece4; }
+      .an-data tr > th, .an-data tr > td { padding: 0; border: 0; min-width: 0; }
+      .an-data tr > th { grid-column: 1 / -1; }
+      .an-data tr > td:last-child { grid-column: 1 / -1; }
+      .an-data tr > td:last-child:empty { display: none; }
+    }
     .an-prof { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 6px 14px 10px; }
     .an-empty { color: #888; text-align: center; padding: 20px 0; margin: 0; }
     .an-row { display: grid; grid-template-columns: minmax(10em, 1.5fr) minmax(7em, .9fr) minmax(140px, 2fr) 3.2em; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0efe8; font-size: .84rem; }

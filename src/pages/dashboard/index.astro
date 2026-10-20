@@ -6,6 +6,7 @@ const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/i
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import HeroFig from '../../components/HeroFig.astro';
+import { ANNEX_COUNT } from '../../data/page-names.js';
 ---
 <BaseLayout title="閲覧室｜Countopia Stats" description="都道府県・市区町村を選んで、学校・人口・住まい・医療・通勤などの数字を自分の手で引き出す閲覧室。各窓口の案内一覧です。" backHref="/" backLabel="玄関">
   <main class="rr">
@@ -645,7 +646,7 @@ import HeroFig from '../../components/HeroFig.astro';
       <div class="rr-annex">
         <a class="rr-annex-link" href="/annex/" aria-label="別館 暮らしの台帳へ"><img src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" /><span>別館 暮らしの台帳</span></a>
         <p class="rr-annex-text">
-          県や町の財政、人の出入り、家計や給与、土地の値段、働き方、自然災害の被害など、お金と暮らしの内側に関わる16の窓口は、別館「暮らしの台帳」にあります。昭和の帳場から来た栞がご案内します。
+          県や町の財政、人の出入り、家計や給与、土地の値段、働き方、自然災害の被害など、お金と暮らしの内側に関わる{ANNEX_COUNT}の窓口は、別館「暮らしの台帳」にあります。昭和の帳場から来た栞がご案内します。
           <a class="rr-annex-go" href="/annex/">別館へ →</a>
         </p>
       </div>
