@@ -331,6 +331,53 @@ export const THEMES = [
       '活動の中身や、参加した人の満足は、この組に入っていません。',
     ],
   },
+  {
+    id: 'housing',
+    imageAlt: '',
+    tag: '空き家、建った年、一戸建てと集合住宅、持ち家と借家、家の広さ、新しく建つ家',
+    title: '住まいを読み解く',
+    kicker: 'HOUSING',
+    lead: '空き家、古い家と新しい家、一戸建てと集合住宅、家の広さ。県の家の顔ぶれを、一つの組で読み解きます。',
+    question: 'この県の家は、どんな顔ぶれで、どう入れ替わっているか。',
+    subQuestions: [
+      '古い家の多さ、新しく建つ家の多さ、空き家の多さは、全国と比べてどうか。',
+      '一戸建てや持ち家の多さと、家の広さは、そろって動いているか。',
+      '土地の値段は、家の広さや一戸建ての多さとどう関係しているか。',
+    ],
+    indicators: [
+      { id: 'vacant', src: 'room', room: 'home-features', key: 'vacant', short: '空き家の割合（すべての住宅のうち）' },
+      { id: 'old', src: 'room', room: 'home-features', key: 'old', short: '1980年以前に建った住宅の割合' },
+      { id: 'newBuild', src: 'room', room: 'home-features', key: 'newBuild', short: '新しく建て始めた住宅（人口1000人あたり）' },
+      { id: 'ownShare', src: 'room', room: 'house-build', key: 'ownShare', short: '新しく建てた住宅のうち持ち家の割合' },
+      { id: 'detached', src: 'room', room: 'home-features', key: 'detached', short: '一戸建ての住宅の割合' },
+      { id: 'rc', src: 'room', room: 'home-features', key: 'rc', short: '鉄筋・鉄骨コンクリート造の住宅の割合' },
+      { id: 'own', src: 'std', file: 'living', code: 'OWNRATE', short: '持ち家率' },
+      { id: 'rentPub', src: 'room', room: 'home-features', key: 'rentPub', short: '公営の借家の割合' },
+      { id: 'rooms', src: 'room', room: 'home-features', key: 'rooms', short: '1住宅あたりの部屋数' },
+      { id: 'tatamiPer', src: 'room', room: 'home-space', key: 'tatamiPer', short: '1人あたりの畳の数' },
+      { id: 'site', src: 'room', room: 'home-space', key: 'site', short: '一戸建ての1住宅あたりの敷地面積' },
+      { id: 'barrier', src: 'room', room: 'home-features', key: 'barrier', short: '高齢者などのための設備がある住宅の割合' },
+      { id: 'land', src: 'room', room: 'land-price', key: 'residential', short: '住宅地の値段' },
+    ],
+    pairs: [
+      { x: 'old', y: 'vacant', why: '古い家が多い県ほど、空き家も多いか。' },
+      { x: 'newBuild', y: 'vacant', why: '新しく建つ家が多い県ほど、空き家は少ないか。' },
+      { x: 'detached', y: 'rooms', why: '一戸建てが多い県ほど、1住宅の部屋数も多いか。' },
+      { x: 'land', y: 'site', why: '住宅地が高い県ほど、一戸建ての敷地は狭いか。' },
+    ],
+    trends: ['vacant', 'old', 'detached'],
+    cautions: [
+      '家の数や割合は住宅・土地統計調査（5年ごと）の値で、一部の住宅を調べて全体を推し量ったものです。',
+      '空き家には、売りに出ている家、貸しに出ている家、別荘なども含まれます。空き家の割合だけは、空き家を含むすべての住宅に占める割合で、ほかの割合（人が住んでいる住宅に占める割合）と分母がちがいます。',
+      '新しく建て始めた住宅は毎年の着工の数で、5年ごとの調査の項目と年がそろいません。',
+      '住宅地の値段は、地価調査の地点の平均で、県のすべての土地の値段ではありません。',
+    ],
+    cannot: [
+      'どの県の住まいが「良い」か「足りない」かは、この組からは言えません。広さや一戸建ての多さを良しとするかは、暮らし方によって変わります。',
+      '古い家が多いことが、空き家を増やした理由だとは言えません（人口の減り方や、土地の広さなど、別のものが両方を動かしていることがあります）。',
+      '家の傷み具合や住み心地、住む人の満足は、この組に入っていません。',
+    ],
+  },
 ];
 
 export const PLANNED = [];

@@ -8,6 +8,7 @@
 // 絵を足したら、ここにも1行足す（書かなければ t）。
 // =====================================================
 export const HERO_POS = {
+  'town-income': 'tr',
   'similar': 'tr',
   'shift-share': 'tt',
   'sampling-error': 'tt',
