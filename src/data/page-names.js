@@ -47,6 +47,8 @@ export const ROOM_NAMES = {
   '/work-forms/': '別館　働き方のかたち',
   '/home-features/': '閲覧室　家のつくりと設備',
   '/town-households/': '閲覧室　わが町の世帯のかたち',
+  '/town-house-age/': '閲覧室　わが町の家の建った年',
+  '/town-income/': '別館　わが町の所得',
   '/home-space/': '閲覧室　住まいの広さ',
   '/medical-staff/': '閲覧室　医療の担い手',
   '/environment/': '閲覧室　暮らしのまわりの環境',

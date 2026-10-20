@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Room from '../../components/Room.astro';
-import { TOWN_FUTURE } from '../../data/rooms/town-future.js';
-const room = TOWN_FUTURE;
+import { TOWN_HOUSE_AGE } from '../../data/rooms/town-house-age.js';
+const room = TOWN_HOUSE_AGE;
 ---
 <BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
   <Room room={room} />

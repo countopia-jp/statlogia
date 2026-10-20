@@ -142,6 +142,17 @@ const thumbOf = (slug) => (fs.existsSync(path.join(process.cwd(), 'public/images
           <span class="lc-foot">別館・都道府県</span>
           </div>
         </a>
+        <a class={`ledger-card${thumbOf('town-income') ? ' ledger-card--img' : ''}`} href="/town-income/">
+          {thumbOf('town-income') && <img class="lc-img" src={thumbOf('town-income')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="lc-body">
+          <span class="lc-mark">得</span>
+          <h3>わが町の所得</h3>
+          <p class="lc-desc">
+            市区町村ごとに、住民税の課税対象になった所得を、納める人1人あたりで。人口に対する納める人の割合も。
+          </p>
+          <span class="lc-foot">別館・市区町村</span>
+          </div>
+        </a>
         <a class={`ledger-card${thumbOf('living') ? ' ledger-card--img' : ''}`} href="/living/">
           {thumbOf('living') && <img class="lc-img" src={thumbOf('living')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="lc-body">
