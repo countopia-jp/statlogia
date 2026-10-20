@@ -1,0 +1,97 @@
+---
+// =====================================================
+// Countopia Stats - これからの人口の見込み（将来推計人口）
+// src/components/FutureTool.astro
+// ページの県／市区町村のセレクタ（selectId）で選ばれた地域の、2020年（国勢調査）から2050年までの
+// 見込みの人口を、2020年を100とした線で描き、全国（町なら県も）と重ねる。データは lib/future-pop.js。
+// =====================================================
+interface Props { level: 'pref' | 'town'; selectId: string; }
+const { level, selectId } = Astro.props;
+const isTown = level === 'town';
+---
+<section class="ftr" hidden data-level={level} data-select={selectId} aria-label="これからの人口の見込み">
+  <h2>これからの人口の見込み</h2>
+  <p class="ftr-note">2020年の国勢調査の人口を100として、2050年までの見込みの人口を線で描きました。{isTown ? '県と全国の線も重ねています。' : '全国の線も重ねています。'}</p>
+  <div class="ftr-fig"></div>
+  <div class="ftr-tiles"></div>
+  <p class="ftr-read"></p>
+  <p class="ftr-src"></p>
+</section>
+
+<script is:inline>
+(function () {
+  let DATA = null;
+  const load = async () => { if (DATA === null) { try { DATA = await (await fetch('/data/future-pop.json')).json(); } catch (e) { DATA = false; } } return DATA; };
+  const idx = (a) => a.v.map((x) => (x === null || !a.v[0] ? null : (x / a.v[0]) * 100));
+  const f1 = (v) => v.toFixed(1);
+  const short = (n) => n.replace(/^\S+[都道府県]\s+/, '');
+  function svg(years, lines) {
+    const W = 640, H = 260, L = 46, R = 120, T = 16, B = 30;
+    const all = lines.flatMap((l) => l.v.filter((x) => x !== null));
+    let lo = Math.min(100, ...all), hi = Math.max(100, ...all);
+    const pad = Math.max(2, (hi - lo) * 0.08); lo = Math.floor((lo - pad) / 5) * 5; hi = Math.ceil((hi + pad) / 5) * 5;
+    const X = (i) => L + (i / (years.length - 1)) * (W - L - R);
+    const Y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+    let b = '';
+    const step = hi - lo > 40 ? 10 : 5;
+    for (let v = lo; v <= hi; v += step) b += `<line x1="${L}" y1="${Y(v).toFixed(1)}" x2="${W - R}" y2="${Y(v).toFixed(1)}" stroke="#1e3a2f" stroke-opacity="${v === 100 ? 0.45 : 0.08}" ${v === 100 ? 'stroke-dasharray="4 3"' : ''}/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#777">${v}</text>`;
+    years.forEach((y, i) => { b += `<text x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle" font-size="10" fill="#777">${y}</text>`; });
+    const labels = [];
+    for (const l of lines) {
+      const pts = l.v.map((v, i) => (v === null ? null : `${X(i).toFixed(1)},${Y(v).toFixed(1)}`)).filter(Boolean).join(' ');
+      b += `<polyline points="${pts}" fill="none" stroke="${l.color}" stroke-width="${l.w}" ${l.dash ? `stroke-dasharray="${l.dash}"` : ''}/>`;
+      l.v.forEach((v, i) => { if (v !== null && l.dots) b += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="3" fill="${l.color}"><title>${l.name} ${years[i]}年 ${f1(v)}</title></circle>`; });
+      const last = l.v[l.v.length - 1];
+      if (last !== null) labels.push({ y: Y(last), text: `${l.name} ${f1(last)}`, color: l.color });
+    }
+    labels.sort((a, b2) => a.y - b2.y);
+    for (let k = 1; k < labels.length; k++) if (labels[k].y - labels[k - 1].y < 13) labels[k].y = labels[k - 1].y + 13;
+    for (const lb of labels) b += `<text x="${W - R + 8}" y="${(lb.y + 4).toFixed(1)}" font-size="11" fill="${lb.color}" font-weight="700">${lb.text}</text>`;
+    return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="2020年を100とした2050年までの見込みの人口の線グラフ">${b}</svg>`;
+  }
+  async function draw(sec) {
+    const sel = document.getElementById(sec.dataset.select);
+    if (!sel) return;
+    let code = sel.value;
+    if (!code) { sec.hidden = true; return; }
+    if (sec.dataset.level === 'pref' && code.length === 2) code += '000';
+    const D = await load();
+    if (!D) return;
+    const me = D.areas[code];
+    if (!me) { sec.hidden = true; return; }
+    const nat = D.areas['00000'];
+    const pref = sec.dataset.level === 'town' ? D.areas[code.slice(0, 2) + '000'] : null;
+    sec.hidden = false;
+    const myName = sec.dataset.level === 'town' ? short(me.n) : me.n;
+    const lines = [{ name: myName, v: idx(me), color: '#b23a2f', w: 2.6, dots: true }];
+    if (pref) lines.push({ name: pref.n, v: idx(pref), color: '#2d6a4f', w: 1.8, dash: '6 3' });
+    lines.push({ name: '全国', v: idx(nat), color: '#777', w: 1.6, dash: '2 3' });
+    sec.querySelector('.ftr-fig').innerHTML = svg(D.years, lines);
+    const fmt = (n) => Math.round(n).toLocaleString('ja-JP');
+    const tile = (i) => { const v = me.v[i]; if (v === null) return ''; const ix = (v / me.v[0]) * 100; return `<div><span>${D.years[i]}年の見込み</span><b>${fmt(v)}人</b><span>2020年を100として ${f1(ix)}</span></div>`; };
+    sec.querySelector('.ftr-tiles').innerHTML = `<div><span>2020年（国勢調査）</span><b>${fmt(me.v[0])}人</b><span>起点（100）</span></div>` + tile(3) + tile(6);
+    const i50 = idx(me)[6], n50 = idx(nat)[6], p50 = pref ? idx(pref)[6] : null;
+    sec.querySelector('.ftr-read').textContent = i50 === null ? '' : `${myName}の2050年の見込みの人口は、2020年を100として${f1(i50)}です（全国${f1(n50)}${p50 !== null ? `、${pref.n}${f1(p50)}` : ''}）。`;
+    sec.querySelector('.ftr-src').textContent = `出典：${D.source}。${D.vintage}。これまでの出生・死亡・人の移動の傾向が続くと仮定した見込みで、予測や目標ではありません。`;
+  }
+  for (const sec of document.querySelectorAll('.ftr')) {
+    const sel = document.getElementById(sec.dataset.select);
+    if (!sel) continue;
+    sel.addEventListener('change', () => draw(sec));
+    setTimeout(() => draw(sec), 1200);
+  }
+})();
+</script>
+
+<style is:global>
+  .ftr { margin: 28px 0 24px; padding: 18px 18px 14px; border: 1px solid #ddd6c4; border-radius: 12px; background: #fffdf7; }
+  .ftr h2 { font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 6px; text-align: center; }
+  .ftr-note, .ftr-src { font-size: .78rem; color: #666; line-height: 1.8; margin: 4px 0; }
+  .ftr-fig svg { display: block; width: 100%; max-width: 640px; height: auto; margin: 8px auto; }
+  .ftr-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0; }
+  .ftr-tiles > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+  .ftr-tiles span { font-size: .74rem; color: #555; }
+  .ftr-tiles b { font-size: 1.1rem; color: #1b4332; }
+  .ftr-read { font-size: .9rem; line-height: 1.9; margin: 8px 0 4px; }
+  @media (max-width: 600px) { .ftr-tiles { gap: 6px; } .ftr-tiles > div { padding: 6px 8px; } .ftr-tiles b { font-size: .95rem; } .ftr-tiles span { font-size: .68rem; } .ftr { padding: 14px 10px 10px; } }
+</style>

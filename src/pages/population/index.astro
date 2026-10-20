@@ -21,6 +21,7 @@ const years = [...new Set(pop.indicators.map((i) => i.year).filter(Boolean))].so
 const yearNote = years.join('・');
 import GrowthTool from '../../components/GrowthTool.astro';
 import PyramidTool from '../../components/PyramidTool.astro';
+import FutureTool from '../../components/FutureTool.astro';
 ---
 
 <BaseLayout title="国勢の間｜人口と世帯｜Countopia Stats" description="都道府県を選んで、総人口・高齢化率・年少人口率・世帯数・出生率・婚姻率を一枚の台帳でご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
@@ -69,6 +70,7 @@ import PyramidTool from '../../components/PyramidTool.astro';
 
     <CompareAddon level="pref" selectId="prefSelect" src="/data/population.json" />
     <PyramidTool level="pref" selectId="prefSelect" />
+    <FutureTool level="pref" selectId="prefSelect" />
 
     <!-- ===== ランキング ===== -->
     <section class="pop-ranking" aria-label="ランキング">

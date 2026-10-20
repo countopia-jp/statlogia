@@ -222,6 +222,7 @@ export async function getRoomData(room) {
     const need = scope === 'pref' ? 47 : Math.ceil(rankCount * (ind.minCoverage ?? room.minCoverage ?? 0.8)); // 地価の商業地・工業地のように、もともと一部の町にしか無い項目は minCoverage で下げる
     let useTimes = times.filter((t) => areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length >= need);
     useTimes = useTimes.slice(-maxYears);
+    if (ind.onlyLatest) useTimes = useTimes.slice(-1); // 10-20 推計の版が複数ある項目（将来推計人口など）は、いちばん新しい版だけ
     if (useTimes.length === 0) {
       console.warn(`[room-engine] ${room.id}/${ind.key}: 揃っている時点がないため外します`);
       continue;

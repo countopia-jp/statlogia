@@ -20,6 +20,7 @@ const heroSrc = `/images/icon/analysis-${t.id}-large.webp`;
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroSrc));
 const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.lq || null, ss: !!t.shiftShare };
 import PyramidTool from '../../../components/PyramidTool.astro';
+import FutureTool from '../../../components/FutureTool.astro';
 ---
 <BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
@@ -102,8 +103,8 @@ import PyramidTool from '../../../components/PyramidTool.astro';
       </>}
 
       {t.pyramid && <>
-        <h3 class="an-h3">人口の形（年齢と男女）</h3>
         <PyramidTool level="pref" selectId="anPref" />
+        <FutureTool level="pref" selectId="anPref" />
       </>}
 
       <h3 class="an-h3">二つの項目の関係</h3>
