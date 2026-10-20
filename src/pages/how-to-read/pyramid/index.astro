@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="人口の形を読む｜統計の歩き方 - Countopia Stats" description="年齢と男女ごとの人口の割合を積み上げた人口ピラミッドの読み方。山の形・つぼの形と、全国の形と重ねて比べる見方。" backHref="/how-to-read/" backLabel="歩き方">
+  <main class="art">
+    <HeroFig src="/images/icon/pyramid-large.webp" alt="" width={1400} height={782} eager>
+      <p class="art-kicker">HOW TO READ</p>
+      <h1><span class="nw">人口の形を</span><span class="nw">読む</span></h1>
+    </HeroFig>
+
+    <Talk speaker="touko">
+      京、人口が同じくらいの町でも、なんだか顔つきがちがうように思えるの。何がちがうのかしら。
+    </Talk>
+    <Talk speaker="kei">
+      年齢ごとの人の数を並べてみると分かります。下を若い人、上をお年寄りにして、左右に男女を積み上げた図を、人口ピラミッドといいます。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="若い人の多い町は下が広い山の形、高齢の人の多い町は上が広いつぼの形になることを示す、2つの人口ピラミッドの例">
+        <text x="170" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#1b4332">A町（若い人が多い）</text><rect x="60.9" y="186" width="103.1" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="186" width="103.1" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="67.8" y="170" width="96.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="170" width="96.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="73.2" y="154" width="90.8" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="154" width="90.8" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="78.8" y="138" width="85.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="138" width="85.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="87.0" y="122" width="77.0" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="122" width="77.0" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="100.8" y="106" width="63.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="106" width="63.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="114.5" y="90" width="49.5" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="90" width="49.5" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="129.6" y="74" width="34.4" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="74" width="34.4" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="147.5" y="58" width="16.5" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="58" width="16.5" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="159.9" y="42" width="4.1" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="176" y="42" width="4.1" height="12" fill="#b23a2f" fill-opacity=".7"/><text x="470" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#1b4332">B町（高齢の人が多い）</text><rect x="422.8" y="186" width="41.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="186" width="41.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="415.9" y="170" width="48.1" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="170" width="48.1" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="422.8" y="154" width="41.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="154" width="41.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="415.9" y="138" width="48.1" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="138" width="48.1" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="402.1" y="122" width="61.9" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="122" width="61.9" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="388.4" y="106" width="75.6" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="106" width="75.6" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="367.8" y="90" width="96.2" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="90" width="96.2" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="360.9" y="74" width="103.1" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="74" width="103.1" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="381.5" y="58" width="82.5" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="58" width="82.5" height="12" fill="#b23a2f" fill-opacity=".7"/><rect x="429.6" y="42" width="34.4" height="12" fill="#4a6fa5" fill-opacity=".75"/><rect x="476" y="42" width="34.4" height="12" fill="#b23a2f" fill-opacity=".7"/><text x="320" y="196" text-anchor="middle" font-size="10" fill="#666">0代</text><text x="320" y="180" text-anchor="middle" font-size="10" fill="#666">10代</text><text x="320" y="164" text-anchor="middle" font-size="10" fill="#666">20代</text><text x="320" y="148" text-anchor="middle" font-size="10" fill="#666">30代</text><text x="320" y="132" text-anchor="middle" font-size="10" fill="#666">40代</text><text x="320" y="116" text-anchor="middle" font-size="10" fill="#666">50代</text><text x="320" y="100" text-anchor="middle" font-size="10" fill="#666">60代</text><text x="320" y="84" text-anchor="middle" font-size="10" fill="#666">70代</text><text x="320" y="68" text-anchor="middle" font-size="10" fill="#666">80代</text><text x="320" y="52" text-anchor="middle" font-size="10" fill="#666">90+</text>
+        <text x="0" y="222" font-size="11" fill="#777">左が男性、右が女性。棒の長さは、町の人口全体に占める割合。</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>山の形と、つぼの形</h2>
+      <p>
+        若い人や子どもの多い町は、下が広く上が細い<b>山の形</b>になります。お年寄りの多い町は、上のほうがふくらんだ<b>つぼの形</b>になります。
+        ある年代だけが大きくふくらんでいたら、その年代の人が多く暮らしているということです。
+        なぜその年代が多いのかは、図からは分かりません。図が教えてくれるのは「どの年代が多いか」までです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>人数ではなく、割合で描く</h2>
+      <p>
+        人数で描くと、大きな町ほど図が大きくなり、形が比べにくくなります。この国では、町の人口全体に占める割合で描いています。こうすると、人口のちがう町どうしでも、形だけを比べられます。
+      </p>
+      <p>
+        さらに、全国（市区町村なら、その県）の形を線で重ねています。棒が線より外に出ている年代は全国より割合が大きく、内側にある年代は小さい、ということです。
+        線とのずれは、町の良し悪しではありません。その町にどんな年代の人が多く暮らしているかを示すだけです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>読むときの注意</h2>
+      <p>
+        使っているのは令和2年（2020年）の国勢調査です。5年ごとの調査なので、いまの形とは少しずれています。
+        年齢の分からない人は除いて、年齢の分かる人口に対する割合にしています。100歳以上はまとめて1段です。
+        人口の少ない町では、数人のちがいで割合が大きく動きます。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>どこで見られるか</h2>
+      <p>
+        閲覧室の<a href="/population/">国勢の間</a>（都道府県）と<a href="/town-population/">わが町の人口</a>（市区町村）、読み解きの間の<a href="/analysis/family/">人口と家族を読み解く</a>で、県や町を選ぶと描かれます。
+      </p>
+    </section>
+
+    <Talk speaker="touko">
+      わたくしの時代の村は、きっと裾の広い山の形だったのね。
+    </Talk>
+    <Talk speaker="kei">
+      そうかもしれません。形を見れば、その町にどんな年代の人が暮らしているかが、ひと目で分かります。
+    </Talk>
+
+    <p class="art-links">
+      <a href="/how-to-read/per-capita/">人口あたりで見るということ →</a><br />
+      <a href="/how-to-read/">歩き方の一覧へ →</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #b23a2f; }
+
+    .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
+    .art-links a { color: #b23a2f; }
+  </style>
+</BaseLayout>

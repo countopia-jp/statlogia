@@ -7,6 +7,7 @@ import { getMuniPopulationData } from '../../lib/muni-population.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniPopulationData();
 import GrowthTool from '../../components/GrowthTool.astro';
+import PyramidTool from '../../components/PyramidTool.astro';
 ---
 <BaseLayout title="わが町の人口｜Countopia Stats" description="市区町村を選んで、総人口・高齢化率・年少人口率・世帯数と将来の推計人口をご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
@@ -53,6 +54,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
+    <PyramidTool level="town" selectId="townSelect" />
 
     <section class="tp-ranking">
       <h2>全国ベスト5</h2>

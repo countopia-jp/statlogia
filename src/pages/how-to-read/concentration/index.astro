@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
 ---
 <BaseLayout title="同じ大きさの業種が、いくつあるか｜統計の歩き方 - Countopia Stats" description="働く人が少ない業種に集まっているか、多くの業種に散らばっているかを1つの数で表すハーフィンダール指数の読み方。" backHref="/how-to-read/" backLabel="歩き方">
   <main class="art">
-    <header class="art-hero">
+    <HeroFig src="/images/icon/concentration-large.webp" alt="駅前から続く町並み。左の通りには同じような工場が並び、右の通りには病院・銀行・八百屋など、いろいろな店や建物が少しずつ並ぶ水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">同じ大きさの業種が、</span><span class="nw">いくつあるか</span></h1>
-    </header>
+    </HeroFig>
 
     <Talk speaker="touko">
       京、町によって、工場で働く人ばかりのところと、いろいろなお店や会社に分かれて働いているところがあるでしょう。その分かれ方は、数で言えるのかしら。

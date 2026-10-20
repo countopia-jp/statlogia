@@ -8,20 +8,33 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import { THEMES } from '../../../data/analysis.js';
+import HeroFig from '../../../components/HeroFig.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 export function getStaticPaths() {
   return THEMES.map((t) => ({ params: { theme: t.id }, props: { t } }));
 }
 const { t } = Astro.props;
+// 10-20 扉絵：public/images/icon/analysis-<id>-large.webp を置けば題を重ねて出す（無いあいだは文字の見出し）
+const heroSrc = `/images/icon/analysis-${t.id}-large.webp`;
+const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroSrc));
 const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.lq || null, ss: !!t.shiftShare };
+import PyramidTool from '../../../components/PyramidTool.astro';
 ---
 <BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <main class="an">
-    <header class="an-hero">
-      <p class="an-kicker">ANALYSIS｜{t.kicker}</p>
-      <h1>{t.title}</h1>
-      <p class="an-lead">{t.lead}</p>
-    </header>
+    {hasHero
+      ? <HeroFig src={heroSrc} alt={t.imageAlt || ''} width={1376} height={768} eager>
+          <p class="an-kicker">ANALYSIS｜{t.kicker}</p>
+          <h1>{t.title}</h1>
+          <p class="an-lead">{t.lead}</p>
+        </HeroFig>
+      : <header class="an-hero">
+          <p class="an-kicker">ANALYSIS｜{t.kicker}</p>
+          <h1>{t.title}</h1>
+          <p class="an-lead">{t.lead}</p>
+        </header>}
 
     <Talk speaker="kei">ここでは、国の統計の手引きにならって「問い→計画→データ→分析→結論」の順に読み進めます。県を選ぶと、下の段がすべてその県で埋まります。</Talk>
 
@@ -86,6 +99,11 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
         <h3 class="an-h3">業種の集まり方（ハーフィンダール指数）</h3>
         <p class="an-note">働く人が、いくつかの業種に集まっているか、たくさんの業種に散らばっているかを1つの数で表します。業種ごとの割合を2乗して足したもの（ハーフィンダール指数）で、大きいほど少ない業種に集まっています。わかりやすくするため、「同じ大きさの業種が何個あるのと同じか」（指数の逆数）でも示します。集まっていることも、散らばっていることも、それだけで良し悪しは決まりません。読み方は<a href="/how-to-read/concentration/">同じ大きさの業種が、いくつあるか</a>。</p>
         <div class="an-hhi" id="anHHI"><p class="an-empty">県を選ぶと、ここに業種の集まり方が出ます。</p></div>
+      </>}
+
+      {t.pyramid && <>
+        <h3 class="an-h3">人口の形（年齢と男女）</h3>
+        <PyramidTool level="pref" selectId="anPref" />
       </>}
 
       <h3 class="an-h3">二つの項目の関係</h3>
