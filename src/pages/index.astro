@@ -184,8 +184,11 @@ const stampDate = buildJst.slice(0, 7);
     .gate-scene-cap { position: absolute; right: 26px; bottom: 13px; font-size: .78rem; letter-spacing: .06em; color: var(--ink); padding: .32em .9em .32em 1.45em; background: #FCFAF2; box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 4px 10px -3px rgba(60,40,20,.4); transform: rotate(1.6deg); }
     .gate-scene-cap::before { content: ""; position: absolute; left: 7px; top: 50%; width: 9px; height: 9px; margin-top: -5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f4b4a4, #B3402A 60%, #7a2a1c); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
     @media (max-width: 900px) {
-      .gate-hero, .gate-guide { grid-template-columns: 1fr; }
-      .gate-wings { grid-template-columns: 1fr; }
+      .gate-hero, .gate-guide { grid-template-columns: minmax(0, 1fr); }
+      .gate-wings { grid-template-columns: minmax(0, 1fr); }
+      .gate-lead .nw, .notice h1 .nw { display: inline; }
+      .notice { min-width: 0; }
+      .gate-scale, .gate-dates { margin-right: 0; }
       .gate-figs { max-width: 440px; margin: 0 auto; }
       .gate-charts { display: none; }
       .notice { margin-top: 18px; padding: 26px 22px 22px; transform: none; }

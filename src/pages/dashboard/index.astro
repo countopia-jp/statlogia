@@ -927,9 +927,11 @@ import { ROOM_COUNT } from '../../data/page-names.js';
    .rr { max-width: 1280px; margin: 0 auto; padding: 0 16px 48px; }
     .rr-hero { text-align: center; padding: 28px 0 8px; }
     /* 扉絵の文字の箱は左の空いた壁に（一葉と棚に重ねない）。文は左寄せ */
-    :global(.hf--l .hf-text) { width: 46%; text-align: left; top: 14%; transform: none; }
-    :global(.hf--l .hf-text > *) { margin-left: 0; }
-    :global(.hf--l .hf-text h1) { line-height: 1.4; }
+    @media (min-width: 761px) {
+      :global(.hf--l .hf-text) { width: 46%; text-align: left; top: 14%; transform: none; }
+      :global(.hf--l .hf-text > *) { margin-left: 0; }
+      :global(.hf--l .hf-text h1) { line-height: 1.4; }
+    }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
     .rr-hero h1 { margin: 4px 0 12px; }
