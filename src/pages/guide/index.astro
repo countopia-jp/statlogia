@@ -64,11 +64,11 @@ const duoPoint = img('duo-point-scene.webp');
       二人の名前は、四字熟語「<b>一葉知秋</b>（いちようちしゅう）」——「<b>一葉</b>落ちて天下の<b>秋を知る</b>」から。一枚の葉から季節を推し量るように、一部の数字から全体を読む。それが統計の仕事です。ただし、一葉だけで秋と決めてよいのか、と問い続けるのも、同じ仕事のうちです。
     </p>
 
-    <p class="guide-links">
-      <a href="/dashboard/">情報棟へ →</a>
-      <a href="/analysis/">研究棟へ →</a>
-      <a href="/how-to-read/">講義棟へ →</a>
-    </p>
+    <nav class="guide-links" aria-label="三つの棟へ">
+      <a class="guide-wing" href="/dashboard/"><i aria-hidden="true">01</i><b>情報棟</b><small>引く</small><em aria-hidden="true">→</em></a>
+      <a class="guide-wing" href="/analysis/"><i aria-hidden="true">02</i><b>研究棟</b><small>考える</small><em aria-hidden="true">→</em></a>
+      <a class="guide-wing" href="/how-to-read/"><i aria-hidden="true">03</i><b>講義棟</b><small>学ぶ</small><em aria-hidden="true">→</em></a>
+    </nav>
   </main>
 
   <style>
@@ -104,7 +104,18 @@ const duoPoint = img('duo-point-scene.webp');
     .guide-role { font-size: 0.75rem; font-weight: 400; color: #888; }
     .guide-text > p { text-align: left; line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 14px; }
     .guide-note { margin-top: 40px; padding: 16px 20px; border: 1px dashed var(--stamp); border-radius: 8px; font-size: 0.88rem; color: #444; line-height: 1.9; background: #fdfdf8; }
-    .guide-links { text-align: center; margin-top: 32px; font-size: 0.9rem; }
-    .guide-links a { color: var(--stamp); margin: 0 10px; }
+    /* 三つの棟への札：玄関の三棟カードの館名板と同じ系統（紺の板に番号、入口の形） */
+    .guide-links { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 36px; }
+    .guide-wing { display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px 8px 10px; border: 1.5px solid var(--ink); border-radius: 12px 12px 4px 4px; color: var(--ink); background: rgba(255,255,255,.6); text-decoration: none; transition: background .2s, color .2s, transform .2s; }
+    .guide-wing i { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .14em; padding: 3px 7px; border-radius: 3px; background: var(--ink); color: #F0B78A; font-weight: 600; }
+    .guide-wing b { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.02rem; }
+    .guide-wing small { font-size: .74rem; color: var(--ink-soft); letter-spacing: .1em; }
+    .guide-wing em { font-style: normal; transition: transform .2s; }
+    .guide-wing:hover, .guide-wing:focus-visible { background: var(--ink); color: #fff; transform: translateY(-2px); }
+    .guide-wing:hover small, .guide-wing:focus-visible small { color: rgba(255,255,255,.8); }
+    .guide-wing:hover i, .guide-wing:focus-visible i { background: #fff; color: var(--ink); }
+    .guide-wing:hover em, .guide-wing:focus-visible em { transform: translateX(3px); }
+    .guide-wing:visited { color: var(--ink); }
+    @media (max-width: 600px) { .guide-links { flex-direction: column; align-items: stretch; } .guide-wing { justify-content: space-between; } }
   </style>
 </BaseLayout>
