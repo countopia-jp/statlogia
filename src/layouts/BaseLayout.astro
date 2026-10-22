@@ -7,6 +7,7 @@ const {
   backHref = '',
   backLabel = '',
   ogImage = null,
+  preload = [],
 } = Astro.props;
 const here = Astro.url.pathname;
 const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'page' : undefined;
@@ -26,6 +27,8 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <meta property="og:site_name" content="Statlogia" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="canonical" href={new URL(Astro.url.pathname, 'https://statlogia.com')} />
+  <link rel="preload" as="image" href="/images/concrete-tile.webp" />
+  {preload.map((h) => <link rel="preload" as="image" href={h} fetchpriority="high" />)}
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -35,7 +38,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <header class="site">
     <div class="nav">
       <a class="logo" href="/">
-        <span class="mark"><b>STAT</b>LOGIA <small class="kaiso">建設中</small></span>
+        <span class="mark"><b>STAT</b>LOGIA</span>
         <span class="sub">数字の研究都市<span class="tagline">｜引いて、くらべて、読み解く</span></span>
       </a>
       <nav aria-label="主要メニュー">
@@ -214,6 +217,6 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       .fs-arrow { align-self: flex-end; margin-top: -24px; }
     }
   </style>
-  <!-- Cloudflare Web Analytics：公開時に Statlogia 用のビーコンを貼る（§19） -->
+  <!-- Cloudflare Web Analytics は自動注入（Automatic setup）。ここには貼らない -->
 </body>
 </html>

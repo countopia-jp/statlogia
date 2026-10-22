@@ -20,9 +20,9 @@ const duoPoint = img('duo-point-scene.webp');
       <h1>この都市の研究員</h1>
       <p class="guide-lead">
         Statlogia を案内する、二人の研究員をご紹介します。<br />
-        小さな先生の知秋と、見習いの一葉。年の順と教える順が、逆さまの二人です。<br />
-        <a href="/gallery/">日々のイラスト集 →</a>
+        小さな先生の知秋と、見習いの一葉。年の順と教える順が、逆さまの二人です。
       </p>
+      <p class="guide-gallery-line"><a class="guide-gallery-btn" href="/gallery/"><i aria-hidden="true">GALLERY</i>日々のイラスト集<em aria-hidden="true">→</em></a></p>
       {duoPoint && <img class="guide-duo" src={duoPoint} width="1376" height="768" alt="身をかがめて話しかける一葉と、指し棒を担いで笑う知秋" loading="eager" />}
     </header>
 
@@ -78,6 +78,15 @@ const duoPoint = img('duo-point-scene.webp');
     .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: var(--stamp); }
     .guide-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
     .guide-lead { color: var(--ink-soft); line-height: 1.9; }
+    /* イラスト集への札：玄関の出典一覧・情報棟の案内所と同じ形 */
+    .guide-gallery-line { margin: 12px 0 0; text-align: center; }
+    .guide-gallery-btn { display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px 5px 8px; border: 1.5px solid var(--ink); border-radius: 999px; color: var(--ink); background: rgba(255,255,255,.6); text-decoration: none; font-weight: 600; font-size: .86rem; line-height: 1; transition: background .2s, color .2s; }
+    .guide-gallery-btn i { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: .6rem; letter-spacing: .18em; padding: 3px 7px; border-radius: 999px; background: var(--ink); color: #fff; }
+    .guide-gallery-btn em { font-style: normal; transition: transform .2s; }
+    .guide-gallery-btn:hover, .guide-gallery-btn:focus-visible { background: var(--ink); color: #fff; }
+    .guide-gallery-btn:hover i, .guide-gallery-btn:focus-visible i { background: #fff; color: var(--ink); }
+    .guide-gallery-btn:hover em, .guide-gallery-btn:focus-visible em { transform: translateX(3px); }
+    .guide-gallery-btn:visited { color: var(--ink); }
     .guide-profile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin: 48px 0; scroll-margin-top: 90px; }
     /* 机まわりの絵は壁に掛けたフォトフレーム：木の額＋厚紙のマット＋下に小さな銘板（イラスト集への入口） */
     .guide-portrait { position: relative; display: block; color: inherit; text-decoration: none; padding: 7px; border-radius: 2px; background: linear-gradient(160deg, #7a6250 0%, #5a4636 40%, #6a533f 70%, #4e3b2c 100%); box-shadow: inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -10px rgba(31,42,68,.35), 0 3px 6px rgba(0,0,0,.14); transition: transform .25s ease, box-shadow .25s ease; }
