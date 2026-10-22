@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia - 教育ダッシュボード用データ取得モジュール
+// Statlogia - 教育ダッシュボード用データ取得モジュール
 // src/lib/education.js
 //
 // 社会・人口統計体系 市区町村データ 基礎データ E教育
@@ -52,12 +53,7 @@ function getAppId() {
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
   const url = `${API_BASE}/${path}?${qs.toString()}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`[education.js] API HTTP ${res.status}: ${path}`);
-  }
-  const json = await res.json();
-  return json;
+  return await cachedJsonFetch(url);
 }
 
 // --- メタ情報から時間軸コード一覧を取得（新しい順） ---

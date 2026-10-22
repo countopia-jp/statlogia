@@ -2,14 +2,13 @@
 import '../styles/global.css';
 import { ROOM_NAMES } from '../data/page-names.js';
 const {
-  title = 'Countopia Stats｜都道府県・市区町村で引ける、暮らしの統計',
-  description = '都道府県・市区町村で引ける、暮らしの統計。日本の公的統計を「へぇ」と眺めて遊ぶ国、Countopia Stats。',
+  title = 'Statlogia｜数字の背景を、別の数字で読み解く研究都市',
+  description = '都道府県・市区町村の統計を引き、くらべ、読み解く研究都市 Statlogia（スタットロギア）。政府統計 e-Stat の数字を、良し悪しを言わずに並べます。',
   backHref = '',
   backLabel = '',
   ogImage = null,
 } = Astro.props;
 const here = Astro.url.pathname;
-const isAnnex = here.startsWith('/annex') || (ROOM_NAMES[here] || '').startsWith('別館');
 const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'page' : undefined;
 ---
 <!DOCTYPE html>
@@ -22,32 +21,31 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
   <meta property="og:type" content="website" />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:url" content={new URL(Astro.url.pathname, 'https://countopia.com')} />
-  <meta property="og:image" content={ogImage ? `https://countopia.com${ogImage}` : 'https://countopia.com/images/ogp.png'} />
-  <meta property="og:site_name" content="Countopia Stats" />
+  <meta property="og:url" content={new URL(Astro.url.pathname, 'https://statlogia.com')} />
+  <meta property="og:image" content={ogImage ? `https://statlogia.com${ogImage}` : 'https://statlogia.com/images/ogp.png'} />
+  <meta property="og:site_name" content="Statlogia" />
   <meta name="twitter:card" content="summary_large_image" />
-  <link rel="canonical" href={new URL(Astro.url.pathname, 'https://countopia.com')} />
+  <link rel="canonical" href={new URL(Astro.url.pathname, 'https://statlogia.com')} />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet" />
 </head>
-<body class={isAnnex ? 'annex' : undefined}>
+<body>
   <header class="site">
     <div class="nav">
       <a class="logo" href="/">
-        <span class="mark"><b>COUNT</b>OPIA <small class="stats">STATS</small><small class="kaiso">改装中</small><small class="xf">site transformation</small></span>
-        <span class="sub">数字の国<span class="tagline">｜都道府県・市区町村で引ける、暮らしの統計</span></span>
+        <span class="mark"><b>STAT</b>LOGIA <small class="kaiso">建設中</small></span>
+        <span class="sub">数字の研究都市<span class="tagline">｜引いて、くらべて、読み解く</span></span>
       </a>
       <nav aria-label="主要メニュー">
         <ul>
           <li><a href="/" aria-current={cur('/')}>玄関</a></li>
-          <li><a href="/exhibits/" aria-current={cur('/exhibits/')}>展示</a></li>
-          <li><a href="/tower/" aria-current={cur('/tower/')}>展望塔</a></li>
-          <li><a href="/dashboard/" aria-current={cur('/dashboard/')}>閲覧室</a></li>
-          <li><a href="/compare/" aria-current={cur('/compare/')}>見くらべ</a></li>
-          <li><a href="/analysis/" aria-current={cur('/analysis/')}>読み解き</a></li>
-          <li><a href="/how-to-read/" aria-current={cur('/how-to-read/')}>歩き方</a></li>
-          <li><a href="/guide/" aria-current={cur('/guide/')}>案内人</a></li>
+          <li><a href="/dashboard/" aria-current={cur('/dashboard/')}>情報棟</a></li>
+          <li><a href="/analysis/" aria-current={cur('/analysis/') || cur('/compare/')}>研究棟</a></li>
+          <li><a href="/how-to-read/" aria-current={cur('/how-to-read/')}>講義棟</a></li>
+          <li><a href="/search/" aria-current={cur('/search/')}>案内所</a></li>
+          <li><a href="/guide/" aria-current={cur('/guide/')}>研究員</a></li>
         </ul>
       </nav>
     </div>
@@ -57,35 +55,28 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       <a href={backHref}>← {backLabel}へ戻る</a>
     </div>
   )}
-  <slot />
-  {here === '/' && (
-    <div class="annex-banner-wrap">
-      <a class="annex-banner" href="/annex/">
-        <img class="ab-icon" src="/images/icon/annex-building.webp" alt="" aria-hidden="true" width="240" height="240" loading="lazy" />
-        <span class="ab-body">
-          <span class="ab-label">ANNEX</span>
-          <span class="ab-title">別館　暮らしの台帳</span>
-          <span class="ab-note"><span class="ab-ph">財政や家計、給与や働き方、人の出入りや災害など、</span><span class="ab-ph">暮らしの内側の数字を綴じています。</span></span>
-        </span>
-        <span class="ab-arrow">→</span>
-      </a>
-    </div>
-  )}
+  <div class="paper">
+    <slot />
+  </div>
   {here !== '/terms/' && (
     <p class="disclaimer-line">掲載している数値は正確を期していますが、内容を保証するものではありません。くわしくは<a href="/terms/#disclaimer">「利用規約・免責」</a>をご覧ください。</p>
   )}
   <footer class="site">
     <div class="foot">
       <div class="foot-brand">
-        <span class="mono">COUNTOPIA STATS</span> <span class="xf xf--foot">site transformation</span>
-        <span class="since">since 2026.7</span>
-        <p class="tag">Japan in Numbers — 数字の国、カウントピア</p>
+        <span class="mono">STATLOGIA</span>
+        <span class="since">since 2026.10</span>
+        <p class="tag">Japan in Numbers — 数字の研究都市、スタットロギア</p>
       </div>
 
       <nav class="foot-links" aria-label="サイト情報">
-        <span class="foot-heading">この国について</span>
-        <a class="foot-link" href="/about/">入国審査場</a>
-        <a class="foot-link" href="/editor/">編集室</a>
+        <span class="foot-heading">この都市について</span>
+        <a class="foot-link" href="/editor/">運営者</a>
+        <a class="foot-link" href="/guide/">研究員</a>
+        <a class="foot-link" href="/gallery/">イラスト集</a>
+        <span class="foot-heading" style="margin-top:10px">姉妹サイト</span>
+        <a class="foot-link" href="https://countopia.com/" rel="noopener">Countopia Stats</a>
+        <span class="foot-note">気楽に数字を楽しむ国。展示はこちらに。</span>
       </nav>
 
       <nav class="foot-links" aria-label="規約">
@@ -110,7 +101,7 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
     </div>
 
     <div class="foot-bottom">
-      <span>© 2026 Countopia Stats</span>
+      <span>© 2026 Statlogia</span>
     </div>
   </footer>
   <style>
@@ -163,46 +154,16 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       margin-bottom: 2px; font-family: "IBM Plex Mono", monospace;
     }
     .foot-links .foot-link { font-size: .84rem; }
+    .foot-note { font-size: .76rem; opacity: .75; line-height: 1.6; }
     .foot-link {
       color: #f4f1e6; text-decoration: underline;
       text-underline-offset: 3px; text-decoration-color: #f4f1e650;
     }
     .foot-link:hover { color: #f0b78a; text-decoration-color: #f0b78a; }
 
-    /* 別館への案内：フッターの直上、紙の地に置く（玄関＝トップページだけ） */
+    /* 免責の一文：フッターの直上 */
     .disclaimer-line { max-width: 860px; margin: 28px auto 20px; padding: 0 16px; text-align: center; font-size: .75rem; line-height: 1.8; color: var(--ink-soft); }
     .disclaimer-line a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
-    .annex-banner-wrap { max-width: 1280px; margin: 32px auto 36px; padding: 0 16px; display: flex; justify-content: center; align-items: stretch; gap: 18px; flex-wrap: wrap; }
-    .annex-banner-wrap .annex-banner { margin: 0; }
-    @media (max-width: 1100px) { .annex-banner-wrap { flex-direction: column; align-items: center; } .annex-banner-wrap .annex-banner { width: 100%; max-width: 640px; box-sizing: border-box; } }
-    .annex-banner {
-      display: flex; align-items: center; gap: 18px;
-      width: fit-content; max-width: 720px; margin: 0 auto;
-      padding: 12px 22px 12px 12px;
-      border: 1px solid #cdb48e; border-left: 4px solid #5a3e26; border-radius: 10px;
-      /* 10-19 別館の板張り（annex-wood）に、薄いクリームの紙を重ねた木目調 */
-      background: linear-gradient(rgba(251,246,236,.5), rgba(251,246,236,.5)), #efe3cf url("/images/icon/annex-wood.webp") center / 600px auto;
-      text-decoration: none; color: #3b2a1a;
-      box-shadow: 0 2px 8px rgba(90,62,38,.10);
-      transition: background .15s, transform .15s, box-shadow .15s;
-    }
-    .annex-banner:hover, .annex-banner:focus-visible { background: linear-gradient(rgba(251,246,236,.68), rgba(251,246,236,.68)), #efe3cf url("/images/icon/annex-wood.webp") center / 600px auto; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(90,62,38,.16); }
-    /* 10-18 館の絵を大きく */
-    .ab-icon { flex-shrink: 0; width: 104px; height: 104px; border-radius: 8px; display: block; }
-    .ab-body { flex: 1; min-width: 0; }
-    .ab-label { display: block; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .24em; color: #5a3e26; }
-    .ab-title { display: block; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1rem; margin-top: 2px; }
-    .ab-note { display: block; font-size: .78rem; color: #5a4a3a; margin-top: 3px; line-height: 1.6; }
-    .ab-ph { display: block; }
-    @media (max-width: 600px) { .ab-ph { display: inline; } }
-    .ab-arrow { flex-shrink: 0; color: #b23a2f; font-size: 1.1rem; margin-left: 6px; }
-    @media (max-width: 560px) {
-      .annex-banner { gap: 12px; padding: 12px 14px 12px 12px; }
-      .ab-icon { width: 84px; height: 84px; }
-      .annex-banner-wrap { flex-direction: column; align-items: stretch; gap: 12px; }
-      .annex-banner-wrap .annex-banner { width: auto; max-width: none; }
-      .ab-arrow { display: none; }
-    }
 
     /* 出典一覧：3カラムをまたいで横いっぱいに置く */
     .foot-source {
@@ -253,6 +214,6 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       .fs-arrow { align-self: flex-end; margin-top: -24px; }
     }
   </style>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "1929c443f3004e709b99ca6023f0f912"}'></script><!-- End Cloudflare Web Analytics -->
+  <!-- Cloudflare Web Analytics：公開時に Statlogia 用のビーコンを貼る（§19） -->
 </body>
 </html>

@@ -1,21 +1,27 @@
 ---
-// たずね窓口：言葉を入れると、その数字が載っている閲覧室・別館・展示を案内する
+import fs from 'node:fs';
+import path from 'node:path';
+// 案内所：言葉を入れると、その数字が載っている閲覧室の窓口を案内する
 // 索引はビルド時に作り（src/lib/search-index.js）、検索は画面の中だけで行う（外へは何も送らない）
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+import HeroFig from '../../components/HeroFig.astro';
 import { buildSearchIndex } from '../../lib/search-index.js';
 import { SYNONYMS } from '../../data/search-words.js';
+import { ROOM_COUNT } from '../../data/page-names.js';
+import { INDICATOR_COUNT } from '../../lib/counts.js';
 
 const entries = buildSearchIndex();
-const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '空き家', '餃子', '気温', '老人ホーム'];
+const duoSearch = fs.existsSync(path.join(process.cwd(), 'public/images/chara/duo-search-scene.webp')) ? '/images/chara/duo-search-scene.webp' : null;
+const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '空き家', '気温', '老人ホーム', '財政'];
 ---
-<BaseLayout title="たずね窓口｜Countopia Stats" description="知りたいことを言葉で入れると、その数字が載っている閲覧室・別館・展示をご案内します。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="案内所｜Statlogia" description="知りたいことを言葉で入れると、その数字が載っている閲覧室の窓口をご案内します。" backHref="/dashboard/" backLabel="情報棟">
   <main class="sx">
-    <header class="sx-head">
-      <p class="sx-kicker">たずね窓口</p>
+    <HeroFig src="/images/icon/search-large.webp" alt="コンクリートの壁の受付。木のカウンターで索引を開き、呼び鈴を横に置いて顔を上げる知秋の水彩画" width={1400} height={782} eager>
+      <p class="sx-kicker">案内所</p>
       <h1>どの数字を、お探しですか</h1>
-      <p class="sx-lead">知りたいことを、ふだんの言葉で入れてください。<br />その数字が載っている窓口と展示をご案内します。</p>
-    </header>
+      <p class="sx-lead">知りたいことを、ふだんの言葉で入れてください。<br />その数字が載っている窓口をご案内します。</p>
+    </HeroFig>
 
     <form class="sx-form" role="search" onsubmit="return false">
       <label class="sx-label" for="sxQ">たずねる言葉</label>
@@ -29,14 +35,25 @@ const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '�
     </form>
 
     <div class="sx-talk" id="sxTalk">
-      <Talk speaker="kei"><span id="sxSay">言葉を入れると、ここでご案内します。</span></Talk>
+      <div class="sx-talk-in"><Talk speaker="chiaki"><span id="sxSay">言葉を入れたまえ。どの窓口に載っているか、ここで案内しよう。</span></Talk></div>
     </div>
 
     <ol class="sx-list" id="sxList" aria-live="polite"></ol>
-    <p class="sx-note" id="sxSecret" hidden><a href="/news/">瓦版（確認用）→</a></p>
+    {duoSearch && (
+      <div class="sx-scene" id="sxScene">
+        <img class="sx-duo" src={duoSearch} width="1376" height="768" alt="指し棒で先を示す知秋と、指さして確かめる一葉。右手に三叉路の道しるべ" loading="lazy" />
+        <nav class="sx-signs" aria-label="三つの棟へ">
+          <a href="/dashboard/"><small>引く</small>情報棟</a>
+          <a href="/analysis/"><small>考える</small>研究棟</a>
+          <a href="/how-to-read/"><small>学ぶ</small>講義棟</a>
+        </nav>
+        <p class="sx-scene-cap" id="sxSceneCap">言葉が浮かばなければ、棟から入るのも手だ。</p>
+      </div>
+    )}
+    <p class="sx-note" id="sxSecret" hidden><a href="/news/">掲示板（確認用）→</a></p>
     <script is:inline>
       (() => {
-        const KEY = 'カウントピア瓦版';
+        const KEY = 'スタットロギア掲示板';
         const q = document.getElementById('sxQ'), box = document.getElementById('sxSecret');
         const fromHash = () => { const m = location.hash.match(/q=([^&]*)/); try { return m ? decodeURIComponent(m[1]) : ''; } catch { return ''; } };
         const check = () => { const v = (q.value || fromHash()).replace(/\s/g, ''); box.hidden = v !== KEY; };
@@ -48,8 +65,8 @@ const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '�
     </script>
 
     <p class="sx-note">
-      公開中の{entries.reduce((n, e) => n + e.labels.length, 0)}の数字（窓口と展示{entries.length}か所）から探しています。
-      数字そのものは、それぞれの窓口と展示でご覧ください。入れた言葉は、どこにも送ったり残したりしません。
+      <a href="/sources/">{INDICATOR_COUNT.toLocaleString('ja-JP')}の指標</a>（<a href="/dashboard/">{ROOM_COUNT}の窓口</a>）から探しています。
+      数字そのものは、それぞれの窓口でご覧ください。入れた言葉は、どこにも送ったり残したりしません。
     </p>
   </main>
 </BaseLayout>
@@ -116,22 +133,24 @@ const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '�
   function render(q) {
     const list = $('sxList');
     const say = $('sxSay');
-    if (!q.trim()) { list.innerHTML = ''; say.textContent = '言葉を入れると、ここでご案内します。'; return; }
+    const scene = $('sxScene'); const cap = $('sxSceneCap');
+    const showScene = (on, text) => { if (scene) { scene.hidden = !on; if (cap && text) cap.textContent = text; } };
+    if (!q.trim()) { list.innerHTML = ''; say.textContent = '言葉を入れたまえ。どの窓口に載っているか、ここで案内しよう。'; showScene(true, '言葉が浮かばなければ、棟から入るのも手だ。'); return; }
     const { hits } = search(q);
     if (!hits.length) {
       list.innerHTML = '';
-      say.textContent = `「${q}」では、見つかりませんでした。別の言い方や、もっと短い言葉でお試しください。`;
+      say.textContent = `「${q}」では見当たらぬ。別の言い方か、もっと短い言葉で試したまえ。`;
+      showScene(true, 'なければ、棟を歩いて探すしかない。');
       return;
     }
-    const nRoom = hits.filter((h) => h.d.e.kind !== '展示').length;
-    const nEx = hits.length - nRoom;
-    say.textContent = `「${q}」なら、${[nRoom ? `窓口が${nRoom}か所` : '', nEx ? `展示が${nEx}つ` : ''].filter(Boolean).join('、')}あります。`;
+    say.textContent = `「${q}」なら、窓口が${hits.length}か所ある。うむ、順に見ていきたまえ。`;
+    showScene(false);
     list.innerHTML = hits.slice(0, 30).map(({ d, labelHits }) => {
       const e = d.e;
       const shown = (labelHits.length ? labelHits : e.labels).slice(0, 5);
       const more = (labelHits.length ? labelHits : e.labels).length - shown.length;
       return `<li><a class="sx-card" href="${esc(e.href)}">
-        <span class="sx-kind sx-kind--${e.kind === '展示' ? 'ex' : e.kind === '別館' ? 'annex' : 'room'}">${esc(e.kind)}${e.no ? ` ${String(e.no).padStart(2, '0')}` : ''}</span>
+        <span class="sx-kind sx-kind--room">${esc(e.kind)}${e.no ? ` ${String(e.no).padStart(2, '0')}` : ''}</span>
         <span class="sx-name">${esc(e.name)}</span>
         ${e.scopes.length ? `<span class="sx-scope">${esc(e.scopes.join('・'))}で引けます</span>` : ''}
         <span class="sx-desc">${esc(e.desc)}</span>
@@ -166,12 +185,25 @@ const EXAMPLES = ['保育園', '家賃', '雪', '給料', '病院', '通勤', '�
 .sx-chip{font:inherit;font-size:.82rem;padding:3px 10px;border:1px solid var(--line);border-radius:99px;background:var(--paper);color:var(--ink);cursor:pointer}
 .sx-chip:hover{border-color:var(--stamp);color:var(--stamp)}
 .sx-talk{margin:24px 0 8px}
+.sx-scene{position:relative;max-width:860px;margin:22px auto 0;container-type:inline-size}
+.sx-duo{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 2px 10px rgba(31,42,68,.12)}
+/* 絵の中の道しるべに、三つの棟の札を掛ける（右上の空。スマホでは絵の下に並ぶ） */
+.sx-signs{position:absolute;right:5%;top:7%;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.sx-signs a{position:relative;display:inline-flex;align-items:baseline;gap:.5em;padding:.35em 1.6em .35em .9em;color:#fff8ec;text-decoration:none;font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(.8rem,1.9cqi,1rem);letter-spacing:.06em;background:linear-gradient(180deg,#8a6a48,#6b5036);box-shadow:0 2px 4px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.18);clip-path:polygon(0 0,calc(100% - .9em) 0,100% 50%,calc(100% - .9em) 100%,0 100%);transform:rotate(-1.5deg);transition:transform .2s,filter .2s}
+.sx-signs a:nth-child(2){transform:rotate(1deg)}
+.sx-signs a:nth-child(3){transform:rotate(-.5deg)}
+.sx-signs a small{font-family:"IBM Plex Mono",monospace;font-size:.62em;letter-spacing:.14em;opacity:.8;font-weight:400}
+.sx-signs a:hover,.sx-signs a:focus-visible{transform:rotate(0) translateX(4px);filter:brightness(1.08)}
+.sx-scene-cap{position:absolute;left:14px;bottom:10px;margin:0;font-size:.78rem;padding:.25em .8em;background:rgba(255,253,248,.92);border-radius:4px;color:var(--ink)}
+@media(max-width:600px){
+  .sx-signs{position:static;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:8px;margin:10px 0 0}
+  .sx-signs a{transform:none}
+  .sx-scene-cap{position:static;margin:8px 0 0;text-align:center;background:none;padding:0}
+}
 .sx-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px}
 .sx-card{display:flex;flex-direction:column;gap:4px;padding:16px 18px;background:#fff;border:1px solid var(--line);border-radius:12px;color:var(--ink);text-decoration:none}
 .sx-card:hover{border-color:var(--stamp)}
 .sx-kind{align-self:flex-start;font-size:.7rem;letter-spacing:.12em;padding:2px 8px;border-radius:4px;color:#fff;background:#2d6a4f}
-.sx-kind--annex{background:#6b5a3a}
-.sx-kind--ex{background:var(--stamp)}
 .sx-name{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.15rem}
 .sx-scope{font-size:.75rem;color:var(--ink-soft)}
 .sx-desc{font-size:.88rem;color:var(--ink-soft);line-height:1.7}

@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 物価の帳場データ静的エンドポイント
+// Statlogia - 物価の帳場データ静的エンドポイント
 // src/pages/data/price-ledger.json.js
 //
 // ビルド時に /data/price-ledger.json として静的出力される。

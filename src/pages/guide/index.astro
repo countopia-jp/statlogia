@@ -1,97 +1,101 @@
 ---
 // =====================================================
-// Countopia Stats - 案内人紹介ページ
+// Statlogia - 案内人紹介ページ（知秋と一葉）
 // src/pages/guide/index.astro
 // =====================================================
+import fs from 'node:fs';
+import path from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
+const img = (name) => (fs.existsSync(path.join(process.cwd(), 'public/images/chara', name)) ? `/images/chara/${name}` : null);
+const chiakiDesk = img('chiaki-desk.webp');
+const hitohaDesk = img('hitoha-desk.webp');
+const duoPoint = img('duo-point-scene.webp');
 ---
 
-<BaseLayout title="案内人｜橙子と京｜Countopia Stats" description="Countopia Statsを案内する二人、大正から来た子・橙子と、統計局案内人の京のご紹介。" backHref="/" backLabel="玄関">
+<BaseLayout title="研究員｜知秋と一葉｜Statlogia" description="Statlogia を案内する二人の研究員、白衣の小さな先生・知秋と、見習いの一葉のご紹介。名前の由来と、二人の話し方。" backHref="/" backLabel="玄関">
   <main class="guide-page">
     <header class="guide-hero">
       <p class="guide-kicker">GUIDE</p>
-      <h1>この国の案内人</h1>
+      <h1>この都市の研究員</h1>
       <p class="guide-lead">
-        Countopia Statsを案内する、二人のキャラクターをご紹介します。<br />
-        大正から来た子の橙子と、統計局案内人の京。性分はまるで違う二人です。
+        Statlogia を案内する、二人の研究員をご紹介します。<br />
+        小さな先生の知秋と、見習いの一葉。年の順と教える順が、逆さまの二人です。<br />
+        <a href="/gallery/">日々のイラスト集 →</a>
       </p>
+      {duoPoint && <img class="guide-duo" src={duoPoint} width="1376" height="768" alt="身をかがめて話しかける一葉と、指し棒を担いで笑う知秋" loading="eager" />}
     </header>
 
-    <section class="guide-profile" id="kei">
-      <figure class="guide-portrait">
-        <img src="/images/chara/kei-madobe.webp" alt="統計局案内人・京。アーチ窓の内側で書類を抱えて立つ" width="1200" height="670" loading="lazy" />
-      </figure>
+    <section class="guide-profile" id="chiaki">
+      {chiakiDesk && (
+        <a class="guide-portrait" href="/gallery/chiaki/" title="知秋の日々（イラスト集）へ">
+          <span class="guide-portrait-mat"><img src={chiakiDesk} alt="研究室の机で、方眼紙を虫めがねでのぞきこむ知秋。机の端に丼と七味" width="1376" height="768" loading="lazy" /></span>
+          <span class="guide-portrait-cap">知秋の日々 →</span>
+        </a>
+      )}
       <div class="guide-text">
-        <span class="guide-no">GUIDE 01</span>
-        <h2>京<span class="guide-romaji">KEI</span><span class="guide-role">統計局案内人</span></h2>
+        <span class="guide-no">RESEARCHER 01</span>
+        <h2>知秋<span class="guide-romaji">CHIAKI</span><span class="guide-role">教授</span></h2>
         <p>
-          この国の数字をご案内する、統計局の案内人。落ち着いた物腰で、平均や順位、倍率といった数字を一つひとつ丁寧に説明してくれます。「その日に学ばなかった人も含めた平均です」というように、数字の裏側にある前提まで、きちんと言葉を添えるタイプです。
+          白衣の小さな教授。数字から読めることは読み、読めないことは「この数字だけでは分からぬ」と言う。数字に書いていない理由を推測するときは、必ず「わたしの仮説だが」と断ります。この都市では、その仮説に「知秋理論」という札が付きます。ふだんは「うむ、これはだね」の調子ですが、重い数字の前では口数が減ります。激辛が好きで、七味を常に持ち歩いています。
         </p>
-        <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
+        <Talk speaker="chiaki">うむ。順位だけ見て帰るのはもったいない。隣の数字も並べてごらん。</Talk>
       </div>
     </section>
 
-    <section class="guide-profile" id="touko">
-      <figure class="guide-portrait">
-        <img src="/images/chara/touko-yano.webp" alt="大正から来た子・橙子。山あいの野道で手を振っている" width="1200" height="670" loading="lazy" />
-      </figure>
+    <section class="guide-profile" id="hitoha">
+      {hitohaDesk && (
+        <a class="guide-portrait" href="/gallery/hitoha/" title="一葉の日々（イラスト集）へ">
+          <span class="guide-portrait-mat"><img src={hitohaDesk} alt="研究室の机で、クリップボードにメモを取る一葉。机にフィナンシェと紅茶" width="1376" height="768" loading="lazy" /></span>
+          <span class="guide-portrait-cap">一葉の日々 →</span>
+        </a>
+      )}
       <div class="guide-text">
-        <span class="guide-no">GUIDE 02</span>
-        <h2>橙子<span class="guide-romaji">TOUKO</span><span class="guide-role">大正から来た子</span></h2>
+        <span class="guide-no">RESEARCHER 02</span>
+        <h2>一葉<span class="guide-romaji">HITOHA</span><span class="guide-role">研究員（見習い）</span></h2>
         <p>
-          大正の世からこの国にやってきた、京の道連れ。現代の数字に触れるたび、素直に驚いたり、ときどき鋭い一言を挟んだりします。「大人になっても、勉強するの？」というような、何気ない疑問が、案内をふくらませてくれる存在です。
+          この春に来た見習いの研究員。姉妹サイト Countopia の出身で、あちらの案内人・京の後輩にあたります。分からないことは、その場で「それはどういうことですか」「なぜですか」と聞く。驚くのも、感心するのも、だいたい一葉の役です。甘いものが好きで、とくにフィナンシェに目がありません。
         </p>
-        <Talk speaker="touko">まあ……それで、まず何を見ればいいの？</Talk>
+        <Talk speaker="hitoha">先生、それは数字から読めることですか。それとも、先生の仮説ですか。</Talk>
       </div>
     </section>
 
     <p class="guide-note">
-      二人そろって案内するとき、名前を並べると「橙子」＋「京」＝「統計」になります。これは、この国を作るときに仕込んだ、ちょっとした洒落です。
+      二人の名前は、四字熟語「<b>一葉知秋</b>（いちようちしゅう）」——「<b>一葉</b>落ちて天下の<b>秋を知る</b>」から。一枚の葉から季節を推し量るように、一部の数字から全体を読む。それが統計の仕事です。ただし、一葉だけで秋と決めてよいのか、と問い続けるのも、同じ仕事のうちです。
     </p>
 
     <p class="guide-links">
-      <a href="/exhibits/">展示を見る →</a>
-      <a href="/dashboard/">閲覧室へ →</a>
-      <a href="/about/">このサイトについて →</a>
+      <a href="/dashboard/">情報棟へ →</a>
+      <a href="/analysis/">研究棟へ →</a>
+      <a href="/how-to-read/">講義棟へ →</a>
     </p>
   </main>
 
   <style>
-    .guide-page { max-width: 780px; margin: 0 auto; padding: 0 16px 56px; }
+    .guide-page { max-width: 1040px; margin: 0 auto; padding: 0 16px 56px; }
     .guide-hero { text-align: center; padding: 32px 0 8px; }
-    .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
+    .guide-duo { display: block; width: 100%; max-width: 900px; height: auto; margin: 22px auto 0; border-radius: 6px; }
+    .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: var(--stamp); }
     .guide-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
-    .guide-lead { color: #555; line-height: 1.9; }
-
-    .guide-profile {
-      display: flex; flex-direction: column; align-items: center;
-      text-align: center; gap: 16px; margin: 48px 0;
-      scroll-margin-top: 90px;
-    }
-    .guide-portrait img { width: 100%; height: auto; border-radius: 8px; display: block; }
-    .guide-no { display: block; text-align: center; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.2em; font-size: 0.72rem; color: #2d6a4f; }
-    .guide-text { max-width: 480px; text-align: left; }
-    .guide-text h2 {
-      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem;
-      margin: 6px 0 14px; display: flex; align-items: baseline; justify-content: center; gap: 10px;
-      flex-wrap: wrap;
-    }
-    /* 「橙子と京」が地名に読まれないよう、読みを添える */
-    .guide-romaji {
-      font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; font-weight: 600;
-      letter-spacing: 0.16em; color: #b23a2f;
-    }
+    .guide-lead { color: var(--ink-soft); line-height: 1.9; }
+    .guide-profile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin: 48px 0; scroll-margin-top: 90px; }
+    /* 机まわりの絵は壁に掛けたフォトフレーム：木の額＋厚紙のマット＋下に小さな銘板（イラスト集への入口） */
+    .guide-portrait { position: relative; display: block; color: inherit; text-decoration: none; padding: 7px; border-radius: 2px; background: linear-gradient(160deg, #7a6250 0%, #5a4636 40%, #6a533f 70%, #4e3b2c 100%); box-shadow: inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -10px rgba(31,42,68,.35), 0 3px 6px rgba(0,0,0,.14); transition: transform .25s ease, box-shadow .25s ease; }
+    .guide-portrait:hover, .guide-portrait:focus-visible { transform: rotate(0) translateY(-3px); box-shadow: inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.4), 0 22px 40px -12px rgba(31,42,68,.4), 0 3px 6px rgba(0,0,0,.14); }
+    .guide-portrait-mat { display: block; background: #F4F0E6; padding: 22px 22px 46px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.05); }
+    .guide-portrait img { display: block; width: 100%; height: auto; border-radius: 0; box-shadow: 0 0 0 1px rgba(0,0,0,.14), inset 0 0 0 1px rgba(255,255,255,.6), 0 0 0 4px #ECE6D8, 0 0 0 5px rgba(0,0,0,.08), inset 0 2px 6px rgba(0,0,0,.12); }
+    .guide-portrait-cap { position: absolute; left: 50%; bottom: 17px; transform: translateX(-50%); white-space: nowrap; font-family: "Shippori Mincho", serif; font-size: .8rem; letter-spacing: .14em; color: #4B5570; padding: 0 .4em .15em; border-bottom: 1px solid rgba(75,85,112,.45); }
+    #chiaki .guide-portrait { transform: rotate(-.6deg); }
+    #hitoha .guide-portrait { transform: rotate(.5deg); }
+    #chiaki .guide-portrait:hover, #hitoha .guide-portrait:hover, #chiaki .guide-portrait:focus-visible, #hitoha .guide-portrait:focus-visible { transform: rotate(0) translateY(-3px); }
+    .guide-no { display: block; text-align: center; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.2em; font-size: 0.72rem; color: var(--ink-soft); }
+    .guide-text { max-width: 640px; text-align: left; }
+    .guide-text h2 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem; margin: 6px 0 14px; display: flex; align-items: baseline; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .guide-romaji { font-family: "IBM Plex Mono", monospace; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.16em; color: var(--stamp); }
     .guide-role { font-size: 0.75rem; font-weight: 400; color: #888; }
     .guide-text > p { text-align: left; line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 14px; }
-
-    .guide-note {
-      margin-top: 40px; padding: 16px 20px; border: 1px dashed #b23a2f;
-      border-radius: 8px; font-size: 0.85rem; color: #555; line-height: 1.9;
-      background: #fdfdf8;
-    }
-
+    .guide-note { margin-top: 40px; padding: 16px 20px; border: 1px dashed var(--stamp); border-radius: 8px; font-size: 0.88rem; color: #444; line-height: 1.9; background: #fdfdf8; }
     .guide-links { text-align: center; margin-top: 32px; font-size: 0.9rem; }
-    .guide-links a { color: #b23a2f; margin: 0 10px; }
+    .guide-links a { color: var(--stamp); margin: 0 10px; }
   </style>
 </BaseLayout>

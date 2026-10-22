@@ -1,116 +1,79 @@
 ---
+import fs from 'node:fs';
+import path from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import HeroFig from '../../components/HeroFig.astro';
+const heroImg = fs.existsSync(path.join(process.cwd(), 'public/images/icon/training-large.webp')) ? '/images/icon/training-large.webp' : null;
 ---
-<BaseLayout title="統計の歩き方｜Countopia Stats" description="数字をどう読むか。京と橙子が、統計との付き合い方を語ります。" backHref="/" backLabel="玄関">
+<BaseLayout title="講義棟｜Statlogia" description="統計の道具の使い方。散らばりの中の位置、伸び率、特化係数、相関、似た県、増減の分解、誤差の幅、業種の集まり方、人口の形を、知秋と一葉が解きほぐします。" backHref="/" backLabel="玄関">
   <main>
     <section class="how">
-      <figure class="how-hero">
-        <img src="/images/icon/kei-panel.webp" alt="パネルの前で統計の読み方を説明する京"
-             width="1400" height="788" loading="lazy" decoding="async" />
-        <figcaption class="how-overlay">
-          <span class="no">HOW TO READ</span>
-          <h1>統計の歩き方</h1>
-          <p class="sub">数字は、読み方ひとつで見え方が変わります。京と橙子が、統計との付き合い方をゆっくり語る場所です。</p>
-        </figcaption>
-      </figure>
+      {heroImg ? (
+        <HeroFig src={heroImg} alt="打ちっぱなしコンクリートの講義室。ホワイトボードの前で指し棒を持つ知秋と、机でメモを取る一葉の水彩画" width={1400} height={782} eager>
+          <p class="rr-kicker">講義棟</p>
+          <h1>講義室｜統計の道具を使う</h1>
+          <p class="rr-lead">数字は、道具の使い方ひとつで見え方が変わります。<br />情報棟と研究棟で使っている道具の読み方を、一つずつ。</p>
+        </HeroFig>
+      ) : (
+        <div class="how-hero how-hero--text">
+          <span class="no">TRAINING</span>
+          <h1>講義室｜統計の道具を使う</h1>
+          <p class="sub">数字は、道具の使い方ひとつで見え方が変わります。情報棟と研究棟で使っている道具の読み方を、一つずつ。</p>
+        </div>
+      )}
 
-        <h2 class="how-sec"><span class="how-sec-no">BASICS</span>数字を読む前に</h2>
-      <p class="how-sec-lead">平均、割合、指数、調査の素性。窓口や展示の数字を読むときの、土台になる話です。</p>
-      <div class="cards">
-        <a class="card" href="/how-to-read/median-vs-mean/">
-          <img class="card-img" src="/images/icon/median-vs-mean-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>平均のところに、誰もいない</h3>
-          <p>「平均年収」を見て、自分と合わないと感じたことはありませんか。平均値と中央値のちがいを、京が絵で説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/average-vs-national/">
-          <img class="card-img" src="/images/icon/average-vs-national-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>全国平均と単純平均はなぜ違うのか</h3>
-          <p>Countopiaの窓口によく出てくる「47都道府県の単純平均」という注記。それが公式の全国値とどう違うのか、京が説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/per-capita/">
-          <img class="card-img" src="/images/icon/per-capita-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>人口あたりで見るということ</h3>
-          <p>飲食店の数、教育費……実数のまま比べると、いつも大きな街が「1位」になってしまいます。「あたり」に直す意味を、京が説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/rate-and-count/">
-          <img class="card-img" src="/images/icon/rate-and-count-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>割合だけ見ると、消えるもの</h3>
-          <p>人口で割ると、大きな町と小さな町を同じ土俵で比べられます。そのかわり消えるものがある。二つの物差しの使い分けを、京が説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/base-100/">
-          <img class="card-img" src="/images/icon/base-100-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>100は、円ではない</h3>
-          <p>物価の展示に出てくる「125.1」は何円のことでしょう。円ではありません。全国平均を100とした指数の読み方を、京が説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/data-lag/">
-          <img class="card-img" src="/images/icon/data-lag-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>いちばん新しい数字が、数年前なわけ</h3>
-          <p>窓口に「2018年度」と書いてあっても、それがいちばん新しい数字です。調査の周期と、公表までにかかる時間の話を、京が説明します。</p>
-        </a>
-        <a class="card" href="/how-to-read/data-source/">
-          <img class="card-img" src="/images/icon/data-source-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>データの出どころ（e-Stat）</h3>
-          <p>Countopiaの数字は、どこから来ているのでしょう。国の統計調査からこのサイトまでの道筋を、京がご案内します。</p>
-        </a>
-        <a class="card" href="/how-to-read/surveys/">
-          <img class="card-img" src="/images/icon/surveys-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>数字のもとになった調査</h3>
-          <p>国勢調査、家計調査、社会生活基本調査……。この国の数字は、だれが、何を、どう数えたものなのか。主な調査を、京がご案内します。</p>
-        </a>
-      </div>
-
-      <h2 class="how-sec"><span class="how-sec-no">TOOLS</span>統計の道具を使う</h2>
-      <p class="how-sec-lead">閲覧室や見くらべの間に置いた、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰、似た町、増減の分解、誤差の幅、業種の集まり方、人口の形。</p>
+      <h2 class="how-sec"><span class="how-sec-no">TOOLS</span>統計の道具</h2>
+      <p class="how-sec-lead">情報棟の窓口や研究棟の見くらべ・読み解きで使っている、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰、似た町、増減の分解、誤差の幅、業種の集まり方、人口の形。</p>
       <div class="cards">
         <a class="card" href="/how-to-read/position/">
           <img class="card-img" src="/images/icon/position-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>10位は、近いのか遠いのか</h3>
-          <p>順位だけでは、1位との差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方を、京が説明します。</p>
+          <p>順位だけでは、1位との差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/growth/">
           <img class="card-img" src="/images/icon/growth-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>伸び方は、そろえてから比べる</h3>
-          <p>大きさのちがう町の移りかわりは、最初の年を100にそろえて比べます。年平均の伸び率と「ポイント」の話を、京が説明します。</p>
+          <p>大きさのちがう町の移りかわりは、最初の年を100にそろえて比べます。年平均の伸び率と「ポイント」の話を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/small-towns/">
           <img class="card-img" src="/images/icon/small-towns-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>小さな町の1位は、あてにならない</h3>
-          <p>人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロットと経験ベイズ推定で、揺れを差し引いて見る方法を、京が説明します。</p>
+          <p>人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロットと経験ベイズ推定で、揺れを差し引いて見る方法を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/specialization/">
           <img class="card-img" src="/images/icon/specialization-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>町の得意を測る物差し</h3>
-          <p>医療・福祉で働く人が多いのは、全国どこも同じ。全国の割合で割る「特化係数」で、町のかたよりを見る方法を、京が説明します。</p>
+          <p>医療・福祉で働く人が多いのは、全国どこも同じ。全国の割合で割る「特化係数」で、町のかたよりを見る方法を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/correlation/">
           <img class="card-img" src="/images/icon/correlation-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>二つの数字が、そろって動くとき</h3>
-          <p>図書館の多い県ほど、病院も多い。けれど理由はそこにはありません。散布図・相関係数・回帰直線の読み方を、京が説明します。</p>
+          <p>図書館の多い県ほど、病院も多い。けれど理由はそこにはありません。散布図・相関係数・回帰直線の読み方を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/similar/">
           <img class="card-img" src="/images/icon/similar-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>似た町と並べてみる</h3>
-          <p>大きさも働き方もちがう町と比べても、差の多くは町の顔ぶれのちがいです。人口と産業の構成が近い町を選ぶ「類似団体」の考え方を、京が説明します。</p>
+          <p>大きさも働き方もちがう町と比べても、差の多くは町の顔ぶれのちがいです。人口と産業の構成が近い町を選ぶ「類似団体」の考え方を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/shift-share/">
           <img class="card-img" src="/images/icon/shift-share-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>増えた分を、三つに分ける</h3>
-          <p>働く人がふえたのは、町の力か、全国の流れか。増減を全国の流れ・産業の構成・地域の分に分けるシフトシェア分析を、京が説明します。</p>
+          <p>働く人がふえたのは、町の力か、全国の流れか。増減を全国の流れ・産業の構成・地域の分に分けるシフトシェア分析を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/sampling-error/">
           <img class="card-img" src="/images/icon/sampling-error-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>調べ直したら、順位は入れかわるか</h3>
-          <p>一部の人を調べた統計の値には、幅があります。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方を、京が説明します。</p>
+          <p>一部の人を調べた統計の値には、幅があります。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/concentration/">
           <img class="card-img" src="/images/icon/concentration-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>同じ大きさの業種が、いくつあるか</h3>
-          <p>働く人は、少ない業種に集まっているか、多くの業種に散らばっているか。割合を2乗して足すハーフィンダール指数の読み方を、京が説明します。</p>
+          <p>働く人は、少ない業種に集まっているか、多くの業種に散らばっているか。割合を2乗して足すハーフィンダール指数の読み方を、知秋が説明します。</p>
         </a>
         <a class="card" href="/how-to-read/pyramid/">
           <img class="card-img" src="/images/icon/pyramid-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <h3>人口の形を読む</h3>
-          <p>年齢と男女ごとの人口を積み上げた人口ピラミッド。山の形とつぼの形、全国の形と重ねて比べる見方を、京が説明します。</p>
+          <p>年齢と男女ごとの人口を積み上げた人口ピラミッド。山の形とつぼの形、全国の形と重ねて比べる見方を、知秋が説明します。</p>
         </a>
       </div>
     </section>
@@ -119,7 +82,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 <style>
 .how{padding:56px 0 80px;max-width:1280px;margin:0 auto}
 
-/* 京のパネル絵に見出しを重ねる */
+/* 扉絵に見出しを重ねる */
 .how-hero{position:relative;margin:1rem auto 2.5rem;max-width:900px}
 .how-hero img{width:100%;height:auto;display:block;border-radius:10px}
 .how-overlay{
@@ -154,6 +117,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
 .how-sec{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.3rem;margin:40px 0 6px;padding-left:12px;border-left:4px solid var(--ink);display:flex;align-items:baseline;gap:12px}
 .how-sec:first-of-type{margin-top:8px}
+.how-hero--text{padding:28px 0 8px}
+.how-hero--text .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.24em;color:var(--stamp);font-weight:600}
+.how-hero--text h1{font-family:"Shippori Mincho",serif;font-size:1.7rem;margin:6px 0 10px}
+.how-hero--text .sub{color:var(--ink-soft);line-height:1.9}
 .how-sec-no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.24em;color:var(--stamp);font-weight:600}
 .how-sec-lead{font-size:.88rem;color:var(--ink-soft);line-height:1.8;margin:0 0 18px}
 .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}

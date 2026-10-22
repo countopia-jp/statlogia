@@ -1,6 +1,6 @@
 ---
 // =====================================================
-// Countopia Stats - 目的別の分析（読み解きの間）テーマのページ
+// Statlogia - 目的別の分析（読み解きの間）テーマのページ
 // src/pages/analysis/[theme]/index.astro
 // 設定は src/data/analysis.js。PPDAC（問い→計画→データ→分析→結論）の順に組む。
 // ※スタイルは is:global（JS生成要素にスコープCSSが効かないため）。全セレクタ .an- 接頭辞。
@@ -22,7 +22,7 @@ const cfg = { indicators: t.indicators, pairs: t.pairs, trends: t.trends, lq: t.
 import PyramidTool from '../../../components/PyramidTool.astro';
 import FutureTool from '../../../components/FutureTool.astro';
 ---
-<BaseLayout title={`${t.title}｜読み解きの間｜Countopia Stats`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
+<BaseLayout title={`${t.title}｜読み解きの間｜Statlogia`} description={t.lead} backHref="/analysis/" backLabel="読み解きの間">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <main class="an">
     {hasHero
@@ -37,7 +37,7 @@ import FutureTool from '../../../components/FutureTool.astro';
           <p class="an-lead">{t.lead}</p>
         </header>}
 
-    <Talk speaker="kei">ここでは、国の統計の手引きにならって「問い→計画→データ→分析→結論」の順に読み進めます。県を選ぶと、下の段がすべてその県で埋まります。</Talk>
+    <Talk speaker="chiaki-work">ここでは、国の統計の手引きにならって「問い→計画→データ→分析→結論」の順に読み進めよう。県を選ぶと、下の段がすべてその県で埋まる。</Talk>
 
     <section class="an-pick" aria-label="県を選ぶ">
       <label><span>読み解く県</span><select id="anPref"><option value="">選んでください</option></select></label>
@@ -124,8 +124,17 @@ import FutureTool from '../../../components/FutureTool.astro';
       <ul class="an-cannot">{t.cannot.map((c) => <li>{c}</li>)}</ul>
     </section>
 
-    <Talk speaker="touko">数字を並べたあとに「ここまでは言えて、ここからは言えない」と書いておくのね。</Talk>
-    <Talk speaker="kei">はい。言えないことを書いておくのも、読み解きのうちです。</Talk>
+    {t.theory && (
+      <section class="an-theory" aria-label="知秋理論">
+        <p class="an-theory-tag"><span class="an-theory-seal">知秋理論</span><small>データの外に出た、まだ検証されていない仮説</small></p>
+        <Talk speaker="chiaki-work">{t.theory.text}</Talk>
+        <Talk speaker="hitoha">{t.theory.reply || '先生、それは数字から読めることですか。それとも、先生の仮説ですか。'}</Talk>
+        <Talk speaker="chiaki-work">{t.theory.answer || '仮説だ。だから札を付けてある。確かめるなら、こういう数字を見ればいい——' + t.theory.check}</Talk>
+      </section>
+    )}
+
+    <Talk speaker="hitoha">数字を並べたあとに「ここまでは言えて、ここからは言えない」と書いておくんですね。</Talk>
+    <Talk speaker="chiaki-work">うむ。言えないことを書いておくのも、読み解きのうちだよ。</Talk>
 
     <p class="an-cross">あわせて見る：<a href="/compare/">見くらべの間</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>{t.lq && <>｜<a href="/how-to-read/specialization/">町の得意を測る物差し</a></>}</p>
     <footer class="an-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」「家計調査」「消費者物価地域差指数」ほか）。分析の進め方は、総務省統計局『データ利活用実践ガイドブック EBPMのための』のPPDACサイクルにならっています。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
@@ -625,6 +634,10 @@ import FutureTool from '../../../components/FutureTool.astro';
     .an-pair-r b { font-family: "IBM Plex Mono", monospace; color: #b23a2f; }
     .an-can li, .an-cannot li { margin-bottom: 6px; }
     .an-cannot { color: #555; }
+    .an-theory { margin: 28px 0 0; padding: 14px 18px 6px; border: 1px dashed var(--stamp); border-radius: 10px; background: rgba(179,64,42,.04); }
+    .an-theory-tag { margin: 0 0 6px; display: flex; align-items: center; gap: 10px; }
+    .an-theory-seal { display: inline-block; padding: .1em .6em; border: 1.5px solid var(--stamp); color: var(--stamp); border-radius: 3px; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: .82rem; letter-spacing: .18em; transform: rotate(-3deg); }
+    .an-theory-tag small { color: var(--ink-soft); font-size: .76rem; }
     .an-cross { margin-top: 36px; font-size: .88rem; text-align: center; line-height: 1.9; }
     .an-cross a { color: #b23a2f; }
     .an-source { margin-top: 28px; font-size: .74rem; color: #888; line-height: 1.8; }

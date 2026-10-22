@@ -7,12 +7,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniDaycareData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="介護は、近いか｜Countopia Stats" description="市区町村を選んで、最寄りの老人デイサービスセンターまで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="介護は、近いか｜Statlogia" description="市区町村を選んで、最寄りの老人デイサービスセンターまで500m未満・1000m以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-daycare-large.webp" alt="介助を受けながら小径を歩く高齢女性と、デイサービスセンターでお茶を楽しむ人々の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜医療・福祉・安全</p>
       <h1>介護は、近いか</h1>
       <p class="tp-lead">
         市区町村を選んで、最寄りの老人デイサービスセンターまでの近さをご覧ください。<br />
@@ -20,11 +20,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは老人デイサービスの窓口です。デイサービスセンターは、お年寄りが日中に通って、食事や入浴、運動などの世話を受けるところです。最寄りのセンターまで500m未満の世帯の割合で、その町の「介護の近さ」が分かります。
+    <Talk speaker="chiaki">
+      こちらは老人デイサービスの窓口だ。デイサービスセンターは、お年寄りが日中に通って、食事や入浴、運動などの世話を受けるところだ。最寄りのセンターまで500m未満の世帯の割合で、その町の「介護の近さ」が分かる。
     </Talk>
-    <Talk speaker="touko">
-      お年寄りが、昼のあいだ通うところがあるのね。それは近いほうがよいでしょうねえ。
+    <Talk speaker="hitoha">
+      家からの近さで見るんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -47,8 +47,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="daycareChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -179,19 +179,19 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const near = a.v[NEAR], far = a.v[FAR];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["お年寄りが昼間に通うところがあるのね。", "家からの道のりまで、測ってあるなんて。", "わたくしの時代では、お年寄りは縁側で日向ぼっこよ。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["家からの道のりまで、測ってあるんですね。", "500m未満の世帯の割合は、町でずいぶん違うんですね。", "1km以上の世帯の割合も、別に出ているんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasNear = typeof near === 'number';
         const hasFar = typeof far === 'number';
         let k = '';
         if (hasNear) {
           k = `デイサービスまで500m未満の世帯は${near.toFixed(1)}％。`;
-          k += near >= 40 ? ' 4割以上の世帯で、デイサービスが500m未満にあります。'
+          k += near >= 40 ? ' 4割以上の世帯で、デイサービスが500m未満にある。'
              : near <= 15 ? ' 500m未満の世帯は、15％以下です。'
              : '';
         } else {
-          k = 'デイサービスまで500m未満の世帯の割合は、この町の値がありません。';
+          k = 'デイサービスまで500m未満の世帯の割合は、この町の値がない。';
         }
         if (hasFar) k += ` 1000m以上の世帯は${far.toFixed(1)}％です。`;
         else k += ' 1000m以上の世帯の割合は、この町の値がありません。';

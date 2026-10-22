@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 数字の照合（ビルドのたびに動く）
+// Statlogia - 数字の照合（ビルドのたびに動く）
 // src/lib/verify-data.js
 //
 // サイトに出す数字を、表示する「年」を指定して e-Stat から1件ずつ取り直し、同じ値かを確かめる。
@@ -20,31 +20,6 @@ import { getMuniPopulationData } from './muni-population.js';
 import { getMuniMedicalData } from './muni-medical.js';
 import { getMuniCultureData } from './muni-culture.js';
 import { getMuniFinanceData } from './muni-finance.js';
-import { getDayNightRatioData } from './day-night-ratio.js';
-import { getVacancyData } from './vacancy.js';
-import { getCarData } from './cars.js';
-import { getFoodData } from './food.js';
-import { getSolarData } from './solar.js';
-import { getHousingTypeData } from './housing-type.js';
-import { getWasteData } from './waste.js';
-import { getPriceData } from './price.js';
-import { getClimateData } from './climate.js';
-import { getKaraokeData } from './karaoke.js';
-import { getBoardGamesData } from './board-games.js';
-import { getGardeningData } from './gardening.js';
-import { getJapaneseArtsData } from './japanese-arts.js';
-import { getGamesCraftsData } from './games-crafts.js';
-import { getBudoData } from './budo.js';
-import { getBallGamesData } from './ball-games.js';
-import { getHikingData } from './hiking.js';
-import { getFishingData } from './fishing.js';
-import { getPachinkoData } from './pachinko.js';
-import { getReadingData } from './reading.js';
-import { getSnowGroundData } from './snow-ground.js';
-import { getActivityPair } from './activity-pair.js';
-import { getKakeiPair } from './kakei-pair.js';
-import { getGyozaData } from './gyoza.js';
-import { getBeefPorkData } from './beef-pork.js';
 import * as MH from './muni-housing.js';
 import * as MCT from './muni-commute-time.js';
 import * as MC from './muni-commute.js';
@@ -301,11 +276,6 @@ export async function verifyAll() {
       compare(res, `物価の帳場・${cat.label}`, '0000010103', cat.code, d.yearLabel, d.areas.map((a) => ({ area: a.c, name: a.n, v: (a.v[cat.code] || []).at(-1) })), got, { decimals: 1 });
     }
   });
-  await run('展示09 昼夜間人口比率', async () => {
-    const d = await getDayNightRatioData();
-    const got = await direct('0000010101', 'A6108', null);
-    compare(res, '展示09・昼夜間人口比率', '0000010101', 'A6108', d.year, d.rows.map((r) => ({ area: r.c, name: r.n, v: r.minutes })), got, { decimals: 1 });
-  });
 
   // 3) 手書きの市区町村ページ（選んだ町だけ）
   await run('学びの登記所', async () => {
@@ -330,133 +300,6 @@ export async function verifyAll() {
   await run('わが町の医療', async () => { const d = await getMuniMedicalData(); await townList('わが町の医療', d, [['病院', '0000020109', 'I5101'], ['一般診療所', '0000020109', 'I5102'], ['歯科診療所', '0000020109', 'I5103'], ['お医者さん', '0000020109', 'I6100']], d.medYear); });
   await run('わが町の図書館と公民館', async () => { const d = await getMuniCultureData(); await townList('わが町の図書館と公民館', d, [['図書館', '0000020107', 'G1401'], ['公民館', '0000020107', 'G1201']], d.culYear); });
   await run('わが町の財政と教育費', async () => { const d = await getMuniFinanceData(); await townList('わが町の財政と教育費', d, [['財政力指数', '0000020104', 'D2201']], d.year); });
-
-  // 4) 展示の部品
-  // 4-1) 社会生活基本調査の行動者率（2021年、1時点だけ）
-  const HOBBY = '0003456573', SPORT = '0003456409';
-  const act = [
-    ['展示 カラオケと楽器', getKaraokeData, HOBBY, [['rows', '12'], ['instrument', '09']]],
-    ['展示 将棋と囲碁', getBoardGamesData, HOBBY, [['rows', '30'], ['go', '29']]],
-    ['展示 庭いじりと日曜大工', getGardeningData, HOBBY, [['rows', '21'], ['diy', '22']]],
-    ['展示 書道・華道・茶道', getJapaneseArtsData, HOBBY, [['rows', '15'], ['kado', '16'], ['sado', '17']]],
-    ['展示 ゲームと手芸', getGamesCraftsData, HOBBY, [['rows', '32'], ['crafts', '19']]],
-    ['展示 本とマンガ', getReadingData, HOBBY, [['rows', '27'], ['manga', '28']]],
-    ['展示 パチンコ', getPachinkoData, HOBBY, [['rows', '31']]],
-    ['展示 柔道と剣道', getBudoData, SPORT, [['rows', '11'], ['kendo', '12']]],
-    ['展示 野球とサッカー', getBallGamesData, SPORT, [['rows', '01'], ['soccer', '05']]],
-    ['展示 山歩き', getHikingData, SPORT, [['rows', '17']]],
-    ['展示 釣り', getFishingData, SPORT, [['rows', '14']]],
-    ['展示 スキーとグラウンドゴルフ', getSnowGroundData, SPORT, [['rows', '16'], ['ground', '10']]],
-    ['展示33 映画館と美術館', () => getActivityPair('04', '02'), HOBBY, [['rows', '04'], ['second', '02']]],
-    ['展示34 キャンプと遊園地', () => getActivityPair('34', '33'), HOBBY, [['rows', '34'], ['second', '33']]],
-    ['展示37 スポーツ観戦と演劇', () => getActivityPair('01', '03'), HOBBY, [['rows', '01'], ['second', '03']]],
-    ['展示38 ジョギングとウォーキング', () => getActivityPair('19', '20', SPORT), SPORT, [['rows', '19'], ['second', '20']]],
-    ['展示39 コンサート', () => getActivityPair('06', '07'), HOBBY, [['rows', '06'], ['second', '07']]],
-    ['展示40 卓球とバドミントン', () => getActivityPair('06', '08', SPORT), SPORT, [['rows', '06'], ['second', '08']]],
-    ['展示43 ゴルフとボウリング', () => getActivityPair('09', '13', SPORT), SPORT, [['rows', '09'], ['second', '13']]],
-    ['展示44 絵と焼きもの', () => getActivityPair('23', '24'), HOBBY, [['rows', '23'], ['second', '24']]],
-    ['展示47 水泳とサイクリング', () => getActivityPair('15', '18', SPORT), SPORT, [['rows', '15'], ['second', '18']]],
-    ['展示48 おどりと社交ダンス', () => getActivityPair('13', '14'), HOBBY, [['rows', '13'], ['second', '14']]],
-    ['展示51 ヨガとトレーニング', () => getActivityPair('21', '22', SPORT), SPORT, [['rows', '21'], ['second', '22']]],
-    ['展示52 テニスとバレーボール', () => getActivityPair('07', '03', SPORT), SPORT, [['rows', '07'], ['second', '03']]],
-    ['展示53 写真と料理・菓子作り', () => getActivityPair('25', '20'), HOBBY, [['rows', '25'], ['second', '20']]],
-    ['展示54 邦楽とコーラス', () => getActivityPair('10', '11'), HOBBY, [['rows', '10'], ['second', '11']]],
-    ['展示58 家で見る映画と音楽', () => getActivityPair('05', '08'), HOBBY, [['rows', '05'], ['second', '08']]],
-    ['展示59 バスケットボールとソフトボール', () => getActivityPair('04', '02', SPORT), SPORT, [['rows', '04'], ['second', '02']]],
-    ['展示60 俳句・小説と和裁・洋裁', () => getActivityPair('26', '18'), HOBBY, [['rows', '26'], ['second', '18']]],
-  ];
-  for (const [name, get, statsId, parts] of act) {
-    await run(name, async () => {
-      const d = await get();
-      for (const [k, cat03] of parts) {
-        const rows = k === 'rows' ? d.rows : d[k]?.rows || [];
-        const got = await directActivity(statsId, cat03);
-        compareRows(res, `${name}（${cat03}）`, rows, (r) => got[r.c], { decimals: 1, expect: 47 });
-      }
-    });
-  }
-
-  // 4-2) 家計調査（市）
-  const kakei = [
-    ['展示 餃子', getGyozaData, [['rows', '010920070']]],
-    ['展示30 牛肉と豚肉', getBeefPorkData, [['rows', '010310010'], ['pork', '010310020']]],
-    ['展示31 コーヒーと緑茶', () => getKakeiPair('011020010', '011010010'), [['rows', '011020010'], ['second', '011010010']]],
-    ['展示32 パンとお米', () => getKakeiPair('010120000', '010110001'), [['rows', '010120000'], ['second', '010110001']]],
-    ['展示35 ケーキとまんじゅう', () => getKakeiPair('010800050', '010800020'), [['rows', '010800050'], ['second', '010800020']]],
-    ['展示36 マグロとサケ', () => getKakeiPair('010211010', '010211060'), [['rows', '010211010'], ['second', '010211060']]],
-    ['展示41 そば・うどんとラーメン', () => getKakeiPair('011211010', '011211020'), [['rows', '011211010'], ['second', '011211020']]],
-    ['展示42 納豆と豆腐', () => getKakeiPair('010530030', '010530010'), [['rows', '010530030'], ['second', '010530010']]],
-    ['展示45 日本酒とビール', () => getKakeiPair('011100010', '011100030'), [['rows', '011100010'], ['second', '011100030']]],
-    ['展示46 せんべいとチョコレート', () => getKakeiPair('010800090', '010800130'), [['rows', '010800090'], ['second', '010800130']]],
-    ['展示49 しょう油とみそ', () => getKakeiPair('010720020', '010720030'), [['rows', '010720020'], ['second', '010720030']]],
-    ['展示50 りんごとみかん', () => getKakeiPair('010610010', '010610020'), [['rows', '010610010'], ['second', '010610020']]],
-    ['展示55 焼酎とワイン', () => getKakeiPair('011100020', '011100050'), [['rows', '011100020'], ['second', '011100050']]],
-    ['展示56 牛乳とヨーグルト', () => getKakeiPair('010410001', '010420020'), [['rows', '010410001'], ['second', '010420020']]],
-    ['展示57 すしとハンバーガー', () => getKakeiPair('011211040', '011211090'), [['rows', '011211040'], ['second', '011211090']]],
-    ['展示61 鶏肉と卵', () => getKakeiPair('010310030', '010430001'), [['rows', '010310030'], ['second', '010430001']]],
-  ];
-  for (const [name, get, parts] of kakei) {
-    await run(name, async () => {
-      const d = await get();
-      for (const [k, code] of parts) {
-        const rows = k === 'rows' ? d.rows : d[k]?.rows || [];
-        const got = await directKakei(code);
-        compareRows(res, `${name}（${code}・${d.year}）`, rows, (r) => yearOf(got[r.c], d.year), { decimals: 0 });
-      }
-    });
-  }
-
-  // 4-3) 社会・人口統計体系の展示
-  const pct = (a, b) => (ok(a) && ok(b) && b > 0 ? (a / b) * 100 : null);
-  await run('展示 空き家', async () => {
-    const d = await getVacancyData();
-    const v = await direct('0000010108', 'H110202', null), t = await direct('0000010108', 'H1100', null);
-    compareRows(res, `展示 空き家（${d.year}）`, d.rows, (r) => pct(yearOf(v[r.c], d.year), yearOf(t[r.c], d.year)), { decimals: 1, expect: 47 });
-  });
-  await run('展示 太陽光発電の家', async () => {
-    const d = await getSolarData();
-    const s = await direct('0000010108', 'H2281', null), o = await direct('0000010108', 'H1101', null);
-    compareRows(res, `展示 太陽光発電の家（${d.year}）`, d.rows, (r) => pct(yearOf(s[r.c], d.year), yearOf(o[r.c], d.year)), { decimals: 1, expect: 47 });
-  });
-  await run('展示 一戸建てと木の家', async () => {
-    const d = await getHousingTypeData();
-    const h = await direct('0000010108', 'H1401', null), o = await direct('0000010108', 'H1101', null), w = await direct('0000010108', 'H140101', null);
-    compareRows(res, `展示 一戸建て（${d.year}）`, d.rows, (r) => pct(yearOf(h[r.c], d.year), yearOf(o[r.c], d.year)), { decimals: 1, expect: 47 });
-    compareRows(res, `展示 木の家（${d.year}）`, d.wood.rows, (r) => pct(yearOf(w[r.c], d.year), yearOf(h[r.c], d.year)), { decimals: 1, expect: 47 });
-  });
-  await run('展示 物価', async () => {
-    const d = await getPriceData();
-    for (const [k, code] of [['rows', 'C5701'], ['food', 'C5703'], ['heat', 'C5705'], ['education', 'C5710']]) {
-      const part = k === 'rows' ? { year: d.year, rows: d.rows } : d[k];
-      const got = await direct('0000010103', code, null);
-      compareRows(res, `展示 物価 ${code}（${part.year}）`, part.rows, (r) => yearOf(got[r.c], part.year), { decimals: 1, expect: 47 });
-    }
-  });
-  await run('展示 外食の街', async () => {
-    const d = await getFoodData();
-    const got = await direct('0000010208', 'H06130', null);
-    compareRows(res, `展示 外食の街（${d.year}）`, d.rows, (r) => yearOf(got[r.c], d.year), { decimals: 1, expect: 47 });
-  });
-  await run('展示 車', async () => {
-    const d = await getCarData();
-    const got = await direct('0000010212', 'L03607', null);
-    compareRows(res, `展示 車（${d.year}）`, d.rows, (r) => { const v = yearOf(got[r.c], d.year); return ok(v) ? Math.round((v / 1000) * 100) / 100 : null; }, { decimals: 2, expect: 47 });
-  });
-  await run('展示 ごみ', async () => {
-    const d = await getWasteData();
-    const pop = await getPopulationData();
-    const codeOf = Object.fromEntries(pop.areas.map((a) => [a.n, a.c]));
-    const w = await direct('0000010108', 'H5610', null), rc = await direct('0000010108', 'H5614', null);
-    compareRows(res, `展示 ごみ（${d.year}）`, d.rows.map((r) => ({ ...r, c: codeOf[r.n] })), (r) => yearOf(w[r.c], d.year), { decimals: 0, expect: 47 });
-    compareRows(res, `展示 リサイクル（${d.year}）`, d.recycle.rows.map((r) => ({ ...r, c: codeOf[r.n] })), (r) => yearOf(rc[r.c], d.year), { decimals: 1, expect: 47 });
-  });
-  await run('展示 日照と快晴', async () => {
-    const d = await getClimateData();
-    for (const [k, code] of [['sun', 'B4108'], ['clear', 'B4104']]) {
-      const got = await direct('0000010102', code, null);
-      compareRows(res, `展示 ${d[k].label}（${d[k].year}）`, d[k].rows.map((r) => ({ ...r, c: r.c || r.code })), (r) => yearOf(got[r.c], d[k].year), { decimals: 1, expect: 47 });
-    }
-  });
 
   // 5) 手書きの町ページ：表示年の元の数字を取り直し、部品と同じ計算（INDICATORS の calc）をしてくらべる
   const townCalc = [

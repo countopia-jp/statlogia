@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 数字の照合結果（ビルド時）
+// Statlogia - 数字の照合結果（ビルド時）
 // src/pages/data/check.json.js → /data/check.json
 // 照合で食い違い（error）が1つでもあればビルドを止める。warning は記録だけ。
 // SKIP_CHECK=1（npm run build:quick）のときは照合を飛ばす。数字の取り方を変えたときは必ずふつうの npm run build で照合すること。

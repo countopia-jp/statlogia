@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="増えた分を、三つに分ける｜統計の歩き方 - Countopia Stats" description="働く人の増減を、全国の流れ・産業の構成・地域の分の三つに分けるシフトシェア分析の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="増えた分を、三つに分ける｜講義室 - Statlogia" description="働く人の増減を、全国の流れ・産業の構成・地域の分の三つに分けるシフトシェア分析の読み方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/shift-share-large.webp" alt="町の工場と商店街を見下ろす丘で、三色の積み木を並べて説明する京と、それを見る橙子の水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/shift-share-large.webp" alt="木の机の上に赤・青・黄の積み木を三つの山に分け、知秋が指し棒で指し、一葉が一つ置こうとする水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">増えた分を、</span><span class="nw">三つに分ける</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、この町では5年で働く人が30人ふえたのですって。町のがんばりで、ふえたということかしら。
+    <Talk speaker="hitoha">
+      先生、この町では5年で働く人が30人ふえたのだそうです。町のがんばりで、ふえたということでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      そうとは限りません。全国で働く人がふえていれば、どの町も同じ割合でふえる分があります。どの産業が多い町かによっても、ふえ方は変わります。その分を差し引いてみましょう。
+    <Talk speaker="chiaki-work">
+      そうとは限らない。全国で働く人がふえていれば、どの町も同じ割合でふえる分がある。どの産業が多い町かによっても、ふえ方は変わる。その分を差し引いてみよう。
     </Talk>
 
     <section class="art-diagram">
@@ -52,7 +52,7 @@ import HeroFig from '../../../components/HeroFig.astro';
       <h2>読むときの注意</h2>
       <p>
         地域の分は「全国の流れと産業の構成では説明できない分」です。町の取り組みの成果を測ったものではなく、その中身は、工場の新設や閉鎖、統計の数え方のちがいなど、さまざまです。
-        また、産業を細かく分けるほど、構成の分と地域の分の割り振りは変わります。この国では、産業を17の大きな分類で分けています。
+        また、産業を細かく分けるほど、構成の分と地域の分の割り振りは変わります。この都市では、産業を17の大きな分類で分けています。
       </p>
       <p>
         使っているのは経済センサス‐活動調査の2016年と2021年の、事業所で働く人の数です。2回の調査は数え方が少しちがうので、全国の伸びにも、その違いの分が含まれます。
@@ -67,20 +67,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      ふえた数だけを見ていたら、町のがんばりと、全国の流れの区別がつかないのね。
+    <Talk speaker="hitoha">
+      ふえた数だけを見ていたら、町のがんばりと、全国の流れの区別がつかないんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。合計の数字を、意味のちがう部分に分けてから読む。統計ではよく使う考え方です。
+    <Talk speaker="chiaki-work">
+      うむ。合計の数字を、意味のちがう部分に分けてから読む。統計ではよく使う考え方だ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

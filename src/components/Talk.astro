@@ -1,19 +1,18 @@
 ---
 // 掛け合い用コンポーネント
-// 使い方: <Talk speaker="kei">セリフ</Talk> / <Talk speaker="touko">セリフ</Talk> / <Talk speaker="shiori">セリフ</Talk>（栞＝別館の案内人、昭和36年ごろ）
+// 使い方: <Talk speaker="chiaki">セリフ</Talk> / <Talk speaker="hitoha">セリフ</Talk>
 // img を差し替えれば全記事のアイコンが一斉に更新される(原画完成時はここだけ変更)
-const { speaker = 'kei' } = Astro.props;
+const { speaker = 'chiaki' } = Astro.props;
+// Statlogia の二人：知秋（教授・左・紺。chiaki＝通常、chiaki-work＝仕事モードの顔）と一葉（研究員・右・灰）
+const CHIAKI = { name: '知秋（教授）', img: '/images/chara/chiaki-face.webp', side: 'left',  tone: 'chiaki' };
+const CHIAKI_WORK = { name: '知秋（教授）', img: '/images/chara/chiaki-work-face.webp', side: 'left',  tone: 'chiaki' };
+const HITOHA = { name: '一葉（研究員）', img: '/images/chara/hitoha-face.webp', side: 'right', tone: 'hitoha' };
 const profiles = {
-  kei:   { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
-  touko: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
-  shiori: { name: '栞（昭和の帳場から来た子）', img: '/images/chara/shiori-face.webp', side: 'right', tone: 'shiori' },
-  // 栞が続けて話すときの2つ目（左側・別の顔）（右向きの顔 shiori-face2.webp）
-  shiori2: { name: '栞（昭和の帳場から来た子）', img: '/images/chara/shiori-face2.webp', side: 'left', tone: 'shiori' },
-  // 旧名の互換
-  guide:    { name: '京（統計局案内人）',     img: '/images/chara/kei-face.webp',   side: 'left',  tone: 'kei'   },
-  traveler: { name: '橙子（大正から来た子）', img: '/images/chara/touko-face.webp', side: 'right', tone: 'touko' },
+  chiaki: CHIAKI,
+  'chiaki-work': CHIAKI_WORK,
+  hitoha: HITOHA,
 };
-const p = profiles[speaker] ?? profiles.kei;
+const p = profiles[speaker] ?? profiles.chiaki;
 ---
 <div class={`say ${p.side === 'right' ? 'right' : ''} ${p.tone}`}>
   <img class="face" src={p.img} alt={p.name} width="52" height="52" loading="lazy" />
@@ -23,7 +22,7 @@ const p = profiles[speaker] ?? profiles.kei;
   </div>
 </div>
 <style>
-.say{display:flex;gap:14px;align-items:flex-start;max-width:640px;margin:14px 0}
+.say{display:flex;gap:14px;align-items:flex-start;max-width:760px;margin:14px 0}
 .say.right{margin-left:auto;flex-direction:row-reverse}
 .face{width:52px;height:52px;border-radius:50%;flex-shrink:0;background:var(--paper)}
 /* セリフは枠線なしの色面。白地に枠線のカード（最多・最少など）と見分けがつくように */
@@ -32,6 +31,12 @@ const p = profiles[speaker] ?? profiles.kei;
 .say.right .bubble::before{left:auto;right:-7px;border-right:0;border-left:7px solid var(--bubble-bg)}
 .name{font-family:"IBM Plex Mono",monospace;font-size:.62rem;letter-spacing:.12em;color:var(--ink-soft);display:block;margin-bottom:4px}
 /* 話者ごとの色分け（地の色・名前・セリフ文字） */
+.say.chiaki{--bubble-bg:#e3e7f0}
+.say.hitoha{--bubble-bg:#ecebe6}
+.say.chiaki .bubble{color:#222}
+.say.chiaki .name{color:#1f2a44}
+.say.hitoha .bubble{color:#222}
+.say.hitoha .name{color:#4a4a4a}
 .say.kei{--bubble-bg:#e4eee7}
 .say.touko{--bubble-bg:#f8e5df}
 .say .bubble{background:var(--bubble-bg)}

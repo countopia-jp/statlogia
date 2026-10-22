@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="町の得意を測る物差し｜統計の歩き方 - Countopia Stats" description="働く人の割合を全国とくらべる「特化係数」の読み方。割合の大きさと、かたよりの大きさは別のもの。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="町の得意を測る物差し｜講義室 - Statlogia" description="働く人の割合を全国とくらべる「特化係数」の読み方。割合の大きさと、かたよりの大きさは別のもの。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/specialization-large.webp" alt="瓦屋根の町並みを高いところから見た水彩画。八百屋、町工場、旅館、本屋が並び、町工場の大きな建物が続く通りを京と橙子が歩く" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/specialization-large.webp" alt="木の机の上の二枚の円グラフの紙。知秋が指し棒で片方の大きな扇を指し、一葉が眼鏡に手をやって見くらべる水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">町の得意を</span><span class="nw">測る物差し</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、この町は医療・福祉で働く人が13％もいて、情報通信業で働く人は1％にも届かないんですって。医療・福祉で働く人の多い町、ということかしら。
+    <Talk speaker="hitoha">
+      先生、この町は医療・福祉で働く人が13％もいて、情報通信業で働く人は1％にも届かないのだそうです。医療・福祉で働く人の多い町、ということでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      割合だけを見るとそう見えます。けれど、医療・福祉で働く人は、全国どこでも多いのです。全国の割合と並べてみましょう。
+    <Talk speaker="chiaki-work">
+      割合だけを見るとそう見える。けれど、医療・福祉で働く人は、全国どこでも多いのだ。全国の割合と並べてみよう。
     </Talk>
 
     <section class="art-diagram">
@@ -49,21 +49,21 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      多いか少ないかと、全国とくらべてどうかは、別の問いなのね。
+    <Talk speaker="hitoha">
+      多いか少ないかと、全国とくらべてどうかは、別の問いなんですね。
     </Talk>
-    <Talk speaker="kei">
-      そうです。どちらの問いに答えている数字なのかを、見分けられるようにしておきましょう。
+    <Talk speaker="chiaki-work">
+      そうだ。どちらの問いに答えている数字なのかを、見分けられるようにしておこう。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/concentration/">同じ大きさの業種が、いくつあるか →</a><br />
       <a href="/how-to-read/position/">10位は、近いのか遠いのか →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

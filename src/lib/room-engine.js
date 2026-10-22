@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 閲覧室の共通エンジン
+// Statlogia - 閲覧室の共通エンジン
 // src/lib/room-engine.js
 //
 // 窓口ごとの設定（src/data/rooms/*.js）を渡すと、e-Stat 社会・人口統計体系から
@@ -17,6 +17,7 @@
 //   scale（単位の換算。百万円→億円なら0.01と unit:'億円'）。窓口に dashAsZero:true を付けると「-」を0として扱う
 //   lq:true（窓口か項目）… 構成の割合（％）に特化係数（全国の割合に対する倍率）を添える
 //   perCapita:false … 人口あたりを添えない（数の項目には自動で添える。perCapKind を参照）
+//   noRank:true（窓口）… 重い数字の窓口。順位・上位下位・ばらつきを出さず、値と全国との比較と推移だけ（Room.astro が読む）
 //
 // 【取得の決まり】コードごとに1リクエスト（まとめると取得上限で切り詰められる）。
 //   e-Stat が応答しないことがあるので、タイムアウト付きで3回まで取り直す。
@@ -38,9 +39,7 @@ async function apiGet(path, params, tries = 3) {
     const ctl = new AbortController();
     const timer = setTimeout(() => ctl.abort(), 120000);
     try {
-      const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`, { signal: ctl.signal });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return await res.json();
+      return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`, { signal: ctl.signal });
     } catch (e) {
       lastErr = e;
       await new Promise((r) => setTimeout(r, 3000 * (i + 1)));
@@ -144,6 +143,7 @@ function perCapKind(room, ind, unit) {
   return unit === '億円' ? 'man' : 'p100k';
 }
 import { seForRoom } from './sampling-error.js';
+import { cachedJsonFetch } from './estat-cache.js';
 const cache = new Map();
 
 export async function getRoomData(room) {

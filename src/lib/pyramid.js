@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - 人口の形（人口ピラミッド）用のデータ
+// Statlogia - 人口の形（人口ピラミッド）用のデータ
 // src/lib/pyramid.js → /data/pyramid.json（全国・都道府県）・/data/pyramid-town/<県コード>.json（市区町村）
 //
 // 令和2年国勢調査 人口等基本集計 表 0003445139
@@ -20,8 +21,7 @@ async function getPage(params) {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 180000);
     try {
-      const r = await fetch(`${API}?${qs}`, { signal: ctl.signal });
-      const j = await r.json();
+      const j = await cachedJsonFetch(`${API}?${qs}`, { signal: ctl.signal });
       const st = j.GET_STATS_DATA?.RESULT?.STATUS;
       if (st !== 0 && st !== 1) throw new Error(j.GET_STATS_DATA?.RESULT?.ERROR_MSG || 'e-Stat');
       return j.GET_STATS_DATA.STATISTICAL_DATA;

@@ -1,23 +1,31 @@
 ---
 // =====================================================
-// Countopia Stats - 瓦版（更新のお知らせ一覧）
+// Statlogia - 掲示板（更新のお知らせ一覧）
 // src/pages/news/index.astro
 // =====================================================
+import fs from 'node:fs';
+import path from 'node:path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+const duoStand = fs.existsSync(path.join(process.cwd(), 'public/images/chara/duo-stand-scene.webp')) ? '/images/chara/duo-stand-scene.webp' : null;
 import Talk from '../../components/Talk.astro';
 import { news } from '../../data/news.js';
 ---
-<BaseLayout title="瓦版｜更新のお知らせ｜Countopia Stats" description="Countopia Statsの更新のお知らせ。新しい展示や窓口の追加、数字の写し替えの記録です。" backHref="/" backLabel="玄関">
+<BaseLayout title="掲示板｜更新のお知らせ｜Statlogia" description="Statlogia の更新のお知らせ。窓口やテーマの追加、数字の写し替えの記録です。" backHref="/" backLabel="玄関">
   <main class="np">
     <header class="np-hero">
       <img class="np-figure" src="/images/icon/icon-news.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
       <p class="np-kicker">GAZETTE</p>
-      <h1>瓦版</h1>
-      <p class="np-lead">数字の国の、新しいお知らせを刷ってお届けします。</p>
+      <h1>掲示板</h1>
+      <p class="np-lead">研究都市の、新しいお知らせを貼り出しています。</p>
     </header>
-    <Talk speaker="kei">
-      国の出来事は、すべてここに刷られます。新しい展示も、新しい部屋も。
-    </Talk>
+    <div class="np-intro">
+      <div class="np-intro-talk">
+        <Talk speaker="chiaki">
+          この都市の出来事は、すべてここに貼り出す。新しい窓口も、新しいテーマもだ。
+        </Talk>
+      </div>
+      {duoStand && <img class="np-duo" src={duoStand} width="1376" height="768" alt="並んで立つ一葉と知秋" loading="lazy" />}
+    </div>
     <ol class="np-list">
       {news.map((n) => (
         <li>
@@ -37,6 +45,7 @@ import { news } from '../../data/news.js';
   <style>
     .np { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
     .np-hero { text-align: center; padding: 28px 0 8px; }
+    .np-duo { display: block; width: 100%; max-width: 760px; height: auto; margin: 10px auto 4px; border-radius: 6px; }
     .np-figure { width: 96px; height: 96px; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 4px; }
     .np-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }
     .np-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }

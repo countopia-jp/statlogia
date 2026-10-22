@@ -1,756 +1,196 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { splitTitle } from '../lib/split-title.js';
-import Talk from '../components/Talk.astro';
-import { catalog } from '../data/catalog.js';
-import { getPriceData } from '../lib/price.js';
-import { getReadingData } from '../lib/reading.js';
-import { news } from '../data/news.js';
-import { getKakeiPair } from '../lib/kakei-pair.js';
-import { getActivityPair } from '../lib/activity-pair.js';
+// =====================================================
+// Statlogia - 玄関（トップページ）
+// src/pages/index.astro
+// 三つの棟（情報棟・研究棟・講義棟）への入口と、案内人の紹介。
+// =====================================================
 import fs from 'node:fs';
-import { exhibits, PLACES } from '../data/exhibits.js';
-import { EXHIBIT_PAIRS } from '../data/exhibit-pairs.js';
-
-const publishedCount = catalog.filter((c) => c.status === 'published').length;
-
-// 展示の本数は catalog の usedIn から数える（手で直さなくてよいように）
-const exhibitCount = new Set(
-  catalog
-    .flatMap((c) => c.usedIn || [])
-    .filter((u) => u.startsWith('/exhibits/'))
-).size;
-
-// カードの数字も統計から出す（月次の再ビルドで自動的に入れ替わる）
-const price = await getPriceData();
-const priceTop = price.rows[0];
-const foodTop = price.food.rows[0];
-const heatTop = price.heat.rows[0];
-const eduTop = price.education.rows[0];
-// いまの展示：2つをくらべる展示のうち、新しい順に3つ（展示を足せば自動で入れ替わる）
-const slugOf = (href) => href.replace(/^\/exhibits\//, '').replace(/\/$/, '');
-const latest = [...exhibits].sort((x, y) => y.no - x.no).filter((e) => EXHIBIT_PAIRS[slugOf(e.href)]).slice(0, 3);
-const latestCards = [];
-for (const e of latest) {
-  const slug = slugOf(e.href);
-  const pr = EXHIBIT_PAIRS[slug];
-  const d = pr.kind === 'kakei' ? await getKakeiPair(pr.a, pr.b) : await getActivityPair(pr.a, pr.b, pr.stats);
-  const top = d.rows[0];
-  latestCards.push({ ...e, slug, kind: pr.kind, short: pr.short, top, place: PLACES[e.place] || '' });
-}
-// 絵がまだ無い展示のカードは、絵なしで出す
-const hasThumb = (slug) => fs.existsSync(`public/images/exhibits/${slug}-thumb.webp`);
-const reading = await getReadingData();
-const readingTop = reading.rows[0];
-
-const num = (v) => v.toFixed(1);
-
-// ビルドは日本時間で日付を取る（月初03:00 JSTのビルドはUTCだと前月末になるため）
-const buildJst = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
-// 入国印の日付はビルド時のもの（月初の再ビルドで押し直される）
-const stampDate = buildJst.slice(0, 7).replace('-', '.');
-// 数字の取得＝ビルドした日
-const dot = (d) => d.replaceAll('-', '.');
-const fetchedDate = dot(buildJst);
-
-// 今月の一数字：読み込み済みのデータから、月ごとに1つ選ぶ
-const monthlyFacts = [
-  { text: `物価がいちばん高いのは${priceTop.n}。全国平均を100として${num(priceTop.minutes)}です。`, href: '/exhibits/price/' },
-  { text: `食べものの値段がいちばん高いのは${foodTop.n}。全国平均を100として${num(foodTop.minutes)}。`, href: '/exhibits/price/' },
-  { text: `電気やガスの値段がいちばん高いのは${heatTop.n}。全国平均を100として${num(heatTop.minutes)}。`, href: '/exhibits/utility/' },
-  { text: `教育にかかる値段がいちばん高いのは${eduTop.n}。全国平均を100として${num(eduTop.minutes)}。`, href: '/exhibits/education-price/' },
-  { text: `本を読んだ人は全国で${num(reading.national)}％。マンガを読んだ人は${num(reading.manga.national)}％でした。`, href: '/exhibits/reading/' },
-  { text: `本を読む人がいちばん多いのは${readingTop.n}で${num(readingTop.minutes)}％です。`, href: '/exhibits/reading/' },
-];
-const monthlyFact = monthlyFacts[new Date().getMonth() % monthlyFacts.length];
-import { THEMES } from '../data/analysis.js';
+import path from 'node:path';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Talk from '../components/Talk.astro';
 import { ROOM_COUNT } from '../data/page-names.js';
+import { THEMES } from '../data/analysis.js';
+import { news } from '../data/news.js';
+import { INDICATOR_COUNT, TABLE_COUNT } from '../lib/counts.js';
+
+const img = (name) => (fs.existsSync(path.join(process.cwd(), 'public/images', name)) ? `/images/${name}` : null);
+const heroImg = img('icon/research-large.webp');
+const chiakiImg = img('chara/chiaki-stand.webp');
+const hitohaImg = img('chara/hitoha-stand.webp');
+const duoImg = img('chara/duo-walk.webp');
+const wingArt = { info: img('icon/reading-room-thumb.webp'), research: img('icon/research-thumb.webp'), lecture: img('icon/training-thumb.webp') };
+const themeCount = THEMES.length;
+const toolCount = fs.readdirSync(path.join(process.cwd(), 'src/pages/how-to-read'), { withFileTypes: true }).filter((d) => d.isDirectory()).length;
+const updated = (news[0]?.date || '').replace(/-/g, '.');
+const buildJst = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 10).replace(/-/g, '.');
+const stampDate = buildJst.slice(0, 7);
 ---
-<BaseLayout description="都道府県・市区町村で引ける、暮らしの統計サイト。日本の公的統計（e-Stat）を、案内人と一緒に眺めて歩く数字の国、Countopia Stats。">
-  <main>
-    <!-- 製図台の上に、白紙を1枚広げている -->
-    <div class="desk">
-      <div class="sheet">
-        <span class="tape tape-l" aria-hidden="true"></span>
-        <span class="tape tape-r" aria-hidden="true"></span>
-
-        <!-- HERO -->
-        <div class="hero">
-          <div>
-            <div class="hero-title-row">
-              <h1>数字の国へ、<br />ようこそ<span class="num">。</span></h1>
-            </div>
-            <p class="lead"><span><span>Countopia Stats</span><span>（カウントピア・スタッツ）は、</span></span><span><span>都道府県・</span><span>市区町村で引ける、</span><span>暮らしの統計サイト。</span></span><span><span>難しい話は、</span><span>案内人がほどきます。</span></span><span><span>数字の景色を、</span><span>一緒に歩いてください。</span></span></p>
-            <p class="api-count">現在 e-Stat の <b>{publishedCount}</b> 指標をご覧になれます</p>
-          </div>
-          <div class="hero-side">
-            <div class="stamp-area" aria-hidden="true">
-              <div class="stamp">
-                <span class="top">IMMIGRATION</span>
-                <span class="big">COUNTOPIA</span>
-                <span class="big2">STATS</span>
-                <span class="date">{stampDate}</span>
-                <span class="bottom">入国を許可する</span>
-              </div>
-            </div>
-            <img class="hero-chara" src="/images/chara/kei-touko-look.webp"
-                 alt="上を指し示す京と、その先を見上げる橙子"
-                 width="720" height="960" />
-            <a class="tk" href="/exhibits/sleep/"><span class="tk-stub" aria-hidden="true"><b>No.</b><span>001</span></span><span class="tk-main"><span class="tk-k" aria-hidden="true">ADMISSION · 展示</span><span class="tk-t">最初の展示を見る<i aria-hidden="true">→</i></span></span></a>
-          </div>
-        </div>
-
-        <!-- 今月の一数字 -->
-        <a class="today" href={monthlyFact.href}>
-          <span class="today-label">今月の一数字</span>
-          <span class="today-text">{monthlyFact.text}</span>
-          <span class="today-more">→</span>
-        </a>
-        <p class="site-dates"><span>数字の取得 <time datetime={fetchedDate.replaceAll('.', '-')}>{fetchedDate}</time></span></p>
-      </div>
-    </div>
-
-    <!-- 県選択：紙の外、方眼の上に置く -->
-    <div class="hero-row">
-      <form class="hero-search" action="/search/" role="search" onsubmit="location.href='/search/#q='+encodeURIComponent(this.querySelector('input').value);return false">
-        <label for="hero-q">知りたいのは、どの数字？</label>
-        <div class="hero-search-row">
-          <input id="hero-q" type="search" placeholder="例：保育園、家賃、雪" autocomplete="off" required />
-          <button type="submit">たずねる →</button>
-        </div>
-        <p class="hero-search-note">「たずね窓口」で、その数字が載っている窓口と展示をご案内します。</p>
-      </form>
-    </div>
-
-    <!-- 展示 -->
-    <section id="exhibits">
-      <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/icon-exhibit.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
-        <div class="sec-text">
-          <span class="no">EXHIBITS</span>
-          <h2>いまの展示</h2>
+<BaseLayout>
+  <main class="gate">
+    <section class="gate-hero">
+      <div class="notice">
+        <p class="gate-kicker">STATLOGIA ｜ 数字の研究都市</p>
+        <h1>数字の背景を、<br class="pc" />別の数字で読み解く。</h1>
+        <p class="gate-lead"><span class="nw">都道府県・市区町村の統計を引き、くらべ、</span><br class="pc" /><span class="nw">読み解く研究都市です。</span></p>
+        <p class="gate-scale"><span><b>{ROOM_COUNT}</b>の窓口</span><span><b>{TABLE_COUNT}</b>の統計表</span><span><b>{INDICATOR_COUNT.toLocaleString('ja-JP')}</b>の指標</span><a class="gate-src" href="/sources/"><i aria-hidden="true">SOURCES</i>出典一覧<em aria-hidden="true">→</em></a></p>
+        <p class="gate-dates"><span>最終更新 <b>{updated}</b></span><span>数字の取得 <b>{buildJst}</b></span></p>
+        <div class="stamp" aria-hidden="true">
+          <span class="top">RESEARCH PASS</span>
+          <span class="big">STATLOGIA</span>
+          <span class="date">{stampDate}</span>
+          <span class="bottom">入館を許可する</span>
         </div>
       </div>
-      <div class="cards">
-        {latestCards.map((c) => (
-          <a class="card pc" href={c.href}>
-            {hasThumb(c.slug) && <img class="card-img" src={`/images/exhibits/${c.slug}-thumb.webp`} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-            <span class="pc-postmark" aria-hidden="true"><i>EXHIBIT</i><b>{c.no}</b></span>
-            <span class="pc-kind">{c.short}・最多・{c.top.n}</span>
-            {c.kind === 'kakei'
-              ? <span class="pc-num">{c.top.minutes.toLocaleString()}<small>円</small></span>
-              : <span class="pc-num">{c.top.minutes.toFixed(1)}<small>％</small></span>}
-            <h3>{splitTitle(c.title)[1] ? <><span class="h1a">{splitTitle(c.title)[0]}</span><span class="h1b">{splitTitle(c.title)[1]}</span></> : c.title}</h3>
-            <p>{c.lead}</p>
-            <span class="c-place">{c.place}</span>
-          </a>
-        ))}
-      </div>
-      <div class="more-actions">
-        <a class="more-btn" href="/exhibits/">すべての展示を見る（全{exhibitCount}展示）→</a>
-        <a class="more-btn ghost" href="/tower/">展望塔から一望する →</a>
-      </div>
+      {(duoImg || chiakiImg || hitohaImg) && (
+        <div class="gate-figs">
+          <svg class="gate-charts" viewBox="0 0 1000 560" aria-hidden="true" preserveAspectRatio="none">
+            <!-- 壁の模様：一葉の左にレーダー図、上に右上がりの折れ線と点、知秋の前（指し棒の下・足元）に棒グラフ。どれも薄く -->
+            <g fill="none" stroke="#1F2A44" stroke-linecap="round" stroke-linejoin="round" opacity=".07">
+              <path d="M400 200 H860" stroke-width="1.5" />
+              <path d="M420 176 L470 158 L570 136 L670 108 L770 82 L850 58" stroke-width="2.5" />
+              <polygon points="40,178 102,214 102,286 40,322 -22,286 -22,214"/><polygon points="40,214 71,232 71,268 40,286 9,268 9,232" stroke-width="1"/><path d="M40 250 L40 178"/><path d="M40 250 L102 214"/><path d="M40 250 L102 286"/><path d="M40 250 L40 322"/><path d="M40 250 L-22 286"/><path d="M40 250 L-22 214"/><polygon points="40,189 77,228 96,282 40,282 -4,275 6,230" stroke-width="2.2" fill="#1F2A44" fill-opacity=".35"/>
+              <path d="M840 530 H1000" stroke-width="1.5" /><rect x="856" y="455" width="26" height="75" /><rect x="892" y="405" width="26" height="125" /><rect x="928" y="432" width="26" height="98" /><rect x="964" y="365" width="26" height="165" />
+            </g>
+            <g fill="#1F2A44" opacity=".07">
+              <circle cx="445" cy="170" r="3.5" /><circle cx="520" cy="146" r="3.5" /><circle cx="620" cy="120" r="3.5" /><circle cx="720" cy="96" r="3.5" /><circle cx="810" cy="68" r="3.5" />
+            </g>
+            <g fill="none" stroke="#B3402A" stroke-width="1.5" stroke-dasharray="5 9" opacity=".12"><path d="M420 164 L850 72" /></g>
+          </svg>
+          {duoImg ? (
+            <a class="fig-link fig-duo" href="/guide/" title="二人の紹介へ"><img src={duoImg} width="866" height="716" alt="指し棒で先を指して歩く知秋と、クリップボードを抱えて付いていく一葉" /></a>
+          ) : (
+            <>
+              {hitohaImg && <a class="fig-link fig-hitoha" href="/guide/#hitoha" title="一葉の紹介へ"><img src={hitohaImg} width="518" height="1300" alt="眼鏡をかけてクリップボードを抱えた見習い研究員・一葉" /></a>}
+              {chiakiImg && <a class="fig-link fig-chiaki" href="/guide/#chiaki" title="知秋の紹介へ"><img src={chiakiImg} width="539" height="1100" alt="指し棒を担いだ知秋教授" /></a>}
+            </>
+          )}
+        </div>
+      )}
     </section>
 
-    <!-- データの仕組み（橙子の高札） -->
-    <section class="notice-board" aria-label="この国のデータについて">
-      <div class="notice-frame">
-        <picture><source media="(max-width:720px)" srcset="/images/icon/toko-letter.webp" width="1376" height="768" /><img class="notice-figure" src="/images/icon/toko-board.webp"
-             alt="高札に筆で書き入れる橙子" width="1400" height="788" loading="lazy" /></picture>
-        <div class="notice-overlay">
-          <p class="notice-title">この国の数字のこと</p>
-          <p>この国の数字は、すべて政府統計の総合窓口〈e-Stat〉のお国の統計から写しています。</p>
-          <p>ただ、そのまま並べるだけだと、大きな町の陰にかくれて、小さな町のほんとうの姿が見えにくいんです。</p>
-          <p>だから台帳によっては、割合や、人・世帯ごとに均した形に直して、大きな町も小さな町も、同じ物差しで比べられるようにしています。</p>
-          <p>数字は、月のはじめにお国の統計をあらためて、新しいものがあれば写し替えています。どの年の数字かは、台帳ごとの出典に書いてあります。</p>
-          <p class="notice-sign">橙子</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 閲覧室 -->
-    <section id="reading-room">
-      <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/icon-reading.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
-        <div class="sec-text">
-          <span class="no">READING ROOM</span>
-          <h2>閲覧室</h2>
-        </div>
-      </div>
-      <div class="cards">
-        <a class="card" href="/education/">
-          <img class="card-img" src="/images/icon/school-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>学びの登記所</h3>
-          <p>全国の市区町村から選んで、幼稚園から高校までの学校の数字を自分の手で引き出せます。あなたの町に、学校はいくつ？</p>
-          <span class="c-place">閲覧室</span>
-        </a>
-        <a class="card" href="/living/">
-          <img class="card-img" src="/images/icon/living-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>暮らしの見積所</h3>
-          <p>給与、家賃、家の広さ、持ち家率。あなたの県の「暮らしの釣り合い」を、数字でご覧ください。</p>
-          <span class="c-place">閲覧室</span>
-        </a>
-        <a class="card" href="/population/">
-          <img class="card-img" src="/images/icon/population-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <h3>国勢の間</h3>
-          <p>総人口、高齢化率、世帯数、出生率、婚姻率。あなたの県の「人のかたち」を、数字でご覧ください。</p>
-          <span class="c-place">閲覧室</span>
-        </a>
-      </div>
-      <div class="more-actions">
-        <a class="more-btn" href="/dashboard/">閲覧室のご案内（全{ROOM_COUNT}窓口）→</a>
-      </div>
-    </section>
-
-    <!-- 見くらべの間（10-18 閲覧室から独立。閲覧室・展望塔と並ぶ入口） -->
-    <section id="compare">
-      <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/compare-icon.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
-        <div class="sec-text">
-          <span class="no">COMPARE</span>
-          <h2>見くらべの間</h2>
-        </div>
-      </div>
-      <a class="cmp-feature" href="/compare/">
-        <img class="cmp-feature-img" src="/images/icon/compare-large.webp" alt="窓の大きな木造の閲覧室。長い机に色ちがいのしおり紐をはさんだ帳面が並び、橙子が身を乗り出して見くらべる水彩画" width="1376" height="768" loading="lazy" />
-        <span class="cmp-feature-body">
-          <span class="cmp-feature-lead">閲覧室と別館の窓口をまたいで、項目を4つまで選び、47都道府県の値と順位を一つの表に並べます。</span>
-          <span class="cmp-feature-list">
-            <span><b>偏差値・上位◯％</b>単位のちがう項目を、同じ物差しで並べる</span>
-            <span><b>人口あたり</b>数の項目を、人口の大きさをそろえて見る</span>
-            <span><b>散布図と相関</b>二つの項目がそろって動くかを確かめる</span>
-          </span>
-          <span class="cmp-feature-go">見くらべの間へ →</span>
-        </span>
+    <section class="gate-wings" aria-label="三つの棟">
+      <a class="wing" href="/dashboard/">
+        {wingArt.info && <img class="wing-art" src={wingArt.info} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
+        <span class="wing-plate"><b>01</b>INFORMATION WING</span>
+                <h2>情報棟</h2>
+        <p class="wing-role">引く</p>
+        <p class="wing-desc">閲覧室の{ROOM_COUNT}の窓口。県や町を選んで、人口・住まい・仕事・お金・医療・教育・自然の数字を台帳から取り寄せます。</p>
+        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M20 19h24v26H20zM20 27.5h24M20 36h24M29 23.3h6M29 31.8h6M29 40.3h6"/></svg><span class="wing-go">閲覧室へ →</span></span>
+      </a>
+      <a class="wing" href="/analysis/">
+        {wingArt.research && <img class="wing-art" src={wingArt.research} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
+        <span class="wing-plate"><b>02</b>RESEARCH WING</span>
+                <h2>研究棟</h2>
+        <p class="wing-role">考える</p>
+        <p class="wing-desc">見くらべの間で指標を並べ、読み解きの間で{themeCount}のテーマを追う。偏差値、似た県、散布図と相関、増減の分解。</p>
+        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><circle cx="29" cy="29" r="11"/><path d="M37 37l8 8" stroke-width="2.6"/><path d="M22 34l5-4 4 2 6-6" stroke-width="1.6"/><circle cx="24" cy="31" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="28" cy="27" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="32" cy="30" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="35" cy="25" r="1.3" fill="var(--ink)" stroke="none"/></svg><span class="wing-go">研究室へ →</span></span>
+      </a>
+      <a class="wing" href="/how-to-read/">
+        {wingArt.lecture && <img class="wing-art" src={wingArt.lecture} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
+        <span class="wing-plate"><b>03</b>LECTURE WING</span>
+                <h2>講義棟</h2>
+        <p class="wing-role">学ぶ</p>
+        <p class="wing-desc">統計の道具{toolCount}本の使い方。位置と散らばり、伸び率、特化係数、相関、誤差の幅、人口の形。</p>
+        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M18 21h28v20H18zM32 41v5M26 46h12"/><path d="M22 36l6-6 5 4 9-9" stroke-width="2.2"/></svg><span class="wing-go">講義室へ →</span></span>
       </a>
     </section>
 
-    <!-- 読み解きの間 -->
-    <section id="analysis">
-      <div class="sec-head">
-        <img class="sec-icon" src="/images/icon/analysis-icon.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
-        <div class="sec-text">
-          <span class="no">ANALYSIS</span>
-          <h2>読み解きの間</h2>
-        </div>
+    <section class="gate-guide" aria-label="案内人">
+      <div class="gate-guide-text">
+        <p class="gate-kicker">GUIDE</p>
+        <h2>この都市の研究員</h2>
+        <Talk speaker="chiaki">うむ、よく来たね。わたしは知秋。この都市で数字を読む研究員だ。数字から読めることは読み、読めないことは「分からぬ」と言う。それがここの流儀だよ。</Talk>
+        <Talk speaker="hitoha">一葉です。先生の下で見習い中です。分からないことは、その場で先生に聞きます。……先生、どこの国の方ですか？</Talk>
+        <Talk speaker="chiaki">見て分からんのかね。生粋のジャパニーズだ。</Talk>
       </div>
-      <a class="cmp-feature cmp-feature--ana" href="/analysis/">
-        <img class="cmp-feature-img" src="/images/icon/analysis-large.webp" alt="本棚のある木造の書庫。窓辺の机で帳面を開き虫めがねを手にした京が、板壁に糸でつながって下がる5枚の札を見上げる水彩画" width="1376" height="768" loading="lazy" />
-        <span class="cmp-feature-body">
-          <span class="cmp-feature-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。県を一つ選ぶと、問いから結論までが一枚にそろいます。</span>
-          <span class="cmp-feature-list">
-            <span><b>問いから結論まで</b>国の手引きにならい、問い→計画→データ→分析→結論の順に読む</span>
-            <span><b>似た県と並べる</b>数字の並びが近い県を挙げ、全国とくらべるだけでは見えない差を見る</span>
-            <span><b>言えないことも書く</b>数字から言えることと、言えないことを分けて示す</span>
-          </span>
-          <span class="cmp-feature-go">読み解きの間へ（全{THEMES.length}テーマ） →</span>
-        </span>
-      </a>
+      {heroImg && <a class="gate-scene-link" href="/guide/" title="二人の紹介へ"><span class="gate-scene-photo"><img class="gate-scene" src={heroImg} alt="打ちっぱなしコンクリートの研究室。机を挟んで同じ方眼紙を見る一葉と知秋の水彩画" width="1400" height="782" loading="lazy" /></span><span class="gate-scene-cap">二人のことをくわしく →</span></a>}
     </section>
-
-    <!-- 案内人 -->
-    <section id="guide">
-      <div class="sec-head">
-        <div class="sec-text">
-          <span class="no">GUIDE</span>
-          <h2>この国の案内人</h2>
-        </div>
-      </div>
-      <div class="guides">
-        <a class="portrait-link" href="/guide/#kei">
-          <figure class="portrait">
-            <img src="/images/chara/kei-desk.webp" alt="統計局案内人・京。執務室の大机に図表を広げている" width="1400" height="788" loading="lazy" />
-            <figcaption><b>京</b><span class="romaji">KEI</span><span>統計局案内人</span></figcaption>
-          </figure>
-        </a>
-        <a class="portrait-link" href="/guide/#touko">
-          <figure class="portrait">
-            <img src="/images/chara/touko-town.webp" alt="大正から来た子・橙子。町の通りを風呂敷包みを提げて歩いている" width="1400" height="788" loading="lazy" />
-            <figcaption><b>橙子</b><span class="romaji">TOUKO</span><span>大正から来た子</span></figcaption>
-          </figure>
-        </a>
-      </div>
-      <Talk speaker="kei">ようこそCountopia Statsへ。この国では、数字はぜんぶ「景色」です。</Talk>
-      <Talk speaker="touko">まあ……それで、まず何を見ればいいの？</Talk>
-      <Talk speaker="kei">まずは「時間の広場」へどうぞ。日本でいちばん睡眠時間の短い県の話をしましょう。</Talk>
-    </section>
-
   </main>
-  <script is:inline>
-    (function () {
-      var set = function () { document.documentElement.style.setProperty('--sbw', (window.innerWidth - document.documentElement.clientWidth) + 'px'); };
-      set();
-      window.addEventListener('resize', set);
-    })();
-  </script>
+  <style>
+    .gate { max-width: 1312px; padding: 18px 16px 16px; }
+    .gate-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: end; padding: 18px 8px 0; }
+    .notice { position: relative; align-self: start; margin-top: 70px; padding: 34px 40px 30px 36px; background: #FFFDF8; border: 1px solid #D9D4C7; box-shadow: 0 1px 0 #fff inset, 0 6px 18px rgba(31,42,68,.10); transform: rotate(-.6deg); }
+    .notice::before, .notice::after { content: ""; position: absolute; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #e8e8e8, #8d8d8d 60%, #5c5c5c); box-shadow: 0 1px 2px rgba(0,0,0,.35); }
+    .notice::before { left: 22px; } .notice::after { right: 22px; }
+    .gate-kicker { margin: 0; font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .22em; color: var(--stamp); font-weight: 600; }
+    .notice h1 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: clamp(1.5rem, 2.6vw, 2.05rem); line-height: 1.45; margin: 8px 0 12px; }
+    .gate-lead { color: var(--ink-soft); line-height: 1.95; margin: 0; }
+    .gate-lead .nw { display: inline-block; }
+    .gate-scale { margin: 16px 200px 0 0; padding-top: 12px; border-top: 1px dashed #D9D4C7; font-size: .8rem; color: var(--ink-soft); display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: baseline; }
+    .gate-scale b { color: var(--ink); font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 1.1rem; margin-right: .15em; }
+    /* 出典一覧：紙に留めた小さな札。訪問済みでも色を変えない */
+    .gate-src { margin-left: 4px; display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px 4px 8px; border: 1px solid var(--ink); border-radius: 999px; color: var(--ink); background: rgba(255,255,255,.55); text-decoration: none; font-size: .76rem; line-height: 1; transition: background .2s, color .2s, transform .2s; }
+    .gate-src i { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: .58rem; letter-spacing: .18em; padding: 2px 6px; border-radius: 999px; background: var(--ink); color: #fff; }
+    .gate-src em { font-style: normal; transition: transform .2s; }
+    .gate-src:hover, .gate-src:focus-visible { background: var(--ink); color: #fff; }
+    .gate-src:hover i, .gate-src:focus-visible i { background: #fff; color: var(--ink); }
+    .gate-src:hover em, .gate-src:focus-visible em { transform: translateX(3px); }
+    .gate-src:visited { color: var(--ink); }
+    .gate-dates { margin: 8px 200px 0 0; font-size: .74rem; color: var(--ink-soft); display: flex; gap: 18px; }
+    .gate-dates b { color: var(--ink); font-family: "IBM Plex Mono", monospace; font-weight: 600; }
+    .gate-figs { position: relative; display: flex; justify-content: center; align-items: flex-end; gap: 0; padding: 0 2%; margin-top: 90px; }
+    .gate-charts { position: absolute; left: -8%; top: -34%; width: 110%; height: 134%; z-index: 0; pointer-events: none; }
+    .fig-link { position: relative; z-index: 1; }
+    .stamp { position: absolute; right: 14px; bottom: 14px; width: 200px; aspect-ratio: 1; border-radius: 50%; border: 4px double var(--seal); color: var(--seal); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .1em; transform: rotate(-10deg); font-size: 19px; opacity: .92; mix-blend-mode: multiply; animation: stampIn .62s cubic-bezier(.3,.9,.2,1) .45s both; --seal: #2F5D8A; }
+    /* 入館印を「ポン」と押す：上から降りてきて（大きく薄い）、押した瞬間に少し沈み、戻る */
+    @keyframes stampIn {
+      0%   { transform: rotate(-14deg) scale(2.2); opacity: 0; filter: blur(1px); }
+      55%  { transform: rotate(-10deg) scale(.94); opacity: 1; filter: blur(0); }
+      70%  { transform: rotate(-10deg) scale(1.04); opacity: .9; }
+      85%  { transform: rotate(-10deg) scale(.99); opacity: .93; }
+      100% { transform: rotate(-10deg) scale(1); opacity: .92; }
+    }
+    @media (prefers-reduced-motion: reduce) { .stamp { animation: none; } }
+    .stamp .top { font-size: .58em; letter-spacing: .26em; font-weight: 600; }
+    .stamp .big { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 1.25em; letter-spacing: .06em; }
+    .stamp .date { font-family: "IBM Plex Mono", monospace; font-size: .78em; border-top: 1.5px solid var(--seal); border-bottom: 1.5px solid var(--seal); padding: .08em .5em; margin-top: .15em; }
+    .stamp .bottom { font-size: .58em; letter-spacing: .22em; margin-top: .1em; }
+    .gate-figs img { display: block; width: 100%; height: auto; }
+    .fig-link { display: block; transition: transform .15s ease; }
+    .fig-link:hover, .fig-link:focus-visible { transform: translateY(-4px); }
+    .fig-duo { width: 92%; }
+    .fig-hitoha { width: 52%; }
+    .fig-chiaki { width: 28%; margin-left: -3%; }
+    .gate-wings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 30px 8px 0; padding: 0; }
+    .wing { position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 44px 22px 18px; min-height: 290px; background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.75); border-top: 3px solid var(--ink); border-radius: 8px; color: inherit; text-decoration: none; backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 8px 24px rgba(31,42,68,.08), inset 0 1px 0 rgba(255,255,255,.9); transition: transform .15s, box-shadow .15s; }
+    .wing-art { position: absolute; right: -10%; top: -2%; width: 82%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; opacity: .95; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 75% 85% at 70% 30%, #000 40%, transparent 80%); mask-image: radial-gradient(ellipse 75% 85% at 70% 30%, #000 40%, transparent 80%); }
+    .wing > *:not(.wing-art) { position: relative; z-index: 1; }
+    .wing:hover, .wing:focus-visible { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31,42,68,.14), inset 0 1px 0 rgba(255,255,255,.9); }
+    .wing-art { transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .3s; }
+    .wing:hover .wing-art, .wing:focus-visible .wing-art { transform: scale(1.05) translate(-2%, 1%); opacity: 1; }
+    /* 棟らしさ：壁に打った館名板（カードの左端から少しはみ出す）＋建物の線画＋入口の形の案内 */
+    .wing-plate { position: absolute; left: 0; top: 0; z-index: 2; margin: 0; padding: .35em 1em .35em .95em; border-radius: 0 0 6px 0; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .22em; color: #F7F6F2; background: var(--ink); border-radius: 0 3px 3px 0; box-shadow: 0 2px 4px rgba(0,0,0,.18); }
+    .wing-plate b { color: #F0B78A; font-weight: 600; margin-right: .9em; }
+    .wing > .wing-plate { position: absolute; }
+    .wing-foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px; }
+    /* 棟の紋章：紺一色の二重丸に、帳面の棚／方眼紙と虫めがね／黒板と折れ線 */
+    .wing-crest { width: 52px; height: 52px; flex: none; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .55; transition: opacity .2s, transform .3s; }
+    .wing:hover .wing-crest, .wing:focus-visible .wing-crest { opacity: .9; transform: rotate(-6deg); }
+    .wing h2 { font-family: "Shippori Mincho", serif; font-size: 1.5rem; margin: 4px 0 0; }
+    .wing-role { font-size: .8rem; letter-spacing: .3em; color: var(--ink-soft); margin: 0 0 10px; }
+    .wing-desc { font-size: .92rem; line-height: 1.85; color: #333; flex: 1; max-width: 66%; margin-top: 44px; }
+    .wing-go { margin: 0; font-size: .86rem; color: var(--ink); font-weight: 500; padding: .35em 1em .35em .9em; border: 1.5px solid var(--ink); border-radius: 10px 10px 3px 3px; background: rgba(255,255,255,.5); transition: background .2s, color .2s; }
+    .wing:hover .wing-go, .wing:focus-visible .wing-go { background: var(--ink); color: #fff; }
+    .gate-guide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: center; margin: 40px 8px 0; padding: 28px 0 0; border-top: 1px solid var(--line); }
+    .gate-guide h2 { font-family: "Shippori Mincho", serif; font-size: 1.4rem; margin: 6px 0 14px; }
+    /* 研究員の区画の絵はコルクボード：木枠のボードに、白ふちの写真を画鋲で留める。札も画鋲で */
+    .gate-scene-link { position: relative; display: block; color: inherit; text-decoration: none; padding: 28px 28px 52px; border: 6px solid #8a7156; border-radius: 2px; background-color: #D8C09A; background-image: radial-gradient(rgba(110,80,45,.13) .7px, transparent 1px), radial-gradient(rgba(110,80,45,.10) .6px, transparent .9px), radial-gradient(rgba(255,245,225,.45) .6px, transparent .9px), linear-gradient(135deg, rgba(255,255,255,.08), rgba(90,60,30,.06)); background-size: 7px 7px, 11px 13px, 13px 9px, 100% 100%; background-position: 0 0, 3px 5px, 6px 2px, 0 0; box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), inset 0 2px 0 rgba(255,255,255,.18), inset 0 0 34px rgba(90,60,30,.16), 0 12px 28px -10px rgba(31,42,68,.35), 0 2px 5px rgba(0,0,0,.12); transition: transform .25s ease, box-shadow .25s ease; }
+    .gate-scene-link:hover, .gate-scene-link:focus-visible { transform: translateY(-3px); box-shadow: inset 0 0 0 1px rgba(255,255,255,.25), inset 0 2px 0 rgba(255,255,255,.18), inset 0 0 34px rgba(90,60,30,.16), 0 20px 38px -12px rgba(31,42,68,.4), 0 2px 5px rgba(0,0,0,.12); }
+    .gate-scene-photo { position: relative; display: block; padding: 8px 8px 10px; background: #FFFEFA; box-shadow: 0 1px 1px rgba(0,0,0,.12), 0 6px 14px -4px rgba(60,40,20,.35); transform: rotate(-1.8deg); transition: transform .25s ease; }
+    .gate-scene-link:hover .gate-scene-photo, .gate-scene-link:focus-visible .gate-scene-photo { transform: rotate(-.6deg); }
+    .gate-scene-photo::before, .gate-scene-photo::after { content: ""; position: absolute; top: -5px; width: 11px; height: 11px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f0f0f0, #9a9a9a 55%, #5c5c5c); box-shadow: 0 2px 3px rgba(0,0,0,.35), 0 0 0 1px rgba(0,0,0,.08); }
+    .gate-scene-photo::before { left: 14px; } .gate-scene-photo::after { right: 14px; }
+    .gate-scene { display: block; width: 100%; height: auto; border-radius: 0; }
+    .gate-scene-cap { position: absolute; right: 26px; bottom: 13px; font-size: .78rem; letter-spacing: .06em; color: var(--ink); padding: .32em .9em .32em 1.45em; background: #FCFAF2; box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 4px 10px -3px rgba(60,40,20,.4); transform: rotate(1.6deg); }
+    .gate-scene-cap::before { content: ""; position: absolute; left: 7px; top: 50%; width: 9px; height: 9px; margin-top: -5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f4b4a4, #B3402A 60%, #7a2a1c); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
+    @media (max-width: 900px) {
+      .gate-hero, .gate-guide { grid-template-columns: 1fr; }
+      .gate-wings { grid-template-columns: 1fr; }
+      .gate-figs { max-width: 440px; margin: 0 auto; }
+      .gate-charts { display: none; }
+      .notice { margin-top: 18px; padding: 26px 22px 22px; transform: none; }
+      .stamp { position: static; width: 150px; font-size: 14px; margin: 14px 0 -6px auto; }
+        .notice h1 .pc, .gate-lead .pc { display: none; }
+    }
+  </style>
 </BaseLayout>
-<style>
-/* ── 製図台と白紙 ───────────────────── */
-.desk{
-  position:relative;
-  /* 全幅に広げる。100vwは縦のスクロールバーの幅も含むので、その分（--sbw、下のスクリプトで測る）を引く。
-     傾けた白紙の角がはみ出さないよう、横だけ切る */
-  width:calc(100vw - var(--sbw, 0px));
-  margin-left:calc(50% - 50vw + var(--sbw, 0px) / 2);
-  overflow-x:clip;
-  padding:40px 0 56px;
-  margin-bottom:34px;
-  background:
-    repeating-linear-gradient(90deg, rgba(0,0,0,.055) 0 2px, transparent 2px 9px),
-    repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 17px),
-    linear-gradient(180deg, #8b6b49 0%, #7d5d3e 55%, #6f5236 100%);
-  box-shadow:0 22px 30px -14px rgba(30,25,15,.45);
-}
-/* 天板の上面のハイライト */
-.desk::before{
-  content:"";
-  position:absolute;left:0;right:0;top:0;height:5px;
-  background:linear-gradient(180deg,#a88760,#6b5033);
-}
-/* 天板の厚み（小口）。下に張り出して板に見せる */
-.desk::after{
-  content:"";
-  position:absolute;left:0;right:0;top:100%;height:16px;
-  background:
-    repeating-linear-gradient(90deg, rgba(0,0,0,.07) 0 3px, transparent 3px 11px),
-    linear-gradient(180deg, #5f462d 0%, #4c3822 70%, #3f2e1b 100%);
-  box-shadow:0 12px 18px -6px rgba(30,25,15,.5);
-}
-/* 台に広げた1枚の白紙 */
-.sheet{
-  position:relative;
-  max-width:1360px;
-  margin:0 auto;
-  padding:40px 4.5% 44px;
-  background:#FBFAF5;
-  transform:rotate(-.4deg);
-  outline:1px solid rgba(40,30,16,.07);
-  box-shadow:
-    0 1px 2px rgba(28,22,14,.22),
-    0 26px 44px -14px rgba(28,22,14,.5);
-}
-.sheet > *{position:relative;z-index:1}
-/* 留めテープ（左右の上隅に斜めがけ） */
-.tape{
-  position:absolute;top:14px;width:110px;height:24px;
-  background:linear-gradient(180deg, rgba(255,253,242,.78), rgba(238,229,200,.62));
-  border-left:1px solid rgba(255,255,255,.4);
-  border-right:1px solid rgba(255,255,255,.4);
-  box-shadow:0 1px 3px rgba(0,0,0,.2);
-  pointer-events:none;
-}
-.tape-l{left:-34px;transform:rotate(-45deg)}
-.tape-r{right:-34px;transform:rotate(45deg)}
-
-.hero{
-  display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:start;
-  padding:8px 0 0;
-}
-.portrait-link{display:block;text-decoration:none;color:inherit;transition:transform .15s ease}
-.portrait-link:hover{transform:translateY(-3px)}
-@media(max-width:760px){.hero{grid-template-columns:1fr;padding-top:4px}}
-.api-count{
-  display:block;font-family:"IBM Plex Mono",monospace;font-size:.78rem;
-  color:#2d6a4f;letter-spacing:.04em;margin:8px 0 0;
-}
-/* 数字を取りに行った日（紙の右下） */
-.site-dates{
-  display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px 16px;margin:14px 0 0;
-  font-family:"Zen Kaku Gothic New",sans-serif;font-size:.76rem;font-weight:400;letter-spacing:.06em;color:var(--ink-soft);
-}
-.site-dates time{font-family:"IBM Plex Mono",monospace;font-weight:500;color:var(--ink-soft);margin-left:4px}
-/* タイトルの右下にボタンを置く */
-.hero-title-row{display:flex;align-items:flex-end;gap:28px;flex-wrap:wrap}
-h1{
-  font-family:"Shippori Mincho",serif;font-weight:800;
-  font-size:clamp(2rem,5.2vw,3.4rem);line-height:1.35;letter-spacing:.04em;
-  margin:0;
-}
-h1 .num{color:var(--stamp)}
-.lead{margin-top:18px;color:var(--ink-soft);font-size:.98rem;max-width:34em}
-/* 意味のまとまりごとに span で包み、途中で折り返さないようにする */
-.lead span{display:inline-block}
-/* 右カラム：入国印にキャラを重ねる */
-.hero-side{
-  position:relative;
-  display:flex;flex-direction:column;align-items:stretch;
-  margin-top:4px;
-  min-height:340px;
-}
-@media(max-width:760px){
-  .hero-side{margin-top:8px;min-height:300px}
-}
-/* 案内人の立ち絵：スタンプの左下に重ねる */
-.hero-chara{
-  position:absolute;left:-4%;bottom:-16px;
-  width:56%;max-width:230px;height:auto;
-  z-index:2;
-  filter:drop-shadow(0 6px 10px rgba(28,22,14,.14));
-}
-/* 今月の一数字（紙の上・最下段） */
-.today{
-  display:flex;align-items:center;gap:16px;
-  margin:28px 0 0;
-  padding:14px 20px;
-  border:1.5px solid var(--ink);border-radius:12px;
-  background:#fffdf6;text-decoration:none;color:inherit;
-  box-shadow:0 3px 0 var(--ink);
-  transition:transform .15s,box-shadow .15s;
-}
-.today:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--ink)}
-.today-label{
-  flex-shrink:0;font-family:"Shippori Mincho",serif;font-weight:800;
-  font-size:.72rem;letter-spacing:.16em;color:var(--paper);
-  background:var(--ink);border-radius:4px;padding:5px 10px;
-}
-.today-text{
-  flex:1;min-width:0;font-family:"Shippori Mincho",serif;
-  font-size:clamp(.88rem,1.6vw,1.08rem);line-height:1.7;
-}
-.today-more{flex-shrink:0;color:var(--stamp);font-size:1.1rem}
-@media(max-width:600px){
-  .today{flex-direction:column;align-items:flex-start;gap:8px;margin-top:22px}
-  .today-more{align-self:flex-end;margin-top:-24px}
-}
-/* 県選択：紙の外、方眼の上（単独で中央に置く） */
-.hero-row{
-  display:flex;gap:20px;align-items:stretch;flex-wrap:wrap;justify-content:center;
-  max-width:1140px;margin:0 auto 8px;
-}
-.hero-search{
-  width:100%;max-width:520px;flex-shrink:0;
-  padding:14px 16px;border:1px solid var(--line);
-  border-radius:12px;background:#fff9;
-}
-@media(max-width:760px){
-  .hero-search{width:100%}
-}
-.hero-search label{
-  display:block;font-size:.78rem;color:var(--ink-soft);margin-bottom:8px;
-  font-family:"Shippori Mincho",serif;
-}
-.hero-search-row{display:flex;gap:8px;flex-wrap:wrap}
-.hero-search-note{
-  margin-top:8px;font-size:.72rem;color:var(--ink-soft);
-}
-.hero-search select,.hero-search input{
-  flex:1;min-width:120px;padding:7px 9px;border:1px solid var(--line);
-  border-radius:8px;background:#fff;font-size:.85rem;color:inherit;
-}
-.hero-search button{
-  padding:7px 14px;border:1px solid var(--stamp);border-radius:8px;
-  background:var(--stamp);color:#fff;font-size:.82rem;cursor:pointer;
-  white-space:nowrap;
-}
-.hero-search button:hover{opacity:.88}
-/* 入国印は右端に寄せる（左下にキャラが入るぶんの逃げ） */
-.stamp-area{display:flex;justify-content:flex-end;position:relative;z-index:1;padding-right:8%}
-/* 中の文字は em 基準にして円のサイズに追従させる */
-.stamp{
-  width:min(290px,68vw);aspect-ratio:1;border-radius:50%;
-  border:5px double var(--stamp);color:var(--stamp);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.14em;
-  transform:rotate(-8deg);background:#fff5;
-  font-size:min(20px,4.6vw);
-  animation:stampIn .5s cubic-bezier(.2,1.6,.4,1) .3s both;
-}
-@keyframes stampIn{from{transform:rotate(-8deg) scale(1.7);opacity:0}to{transform:rotate(-8deg) scale(1);opacity:1}}
-@media(prefers-reduced-motion:reduce){.stamp{animation:none}}
-.stamp .top{font-size:.62em;letter-spacing:.34em;font-weight:600}
-.stamp .big{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:1.5em;letter-spacing:.08em}
-.stamp .big2{font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:.95em;letter-spacing:.14em;margin-top:-.1em}
-.stamp .date{font-family:"IBM Plex Mono",monospace;font-size:.8em;border-top:1.5px solid var(--stamp);border-bottom:1.5px solid var(--stamp);padding:.1em .6em;margin-top:.22em}
-.stamp .bottom{font-size:.6em;letter-spacing:.28em;margin-top:.1em}
-.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:24px}
-.sec-text{display:flex;flex-direction:column}
-.sec-icon{width:56px;height:56px;object-fit:contain;flex-shrink:0;mix-blend-mode:multiply}
-.sec-head .no{font-family:"IBM Plex Mono",monospace;font-size:.72rem;letter-spacing:.3em;color:var(--stamp)}
-.sec-head h2{font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.5rem;margin:4px 0 0}
-#exhibits,#reading-room,#guide{padding:40px 0}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
-@media(max-width:900px){
-  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:600px){
-  .cards{grid-template-columns:1fr}
-}
-.card{
-  border:1px solid var(--line);border-radius:14px;padding:24px;background:#fff8;
-  display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;
-  transition:transform .15s,box-shadow .15s;
-}
-.card:hover{transform:translateY(-3px);box-shadow:0 6px 18px #0001}
-/* カードの頭に扉絵の縮小版（カードの縁いっぱいに） */
-.card:has(.card-img){overflow:hidden}
-.card-img{
-  display:block;width:calc(100% + 48px);max-width:none;height:auto;aspect-ratio:16/9;object-fit:cover;
-  margin:-24px -24px 4px;border-bottom:1px solid var(--line);
-}
-.card.pc .card-img{margin-top:-22px}
-.card--closed{border-style:dashed;color:var(--ink-soft);background:#f4f4ee88}
-.card--closed:hover{transform:none;box-shadow:none}
-.c-no{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.26em;color:var(--stamp)}
-.card.pc{position:relative;padding-top:22px}
-.pc-postmark{
-  position:absolute;top:14px;right:16px;width:52px;height:52px;
-  border:2px solid #2d6a4f66;border-radius:50%;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  transform:rotate(-14deg);font-family:"IBM Plex Mono",monospace;color:#2d6a4f88;
-  background:#fdfdf8cc;transition:transform .18s,color .18s,border-color .18s;
-}
-.pc-postmark i{font-style:normal;font-size:.44rem;letter-spacing:.16em}
-.pc-postmark b{font-size:.95rem;line-height:1}
-.card.pc:hover .pc-postmark{transform:rotate(-5deg) scale(1.06);color:#2d6a4f;border-color:#2d6a4f}
-/* 数字が何を指すかの極小ラベル（数字の上に置く） */
-.pc-kind{
-  font-size:.62rem;letter-spacing:.16em;color:var(--ink-soft);
-  opacity:.75;margin-bottom:-6px;
-}
-.pc-num{
-  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:2.3rem;
-  color:#1b4332;line-height:1;letter-spacing:-0.02em;margin:2px 0 0;
-}
-.pc-num small{font-size:.85rem;margin-left:3px;color:#b23a2f;font-weight:600}
-.card--closed .c-no{color:var(--ink-soft)}
-.card h3{font-family:"Shippori Mincho",serif;font-size:1.1rem;line-height:1.5}
-.card p{font-size:.85rem;color:var(--ink-soft);line-height:1.7}
-.c-place{font-size:.7rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
-/* 10-18 見くらべの間：閲覧室・展望塔と並ぶ入口として、絵と道具の一覧を大きく置く */
-.cmp-feature{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;align-items:center;padding:20px;border:1px solid var(--line);border-left:5px solid var(--stamp);border-radius:12px;background:#fffdf7;color:inherit;text-decoration:none;transition:transform .15s,box-shadow .15s}
-.cmp-feature:hover,.cmp-feature:focus-visible{transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,40,30,.1)}
-.cmp-feature-img{display:block;width:100%;height:auto;border-radius:8px}
-.cmp-feature-body{display:flex;flex-direction:column;gap:14px}
-.cmp-feature-lead{font-size:1rem;line-height:1.9;color:var(--ink)}
-.cmp-feature-list{display:flex;flex-direction:column;gap:8px}
-.cmp-feature-list span{display:block;font-size:.85rem;line-height:1.7;color:var(--ink-soft);padding-left:12px;border-left:3px solid #e6dcc4}
-.cmp-feature-list b{display:block;font-family:"Shippori Mincho",serif;font-size:.98rem;color:var(--ink)}
-.cmp-feature-go{align-self:flex-start;font-weight:700;color:var(--stamp);font-size:.95rem}
-@media(max-width:760px){.cmp-feature{grid-template-columns:1fr;gap:16px;padding:14px}}
-.cmp-feature--ana{border-left-color:var(--ink)}
-.more-actions{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap}
-.more-btn{
-  display:inline-block;padding:11px 22px;border-radius:8px;
-  border:1px solid var(--stamp);background:var(--stamp);color:#fff;
-  font-size:.85rem;font-weight:600;text-decoration:none;
-  white-space:nowrap;transition:opacity .15s;
-}
-.more-btn:hover{opacity:.88}
-.more-btn.ghost{
-  border-color:#1b4332;background:#1b4332;
-}
-
-/* データの仕組み（橙子の高札）── 板に文字を重ねる */
-.notice-board{max-width:900px;margin:8px auto 40px;padding:0 16px}
-.notice-frame{position:relative;width:100%}
-.notice-figure{display:block;width:100%;height:auto;border-radius:6px}
-.notice-overlay{
-  position:absolute;
-  /* 板の無地部分に収める。橙子は右下寄りなので右側は空ける */
-  left:18%;right:26%;top:20%;bottom:17%;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;gap:.5em;
-  color:#3a3226;
-}
-.notice-overlay p{
-  margin:0;line-height:1.55;
-  font-size:clamp(.62rem,1.55vw,1.02rem);
-  font-family:"Shippori Mincho",serif;
-  text-align:left;
-}
-/* 狭い画面：板に4段落は収まらないので、板を上に見せて本文はその下へ（絶対配置を解除） */
-@media(max-width:720px){
-  .notice-overlay{
-    position:static;
-    left:auto;right:auto;top:auto;bottom:auto;
-    max-width:640px;margin:10px auto 0;padding:0 4px;
-    display:flex;flex-direction:column;justify-content:center;gap:.6em;
-    color:var(--ink-soft);
-  }
-  .notice-overlay p{font-size:.9rem;line-height:1.9;font-family:inherit}
-}
-
-.guides{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin:8px 0 30px}
-@media(max-width:760px){.guides{grid-template-columns:1fr}}
-.portrait{
-  margin:0;background:#fff;border:1px solid var(--line);
-  padding:10px 10px 6px;box-shadow:0 6px 16px #0002;
-  transform:rotate(-1deg);
-}
-.portrait:last-child{transform:rotate(1.2deg)}
-.portrait img{display:block;width:100%;height:auto;border:1px solid var(--line)}
-.portrait figcaption{
-  display:flex;align-items:baseline;gap:10px;padding:8px 4px 4px;
-}
-.portrait figcaption b{font-family:"Shippori Mincho",serif;font-size:1.05rem}
-.portrait figcaption span{font-size:.72rem;letter-spacing:.18em;color:var(--ink-soft)}
-.portrait figcaption .romaji{
-  font-family:"IBM Plex Mono",monospace;font-size:.68rem;font-weight:600;
-  letter-spacing:.14em;color:var(--stamp);
-}
-
-/* ── タブレット調整（761〜1024px）──────── */
-@media(min-width:761px) and (max-width:1024px){
-  .desk{padding:28px 0 48px}
-  .sheet{padding:28px 4.5% 32px}
-  .hero{grid-template-columns:1fr .72fr;gap:24px;padding:4px 0 0}
-  .hero-side{margin-top:4px;min-height:280px}
-  /* 円を縮めれば中の文字も em で追従する */
-  .stamp{width:min(300px,36vw);font-size:min(20px,2.4vw)}
-  .hero-chara{max-width:240px;left:-20%;bottom:-40px}
-  .lead{font-size:.95rem;max-width:none;margin-top:14px}
-  .hero-title-row{gap:20px}
-
-  .today{margin-top:24px}
-
-  .hero-row{gap:16px;max-width:none}
-
-  /* 県選択：縦幅を詰める */
-  .hero-search{
-    width:100%;max-width:520px;min-width:290px;
-    padding:12px 14px;
-    align-self:flex-start;
-  }
-  .hero-search label{margin-bottom:6px;font-size:.76rem}
-  .hero-search-note{margin-top:6px;font-size:.7rem;line-height:1.6}
-  .hero-search select,.hero-search input{padding:6px 8px}
-  .hero-search button{padding:6px 12px}
-
-  /* 橙子の高札：文字を少し大きく */
-  .notice-overlay p{font-size:clamp(.82rem,1.9vw,1.06rem)}
-}
-
-/* ── モバイル調整 ───────────────────── */
-@media(max-width:760px){
-  .desk{padding:18px 0 32px;margin-bottom:22px;box-shadow:0 14px 20px -10px rgba(30,25,15,.42)}
-  .desk::after{height:10px}
-  /* 狭い画面では傾きが横スクロールを生むので止める */
-  .sheet{padding:20px 5% 24px;transform:none;box-shadow:0 10px 24px rgba(28,22,14,.32)}
-  .tape{width:86px;height:20px;top:12px}
-  .tape-l{left:-28px}
-  .tape-r{right:-28px}
-
-  .hero{padding:4px 0 0;gap:20px}
-  /* キャラは左、スタンプは右に振り分ける */
-  .hero-chara{position:absolute;left:auto;right:52%;bottom:-12px;width:44%;max-width:180px}
-  .stamp{width:min(260px,58vw)}
-  .lead{margin-top:14px;font-size:.92rem}
-
-  /* タイトルとボタン：縦積みで詰める */
-  .hero-title-row{gap:14px}
-
-  /* 県選択の行 */
-  .hero-row{gap:14px}
-}
-
-@media(max-width:600px){
-  /* 県選択：ボタンを下に回して横幅を確保 */
-  .hero-search-row{flex-direction:column;align-items:stretch}
-  .hero-search select,.hero-search input{width:100%}
-  .hero-search button{width:100%;padding:9px 14px}
-  .hero-search label{font-size:.85rem}
-  .hero-search-note{font-size:.76rem;line-height:1.8}
-}
-@media(max-width:720px){
-  .notice-overlay{position:relative;inset:auto;display:block;box-sizing:border-box;width:100%;max-width:600px;height:680px;margin:22px auto 0;padding:26px 22px;writing-mode:vertical-rl;text-orientation:mixed;overflow-x:auto;color:#3a3226;background-color:#fdf9ee;background-image:linear-gradient(90deg,rgba(178,58,47,.24) 0 1px,transparent 1px);background-size:28px 100%;background-repeat:repeat-x;background-origin:content-box;background-position:right top;border:1px solid rgba(178,58,47,.25);border-radius:2px;transform:rotate(-.6deg);box-shadow:inset 0 0 0 6px #fdf9ee,inset 0 0 0 7px rgba(178,58,47,.2),0 10px 22px -6px rgba(40,30,16,.35)}
-  .notice-overlay p{font-family:"Shippori Mincho",serif;font-size:14px;line-height:28px;letter-spacing:.06em;color:#3a3226;margin:0;text-indent:1em}
-}
-.notice-title,.notice-sign{display:none}
-@media(max-width:720px){
-  .notice-overlay .notice-title{display:block;font-size:16px;font-weight:700;letter-spacing:.14em;text-indent:2em;margin:0 0 0 28px}
-  .notice-overlay .notice-sign{display:block;text-indent:0;text-align:end;margin:0 0 0 0;padding-bottom:1em;letter-spacing:.2em}
-}
-@media(max-width:359px){
-  .notice-overlay{background-size:26px 100%;padding:24px 12px}
-  .notice-overlay p{font-size:13px;line-height:26px}
-  .notice-overlay .notice-title{font-size:15px;margin-left:26px}
-}
-@media(max-width:600px){
-  .lead>span{display:block}
-}
-/* 10-15 玄関のスマホ表示と指標数 */
-.hero .api-count{display:flex;align-items:baseline;gap:.4em;flex-wrap:wrap;font-family:"Zen Kaku Gothic New",sans-serif;font-size:.86rem;color:var(--ink-soft);letter-spacing:.04em;margin:18px 0 0;padding:8px 2px 10px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);max-width:34em}
-.hero .api-count b{font-family:"Shippori Mincho",serif;font-weight:800;font-size:2.2rem;line-height:1;color:var(--ink);letter-spacing:.02em}
-@media(max-width:600px){
-  .hero{padding-top:14px}
-  .hero>div:first-child{display:flex;flex-direction:column}
-  .hero .hero-title-row{display:contents}
-  .hero .lead{font-size:.95rem;line-height:1.95;margin-top:16px}
-  .hero .lead>span:first-child>span+span{margin-left:-.5em}
-  .hero .api-count{font-size:.78rem;letter-spacing:0;flex-wrap:nowrap;white-space:nowrap;gap:.3em}
-  .hero .api-count b{font-size:1.75rem}
-  .hero .hero-chara{width:52%;max-width:215px;right:48%;bottom:-18px}
-  .hero .hero-side{min-height:330px}
-  .tape{display:none}
-}
-/* 10-15 パソコンでも京と橙子を大きく */
-@media(min-width:1025px){
-  .hero .hero-chara{width:62%;max-width:255px;left:-14%;bottom:-24px}
-  .hero .hero-side{min-height:360px}
-}
-@media(min-width:761px) and (max-width:1024px){
-  .hero .hero-chara{width:62%;max-width:255px}
-}
-/* 10-15 スマホの玄関は見出し・説明文・指標数を中央寄せ */
-@media(max-width:600px){
-  .hero h1{text-align:center;text-indent:1em}
-  .hero .lead{text-align:center;margin-left:auto;margin-right:auto}
-  .hero .lead>span:first-child>span+span{margin-left:0}
-  .hero .api-count{justify-content:center}
-}
-
-@media(min-width:761px) and (max-width:1024px){
-  .hero .stamp-area{padding-right:0}
-  .hero .stamp{width:min(240px,27vw);font-size:min(16px,1.95vw)}
-  .hero .hero-chara{width:86%;max-width:275px;left:-30%;bottom:-106px}
-  .hero .hero-side{min-height:330px}
-}
-
-/* 玄関の入場券ボタン */
-.tk{display:inline-flex;align-items:stretch;text-decoration:none;color:var(--ink);background:#f3ead2;border-radius:6px;box-shadow:0 2px 0 #d9caa3,0 6px 14px rgba(30,58,47,.12);transform:rotate(-2deg);transition:transform .18s,box-shadow .18s;
-  -webkit-mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat;
-  mask:radial-gradient(circle 7px at 0 50%,#0000 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 7px at 100% 50%,#0000 98%,#000) right/51% 100% no-repeat}
-.tk:hover,.tk:focus-visible{transform:rotate(-1deg) translateY(-3px);box-shadow:0 3px 0 #d9caa3,0 10px 20px rgba(30,58,47,.16)}
-.tk:focus-visible{outline:2px solid var(--stamp);outline-offset:4px}
-.tk-stub{padding:12px 14px;border-right:2px dashed #b9a77a;display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:"IBM Plex Mono",monospace;line-height:1.2}
-.tk-stub b{font-size:.62rem;letter-spacing:.2em;color:var(--stamp)}
-.tk-stub span{font-size:1.15rem;font-weight:600}
-.tk-main{padding:13px 24px 12px 18px;line-height:1.4}
-.tk-k{display:block;font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.24em;color:#7a6a45}
-.tk-t{display:block;font-family:"Shippori Mincho",serif;font-weight:800;font-size:1.25rem;margin-top:3px;white-space:nowrap}
-.tk-t i{font-style:normal;color:var(--stamp);margin-left:8px;display:inline-block;transition:transform .18s}
-.tk:hover .tk-t i{transform:translateX(3px)}
-@media(max-width:600px){.tk-t{font-size:1.1rem}.tk-main{padding:11px 18px 10px 14px}}
-
-/* 入場券は京・橙子とスタンプの右下に、控えめに */
-.hero-side .tk{position:absolute;right:4%;bottom:-6px;z-index:3;transform:rotate(-3deg) scale(.86);transform-origin:right bottom}
-.hero-side .tk:hover,.hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.86) translateY(-3px)}
-@media(max-width:760px){
-  .hero-side .tk{position:relative;right:auto;bottom:auto;align-self:flex-end;margin:6px 2% 0 0;transform:rotate(-3deg) scale(.8)}
-  .hero-side .tk:hover{transform:rotate(-2deg) scale(.8) translateY(-3px)}
-}
-
-/* 10-18 パソコン：京・橙子とスタンプを一歩うしろ、左へ */
-@media(min-width:1025px){
-  .hero .stamp-area{padding-right:25%}
-  .hero .stamp{width:266px;font-size:18.3px}
-  .hero .hero-chara{width:62.7%;max-width:259px;left:calc(-30% - 45px);bottom:-22px}
-}
-/* 10-18 タブレット：入場券は京・橙子とスタンプの下（気持ち小さく）。京・橙子はスタンプを基準に置く */
-@media(min-width:761px) and (max-width:1024px){
-  .hero>div:first-child{padding-right:24px;align-self:center;padding-top:24px}
-  .hero .hero-side .tk{top:auto;bottom:0;left:auto;right:calc(min(240px,27vw)*.5675 + 51px);transform:translateX(50%) rotate(-3deg) scale(.8);transform-origin:center bottom}
-  .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:translateX(50%) rotate(-2deg) scale(.8) translateY(-3px)}
-  .hero .hero-chara{width:77.4%;max-width:212px;left:auto;right:calc(min(240px,27vw)*1.135 - 108px);bottom:76px}
-  .hero .hero-side{min-height:420px}
-}
-/* 10-18 スマホ：スタンプを画面の中央に */
-@media(max-width:600px){
-  .hero .stamp-area{justify-content:center;padding-right:0}
-  .hero .hero-chara{width:46%;max-width:190px;right:53%;bottom:-22px}
-}
-/* 10-18 スマホ：入場券は京・橙子に重ねない（縮めて右へ寄せる） */
-@media(max-width:760px){
-  .hero .hero-side .tk{transform:rotate(-3deg) scale(.64);transform-origin:right center;margin-right:1%}
-  .hero .hero-side .tk:hover,.hero .hero-side .tk:focus-visible{transform:rotate(-2deg) scale(.64) translateY(-3px)}
-}
-
-</style>

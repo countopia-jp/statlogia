@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - 教育予算・財政力データ取得モジュール
+// Statlogia - 教育予算・財政力データ取得モジュール
 // src/lib/education-budget.js
 //
 // 社会・人口統計体系 都道府県データ 社会生活統計指標
@@ -51,11 +52,7 @@ function getAppId() {
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
   const url = `${API_BASE}/${path}?${qs.toString()}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`[education-budget.js] API HTTP ${res.status}: ${path}`);
-  }
-  return await res.json();
+  return await cachedJsonFetch(url);
 }
 
 function asArray(x) {

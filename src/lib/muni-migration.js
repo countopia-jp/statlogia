@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - 市区町村版 人口の動き（社会増減）取得モジュール
+// Statlogia - 市区町村版 人口の動き（社会増減）取得モジュール
 // src/lib/muni-migration.js
 //   社会・人口統計体系 市区町村データ 基礎データ A人口 0000020101（# 不要）
 //   社会増減 = 転入(A5101) − 転出(A5102)。率は人口千人あたりで自作計算。
@@ -44,9 +45,7 @@ function getAppId() {
 
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
-  const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
-  if (!res.ok) throw new Error(`[muni-migration.js] API HTTP ${res.status}: ${path}`);
-  return await res.json();
+  return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`);
 }
 
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);

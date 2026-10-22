@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Room from '../../components/Room.astro';
+import { TOWN_MARRIAGE } from '../../data/rooms/town-marriage.js';
+const room = TOWN_MARRIAGE;
+---
+<BaseLayout title={`${room.title}｜Statlogia`} description={room.description} backHref="/dashboard/" backLabel="情報棟">
+  <Room room={room} />
+</BaseLayout>

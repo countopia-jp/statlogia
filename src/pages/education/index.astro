@@ -15,12 +15,12 @@ const yearNote = '2024年度';
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
-<BaseLayout title="学びの登記所｜幼稚園から高校までの数字｜Countopia Stats" description="全国の市区町村を選んで、幼稚園から高校までの学校数・児童生徒数・教員数をご覧いただける窓口。小学校児童数の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="学びの登記所｜幼稚園から高校までの数字｜Statlogia" description="全国の市区町村を選んで、幼稚園から高校までの学校数・児童生徒数・教員数をご覧いただける窓口。小学校児童数の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
   <main class="edu-dash">
     <HeroFig src="/images/icon/school-large.webp" alt="山あいの木造校舎、校庭の一本桜" width={1400} height={781}>
-      <p class="edu-kicker">ダッシュボード</p>
+      <p class="edu-kicker">閲覧室｜学校と学び</p>
       <h1>学びの登記所</h1>
       <p class="edu-lead">
         あなたの町に、学校はいくつあるでしょう。<br />
@@ -28,11 +28,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      当登記所には全国の市区町村の学校数が記録されています。まずは調べたい町を選んでください。
+    <Talk speaker="chiaki">
+      ここには全国の市区町村の学校数が記録されている。まずは調べたい町を選びたまえ。
     </Talk>
-    <Talk speaker="touko">
-      わたくしの通っていた学校も、もう数字になっているのかしら……。
+    <Talk speaker="hitoha">
+      学校の数って、町でそんなに違うものですか。
     </Talk>
 
     <section class="edu-selector" aria-label="自治体の選択">
@@ -61,8 +61,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="studentLineChart" data-growth="level" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine">町を選ぶと、台帳を読み上げます。</span></Talk>
-      <Talk speaker="touko"><span id="toukoLine">どんな町かしら。</span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine">町を選ぶと、台帳を読み上げよう。</span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine">どんな町でしょうか。</span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="citySelect" src="/data/education.json" />
@@ -80,8 +80,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="edu-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="kei">
-      学校の数と、1校あたりの児童数。二つの物差しで、並ぶ顔ぶれは変わります。
+    <Talk speaker="chiaki">
+      学校の数と、1校あたりの児童数。二つの物差しで、並ぶ顔ぶれは変わる。
     </Talk>
 
     <footer class="edu-source">
@@ -144,8 +144,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
       function updateCharacterLines(area) {
         const keiEl = document.getElementById('keiLine');
-        const TOUKO_LINES = ["学校の数も、先生の数も、ちゃんと分かるのね。", "わたくしの学校も、教室はひとつきりですのよ。", "子どもの数まで、学校ごとに数えてあるなんて。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["学校の数も、先生の数も、町ごとに分かるんですね。", "1校あたりの人数で見ると、並びが変わりますね。", "子どもの数まで、学校ごとに数えてあるんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const toukoEl = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const elCount = val(area, 'E2101');
         const elStudents = val(area, 'E2501');
@@ -161,25 +161,25 @@ import GrowthTool from '../../components/GrowthTool.astro';
           const ratio = elStudents / elCount;
           const r = Math.round(ratio);
           if (ratio < medianRatio * 0.4) {
-            kei = `小学校1校あたり約${r}人。全国の中央値（約${Math.round(medianRatio)}人）の半分より少ない町です。`;
-            touko = ['わたくしの学校も、教室はひとつきりですのよ。', '先生は全員の名前どころか、家の犬の名前まで覚えていそうね。'][seed % 2];
+            kei = `小学校1校あたり約${r}人。全国の中央値（約${Math.round(medianRatio)}人）の半分より少ない町だ。`;
+            touko = ['小さな学校ですね。先生が全員の名前を覚えていそうです。', '1校あたりの人数が、ずいぶん少ないんですね。'][seed % 2];
           } else if (ratio > medianRatio * 2) {
-            kei = `小学校1校あたり約${r}人。全国の中央値の2倍を超えています。`;
-            touko = ['一校にこんなに大勢……運動会は壮観でしょうねえ。', 'お昼の給食を配るだけで、ひと仕事になりそうだわ。'][seed % 2];
+            kei = `小学校1校あたり約${r}人。全国の中央値の2倍を超えている。`;
+            touko = ['1校あたりの人数が多いんですね。', '大きな学校が多い町なんですね。'][seed % 2];
           } else {
-            kei = `小学校1校あたり約${r}人。全国の真ん中どころ（中央値は約${Math.round(medianRatio)}人）です。`;
-            touko = ['ちょうど、まん中あたりなのねえ。', '教室の窓から、どんな景色が見えるのでしょうね。'][seed % 2];
+            kei = `小学校1校あたり約${r}人。全国の真ん中どころ（中央値は約${Math.round(medianRatio)}人）だ。`;
+            touko = ['ちょうど、まん中あたりなんですね。', '全国の平均に近い町なんですね。'][seed % 2];
           }
         } else if (hasEl && elCount === 0) {
-          kei = 'この町の小学校は、0校と記されています。';
-          touko = '小学校のない町もあるのね。';
+          kei = 'この町の小学校は、0校と記されている。';
+          touko = '小学校のない町もあるんですね。';
         } else {
-          kei = 'この町の小学校は、この町の値がありません。';
-          touko = '値のない欄もあるのね。';
+          kei = 'この町の小学校は、この町の値がない。';
+          touko = '値のない欄もあるんですね。';
         }
-        if (hasHs && hsCount === 0) kei += ' 高校は0校です。';
-        else if (!hasHs) kei += ' 高校は、この町の値がありません。';
-        if (hasKg && kgCount === 0) touko += ' 幼稚園はないのねえ。';
+        if (hasHs && hsCount === 0) kei += ' 高校は0校だ。';
+        else if (!hasHs) kei += ' 高校は、この町の値がない。';
+        if (hasKg && kgCount === 0) touko += '幼稚園はないんですね。';
 
         keiEl.textContent = kei;
         toukoEl.textContent = touko;

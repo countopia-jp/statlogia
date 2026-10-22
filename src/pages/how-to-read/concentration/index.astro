@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="同じ大きさの業種が、いくつあるか｜統計の歩き方 - Countopia Stats" description="働く人が少ない業種に集まっているか、多くの業種に散らばっているかを1つの数で表すハーフィンダール指数の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="同じ大きさの業種が、いくつあるか｜講義室 - Statlogia" description="働く人が少ない業種に集まっているか、多くの業種に散らばっているかを1つの数で表すハーフィンダール指数の読み方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/concentration-large.webp" alt="駅前から続く町並み。左の通りには同じような工場が並び、右の通りには病院・銀行・八百屋など、いろいろな店や建物が少しずつ並ぶ水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/concentration-large.webp" alt="木の机に大きさの違う木箱が並び、知秋が指し棒で大きい箱を指し、一葉が小さい箱を手に取って見くらべる水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">同じ大きさの</span><span class="nw">業種が、</span><span class="nw">いくつあるか</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、町によって、工場で働く人ばかりのところと、いろいろなお店や会社に分かれて働いているところがあるでしょう。その分かれ方は、数で言えるのかしら。
+    <Talk speaker="hitoha">
+      先生、町によって、工場で働く人ばかりのところと、いろいろなお店や会社に分かれて働いているところがあるでしょう。その分かれ方は、数で言えるのでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      言えます。業種ごとの割合を2乗して足すと、働く人がどれだけ少ない業種に集まっているかが、1つの数になります。
+    <Talk speaker="chiaki-work">
+      言える。業種ごとの割合を2乗して足すと、働く人がどれだけ少ない業種に集まっているかが、1つの数になる。
     </Talk>
 
     <section class="art-diagram">
@@ -50,7 +50,7 @@ import HeroFig from '../../../components/HeroFig.astro';
       <h2>読むときの注意</h2>
       <p>
         集まっていることも、散らばっていることも、それだけで良し悪しは決まりません。
-        数は、業種の分け方で変わります。この国では、経済センサス‐活動調査の事業所で働く人を、産業の大きな分類17区分で数えています。区分を細かくすると、同じ町でも個数は大きくなります。
+        数は、業種の分け方で変わります。この都市では、経済センサス‐活動調査の事業所で働く人を、産業の大きな分類17区分で数えています。区分を細かくすると、同じ町でも個数は大きくなります。
         ちがう分け方で出した数どうしは、比べられません。
       </p>
       <p>
@@ -66,20 +66,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      業種が3つあっても、3個分とはかぎらないのね。
+    <Talk speaker="hitoha">
+      業種が3つあっても、3個分とはかぎらないんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。数えた業種の数ではなく、大きさのそろい方まで入れて数えるのが、この物差しです。
+    <Talk speaker="chiaki-work">
+      うむ。数えた業種の数ではなく、大きさのそろい方まで入れて数えるのが、この物差しだ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/specialization/">町の得意を測る物差し →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

@@ -6,12 +6,12 @@ import { getMuniLanduseData } from '../../lib/muni-landuse.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniLanduseData();
 ---
-<BaseLayout title="わが町の土地の使われ方｜Countopia Stats" description="市区町村を選んで、都市計画の用途地域のうち住まい・商い・工場の土地がそれぞれどれだけあるかをご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の土地の使われ方｜Statlogia" description="市区町村を選んで、都市計画の用途地域のうち住まい・商い・工場の土地がそれぞれどれだけあるかをご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-landuse-large.webp" alt="机に広げた、緑と生成りと朱に色分けされた都市計画図の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜住まいと土地</p>
       <h1>わが町の土地の使われ方</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の土地がどう区分けされているかをご覧ください。<br />
@@ -19,11 +19,11 @@ const data = await getMuniLanduseData();
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは用途地域の窓口です。都市計画法で「ここは住まいのための土地」「ここは工場を建ててよい土地」と定められていて、その広さの内訳が引けます。
+    <Talk speaker="chiaki">
+      こちらは用途地域の窓口だ。都市計画法で「ここは住まいのための土地」「ここは工場を建ててよい土地」と定められていて、その広さの内訳が引ける。
     </Talk>
-    <Talk speaker="touko">
-      町の中にも、決まりごとがあるのねえ。
+    <Talk speaker="hitoha">
+      町の中にも、決まりごとがあるんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -47,8 +47,8 @@ const data = await getMuniLanduseData();
         <canvas id="zoneChart" height="90"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -184,12 +184,12 @@ const data = await getMuniLanduseData();
       function updateLines(a) {
         const houseOnly = a.v[HOUSE_ONLY], house = a.v[HOUSE], shop = a.v[SHOP], factory = a.v[FACTORY];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["住むところ、商うところ、工場のところと、分けてあるのね。", "町の土地の使い方まで、決めてあるの？", "地図に色を塗り分けたみたいね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["住むところ、商うところ、工場のところと、分けてあるんですね。", "用途地域のない町もあるんですね。", "住居系の割合が大きい町が多いんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         if (typeof a.v[ZONE_AREA] !== 'number') {
-          kei.textContent = `${a.n}の用途地域の数字は、この統計にはありません。`;
-          touko.textContent = '町によって、定めのないところもあるのねえ。';
+          kei.textContent = `${a.n}の用途地域の数字は、この統計にはない。`;
+          touko.textContent = '町によって、定めのないところもあるんですね。';
           return;
         }
         const hasLiving = typeof houseOnly === 'number' || typeof house === 'number';
@@ -198,7 +198,7 @@ const data = await getMuniLanduseData();
         parts.push(hasLiving ? `住まいのための土地が${living.toFixed(1)}％` : '住まいのための土地は、この町の値がありません');
         parts.push(typeof shop === 'number' ? `商いの土地が${shop.toFixed(1)}％` : '商いの土地は、この町の値がありません');
         parts.push(typeof factory === 'number' ? `工場の土地が${factory.toFixed(1)}％` : '工場の土地は、この町の値がありません');
-        kei.textContent = `用途地域のうち、${parts.join('、')}です。`;
+        kei.textContent = `用途地域のうち、${parts.join('、')}だ。`;
         const seed = parseInt(a.c, 10) || 0;
         touko.textContent = !hasLiving
           ? '値のない欄もあるのね。'

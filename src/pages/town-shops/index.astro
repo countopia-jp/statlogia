@@ -4,6 +4,6 @@ import Room from '../../components/Room.astro';
 import { TOWN_SHOPS } from '../../data/rooms/town-shops.js';
 const room = TOWN_SHOPS;
 ---
-<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title={`${room.title}｜Statlogia`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
   <Room room={room} />
 </BaseLayout>

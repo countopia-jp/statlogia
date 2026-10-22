@@ -7,12 +7,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniMigrationData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="わが町の人の出入り｜Countopia Stats" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
+<BaseLayout title="わが町の人の出入り｜Statlogia" description="市区町村を選んで、1年間の転入・転出と社会増減をご覧いただける窓口。社会増減率の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="情報棟">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-migration-large.webp" alt="家族が家に帰り着く一方で、一人旅立つ人がいる郊外の道の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">別館・暮らしの台帳</p>
+      <p class="tp-kicker">閲覧室｜人と家族</p>
       <h1>わが町の人の出入り</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
@@ -20,8 +20,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="shiori">
-      春になると、駅の前は就職で出てくる若い人でいっぱいになるんです。ここは、町の人の出入りの帳場ですよ。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かります。
+    <Talk speaker="chiaki">
+      ここは、町の人の出入りの窓口だ。転入から転出を引いた「社会増減」で、1年のあいだにどちらが多かったかが分かる。
     </Talk>
 
     <section class="tp-selector">
@@ -44,7 +44,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="migChart" data-growth="diff" height="120"></canvas>
       </div>
 
-      <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -176,8 +176,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const delta = a.v[3], sr = a.v[SR_I];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["転入と転出は、住民票を移した人の数で数えるんです。", "転入から転出を引いた数が「社会増減」の欄なんですよ。", "生まれた人と亡くなった人の差は、別の欄で数えるんです。"];
-        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["転入と転出は、住民票を移した人の数で数えるんですね。", "転入から転出を引いた数が「社会増減」なんですね。", "生まれた人と亡くなった人の差は、別の欄なんですね。"];
+        // 一葉の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasDelta = typeof delta === 'number';
         let k = '';
@@ -186,7 +186,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
           else if (delta < 0) k = `1年間で、転出が転入を${Math.abs(delta).toLocaleString('ja-JP')}人上回りました。`;
           else k = '転入と転出が、ちょうど釣り合っています。';
         } else {
-          k = '社会増減は、この町の値がありません。';
+          k = '社会増減は、この町の値がない。';
         }
         if (typeof sr === 'number' && Math.abs(sr) >= 15) k += ' 人口千人あたりの増減でみると、動いた人数の多い年でした。';
         kei.textContent = k;

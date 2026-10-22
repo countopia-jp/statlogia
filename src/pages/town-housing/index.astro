@@ -7,12 +7,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniHousingData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="わが町の住まい｜Countopia Stats" description="市区町村を選んで、空き家率・持ち家率・共同住宅の割合・1軒あたりの広さ・家賃をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の住まい｜Statlogia" description="市区町村を選んで、空き家率・持ち家率・共同住宅の割合・1軒あたりの広さ・家賃をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-housing-large.webp" alt="軒を連ねる木造の家並みと、暖簾のかかった家、雨戸を閉じた家を描いた水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜住まいと土地</p>
       <h1>わが町の住まい</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の住まいの数字をご覧ください。<br />
@@ -20,11 +20,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは住まいの窓口です。空き家がどれだけあるか、家を買っている人が多いか借りている人が多いか、1軒あたりの広さはどのくらいか。町ごとに引けます。
+    <Talk speaker="chiaki">
+      こちらは住まいの窓口だ。空き家がどれだけあるか、家を買っている人が多いか借りている人が多いか、1軒あたりの広さはどのくらいか。町ごとに引ける。
     </Talk>
-    <Talk speaker="touko">
-      家のことは、住んでみないと分からないと思っていたけれど。
+    <Talk speaker="hitoha">
+      空き家の割合まで、町ごとに分かるんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -47,8 +47,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="housingChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -64,7 +64,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="tp-note" id="rankNote"></p>
     </section>
 
-    <p class="tp-cross">あわせて見る：<a href="/town-population/">わが町の人口</a>｜<a href="/town-migration/">わが町の人の出入り</a>｜<a href="/exhibits/vacancy/">日本一「空き家が多い」県はどこだ</a></p>
+    <p class="tp-cross">あわせて見る：<a href="/town-population/">わが町の人口</a>｜<a href="/town-migration/">わが町の人の出入り</a></p>
 
     <footer class="tp-source">
       <p>
@@ -179,21 +179,21 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const vacant = a.v[VACANT], own = a.v[OWN], flat = a.v[FLAT], rent = a.v[RENT];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["空き家の数まで、数えてあるのね。", "畳一枚あたりの家賃なんて、面白い測り方ね。", "わたくしの時代の家とは、ずいぶん造りが違うのでしょうね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["空き家の割合は、町でずいぶん違うんですね。", "持ち家と借家の割合は、都市部で逆になるんですね。", "1戸あたりの広さも、町ごとに出ているんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasVacant = typeof vacant === 'number';
         const hasOwn = typeof own === 'number';
         const hasFlat = typeof flat === 'number';
         let k = '';
-        k += hasVacant ? `住宅のうち${vacant.toFixed(1)}％が空き家です。` : '空き家率は、この町の値がありません。';
+        k += hasVacant ? `住宅のうち${vacant.toFixed(1)}％が空き家だ。` : '空き家率は、この町の値がない。';
         if (hasOwn) {
           k += ` 持ち家は${own.toFixed(1)}％、共同住宅は${hasFlat ? flat.toFixed(1) + '％' : 'この町の値がありません'}。`;
         } else {
-          k += ' 持ち家率は、この町の値がありません。';
+          k += ' 持ち家率は、この町の値がない。';
         }
         if (typeof rent !== 'number') {
-          k += ' 1畳当たり家賃は、市と区にのみ数字があります。';
+          k += ' 1畳当たり家賃は、市と区にのみ数字がある。';
         }
         kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;

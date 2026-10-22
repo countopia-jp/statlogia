@@ -1,3 +1,4 @@
+import { cachedJsonFetch } from './estat-cache.js';
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020108';
 // 国勢調査ベースで5年に一度のため、複数時点を確保するには広めに遡る必要がある
@@ -38,9 +39,7 @@ function getAppId() {
 
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
-  const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
-  if (!res.ok) throw new Error(`[muni-commute.js] API HTTP ${res.status}: ${path}`);
-  return await res.json();
+  return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`);
 }
 
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);

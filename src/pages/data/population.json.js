@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 人口・世帯データ静的エンドポイント
+// Statlogia - 人口・世帯データ静的エンドポイント
 // src/pages/data/population.json.js
 //
 // ビルド時に /data/population.json として静的出力される。

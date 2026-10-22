@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - 定番統計（人口・世帯）データ取得モジュール
+// Statlogia - 定番統計（人口・世帯）データ取得モジュール
 // src/lib/population.js
 //
 // 社会・人口統計体系 都道府県データ 基礎データ
@@ -45,11 +46,7 @@ function getAppId() {
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
   const url = `${API_BASE}/${path}?${qs.toString()}`;
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`[population.js] API HTTP ${res.status}: ${path}`);
-  }
-  return await res.json();
+  return await cachedJsonFetch(url);
 }
 
 function asArray(x) {

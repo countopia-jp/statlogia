@@ -1,22 +1,38 @@
 // =====================================================
-// Countopia Stats - 扉絵の上に題と説明を重ねる位置
+// Statlogia - 扉絵の上に題と説明を重ねる位置
 // src/data/hero-pos.js
 //
 // 絵の名前（-large.webp を除いた部分）→ 位置。
-// tt 上の細い帯（題だけを小さく、人物の頭が高い絵向け） / t 上 / tl 左上 / tr 右上 / l 左 / r 右 / c 中央 / under 絵の下（人物が多く重ねる場所がない絵）
-// 人物（京・橙子・栞や、絵の主役の人）に重ならない、空や壁など静かなところを選んである。
+// tt 上の細い帯（題だけを小さく、人物の頭が高い絵向け） / t 上 / tl 左上 / tr 右上 / l 左 / r 右 / c 中央 / bl 左下 / br 右下 / under 絵の下 / under 絵の下（人物が多く重ねる場所がない絵）
+// 人物（知秋・一葉や、絵の主役の人）に重ならない、空や壁など静かなところを選んである。
 // 絵を足したら、ここにも1行足す（書かなければ t）。
 // =====================================================
 export const HERO_POS = {
+  'search': 'tl',
+  'pref-debt': 't',
+  'pref-tax': 't',
+  'town-debt': 't',
+  'town-daynight': 't',
+  'town-foreign': 't',
+  'town-marriage': 't',
+  'pref-foreign': 't',
+  'town-tax': 't',
+  'training': 'tl',
+  'research': 't',
+  'reading-room': 'l',
+  'heavy': 't',
+  'gate': 't',
   'town-income': 'tr',
-  'similar': 'tr',
+  'similar': 'tl',
   'shift-share': 'tt',
-  'sampling-error': 'tt',
-  'correlation': 'tl',
+  'sampling-error': 'tr',
+  'correlation': 'tr',
   'growth': 'tl',
-  'position': 'tr',
+  'position': 'tl',
   'specialization': 't',
-  'small-towns': 'tl',
+  'pyramid': 't',
+  'concentration': 't',
+  'small-towns': 'tr',
   'care-supply': 't',
   'life-family': 't',
   'pref-finance': 'under',
@@ -25,7 +41,7 @@ export const HERO_POS = {
   'pref-workers': 't',
   'town-value': 't',
   'after-school': 'tr',
-  'analysis': 'under',
+  'analysis': 'br',
   'annex': 'c',
   'appliances': 't',
   'average-vs-national': 'tr',
@@ -69,7 +85,6 @@ export const HERO_POS = {
   'pref-spending': 'tr',
   'prices': 't',
   'rate-and-count': 'tl',
-  'reading-room': 'under',
   'school': 't',
   'school-build': 'tr',
   'sky': 't',
@@ -129,7 +144,6 @@ export const EXHIBIT_HERO_POS = {
   'games-crafts': 't',
   'gardening': 't',
   'golf-bowling': 't',
-  'gyoza': 'tl',
   'hiking': 'tr',
   'hobby': 'tr',
   'hogaku-chorus': 'tl',

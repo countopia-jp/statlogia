@@ -6,10 +6,10 @@ import { getMuniCommuteTimeData } from '../../lib/muni-commute-time.js';
 import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCommuteTimeData();
 ---
-<BaseLayout title="通勤に、どれだけかかるか｜Countopia Stats" description="市区町村を選んで、片道の通勤時間が30分未満・1時間以上・1時間30分以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="通勤に、どれだけかかるか｜Statlogia" description="市区町村を選んで、片道の通勤時間が30分未満・1時間以上・1時間30分以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="tp">
     <HeroFig src="/images/icon/town-commute-time-large.webp" alt="朝の郊外の駅のホーム。通勤鞄を提げた人と、電車を待つ人々。遠くまで伸びる線路を描いた水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜働く・通う</p>
       <h1>通勤に、どれだけかかるか</h1>
       <p class="tp-lead">
         市区町村を選んで、その町から通う人が、片道にどれだけの時間をかけているかをご覧ください。<br />
@@ -17,11 +17,11 @@ const data = await getMuniCommuteTimeData();
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは通勤時間の窓口です。働きに出ている世帯を、片道の通勤時間の長さで4つに分けています。となりの窓口が「何で通うか」なら、こちらは「どれだけかかるか」です。
+    <Talk speaker="chiaki">
+      こちらは通勤時間の窓口だ。働きに出ている世帯を、片道の通勤時間の長さで4つに分けている。となりの窓口が「何で通うか」なら、こちらは「どれだけかかるか」だ。
     </Talk>
-    <Talk speaker="touko">
-      同じ町に住んでいても、勤め先が近い人と遠い人がいるものね。
+    <Talk speaker="hitoha">
+      同じ町に住んでいても、勤め先が近い人と遠い人がいるものですね。
     </Talk>
 
     <section class="tp-selector">
@@ -39,8 +39,8 @@ const data = await getMuniCommuteTimeData();
       <h2 id="resultTitle"></h2>
       <div id="cardArea" class="tp-cards tp-cards-4"></div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -54,7 +54,7 @@ const data = await getMuniCommuteTimeData();
       <p class="tp-note" id="rankNote"></p>
     </section>
 
-    <p class="tp-cross">あわせて見る：<a href="/town-commute/">通勤の足は、何か</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/exhibits/commute/">日本一「通勤に時間がかかる」県はどこだ</a></p>
+    <p class="tp-cross">あわせて見る：<a href="/town-commute/">通勤の足は、何か</a>｜<a href="/town-population/">わが町の人口</a></p>
 
     <footer class="tp-source">
       <p>
@@ -139,8 +139,8 @@ const data = await getMuniCommuteTimeData();
       function updateLines(a) {
         const short = a.v[SHORT], long = a.v[LONG], vlong = a.v[VLONG];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["通うのにかかる時間まで、調べてあるの？", "わたくしの時代では、みんな歩いて通っているわ。", "片道の時間を、家ごとに尋ねたのかしら。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["通勤時間まで、町ごとに調べてあるんですね。", "片道1時間以上の世帯が、こんなにあるんですね。", "30分未満の世帯の割合は、町でずいぶん違うんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasShort = typeof short === 'number';
         const hasLong = typeof long === 'number';
@@ -149,23 +149,23 @@ const data = await getMuniCommuteTimeData();
         if (hasLong) {
           k = `片道1時間以上かけて通う世帯は${long.toFixed(1)}％。`;
           if (hasVlong && vlong >= 5) k += ` そのうち1時間30分以上が${vlong.toFixed(1)}％です。`;
-          k += long >= 30 ? ' 30％以上です。'
+          k += long >= 30 ? ' 30％以上だ。'
              : long >= 15 ? ' 15％以上です。'
              : long < 5 ? ' 5％未満です。'
              : '';
         } else {
-          k = '片道1時間以上かけて通う世帯の割合は、この町の値がありません。';
+          k = '片道1時間以上かけて通う世帯の割合は、この町の値がない。';
         }
         if (hasShort && hasLong) {
           const mid = 100 - short - long;
           const biggest = short >= long && short >= mid ? `30分未満で、${short.toFixed(1)}％`
             : mid >= long ? `30分以上1時間未満で、${mid.toFixed(1)}％`
             : `1時間以上で、${long.toFixed(1)}％`;
-          k += ` いちばん多いのは${biggest}を占めます。`;
+          k += ` いちばん多いのは${biggest}を占める。`;
         } else if (hasShort) {
-          k += ` 30分未満の世帯は${short.toFixed(1)}％です。`;
+          k += ` 30分未満の世帯は${short.toFixed(1)}％だ。`;
         } else {
-          k += ' 30分未満の世帯の割合は、この町の値がありません。';
+          k += ' 30分未満の世帯の割合は、この町の値がない。';
         }
         kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;

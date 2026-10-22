@@ -1,6 +1,6 @@
 ---
 // =====================================================
-// Countopia Stats - 教育予算ダッシュボード「教育の帳場」
+// Statlogia - 教育予算ダッシュボード「教育の帳場」
 // src/pages/education-budget/index.astro
 //
 // 都道府県を選んで、財政力指数と教育費のかけ方を見る窓口。
@@ -20,12 +20,12 @@ const yearNote = years.join('・');
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
-<BaseLayout title="教育の帳場｜財政力と教育費｜Countopia Stats" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/annex/" backLabel="暮らしの台帳">
+<BaseLayout title="教育の帳場｜財政力と教育費｜Statlogia" description="都道府県を選んで、財政力指数と、人口1人当たり教育費・児童生徒1人当たりの小中高の経費を並べて見る帳場です。" backHref="/dashboard/" backLabel="情報棟">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="edb-dash">
     <HeroFig src="/images/icon/education-budget-large.webp" alt="天秤の一方に硬貨、もう一方に本とランドセルを載せた静物" width={1400} height={788}>
-      <p class="edb-kicker">別館・暮らしの台帳</p>
+      <p class="edb-kicker">閲覧室｜県のお金</p>
       <h1>教育の帳場</h1>
       <p class="edb-lead">
         財政力指数、教育費、小・中・高それぞれの1人当たり経費。<br />
@@ -33,8 +33,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="shiori">
-      うちの市でも、校舎の建て替えの伝票が回ってくる時期なんです。この帳場では、県の財政力指数と、人口や児童生徒1人あたりの教育費を、並べて見ていただけますよ。財政力指数は、県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った数なんです。1に近いほど、自分の収入でまかなえる割合が大きい計算になります。
+    <Talk speaker="chiaki">
+      ここでは、県の財政力指数と、人口や児童生徒1人あたりの教育費を、並べて見られる。財政力指数は、県が自分で集められる標準的な収入を、標準的な仕事に要るお金で割った数だ。1に近いほど、自分の収入でまかなえる割合が大きい計算になる。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -57,7 +57,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="edbChart" data-growth="diff" height="120"></canvas>
       </div>
 
-      <Talk speaker="shiori"><span id="keiLine">県を選ぶと、帳簿の欄が埋まりますよ。</span> <span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine">県を選ぶと、帳簿の欄が埋まるよ。</span> <span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="pref" selectId="prefSelect" src="/data/education-budget.json" />
@@ -74,8 +74,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="edb-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="shiori">
-      財政力指数の順位と、教育費の順位は、同じ並びにはならないんです。この帳簿だけでは理由までは分かりません。分かるのは、県ごとの並びだけですよ。
+    <Talk speaker="chiaki">
+      財政力指数の順位と、教育費の順位は、同じ並びにはならない。この帳簿だけでは理由までは分からない。分かるのは、県ごとの並びだけだ。
     </Talk>
 
     <p class="edb-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/population/">国勢の間</a></p>
@@ -200,8 +200,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["財政力指数と教育費、二つの帳簿を並べてあるんです。", "1人あたりに直すと、大きな県と小さな県を同じ物差しで見られます。", "教育費の欄には、先生のお給金や校舎の修繕のお金も入るんですよ。"];
-        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["財政力指数と教育費、二つの順位を並べて見るんですね。", "1人あたりに直すと、大きな県と小さな県を同じ物差しで見られるんですね。", "教育費には、先生の給与や校舎の修繕のお金も入るんですね。"];
+        // 一葉の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const financeRank = stats['#D0110101'].rank[area.c];
         const eduRank = stats['#D0331403'].rank[area.c];
@@ -217,14 +217,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
         const band = (r, n) => (r <= 10 ? '上位' : r >= n - 9 ? '下位' : '中ほど');
         if (!hasFin || !hasEdu) {
-          k += ' 二つを並べて見ることはできません。';
-          t = '値のない欄もあるんですよ。';
+          k += ' 二つを並べて見ることはできない。';
+          t = '値のない欄もあるんですね。';
         } else if (band(financeRank, total) === band(eduRank, eduTotal)) {
-          k += ` 二つの順位は、どちらも全国の${band(financeRank, total)}です。`;
-          t = '二つの順位が、同じあたりに並んでいるのね。';
+          k += ` 二つの順位は、どちらも全国の${band(financeRank, total)}だ。`;
+          t = '二つの順位が、同じあたりに並んでいるんですね。';
         } else {
-          k += ` 財政力指数は全国の${band(financeRank, total)}、教育費は${band(eduRank, eduTotal)}です。`;
-          t = '二つの順位が、別のところにあるのね。';
+          k += ` 財政力指数は全国の${band(financeRank, total)}、教育費は${band(eduRank, eduTotal)}だ。`;
+          t = '二つの順位が、別のところにあるんですね。';
         }
 
         kei.textContent = k;

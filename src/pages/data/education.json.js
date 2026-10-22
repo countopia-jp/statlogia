@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia - 教育データ静的エンドポイント
+// Statlogia - 教育データ静的エンドポイント
 // src/pages/data/education.json.js
 //
 // ビルド時に /data/education.json として静的出力される。

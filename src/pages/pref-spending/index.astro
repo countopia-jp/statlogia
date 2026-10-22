@@ -4,6 +4,6 @@ import Room from '../../components/Room.astro';
 import { PREF_SPENDING } from '../../data/rooms/pref-spending.js';
 const room = PREF_SPENDING;
 ---
-<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/annex/" backLabel="暮らしの台帳">
+<BaseLayout title={`${room.title}｜Statlogia`} description={room.description} backHref="/dashboard/" backLabel="情報棟">
   <Room room={room} />
 </BaseLayout>

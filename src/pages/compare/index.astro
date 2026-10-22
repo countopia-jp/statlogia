@@ -1,6 +1,6 @@
 ---
 // =====================================================
-// Countopia Stats - 見くらべの間（窓口をまたいで、項目を並べる）※10-18 「くらべる台」から改名し、閲覧室から独立（玄関の別館の札の横に置く）
+// Statlogia - 見くらべの間（窓口をまたいで、項目を並べる）※10-18 「くらべる台」から改名し、閲覧室から独立（玄関の別館の札の横に置く）
 // src/pages/compare/index.astro
 //
 // 共通エンジンで動く県の窓口（scope:'pref'。10-18から別館の窓口も「別館｜棚」として含める）から、項目を4つまで選び、
@@ -11,26 +11,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { ROOMS } from '../../data/rooms/index.js';
 import HeroFig from '../../components/HeroFig.astro';
-const SHELF_ORDER = ['人と住まい', '近くにあるもの', '働く・通う・暮らす', '空と大地', '仕事と産業', 'わが町をくわしく', '学校と学び', '文化と余暇'];
+const SHELF_ORDER = ['人と家族', '住まいと土地', '暮らしと家計', '働く・通う', '産業と稼ぎ', '田畑・海・観光', '医療・福祉・安全', '学校と学び', '文化と余暇', '空と大地', '県のお金', '町のお金'];
 const rooms = Object.values(ROOMS)
   .filter((r) => r.scope === 'pref')
-  .map((r) => ({ id: r.id, title: r.title, shelf: r.annex ? `別館｜${r.shelf || '暮らしの台帳'}` : r.shelf || 'そのほか' }));
+  .map((r) => ({ id: r.id, title: r.title, shelf: r.shelf || 'そのほか' }));
 const shelves = [...new Set([...SHELF_ORDER, ...rooms.map((r) => r.shelf)])]
-  .filter((s) => rooms.some((r) => r.shelf === s))
-  .sort((a, b) => Number(a.startsWith('別館')) - Number(b.startsWith('別館')));
+  .filter((s) => rooms.some((r) => r.shelf === s));
 const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shelf === s) }));
 ---
-<BaseLayout title="見くらべの間｜Countopia Stats" description="閲覧室と別館の窓口をまたいで、気温・住まい・医療・家計などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べて見くらべる部屋です。" backHref="/" backLabel="玄関">
+<BaseLayout title="見くらべの間｜Statlogia" description="閲覧室の窓口をまたいで、気温・住まい・医療・家計などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べて見くらべる部屋です。" backHref="/" backLabel="玄関">
   <main class="cp">
-    <HeroFig src="/images/icon/compare-large.webp" alt="窓の大きな木造の閲覧室。長い机に色ちがいのしおり紐をはさんだ帳面が並び、橙子が身を乗り出して見くらべる水彩画" width={1376} height={768}>
+    <HeroFig src="/images/icon/compare-large.webp" alt="コンクリートの壁の部屋。木の机に開いた帳面を4冊並べ、一葉が両手をついて見くらべる水彩画" width={1376} height={768}>
       <p class="cp-kicker">COMPARE</p>
       <h1>見くらべの間</h1>
       <p class="cp-lead">窓口をまたいで、項目を4つまで選び、<br />47都道府県の値と順位を一つの表に並べます。</p>
     </HeroFig>
 
-    <Talk speaker="kei">窓口ごとの帳面から、ちがう項目を同じ表に写して並べる部屋です。別館の台帳の項目も選べます。項目を選ぶと、47都道府県の値と順位が横に並びます。</Talk>
-    <Talk speaker="touko">わたくしの頃は、帳面を何冊も机に広げて、指でたどってくらべたものよ。</Talk>
-    <Talk speaker="kei">並べると、よく似た並びの項目が見つかることもあります。ただ、並びが似ていても、片方がもう片方の理由とはかぎりません。</Talk>
+    <Talk speaker="chiaki-work">窓口ごとの帳面から、ちがう項目を同じ表に写して並べる部屋だ。情報棟のどの窓口の項目も選べる。項目を選ぶと、47都道府県の値と順位が横に並ぶ。</Talk>
+    <Talk speaker="hitoha">窓口を行ったり来たりしなくて済むんですね。</Talk>
+    <Talk speaker="chiaki-work">並べると、よく似た並びの項目が見つかることもある。ただ、並びが似ていても、片方がもう片方の理由とはかぎらない。</Talk>
 
     <section class="cp-pick" aria-label="項目を選ぶ">
       {[0, 1, 2, 3].map((k) => (
@@ -79,7 +78,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
       <p class="cp-note">斜めの線は、横の値から縦の値をいちばんよく言い当てる直線（最小二乗法による回帰直線）です。相関係数は−1から1の値で、1に近いほど右上がり、−1に近いほど右下がりにそろって並び、0に近いほど関係が見えないことを表します。「直線から見た差」は、横の値から見込まれる縦の値と、実際の値との差（残差）です。二つの項目がそろって動いていても、片方がもう片方の理由とはかぎりません。人口の多さなど、別のものが両方を動かしていることがあります。</p>
     </section>
 
-    <p class="cp-cross">あわせて見る：<a href="/analysis/">読み解きの間（目的別の分析）</a>｜<a href="/dashboard/">閲覧室の窓口の一覧</a>｜<a href="/search/">たずね窓口</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/">統計の歩き方</a></p>
+    <p class="cp-cross">あわせて見る：<a href="/analysis/">読み解きの間（目的別の分析）</a>｜<a href="/dashboard/">閲覧室の窓口の一覧</a>｜<a href="/search/">案内所</a>｜<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/correlation/">二つの数字が、そろって動くとき</a>｜<a href="/how-to-read/">講義室</a></p>
     <footer class="cp-source"><p>出典：各窓口の出典のとおり（総務省統計局「社会・人口統計体系」ほか）。このページはe-Stat APIで取得した統計データを独自に加工して作成しています。</p></footer>
   </main>
 </BaseLayout>

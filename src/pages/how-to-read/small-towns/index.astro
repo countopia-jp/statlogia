@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="小さな町の1位は、あてにならない｜統計の歩き方 - Countopia Stats" description="人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロット、見込みの数との比、経験ベイズ推定の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="小さな町の1位は、あてにならない｜講義室 - Statlogia" description="人口の少ない町の「人口あたり」は大きく揺れます。ファンネルプロット、見込みの数との比、経験ベイズ推定の読み方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/small-towns-large.webp" alt="山あいの村と遠くの町を見下ろす丘の上の机で、大きな升と、豆がこぼれる小さな升を橙子がのぞきこむ水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/small-towns-large.webp" alt="木の台に置かれた家が数軒だけの町の模型を、一葉がかがんでのぞき込む水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">小さな町の1位は、</span><span class="nw">あてにならない</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、人口10万人あたりの順位を見たら、上のほうに知らない小さな村ばかり並んでいるの。
+    <Talk speaker="hitoha">
+      先生、人口10万人あたりの順位を見たら、上のほうに知らない小さな村ばかり並んでいるんです。
     </Talk>
-    <Talk speaker="kei">
-      人口あたりの数字では、よくあることです。人口が少ないと、数が1つ増えるだけで、割り算の答えが大きく跳ねるのです。
+    <Talk speaker="chiaki-work">
+      人口あたりの数字では、よくあることだ。人口が少ないと、数が1つ増えるだけで、割り算の答えが大きく跳ねるのだ。
     </Talk>
 
     <section class="art-sec">
@@ -90,20 +90,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      小さな村の数字を、少し割り引いて見るということね。
+    <Talk speaker="hitoha">
+      小さな村の数字を、少し割り引いて見るということですね。
     </Talk>
-    <Talk speaker="kei">
-      割り引くというより、揺れのぶんを差し引いて見る、と言うほうが近いでしょうか。村の数字が軽いのではありません。数が少ないぶん、一つひとつの出来事の重みが大きいのです。
+    <Talk speaker="chiaki-work">
+      割り引くというより、揺れのぶんを差し引いて見る、と言うほうが近いだろうか。村の数字が軽いのではない。数が少ないぶん、一つひとつの出来事の重みが大きいのだ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/specialization/">町の得意を測る物差し →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

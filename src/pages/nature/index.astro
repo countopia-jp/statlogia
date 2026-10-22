@@ -4,6 +4,6 @@ import Room from '../../components/Room.astro';
 import { NATURE } from '../../data/rooms/nature.js';
 const room = NATURE;
 ---
-<BaseLayout title={`${room.title}｜Countopia Stats`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title={`${room.title}｜Statlogia`} description={room.description} backHref="/dashboard/" backLabel="閲覧室">
   <Room room={room} />
 </BaseLayout>

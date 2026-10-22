@@ -1,6 +1,6 @@
 ---
 // =====================================================
-// Countopia Stats - 学校情報化ダッシュボード「情報化の帳場」
+// Statlogia - 学校情報化ダッシュボード「情報化の帳場」
 // src/pages/ict/index.astro
 //
 // 都道府県を選んで、学校のICT整備（小中高）を見る窓口。
@@ -20,10 +20,10 @@ const yearNote = years.join('・');
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
-<BaseLayout title="情報化の帳場｜学校のデジタル化｜Countopia Stats" description="都道府県を選んで、学校の学習用パソコン・大型提示装置・デジタル教科書の整備状況を小・中・高ごとに、以前の調査の電子黒板などとあわせてご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="情報化の帳場｜学校のデジタル化｜Statlogia" description="都道府県を選んで、学校の学習用パソコン・大型提示装置・デジタル教科書の整備状況を小・中・高ごとに、以前の調査の電子黒板などとあわせてご覧いただける窓口。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="ict-dash">
     <HeroFig src="/images/icon/ict-large.webp" alt="古い帳場机に並ぶ、タブレット端末・電子黒板・デジタル教科書と算盤や筆" width={1400} height={788}>
-      <p class="ict-kicker">ダッシュボード</p>
+      <p class="ict-kicker">閲覧室｜学校と学び</p>
       <h1>情報化の帳場</h1>
       <p class="ict-lead">
         学習用のパソコン、大きな画面、デジタル教科書。<br />
@@ -31,11 +31,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      当帳場では、学校のデジタル化を小・中・高それぞれで見積もります。GIGAスクールを経て、教室の風景はずいぶん変わりました。
+    <Talk speaker="chiaki">
+      ここでは、学校のデジタル化を小・中・高それぞれで見る。GIGAスクールを経て、教室の風景はずいぶん変わった。
     </Talk>
-    <Talk speaker="touko">
-      黒板が……光るの？　わたくしの時代とは、ずいぶん違うのねえ。
+    <Talk speaker="hitoha">
+      わたしのころは、まだ黒板にチョークでした。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -59,8 +59,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <p class="ict-line-note">※教育用コンピュータ1台を何人で使っているか。右肩下がりは、1台あたりの児童数が減ったことを表します（この数え方は2022年度まで）</p>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine">県を選ぶと、帳面をお出しします。</span></Talk>
-      <Talk speaker="touko"><span id="toukoLine">どんな教室かしら。</span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine">県を選ぶと、帳面を出そう。</span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine">どんな教室でしょうか。</span></Talk>
     </section>
 
     <CompareAddon level="pref" selectId="prefSelect" src="/data/ict.json" />
@@ -86,11 +86,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="ict-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="kei">
-      学習用のパソコン、大型提示装置、デジタル教科書は、それぞれ別の調査の項目です。県ごとの数字を、カードでご覧ください。
+    <Talk speaker="chiaki">
+      学習用のパソコン、大型提示装置、デジタル教科書は、それぞれ別の調査の項目だ。県ごとの数字を、カードで見たまえ。
     </Talk>
-    <Talk speaker="touko">
-      同じ日本でも、教室の景色はずいぶん違うのねえ。
+    <Talk speaker="hitoha">
+      同じ日本でも、教室の景色はずいぶん違うんですね。
     </Talk>
 
     <p class="ict-cross">あわせて見る：<a href="/education/">学びの登記所</a>｜<a href="/education-budget/">教育の帳場</a></p>
@@ -278,8 +278,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
         const toukoEl = document.getElementById('toukoLine');
-        // 橙子は順位に反応しない。大正の目から見た一言（京のセリフで1行を選ぶ）
-        const TOUKO_LINES = ['教室に、そんなに大きな画面があるの？　わたくしの教室は黒板だけよ。', 'わたくしの時代では、石盤に石筆で書くのよ。', '教科書まで、機械で読む時代なのね。'];
+        // 一葉の一言は順位に反応しない。数字への気づきを一つ（知秋の文から1行を選ぶ）
+        const TOUKO_LINES = ['1人1台が、もう当たり前なんですね。', '大型提示装置の整備率は、県でずいぶん違うんですね。', 'デジタル教科書は、まだこれからなんですね。'];
         const dRank = stats['E9417'].rank[area.c];
         const tRank = stats['E9421'].rank[area.c];
         const hasD = typeof dRank === 'number';
@@ -288,7 +288,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
           (hasD ? `大型提示装置のある教室の割合は${stats['E9417'].total}県中${dRank}位、` : '大型提示装置は、この県の値がありません。') +
           (hasT ? `デジタル教科書の整備率は${stats['E9421'].total}県中${tRank}位です。` : 'デジタル教科書は、この県の値がありません。');
         kei.textContent = k;
-        if (!hasD || !hasT) { toukoEl.textContent = '値のない欄もあるのね。'; return; }
+        if (!hasD || !hasT) { toukoEl.textContent = '値のない欄もあるんですね。'; return; }
         let h = 0;
         for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
         toukoEl.textContent = TOUKO_LINES[h % TOUKO_LINES.length];

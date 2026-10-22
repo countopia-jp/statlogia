@@ -1,8 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { catalog } from '../../data/catalog.js';
-import { exhibitNameOf } from '../../data/exhibits.js';
 import { ROOM_NAMES } from '../../data/page-names.js';
+import { INDICATOR_COUNT } from '../../lib/counts.js';
 
 // 統計表の名前。表番号の系統から機械的に決まる
 // （00000101xx=基礎データ / 00000102xx=社会生活統計指標 / 00034xxxxx=社会生活基本調査）
@@ -23,14 +23,15 @@ const surveyName = (id) => {
 };
 const isIndicatorTable = (id) => id.startsWith('00000102') || id.startsWith('00000202');
 
-// 閲覧室の窓口名だけ手で持つ。
-// 展示の名前は exhibits.js の exhibitNameOf から引くので、ここに書かない。
-const pageName = (path) => exhibitNameOf.get(path) || ROOM_NAMES[path] || path;
+// 窓口名は page-names.js から引く。展示（/exhibits/）は Countopia に残したので、ここでは数えない。
+const pageName = (path) => ROOM_NAMES[path] || path;
 
 // 公開済みの指標を、統計表ごとにまとめる
 const groups = new Map();
-for (const c of catalog) {
-  if (c.status !== 'published') continue;
+for (const c0 of catalog) {
+  if (c0.status !== 'published') continue;
+  const c = { ...c0, usedIn: (c0.usedIn || []).filter((p) => !p.startsWith('/exhibits/')) };
+  if (!c.usedIn.length) continue;
   for (const id of Object.values(c.statsDataId || {})) {
     if (!id) continue;
     if (!groups.has(id)) groups.set(id, { id, indicators: [], pages: new Set() });
@@ -43,20 +44,18 @@ const tables = [...groups.values()]
   .map((g) => ({ ...g, pages: [...g.pages].sort() }))
   .sort((a, b) => a.id.localeCompare(b.id));
 
-const indicatorCount = new Set(
-  catalog.filter((c) => c.status === 'published').map((c) => c.key)
-).size;
+const indicatorCount = INDICATOR_COUNT;
 ---
-<BaseLayout title="出典一覧｜Countopia Stats" description="Countopia Statsで使っている政府統計の一覧。統計表ごとに、表番号とe-Statへのリンクをまとめています。" backHref="/about/" backLabel="入国審査場">
+<BaseLayout title="出典一覧｜Statlogia" description="Statlogia で使っている政府統計の一覧。統計表ごとに、表番号とe-Statへのリンクをまとめています。" backHref="/" backLabel="玄関">
   <main>
     <section class="sources">
       <div class="sec-head">
         <span class="no">SOURCES</span>
         <h1>出典一覧</h1>
-        <p class="sub">この国の数字が、どの統計表から来ているか。{tables.length}の表・{indicatorCount}の指標をまとめました。</p>
+        <p class="sub">この都市の数字が、どの統計表から来ているか。{tables.length}の表・{indicatorCount}の指標をまとめました。</p>
       </div>
 
-      <p class="intro">この国の数字は、すべて政府統計の総合窓口〈e-Stat〉から取得しています。表示のために割合や「1人あたり」に直しているものもありますが、もとの数字はここに挙げた統計表のとおりです。確かめたい数字があれば、元の表を直接ご覧ください。</p>
+      <p class="intro">この都市の数字は、すべて政府統計の総合窓口〈e-Stat〉から取得しています。表示のために割合や「1人あたり」に直しているものもありますが、もとの数字はここに挙げた統計表のとおりです。確かめたい数字があれば、元の表を直接ご覧ください。</p>
 
       <p class="note">リンクが切れていた場合は、<strong>表番号</strong>でe-Stat内を検索すると同じ表に辿り着けます。表番号は変わりません。</p>
 

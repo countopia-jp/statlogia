@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 教育予算・財政力データ静的エンドポイント
+// Statlogia - 教育予算・財政力データ静的エンドポイント
 // src/pages/data/education-budget.json.js
 //
 // ビルド時に /data/education-budget.json として静的出力される。

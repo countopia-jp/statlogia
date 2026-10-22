@@ -1,6 +1,6 @@
 ---
 // =====================================================
-// Countopia Stats - 定番統計ダッシュボード「国勢の間」
+// Statlogia - 定番統計ダッシュボード「国勢の間」
 // src/pages/population/index.astro
 //
 // 都道府県を選んで人口・世帯の基礎データを見る窓口。
@@ -24,12 +24,12 @@ import PyramidTool from '../../components/PyramidTool.astro';
 import FutureTool from '../../components/FutureTool.astro';
 ---
 
-<BaseLayout title="国勢の間｜人口と世帯｜Countopia Stats" description="都道府県を選んで、総人口・高齢化率・年少人口率・世帯数・出生率・婚姻率を一枚の台帳でご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="国勢の間｜人口と世帯｜Statlogia" description="都道府県を選んで、総人口・高齢化率・年少人口率・世帯数・出生率・婚姻率を一枚の台帳でご覧いただける窓口。総人口の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="pop-dash">
     <HeroFig src="/images/icon/population-large.webp" alt="丘の上から見おろす、屋根の連なる町並みと遠い山" width={1400} height={788}>
-      <p class="pop-kicker">ダッシュボード</p>
+      <p class="pop-kicker">閲覧室｜人と家族</p>
       <h1>国勢の間</h1>
       <p class="pop-lead">
         総人口、高齢化率、世帯数、出生率、婚姻率。<br />
@@ -37,11 +37,11 @@ import FutureTool from '../../components/FutureTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      当所では、県の人口と世帯のすがたをまとめて見ていただけます。国の基本、と言えば大げさですが。
+    <Talk speaker="chiaki">
+      ここでは、県の人口と世帯のすがたをまとめて見られる。数字の基本のきだ。
     </Talk>
-    <Talk speaker="touko">
-      その土地に、どれくらいの人が暮らしているか、ということね。
+    <Talk speaker="hitoha">
+      その土地に、どれくらいの人が暮らしているか、ということですね。
     </Talk>
 
     <!-- ===== 都道府県セレクタ ===== -->
@@ -64,8 +64,8 @@ import FutureTool from '../../components/FutureTool.astro';
         <canvas id="popChart" data-growth="level" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine">県を選ぶと、台帳をお出しします。</span></Talk>
-      <Talk speaker="touko"><span id="toukoLine">どんな土地かしら。</span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine">県を選ぶと、台帳を出そう。</span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine">どんな土地でしょうか。</span></Talk>
     </section>
 
     <CompareAddon level="pref" selectId="prefSelect" src="/data/population.json" />
@@ -84,11 +84,11 @@ import FutureTool from '../../components/FutureTool.astro';
       <p class="pop-note" id="rankNote"></p>
     </section>
 
-    <Talk speaker="kei">
-      人口の順位と高齢化率の順位は、同じ並びにはなりません。数字を並べてみると、県ごとの違いが見えてきます。
+    <Talk speaker="chiaki">
+      人口の順位と高齢化率の順位は、同じ並びにはならない。数字を並べてみると、県ごとの違いが見えてくる。
     </Talk>
-    <Talk speaker="touko">
-      人が多い県、少ない県。それぞれに、暮らしがあるのねえ。
+    <Talk speaker="hitoha">
+      人が多い県、少ない県。それぞれに、暮らしがあるんですね。
     </Talk>
 
     <p class="pop-cross">あわせて見る：<a href="/living/">暮らしの見積所</a>｜<a href="/education/">学びの登記所</a></p>
@@ -221,8 +221,8 @@ import FutureTool from '../../components/FutureTool.astro';
 
       function updateLines(area) {
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["こんなに大勢の人が、一人ずつ数えてあるのね！", "国勢調査なら知っているわ。ついこのあいだ、はじめて行われたばかりよ。", "お年寄りも子どもも、ちゃんと分けて数えてあるのね。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["人口と高齢化率を、並べて見るんですね。", "国勢調査は5年に一度、全員を数えるんですよね。", "お年寄りも子どもも、分けて数えてあるんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const popRank = stats['A1101'].rank[area.c];
         const agingRank = stats['A1306'].rank[area.c];
@@ -237,22 +237,22 @@ import FutureTool from '../../components/FutureTool.astro';
         let t = '';
 
         if (!hasPop || !hasAging) {
-          t = '値のない欄もあるのね。';
+          t = '値のない欄もあるんですね。';
         } else if (popRank <= 5 && agingRank >= 38) {
-          k += ' 人口が多く、高齢化率は低いほうの県です。';
-          t = ['人口の順位と、高齢化の順位は、そろわないのねえ。', '二つの数字を並べると、見え方が変わるのね。'][seed % 2];
+          k += ' 人口が多く、高齢化率は低いほうの県だ。';
+          t = ['人口の順位と、高齢化の順位は、そろわないんですね。', '二つの数字を並べると、見え方が変わるんですね。'][seed % 2];
         } else if (popRank >= 38 && agingRank <= 10) {
-          k += ' 人口は少なめで、高齢化率は高いほうです。';
-          t = ['どちらの数字も、端のほうにあるのねえ。', '二つとも、まん中からは離れているのね。'][seed % 2];
+          k += ' 人口は少なめで、高齢化率は高いほうだ。';
+          t = ['どちらの数字も、端のほうにあるんですね。', '二つとも、まん中からは離れているんですね。'][seed % 2];
         } else if (agingRank <= 5) {
-          k += ' 高齢化率は全国でも上位です。';
-          t = ['65歳以上の方の割合が、高いほうなのねえ。', 'この県は、上のほうにあるのね。'][seed % 2];
+          k += ' 高齢化率は全国でも上位だ。';
+          t = ['65歳以上の方の割合が、高いほうなんですね。', 'この県は、上のほうにあるんですね。'][seed % 2];
         } else if (agingRank >= 43) {
-          k += ' 高齢化率は全国でも低いほうです。';
-          t = ['65歳以上の方の割合が、低いほうなのねえ。'][0];
+          k += ' 高齢化率は全国でも低いほうだ。';
+          t = ['65歳以上の方の割合が、低いほうなんですね。'][0];
         } else {
-          k += ' 高齢化率は、全国の中ほどです。';
-          t = ['高齢化率は、まん中あたりなのねえ。'][0];
+          k += ' 高齢化率は、全国の中ほどだ。';
+          t = ['高齢化率は、まん中あたりなんですね。'][0];
         }
 
         kei.textContent = k;

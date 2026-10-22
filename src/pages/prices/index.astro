@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/prices-large.webp'));
 // =====================================================
-// Countopia Stats - 物価の帳場
+// Statlogia - 物価の帳場
 // src/pages/prices/index.astro
 //
 // 都道府県を選んで、消費者物価地域差指数の全分類（総合・家賃を除く総合・10大費目）を
@@ -23,10 +23,10 @@ const lastYear = pl.years[pl.years.length - 1];
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
 
-<BaseLayout title="物価の帳場｜Countopia Stats" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="物価の帳場｜Statlogia" description="都道府県を選んで、物価の水準を食料・住居・光熱・教育など分類ごとに、全国平均を100として並べてご覧いただける窓口。分類ごとの移りかわりと、全国の高い県・安い県つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="pl-dash">
     <HeroFig src="/images/icon/prices-large.webp" alt="商店街の八百屋と魚屋で、買い物かごを手に品物を選ぶ人々の水彩画" width={1400} height={788}>
-      <p class="pl-kicker">閲覧室</p>
+      <p class="pl-kicker">閲覧室｜暮らしと家計</p>
       <h1>物価の帳場</h1>
       <p class="pl-lead">
         食料、住居、光熱・水道、教育……。<br />
@@ -34,14 +34,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      当所では、値段の水準を分類ごとに並べます。全国平均を100として、100より大きければ全国より高く、小さければ安い、という見方です。
+    <Talk speaker="chiaki">
+      当所では、値段の水準を分類ごとに並べる。全国平均を100として、100より大きければ全国より高く、小さければ安い、という見方だ。
     </Talk>
-    <Talk speaker="touko">
-      百がまんなかなのね。それなら、わたくしにも読めそうだわ。
+    <Talk speaker="hitoha">
+      百がまんなかなんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。使う量や払ったお金ではなく、同じような品物の「値段」をくらべた数字です。
+    <Talk speaker="chiaki">
+      うむ。使う量や払ったお金ではなく、同じような品物の「値段」をくらべた数字だ。
     </Talk>
 
     <section class="pl-selector" aria-label="都道府県の選択">
@@ -61,8 +61,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="pl-note">まんなかの線が全国平均（100）です。右へのびるほど全国より高く、左へのびるほど安い分類です。<br />棒の目盛りは、県ごとに見やすい幅に合わせています（下の数字が両端の値）。</p>
       <ol class="pl-bars" id="plBars"></ol>
 
-      <Talk speaker="kei"><span id="plKei">県を選ぶと、帳面をお出しします。</span></Talk>
-      <Talk speaker="touko"><span id="plTouko">どんな値段なのかしら。</span></Talk>
+      <Talk speaker="chiaki"><span id="plKei">県を選ぶと、帳面を出そう。</span></Talk>
+      <Talk speaker="hitoha"><span id="plTouko">どんな値段なのでしょうか。</span></Talk>
     </section>
 
     <CompareAddon level="pref" selectId="plPref" src="/data/price-ledger.json" adapter="prices" />
@@ -97,14 +97,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <p class="pl-note">県名を押すと、その県の帳面を開きます。5番目と同じ値の県は、表にいっしょに載せています。</p>
     </section>
 
-    <Talk speaker="touko">
-      同じ県でも、分類によって高かったり安かったりするのねえ。
+    <Talk speaker="hitoha">
+      同じ県でも、分類によって高かったり安かったりするんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。総合の数字ひとつでは見えない並びが、分類ごとに分けると見えてきます。
+    <Talk speaker="chiaki">
+      うむ。総合の数字ひとつでは見えない並びが、分類ごとに分けると見えてくる。
     </Talk>
 
-    <p class="pl-cross">あわせて見る：<a href="/exhibits/price/">日本一「物価が高い」県はどこだ</a>｜<a href="/exhibits/utility/">日本一「電気やガスが高い」県はどこだ</a>｜<a href="/living/">暮らしの見積所</a>｜<a href="/how-to-read/base-100/">100は、円ではない</a></p>
+    <p class="pl-cross">あわせて見る：<a href="/living/">暮らしの見積所</a></p>
 
     <footer class="pl-source">
       <p>
@@ -211,8 +211,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         if (above === vals.length) t = 'まあ、どの分類も100より上なのね。';
         else if (below === vals.length) t = 'どの分類も、100より下なのね。';
         else t = `100より上が${above}つ、下が${below}つ${even ? `、ちょうど100が${even}つ` : ''}。分類によって分かれるのねえ。`;
-        const TOUKO_LINES = ["物の値段を、県ごとにくらべてあるのね。", "わたくしの時代では、お豆腐が一丁いくらだったかしら。", "百を目安に高い安いを見るのね。面白い測り方だわ。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["物の値段を、県ごとにくらべてあるんですね。", "100より上か下かで、全国との差が分かるんですね。", "分類ごとに、並びが変わるんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const plToukoSlot = { set textContent(v) { const el = document.getElementById('plTouko'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('plKei').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         plToukoSlot.textContent = t;
       }

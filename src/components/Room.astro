@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 // =====================================================
-// Countopia Stats - 閲覧室の共通ページ部品
+// Statlogia - 閲覧室の共通ページ部品
 // src/components/Room.astro
 //
 // <Room room={設定} /> だけで、県（scope:'pref'）か町（scope:'town'）の窓口ができる。
@@ -18,16 +18,16 @@ const { room } = Astro.props;
 const data = await getRoomData(room);
 const years = yearSummary(data);
 const isPref = room.scope === 'pref';
-// 栞が続けて話すときは、2つ目以降を左側（別の顔のアイコン）に置いて左右交互にする
-const mergedIntro = room.intro.map(([who, text], i, arr) => [who === 'shiori' && i > 0 && arr[i - 1][0] === 'shiori' && i % 2 === 1 ? 'shiori2' : who, text]);
-// 別館（annex）の窓口は栞がひとりで案内する（順位を言うのも栞。京・橙子は出ない）
+// 重い数字の窓口（room.noRank）：順位・上位下位を出さず、値と全国との比較と推移だけにする
+const noRank = !!room.noRank;
+const mergedIntro = room.intro;
 // 扉絵：public/images/icon/<窓口id>-large.webp を置けば出る（無いあいだは出さない）
 const heroImage = room.image ?? `/images/icon/${room.id}-large.webp`;
 const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 ---
 <main class="rm">
   <HeroFig src={heroImage} alt={room.imageAlt || ''} width={1400} height={788}>
-    <p class="rm-kicker">{room.annex ? '別館' : '閲覧室'}{room.shelf ? `｜${room.shelf}` : ''}</p>
+    <p class="rm-kicker">閲覧室{room.shelf ? `｜${room.shelf}` : ''}</p>
     <h1>{room.title}</h1>
     <p class="rm-lead" set:html={room.lead} />
   </HeroFig>
@@ -48,14 +48,8 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   <section id="rmResult" class="rm-result" hidden aria-live="polite">
     <h2 id="rmTitle"></h2>
     <div class="rm-cards" id="rmCards"></div>
-    {room.annex ? (
-      <Talk speaker="shiori"><span id="rmKei"></span> <span id="rmTouko"></span></Talk>
-    ) : (
-      <>
-        <Talk speaker="kei"><span id="rmKei"></span></Talk>
-        <Talk speaker="touko"><span id="rmTouko"></span></Talk>
-      </>
-    )}
+    <Talk speaker="chiaki-work"><span id="rmKei"></span></Talk>
+    <Talk speaker="hitoha"><span id="rmTouko"></span></Talk>
   </section>
 
   <section id="rmCmpSec" class="rm-cmp" hidden aria-label="ほかの地域とならべる">
@@ -68,7 +62,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     <p class="rm-sim" id="rmSim" hidden></p>
     <ul class="rm-chips" id="rmChips"></ul>
     <div class="rm-cmp-wrap" id="rmCmpWrap" hidden><table class="rm-cmp-table" id="rmCmpTable"></table></div>
-    <p class="rm-note" id="rmCmpNote" hidden>順位は{isPref ? '47都道府県の中' : '全国の市区町村の中'}での順位です。年の書いてある値は、最新の年の値がないため、それより前の年の値です。「近い」地域は比べる相手の目安です。県は総人口の近い順、市区町村は総務省の類似団体の考え方にならい、総人口と産業の構成（国勢調査の第2次＋第3次産業、第3次産業で働く人の割合）の近い順に4つ挙げています。</p>
+    <p class="rm-note" id="rmCmpNote" hidden>{noRank ? 'この窓口では順位を出しません。' : `順位は${isPref ? '47都道府県の中' : '全国の市区町村の中'}での順位です。`}年の書いてある値は、最新の年の値がないため、それより前の年の値です。「近い」地域は比べる相手の目安です。県は総人口の近い順、市区町村は総務省の類似団体の考え方にならい、総人口と産業の構成（国勢調査の第2次＋第3次産業、第3次産業で働く人の割合）の近い順に4つ挙げています。</p>
   </section>
 
   <section id="rmLineSec" class="rm-line-sec" hidden aria-label="移りかわり">
@@ -96,6 +90,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     </section>
   )}
 
+  {!noRank && (
   <section class="rm-ranking" aria-label="上位と下位">
     <h2>{isPref ? '全国の上位と下位' : '上位と下位'}</h2>
     <div class="rm-selector rm-selector--small">
@@ -108,8 +103,9 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     </div>
     <p class="rm-note">名前を押すと、その{isPref ? '県' : '町'}の帳面を開きます。同じ値は同じ順位として並べています。</p>
   </section>
+  )}
 
-  {!isPref && (
+  {!isPref && !noRank && (
     <section class="rm-spread" aria-label="県の中のばらつき">
       <h2>県の中のばらつき</h2>
       <p class="rm-note rm-spread-lead">上の「項目」と「くらべる範囲」に合わせて、同じ県の市区町村どうしで、値がどれだけ散らばっているかを出します。値を小さい順に並べたとき、真ん中の半分の町が入る幅（四分位範囲）で測り、47都道府県で比べます。</p>
@@ -137,7 +133,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 </main>
 
 <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script is:inline define:vars={{ ROOM_ID: room.id, TOUKO: room.annex ? (room.shiori || []) : (room.touko || []), ANNEX: !!room.annex }}>
+<script is:inline define:vars={{ ROOM_ID: room.id, HITOHA: room.hitoha || [], NO_RANK: noRank }}>
 (async function () {
   const res = await fetch(`/data/room-${ROOM_ID}.json`);
   const D = await res.json();
@@ -335,6 +331,9 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
         meta = '<div class="rm-card-meta rm-card-meta--soft">この' + (isPref ? '県' : '町') + 'の値はありません</div>';
       } else if (a.x) {
         meta = '<div class="rm-card-meta rm-card-meta--soft">政令市の区のため順位は出しません</div>';
+      } else if (isLatest && NO_RANK) {
+        const nat = isPref ? D.national[ind.key][L(ind)] : null;
+        meta = nat === null ? '' : `<div class="rm-card-meta rm-card-meta--soft">${D.nationalIsAvg && D.nationalIsAvg[ind.key] ? '47都道府県の平均' : '全国'} <span>${fmtText(ind, nat)}</span></div>`;
       } else if (isLatest) {
         const all = poolOf(ind);
         const rk = rankIn(ind, a, all);
@@ -475,7 +474,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
         const lk = lastKnown(a, ind);
         if (!lk) return '<td>—</td>';
         const old = lk.i !== L(ind);
-        const rk = !old && !a.x ? rankIn(ind, a, pool) : null;
+        const rk = !old && !a.x && !NO_RANK ? rankIn(ind, a, pool) : null;
         return `<td><b>${fmtText(ind, lk.v)}</b>${old ? `<small>${ind.yearLabels[lk.i]}</small>` : ''}${rk ? `<small>${rk}位</small>` : ''}</td>`;
       }).join('');
       return `<tr><th scope="row">${ind.label}<small>${ind.yearLabels[L(ind)]}</small></th>${tds}</tr>`;
@@ -483,26 +482,26 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     document.getElementById('rmCmpTable').innerHTML = `<thead><tr><th scope="col">項目</th>${th}</tr></thead><tbody>${rows}</tbody>`;
   }
 
-  // 橙子の一言は順位を言い直さず、その窓口の数字への驚きや感心を言う（町を選ぶたびに入れ替わる）
-  // 別館では栞（昭和36年ごろの市役所の統計係）が、帳簿の欄の読み方を一言添える（評価や理由は言わない）
-  const TOUKO_COMMON = ANNEX
-    ? ['欄の名前を、ひとつずつ確かめてみてくださいね。', '割合の欄は、合計を100として分けた数なんです。', '年によって数え方が変わる欄もあるので、注にも目を通してくださいね。']
-    : ['こんなことまで、ちゃんと数えてあるのね！', '帳面をめくるだけで、遠くの町のことが分かるなんて。', 'わたくしの時代にも、こんな台帳があったら便利なのに。'];
-  const toukoLine = (a) => { const pool = TOUKO.length ? TOUKO : TOUKO_COMMON; return pool[(parseInt(a.c, 10) || 0) % pool.length]; };
+  // 一葉の一言は順位を言い直さず、その窓口の数字への気づきや問いを言う（地域を選ぶたびに入れ替わる）
+  const TOUKO_COMMON = ['ここまで細かく数えてあるんですね。', '隣の項目と並べると、見え方が変わりそうです。', '順位より先に、値そのものを見たほうがいいですか。'];
+  const toukoLine = (a) => { const pool = HITOHA.length ? HITOHA : TOUKO_COMMON; return pool[(parseInt(a.c, 10) || 0) % pool.length]; };
   function lines(a, ranks) {
     const kei = document.getElementById('rmKei');
     const touko = document.getElementById('rmTouko');
     const name = isPref ? a.n : shortName(a);
+    if (NO_RANK) {
+      kei.textContent = `${name}の数字だ。この窓口では順位をつけない。全国の値と、年ごとの移りかわりで見てほしい。`;
+      touko.textContent = '順位ではなく、推移で読むんですね。';
+      return;
+    }
     if (ranks.length === 0) {
-      kei.textContent = a.x ? `${name}は政令指定都市の区なので、数字だけをお出しして、順位はつけていません。` : `${name}は、最新の年の値がそろっていません。`;
-      touko.textContent = ANNEX
-        ? (a.x ? '区ごとの数字も、帳簿に載っているんですよ。' : '値の入っていない欄もあるんです。')
-        : (a.x ? '区ごとの数字も、見られるのね。' : '値のない欄もあるのね。');
+      kei.textContent = a.x ? `${name}は政令指定都市の区なので、数字だけを出して、順位はつけていない。` : `${name}は、最新の年の値がそろっていない。`;
+      touko.textContent = a.x ? '区ごとの数字も、見られるんですね。' : '値のない欄もあるんですね。';
       return;
     }
     if (ranks.length === 1) {
       const x = ranks[0];
-      kei.textContent = `${name}の「${x.ind.label}」は、${x.n}${isPref ? '都道府県' : 'の市区町村'}のなかで${x.rk}番目（${x.ind.rankWord}）です。`;
+      kei.textContent = `${name}の「${x.ind.label}」は、${x.n}${isPref ? '都道府県' : 'の市区町村'}のなかで${x.rk}番目（${x.ind.rankWord}）だ。`;
       touko.textContent = toukoLine(a);
       return;
     }
@@ -521,16 +520,16 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const allTop = pos.every((x) => x.p <= 0.15);
     const allBottom = pos.every((x) => x.p >= 0.85);
     if (allTop) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで上のほうにあり、${rkRange}番目${sameWord}です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで上のほうにあり、${rkRange}番目${sameWord}だ。`;
     } else if (allBottom) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${rkRange}番目${sameWord}です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで下のほうにあり、${rkRange}番目${sameWord}だ。`;
     } else if (allMiddle) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${rkRange}番目${sameWord}にあります。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで、まんなかあたりの${rkRange}番目${sameWord}にある。`;
     } else if (pos.every((x) => x.p >= 0.5)) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${rkRange}番目${sameWord}にあります。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで下半分、${rkRange}番目${sameWord}にある。`;
     } else if (pos.every((x) => x.p <= 0.5)) {
-      kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${rkRange}番目${sameWord}にあります。`;
-    } else kei.textContent = `${name}の項目のうち、順位がいちばん上なのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下なのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）です。`;
+      kei.textContent = `${name}は、どの項目も${among}のなかで上半分、${rkRange}番目${sameWord}にある。`;
+    } else kei.textContent = `${name}の項目のうち、順位がいちばん上なのは「${top.ind.label}」で、${top.n}${unitWord}中${top.rk}番目（${top.ind.rankWord}）。いちばん下なのは「${bot.ind.label}」で、${bot.n}${unitWord}中${bot.rk}番目（${bot.ind.rankWord}）だ。`;
     touko.textContent = toukoLine(a);
   }
 
@@ -730,7 +729,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 
   // ---- 上位と下位 ----
   const indSel = document.getElementById('rmRankInd');
-  for (const ind of IND) { const o = document.createElement('option'); o.value = ind.key; o.textContent = ind.label; indSel.appendChild(o); }
+  if (indSel) for (const ind of IND) { const o = document.createElement('option'); o.value = ind.key; o.textContent = ind.label; indSel.appendChild(o); }
   const scopeSel = document.getElementById('rmRankScope');
   function updateScopeOptions() {
     if (!scopeSel) return;
@@ -747,6 +746,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     return keep.length > CAP ? { shown: keep.slice(0, 5), rest: keep.length - 5 } : { shown: keep, rest: 0 };
   }
   function showRank() {
+    if (!indSel) return;
     const ind = IND.find((i) => i.key === indSel.value) || IND[0];
     if (!ind) return;
     const pref = scopeSel && scopeSel.value !== 'all' ? scopeSel.value : null;
@@ -845,7 +845,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       ${svg}<p class="rm-spread-ends"><span>${shortName(lo.a)} ${f(lo.v)}</span><span>${shortName(hi.a)} ${f(hi.v)}</span></p>
       <p class="rm-note">点は${PREF_NAMES[pref]}の市区町村、箱は真ん中の半分、縦の線は中央値です。${curO ? `赤い点が${shortName(curO.a)}です。` : ''}人口の少ない町は値が大きく揺れやすいので、両端の町だけで県の散らばりを判断しないでください。幅の大小に良し悪しはありません。</p>`;
   }
-  indSel.addEventListener('change', showRank);
+  if (indSel) indSel.addEventListener('change', showRank);
   if (scopeSel) scopeSel.addEventListener('change', showRank);
   showRank();
 

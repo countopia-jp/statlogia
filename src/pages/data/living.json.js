@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 暮らしデータ静的エンドポイント
+// Statlogia - 暮らしデータ静的エンドポイント
 // src/pages/data/living.json.js
 //
 // ビルド時に /data/living.json として静的出力される。

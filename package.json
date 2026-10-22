@@ -1,11 +1,12 @@
 {
-  "name": "countopia",
+  "name": "statlogia",
   "type": "module",
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "build:quick": "SKIP_CHECK=1 astro build",
+    "build:fresh": "SKIP_CHECK=1 ESTAT_FRESH=1 astro build",
     "preview": "astro preview"
   },
   "dependencies": {

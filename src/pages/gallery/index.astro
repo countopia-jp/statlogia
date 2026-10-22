@@ -1,0 +1,91 @@
+---
+// =====================================================
+// Statlogia - 日々のイラスト集の入口（/gallery/）
+// 二人の最新の一枚をカードにして、それぞれのギャラリーへ案内する。中身は src/data/gallery.js
+// =====================================================
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { PEOPLE, GALLERY, galleryOf } from '../../data/gallery.js';
+// 「新しい絵」は同じファイル（二人並びの絵）を1回だけ。名前は併記
+const sorted = [...GALLERY].sort((a, b) => (a.date < b.date ? 1 : -1));
+const seen = new Map();
+for (const g of sorted) {
+  if (!seen.has(g.file)) seen.set(g.file, { ...g, whos: [g.who] });
+  else seen.get(g.file).whos.push(g.who);
+}
+const recent = [...seen.values()].slice(0, 6);
+// 二人のカードの顔は、その人だけが写っている最新の絵（二人並びは避ける）
+const soloOf = (who) => {
+  const items = galleryOf(who);
+  return items.find((g) => sorted.filter((x) => x.file === g.file).length === 1) || items[0];
+};
+---
+<BaseLayout title="日々のイラスト集｜Statlogia" description="知秋と一葉の、数字のない時間の記録。研究室の外での二人のイラスト集です。" backHref="/guide/" backLabel="研究員">
+  <main class="gx">
+    <header class="gx-hero">
+      <p class="gx-kicker">GALLERY</p>
+      <h1>日々のイラスト集</h1>
+      <p class="gx-lead">白衣を着たまま、数字のない時間を過ごす二人の記録です。</p>
+    </header>
+
+    <section class="gx-people" aria-label="研究員ごとのイラスト集">
+      {Object.entries(PEOPLE).map(([who, p]) => {
+        const items = galleryOf(who);
+        const top = soloOf(who);
+        return (
+          <a class="gx-person" href={`/gallery/${who}/`}>
+            {top && <img src={`/images/chara/${top.file}`} alt={`${p.name}：${top.title}`} width={top.w} height={top.h} loading="lazy" />}
+            <span class="gx-person-body">
+              <span class="gx-person-no">{p.romaji}</span>
+              <b>{p.title}</b>
+              <span class="gx-person-n">{items.length}枚</span>
+            </span>
+          </a>
+        );
+      })}
+    </section>
+
+    <section class="gx-recent" aria-label="新しい絵">
+      <h2>新しい絵</h2>
+      <ol class="gx-list">
+        {recent.map((g) => (
+          <li>
+            <a href={`/gallery/${g.who}/`}>
+              <img src={`/images/chara/${g.file}`} alt={`${g.whos.map((w) => PEOPLE[w].name).join('・')}：${g.title}`} width={g.w} height={g.h} loading="lazy" />
+              <span><b>{g.title}</b><small>{g.whos.map((w) => PEOPLE[w].name).join('・')}</small></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <p class="gx-foot"><a href="/guide/">研究員の紹介へ →</a></p>
+  </main>
+  <style>
+    .gx { max-width: 1040px; margin: 0 auto; padding: 0 16px 56px; }
+    .gx-hero { text-align: center; padding: 32px 0 8px; }
+    .gx-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .74rem; color: var(--stamp); font-weight: 600; margin: 0; }
+    .gx-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 10px; }
+    .gx-lead { color: var(--ink-soft); margin: 0; }
+    .gx-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin: 28px 0 0; padding: 0; }
+    .gx-person { display: block; position: relative; overflow: hidden; border-radius: 8px; border: 1px solid #D9D4C7; background: #FFFDF8; box-shadow: 0 4px 14px rgba(31,42,68,.08); color: inherit; text-decoration: none; transition: transform .15s ease; }
+    .gx-person:hover, .gx-person:focus-visible { transform: translateY(-3px); }
+    .gx-person img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; }
+    .gx-person img, .gx-list img { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+    .gx-person:hover img, .gx-person:focus-visible img { transform: scale(1.05); }
+    .gx-list a:hover img, .gx-list a:focus-visible img { transform: scale(1.03) rotate(-.6deg); }
+    .gx-person-body { display: flex; align-items: baseline; gap: 12px; padding: 12px 16px 14px; }
+    .gx-person-no { font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .2em; color: var(--stamp); font-weight: 600; }
+    .gx-person-body b { font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
+    .gx-person-n { margin-left: auto; font-size: .8rem; color: var(--ink-soft); }
+    .gx-recent { margin-top: 40px; padding: 0; }
+    .gx-recent h2 { font-family: "Shippori Mincho", serif; font-size: 1.1rem; border-left: 4px solid var(--ink); padding-left: 10px; margin: 0 0 14px; }
+    .gx-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .gx-list a { display: block; color: inherit; text-decoration: none; }
+    .gx-list img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; border: 1px solid #D9D4C7; }
+    .gx-list span { display: flex; gap: 8px; align-items: baseline; font-size: .84rem; margin-top: 6px; }
+    .gx-list small { margin-left: auto; color: var(--ink-soft); }
+    .gx-foot { margin-top: 36px; text-align: center; font-size: .9rem; }
+    .gx-foot a, .gx-foot a:visited { color: var(--ink); }
+    @media (max-width: 720px) { .gx-people { grid-template-columns: 1fr; } .gx-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  </style>
+</BaseLayout>

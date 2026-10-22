@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 閲覧室・別館の窓口の表示名（パス→名前）
+// Statlogia - 閲覧室の窓口の表示名（パス→名前）
 // src/data/page-names.js
 //
 // 出典一覧とたずね窓口で使う。窓口を足したら、ここに1行足す。
@@ -7,7 +7,7 @@
 // =====================================================
 export const ROOM_NAMES = {
   '/education/': '閲覧室　学びの登記所',
-  '/education-budget/': '別館　教育の帳場',
+  '/education-budget/': '閲覧室　教育の帳場',
   '/ict/': '閲覧室　情報化の帳場',
   '/compare/': '見くらべの間',
   '/analysis/': '読み解きの間',
@@ -19,10 +19,10 @@ export const ROOM_NAMES = {
   '/analysis/living/': '読み解きの間　暮らしを読み解く',
   '/analysis/leisure/': '読み解きの間　余暇と地域のつながりを読み解く',
   '/analysis/housing/': '読み解きの間　住まいを読み解く',
-  '/living/': '別館　暮らしの見積所',
+  '/living/': '閲覧室　暮らしの見積所',
   '/prices/': '閲覧室　物価の帳場',
   '/sky/': '閲覧室　空の帳場',
-  '/disaster/': '別館　自然災害の帳場',
+  '/disaster/': '閲覧室　自然災害の帳場',
   '/town-forest/': '閲覧室　わが町の森と土地',
   '/nature/': '閲覧室　自然公園と植生',
   '/town-work/': '閲覧室　わが町の仕事',
@@ -45,11 +45,11 @@ export const ROOM_NAMES = {
   '/colleges/': '閲覧室　大学と専門学校',
   '/care-places/': '閲覧室　子どもと高齢者の施設',
   '/town-commerce/': '閲覧室　お店と商い',
-  '/work-forms/': '別館　働き方のかたち',
+  '/work-forms/': '閲覧室　働き方のかたち',
   '/home-features/': '閲覧室　家のつくりと設備',
   '/town-households/': '閲覧室　わが町の世帯のかたち',
   '/town-house-age/': '閲覧室　わが町の家の建った年',
-  '/town-income/': '別館　わが町の所得',
+  '/town-income/': '閲覧室　わが町の所得',
   '/home-space/': '閲覧室　住まいの広さ',
   '/medical-staff/': '閲覧室　医療の担い手',
   '/environment/': '閲覧室　暮らしのまわりの環境',
@@ -57,34 +57,40 @@ export const ROOM_NAMES = {
   '/forest-river/': '閲覧室　森と川のめぐみ',
   '/transport/': '閲覧室　乗りものと運ぶもの',
   '/per-worker/': '閲覧室　働く人ひとりが生み出す額',
-  '/pref-finance/': '別館　県の台所事情',
+  '/pref-finance/': '閲覧室　県の台所事情',
   '/care-supply/': '閲覧室　医療と介護の手当て',
   '/town-value/': '閲覧室　わが町の稼ぎ',
   '/life-family/': '閲覧室　人の一生と家族のかたち',
   '/pref-value/': '閲覧室　県の稼ぎの顔ぶれ',
   '/pref-workers/': '閲覧室　県の働き手の顔ぶれ',
   '/pref-productivity/': '閲覧室　業種ごとの1人あたりの稼ぎ',
-  '/annex/': '別館　暮らしの台帳',
-  '/annex/shiori/': '別館　案内人の栞',
   '/learning-places/': '閲覧室　学びの場と集い',
   '/house-build/': '閲覧室　家の建ちかた',
   '/town-farm/': '閲覧室　わが町の農家',
   '/town-business-size/': '閲覧室　わが町の事業所の大きさ',
-  '/pref-economy/': '別館　県のふところ',
-  '/pref-spending/': '別館　県のお金の使いみち',
-  '/town-revenue/': '別館　町のお金の入り口',
-  '/pref-revenue/': '別館　県のお金の入り口',
-  '/town-spending/': '別館　町のお金の使いみち',
-  '/household/': '別館　家計の帳場',
-  '/pref-migration/': '別館　県の人の出入り',
-  '/work-style/': '別館　働き方の帳場',
-  '/land-price/': '別館　土地の値段',
+  '/pref-economy/': '閲覧室　県のふところ',
+  '/pref-spending/': '閲覧室　県のお金の使いみち',
+  '/town-revenue/': '閲覧室　町のお金の入り口',
+  '/pref-revenue/': '閲覧室　県のお金の入り口',
+  '/pref-debt/': '閲覧室　県の借金と貯え',
+  '/pref-tax/': '閲覧室　県の税のすがた',
+  '/town-debt/': '閲覧室　わが町の借金と貯え',
+  '/town-tax/': '閲覧室　わが町の税のすがた',
+  '/town-daynight/': '閲覧室　わが町の昼と夜',
+  '/town-foreign/': '閲覧室　わが町の外国人住民',
+  '/town-marriage/': '閲覧室　わが町の結婚と離婚',
+  '/pref-foreign/': '閲覧室　県の外国人住民',
+  '/town-spending/': '閲覧室　町のお金の使いみち',
+  '/household/': '閲覧室　家計の帳場',
+  '/pref-migration/': '閲覧室　県の人の出入り',
+  '/work-style/': '閲覧室　働き方の帳場',
+  '/land-price/': '閲覧室　土地の値段',
   '/population/': '閲覧室　国勢の間',
   '/town-population/': '閲覧室　わが町の人口',
-  '/town-migration/': '別館　わが町の人の出入り',
+  '/town-migration/': '閲覧室　わが町の人の出入り',
   '/town-nursery/': '閲覧室　保育所は、近いか',
   '/town-daycare/': '閲覧室　介護は、近いか',
-  '/town-finance/': '別館　わが町の財政と教育費',
+  '/town-finance/': '閲覧室　わが町の財政と教育費',
   '/town-commute/': '閲覧室　通勤の足は、何か',
   '/town-commute-time/': '閲覧室　通勤に、どれだけかかるか',
   '/town-housing/': '閲覧室　わが町の住まい',
@@ -93,8 +99,6 @@ export const ROOM_NAMES = {
   '/town-culture/': '閲覧室　わが町の図書館と公民館',
 };
 
-// 10-20 窓口の数（玄関・閲覧室・別館の案内で使う）。名前の頭の「閲覧室」「別館」で数えるので、窓口を足して上に1行足せば自動で増える
-// 別館は /annex/ 配下（別館トップ・栞の紹介）を除く
+// 窓口の数（玄関・情報棟の案内で使う）。名前の頭の「閲覧室」で数えるので、窓口を足して上に1行足せば自動で増える
 const _names = Object.entries(ROOM_NAMES);
 export const ROOM_COUNT = _names.filter(([, n]) => n.startsWith('閲覧室　')).length;
-export const ANNEX_COUNT = _names.filter(([p, n]) => n.startsWith('別館　') && !p.startsWith('/annex/')).length;

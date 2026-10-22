@@ -11,12 +11,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniMedicalData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="わが町の医療｜Countopia Stats" description="市区町村を選んで、病院・診療所・歯科・お医者さん・薬剤師・病床の数をそのままご覧いただける窓口。お医者さんの数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の医療｜Statlogia" description="市区町村を選んで、病院・診療所・歯科・お医者さん・薬剤師・病床の数をそのままご覧いただける窓口。お医者さんの数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-medical-large.webp" alt="診療所の前の通りを、看護師や近所の人、子どもたちが行き交う水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜医療・福祉・安全</p>
       <h1>わが町の医療</h1>
       <p class="tp-lead">
         市区町村を選んで、その町にどれだけの医療があるかをご覧ください。<br />
@@ -24,14 +24,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは医療の窓口です。病院や診療所がいくつあるか、お医者さんや薬剤師さんが何人いるか。その町にある数を、そのままお出しします。
+    <Talk speaker="chiaki">
+      こちらは医療の窓口だ。病院や診療所がいくつあるか、お医者さんや薬剤師さんが何人いるか。その町にある数を、そのまま出そう。
     </Talk>
-    <Talk speaker="touko">
-      人の数で割ったりはしないの？
+    <Talk speaker="hitoha">
+      人の数で割ったりはしないんですか？
     </Talk>
-    <Talk speaker="kei">
-      しません。お医者さんにかかるとき、となりの町まで行くこともありますから。割ってしまうと、かえって分かりにくくなります。
+    <Talk speaker="chiaki">
+      しない。お医者さんにかかるとき、となりの町まで行くこともあるから。割ってしまうと、かえって分かりにくくなる。
     </Talk>
 
     <section class="tp-selector">
@@ -54,8 +54,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="medChart" data-growth="level" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -164,8 +164,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const doctor = a.v[DOCTOR], hospital = a.v[HOSPITAL], beds = a.v[BEDS];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["お医者さんの数まで、町ごとに分かるのね。", "わたくしの時代では、往診に来てくださるお医者さまが頼りなのよ。", "病院の寝台の数まで、数えてあるなんて。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["お医者さんの数まで、町ごとに分かるんですね。", "病院のない町もあるんですね。", "病床の数まで、数えてあるんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const num = (v) => Math.round(v).toLocaleString('ja-JP');
         const parts = [];

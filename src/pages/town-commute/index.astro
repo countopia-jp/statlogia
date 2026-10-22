@@ -7,12 +7,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCommuteData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="通勤の足は、何か｜Countopia Stats" description="市区町村を選んで、自宅の外へ通う人のうち自家用車で通う人・公共交通で通う人の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="通勤の足は、何か｜Statlogia" description="市区町村を選んで、自宅の外へ通う人のうち自家用車で通う人・公共交通で通う人の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-commute-large.webp" alt="朝の通勤風景。自家用車の列と、駅へ向かう人々を描いた水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜働く・通う</p>
       <h1>通勤の足は、何か</h1>
       <p class="tp-lead">
         市区町村を選んで、その町の人が主に何で通うのかをご覧ください。<br />
@@ -20,11 +20,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは通勤の足の窓口です。自宅の外へ通う人が、主に何を使って移動しているか。その割合で、その町の「足」の姿が見えてきます。
+    <Talk speaker="chiaki">
+      こちらは通勤の足の窓口だ。自宅の外へ通う人が、主に何を使って移動しているか。その割合で、その町の「足」の姿が見えてくる。
     </Talk>
-    <Talk speaker="touko">
-      車で通う町もあれば、汽車や電車で通う町もあるのね。
+    <Talk speaker="hitoha">
+      車で通う町と、電車で通う町があるんですね。
     </Talk>
 
     <section class="tp-selector">
@@ -47,8 +47,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="commuteChart" data-growth="diff" data-unit="ポイント" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -179,19 +179,19 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const car = a.v[CAR], transit = a.v[TRANSIT];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["自分の車で通う人が、こんなにいるの？", "わたくしの時代では、市電に乗るのがハイカラなのよ。", "通い方まで数えてあるなんて、細かいわねえ。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["自分の車で通う人が、こんなに多いんですね。", "電車やバスの割合は、都市部で高いんですね。", "徒歩や自転車の割合も、別に出ているんですね。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasCar = typeof car === 'number';
         const hasTransit = typeof transit === 'number';
         let k = '';
         if (hasCar) {
           k = `自家用車で通う人は${car.toFixed(1)}％。`;
-          k += car >= 60 ? ' 通う人の6割以上が自家用車です。'
+          k += car >= 60 ? ' 通う人の6割以上が自家用車だ。'
              : car <= 20 ? ' 自家用車は、通う人の2割以下です。'
              : '';
         } else {
-          k = '自家用車で通う人の割合は、この町の値がありません。';
+          k = '自家用車で通う人の割合は、この町の値がない。';
         }
         if (hasTransit) k += ` 鉄道やバスで通う人は${transit.toFixed(1)}％です。`;
         else k += ' 鉄道やバスで通う人の割合は、この町の値がありません。';

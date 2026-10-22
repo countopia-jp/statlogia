@@ -1,4 +1,5 @@
 import { makeYearBook } from './year-pick.js';
+import { cachedJsonFetch } from './estat-cache.js';
 const API_BASE = 'https://api.e-stat.go.jp/rest/3.0/app/json';
 const STATS_ID = '0000020101';
 const RECENT_YEARS = 40; // 国勢調査は5年に一度のため、12年では2点しか取れない。長めに遡って複数時点を確保する
@@ -32,9 +33,7 @@ function getAppId() {
 
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
-  const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
-  if (!res.ok) throw new Error(`[muni-population.js] API HTTP ${res.status}: ${path}`);
-  return await res.json();
+  return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`);
 }
 
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);

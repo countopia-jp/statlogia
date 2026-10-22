@@ -10,12 +10,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniCultureData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="わが町の図書館と公民館｜Countopia Stats" description="市区町村を選んで、図書館と公民館の数、図書館は「何人に1館か」をご覧いただける窓口。公民館の数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
+<BaseLayout title="わが町の図書館と公民館｜Statlogia" description="市区町村を選んで、図書館と公民館の数、図書館は「何人に1館か」をご覧いただける窓口。公民館の数の推移つき。" backHref="/dashboard/" backLabel="閲覧室">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-culture-large.webp" alt="木の床と本棚の並ぶ図書館の窓辺で本を読む人々と、窓の外の公民館で寄り合いの支度をする住民の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室</p>
+      <p class="tp-kicker">閲覧室｜文化と余暇</p>
       <h1>わが町の図書館と公民館</h1>
       <p class="tp-lead">
         市区町村を選んで、その町に図書館と公民館がいくつあるかをご覧ください。<br />
@@ -23,14 +23,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="kei">
-      こちらは図書館と公民館の窓口です。その町にいくつあるか、そのままの数と、図書館だけは「何人に1館あるか」もお出しします。
+    <Talk speaker="chiaki">
+      こちらは図書館と公民館の窓口だ。その町にいくつあるか、そのままの数と、図書館だけは「何人に1館あるか」も出そう。
     </Talk>
-    <Talk speaker="touko">
-      公民館は、人の数で割らないの？
+    <Talk speaker="hitoha">
+      公民館は、人の数で割らないんですか？
     </Talk>
-    <Talk speaker="kei">
-      割りません。公民館は、地区ごとの小さな館まで数える町と、大きな館だけを数える町があって、数え方がそろっていないんです。
+    <Talk speaker="chiaki">
+      割らない。公民館は、地区ごとの小さな館まで数える町と、大きな館だけを数える町があって、数え方がそろっていないのだ。
     </Talk>
 
     <section class="tp-selector">
@@ -53,13 +53,13 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="culChart" data-growth="level" height="120"></canvas>
       </div>
 
-      <Talk speaker="kei"><span id="keiLine"></span></Talk>
-      <Talk speaker="touko"><span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span></Talk>
+      <Talk speaker="hitoha"><span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
 
-    <p class="tp-cross">あわせて見る：<a href="/exhibits/reading/">本とマンガ、日本一はどの県だ</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/how-to-read/per-capita/">人口あたりで見るということ</a></p>
+    <p class="tp-cross">あわせて見る：<a href="/town-population/">わが町の人口</a></p>
 
     <footer class="tp-source">
       <p>
@@ -174,13 +174,13 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const lib = a.v[LIB], komin = a.v[KOMIN], libPer = a.v[LIB_PER];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["図書館が、町ごとに数えてあるのね！", "公民館？　町の人が集まるところなのね。", "わたくしの時代では、本は高くて、なかなか買えないのよ。"];
-        // 橙子の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["図書館の数が、町ごとに分かるんですね。", "「何人に1館か」で見ると、小さな町が上に来るんですね。", "公民館は数え方がそろっていない、というのを覚えておきます。"];
+        // 一葉の一言は順位や値を言い直さず、数字への驚きや感心を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         const hasLib = typeof lib === 'number';
         const hasKomin = typeof komin === 'number';
         let k = '';
-        k += hasLib ? (lib === 0 ? '図書館は、この町にはありません。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`) : '図書館の数は、この町の値がありません。';
+        k += hasLib ? (lib === 0 ? '図書館は、この町にはない。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`) : '図書館の数は、この町の値がない。';
         if (hasKomin) k += komin === 0 ? (hasLib && lib === 0 ? ' 公民館も、数字の上ではありません。' : ' 公民館は、数字の上ではありません。') : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館です。`;
         else k += ' 公民館の数は、この町の値がありません。';
         if (hasLib && lib > 0 && typeof libPer === 'number') k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館です。`;
@@ -193,15 +193,15 @@ import GrowthTool from '../../components/GrowthTool.astro';
         const ratio = hasTrend ? last / first : 1;
         let t;
         if (hasTrend && ratio <= 0.8) {
-          t = ['公民館が、だんだん減っているのねえ。', 'むかしは、もっとたくさんあったのね。'][seed % 2];
+          t = ['公民館が、だんだん減っているんですね。', 'むかしは、もっとたくさんあったんですね。'][seed % 2];
         } else if (hasTrend && ratio >= 1.2) {
-          t = ['公民館は、増えてきたのね。', 'いまのほうが多いのねえ。'][seed % 2];
+          t = ['公民館は、増えてきたんですね。', 'いまのほうが多いんですね。'][seed % 2];
         } else if (hasTrend) {
-          t = ['公民館の数は、ずっと同じくらいなのね。', '長いあいだ、あまり変わっていないのねえ。'][seed % 2];
+          t = ['公民館の数は、ずっと同じくらいなんですね。', '長いあいだ、あまり変わっていないんですね。'][seed % 2];
         } else if (lib === 0 && komin === 0) {
-          t = 'この町には、どちらも無いのねえ。';
+          t = 'この町には、どちらも無いんですね。';
         } else {
-          t = ['本を借りる場所は、町ごとに違うのねえ。', '数えられているのねえ。'][seed % 2];
+          t = ['本を借りる場所は、町ごとに違うんですね。', '数えられているんですね。'][seed % 2];
         }
         touko.textContent = t;
       }

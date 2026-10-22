@@ -1,13 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="迷子になりました | Countopia">
-  <section class="err-page">
-    <img src="/images/icon/touko-404.webp" alt="道に迷った橙子" class="err-illust" />
+<BaseLayout title="迷子になりました | Statlogia">
+  <main class="err-page">
+    <img src="/images/icon/lost-404.webp" alt="地図を広げて首をかしげる一葉。足元にクリップボード" class="err-illust" width="1200" height="675" />
     <h1>404 - このページは見つかりません</h1>
-    <p>お探しのページは、まだ地図に載っていないようです。</p>
+    <p>お探しのページは、この都市の地図に載っていないようです。移転した窓口は、情報棟の一覧からお探しください。</p>
+    <p><a href="/dashboard/">情報棟へ</a></p>
     <a href="/">玄関に戻る</a>
-  </section>
+  </main>
 </BaseLayout>
 
 <style>
@@ -16,7 +17,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     padding: 3rem 1rem;
   }
   .err-illust {
-    max-width: 480px;
+    max-width: 640px;
+    border-radius: 8px;
     width: 100%;
     height: auto;
     margin: 0 auto 1.5rem;

@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="10位は、近いのか遠いのか｜統計の歩き方 - Countopia Stats" description="順位だけでは、差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="10位は、近いのか遠いのか｜講義室 - Statlogia" description="順位だけでは、差の大きさは分かりません。散らばりの中の位置（上位◯％・偏差値・箱ひげ）の読み方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/position-large.webp" alt="明るい座敷で、高さ順に一列に立てた竹の物差しのなかほどの1本を、京が指でそっと示す水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/position-large.webp" alt="背の順に並んだ木の板。知秋が指し棒で板を指し、一葉が自分の背丈と同じ板の横に立つ水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">10位は、</span><span class="nw">近いのか遠いのか</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、帳面に「10位」とあったわ。1位とは、ずいぶん離れているのでしょう？
+    <Talk speaker="hitoha">
+      先生、帳面に「10位」とありました。1位とは、ずいぶん離れているんでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      それが、順位だけでは分からないのです。並べ方によっては、1位と10位がほとんど同じ値のこともあります。絵にしてみましょう。
+    <Talk speaker="chiaki-work">
+      それが、順位だけでは分からないのだ。並べ方によっては、1位と10位がほとんど同じ値のこともある。絵にしてみよう。
     </Talk>
 
     <section class="art-diagram">
@@ -128,17 +128,17 @@ import HeroFig from '../../../components/HeroFig.astro';
       <p class="art-diagram-note">※点の位置は説明用の仮の例です。</p>
     </section>
 
-    <Talk speaker="touko">
-      上の10位は、まわりと肩を寄せあっているのね。下の10位は、ぽつんと離れているわ。
+    <Talk speaker="hitoha">
+      上の10位は、まわりと肩を寄せあっているんですね。下の10位は、ぽつんと離れています。
     </Talk>
-    <Talk speaker="kei">
-      そうです。順位は「何番目か」だけを数えます。「どれだけ離れているか」は、順位からは消えてしまうのです。
+    <Talk speaker="chiaki-work">
+      そうだ。順位は「何番目か」だけを数える。「どれだけ離れているか」は、順位からは消えてしまうのだ。
     </Talk>
 
     <section class="art-sec">
       <h2>点の帯と、箱の帯</h2>
       <p>
-        Countopiaの窓口では、帳面のカードに小さな帯を添えています。
+        Statlogia の窓口では、帳面のカードに小さな帯を添えています。
         県の窓口では、47都道府県の値を1つずつ点で並べ、選んだ県を赤い点で示します。
         点が固まっているところは、値の近い県がたくさんあるところです。
       </p>
@@ -167,24 +167,24 @@ import HeroFig from '../../../components/HeroFig.astro';
       <p>
         ただし、偏差値には弱点があります。ごく一部の地域だけが飛びぬけて大きい項目（大きな街に集中する数など）では、
         平均とばらつきがその一部に引っぱられて、ほかの地域の偏差値が実感とずれてしまいます。
-        そのためCountopiaでは、分布の偏りが小さい項目にだけ偏差値を出し、偏りが大きい項目は「上位◯％」だけにしています。
+        そのため Statlogia では、分布の偏りが小さい項目にだけ偏差値を出し、偏りが大きい項目は「上位◯％」だけにしています。
       </p>
     </section>
 
-    <Talk speaker="touko">
-      数字の並びにも、くせがあるのね。
+    <Talk speaker="hitoha">
+      数字の並びにも、くせがあるんですね。
     </Talk>
-    <Talk speaker="kei">
-      ええ。くせを知ったうえで物差しを選ぶのが、統計の読み方の半分です。
+    <Talk speaker="chiaki-work">
+      うむ。くせを知ったうえで物差しを選ぶのが、統計の読み方の半分だ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/growth/">伸び方は、そろえてから比べる →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

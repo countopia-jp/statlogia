@@ -1,12 +1,14 @@
 :root{
-  --paper:#F7F5EF;
-  --grid:#DCE4DB;
-  --ink:#1E3A2F;
-  --ink-soft:#4A6355;
+  /* Statlogia：紙は白に近い生成り、インクは紺。壁は打ちっぱなしコンクリート（body::before） */
+  --paper:#F7F6F2;
+  --grid:#D9DBDF;
+  --ink:#1F2A44;
+  --ink-soft:#4B5570;
   --stamp:#B3402A;
   --ochre:#C99A2E;
-  --sky:#7FA8A0;
-  --line:#B8C4B4;
+  --sky:#7F97A8;
+  --line:#C3C6CC;
+  --wall:#E6E7E9;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:112.5%}
@@ -20,13 +22,13 @@ body::before{
   content:"";
   position:fixed;
   inset:0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size:28px 28px;
+  background:var(--wall) url("/images/concrete-tile.webp") center / 512px 512px repeat;
   z-index:-1;
   pointer-events:none;
 }
+/* 壁（コンクリート）の上に紙のパネルを置く：本文はすべて main の紙に載せる */
+.paper{background:rgba(247,246,242,.84);max-width:1312px;margin:22px auto 0;padding:10px 0 28px;border-radius:6px;box-shadow:0 2px 16px rgba(31,42,68,.10)}
+@media (max-width:900px){.paper{margin:0;border-radius:0;box-shadow:none}}
 .mono{font-family:"IBM Plex Mono",monospace}
 .serif{font-family:"Shippori Mincho",serif}
 
@@ -80,6 +82,9 @@ section{padding:56px 0}
 .sec-head{display:flex;align-items:baseline;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:32px}
 .sec-head .no{font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600;font-size:.85rem;letter-spacing:.1em}
 .sec-head h2{font-family:"Shippori Mincho",serif;font-size:1.5rem;font-weight:800;letter-spacing:.06em}
+/* 横並びの見出し（出典一覧）：題は折り返さず、説明文が残りの幅を使う */
+.sec-head h1{flex-shrink:0;white-space:nowrap}
+.sec-head .sub{flex:1 1 0;min-width:0}
 /* 展示ページの見出しは、番号・題・小見出しを縦に積む（横並びだと番号が2行に折れ、題が窮屈になる） */
 .exhibit>.sec-head{flex-direction:column;align-items:flex-start;gap:0;padding-bottom:14px}
 .exhibit>.sec-head h1{margin-top:6px;line-height:1.35}
@@ -132,34 +137,6 @@ nav a[aria-current="page"]{color:var(--stamp)}
 /* 10-18 展示の見出しと展示カードの題は「日本一はどの県だ」を下の段に（パソコン・タブレット・スマホ共通） */
 h1 .h1b,h3 .h1b{display:block}
 
-/* ===== 別館（暮らしの台帳）：板張りの部屋に台帳を置いた見た目 ===== */
-body.annex{ --annex-ink:#5a3e26; --annex-navy:#2c4a7a; background-color:#efe3cf; }
-body.annex::before{
-  background-color:#efe3cf;
-  background-image:
-    url("/images/icon/annex-wood.webp"),
-    repeating-linear-gradient(90deg, rgba(150,110,70,.10) 0 1px, transparent 1px 180px),
-    repeating-linear-gradient(90deg, rgba(160,120,80,.05) 0 2px, transparent 2px 23px, rgba(160,120,80,.04) 23px 24px, transparent 24px 61px),
-    linear-gradient(180deg, #f1e6d3, #ead9bf);
-  background-size: 900px auto, auto, auto, auto;
-  background-repeat: repeat;
-}
-body.annex header.site{ background:rgba(247,240,228,.94); border-bottom-color:var(--annex-ink); }
-body.annex .backbar a{ border-color:var(--annex-ink); color:var(--annex-ink); }
-body.annex .backbar a:hover{ background:var(--annex-ink); color:#fff; }
-body.annex main{
-  background-color:rgba(251,248,241,.8);
-  background-image:linear-gradient(90deg, transparent 18px, rgba(179,64,42,.28) 18px 19px, transparent 19px 22px, rgba(179,64,42,.28) 22px 23px, transparent 23px);
-  border:1px solid #dccbb0; border-radius:6px;
-  box-shadow:0 2px 14px rgba(90,62,38,.12);
-  margin-top:20px !important; margin-bottom:36px !important;
-  padding-left:max(28px, 2vw) !important;
-}
-body.annex .rr-kicker, body.annex .rm-kicker{ color:var(--annex-ink) !important; }
-body.annex .rr-group-title{ border-left-color:var(--annex-ink) !important; }
-body.annex main a{ color:var(--annex-navy); }
-@media (max-width:600px){ body.annex main{ margin-left:8px !important; margin-right:8px !important; padding-left:26px !important; } }
-
 /* =====================================================
    10-18 扉絵：絵の上に題と説明を白いもやで重ねる（別館と同じ仕様）
    位置は src/data/hero-pos.js。人物に重ならない空や壁に置く
@@ -183,10 +160,12 @@ body.annex main a{ color:var(--annex-navy); }
 .hf--tr .hf-text{right:3%;top:5%;width:46%}
 .hf--l .hf-text{left:3%;top:50%;transform:translateY(-50%);width:44%}
 .hf--r .hf-text{right:3%;top:50%;transform:translateY(-50%);width:44%}
-.hf--tl .hf-text,.hf--tr .hf-text,.hf--l .hf-text,.hf--r .hf-text{padding:14px 18px 12px}
-.hf--tl .hf-text br,.hf--tr .hf-text br,.hf--l .hf-text br,.hf--r .hf-text br{display:none}
-.hf--tl .hf-text h1,.hf--tr .hf-text h1,.hf--l .hf-text h1,.hf--r .hf-text h1{font-size:clamp(1.1rem,2.42cqi,1.5rem);margin:2px auto 6px}
-.hf--tl .hf-text > p:last-child:not(:first-child),.hf--tr .hf-text > p:last-child:not(:first-child),.hf--l .hf-text > p:last-child:not(:first-child),.hf--r .hf-text > p:last-child:not(:first-child){font-size:clamp(.74rem,1.44cqi,.85rem);line-height:1.7}
+.hf--br .hf-text{right:3%;bottom:5%;width:40%}
+.hf--bl .hf-text{left:3%;bottom:5%;width:40%}
+.hf--tl .hf-text,.hf--tr .hf-text,.hf--l .hf-text,.hf--r .hf-text,.hf--br .hf-text,.hf--bl .hf-text{padding:14px 18px 12px}
+.hf--tl .hf-text br,.hf--tr .hf-text br,.hf--l .hf-text br,.hf--r .hf-text br,.hf--br .hf-text br,.hf--bl .hf-text br{display:none}
+.hf--tl .hf-text h1,.hf--tr .hf-text h1,.hf--l .hf-text h1,.hf--r .hf-text h1,.hf--br .hf-text h1,.hf--bl .hf-text h1{font-size:clamp(1.1rem,2.42cqi,1.5rem);margin:2px auto 6px}
+.hf--br .hf-text > p:last-child:not(:first-child),.hf--bl .hf-text > p:last-child:not(:first-child),.hf--tl .hf-text > p:last-child:not(:first-child),.hf--tr .hf-text > p:last-child:not(:first-child),.hf--l .hf-text > p:last-child:not(:first-child),.hf--r .hf-text > p:last-child:not(:first-child){font-size:clamp(.74rem,1.44cqi,.85rem);line-height:1.7}
 .hf--under .hf-text{position:relative;width:auto;margin:-22px 16px 0;padding:16px 20px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
 .hf--noimg{padding:28px 0 8px !important}
 .hf--noimg .hf-text{position:static;transform:none;width:auto;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
@@ -194,10 +173,19 @@ body.annex main a{ color:var(--annex-navy); }
   .hf .hf-text{position:relative;left:auto;right:auto;top:auto;transform:none;width:auto;margin:-22px 12px 0;padding:14px 16px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
   .hf .hf-text br{display:none}
 }
-/* 10-18 改装中の札（タイトルの横） */
-.logo .mark .kaiso{display:inline-block;margin-left:.7em;padding:.18em .6em .14em;border-radius:999px;background:var(--stamp);color:#fff;font-family:"Zen Kaku Gothic New",sans-serif;font-size:.42em;font-weight:700;letter-spacing:.14em;vertical-align:.5em;line-height:1.3}
-.logo .mark{position:relative;margin-right:2.4em}
-.logo .mark .kaiso{position:absolute;left:100%;top:.55em;margin-left:.7em;white-space:nowrap}
+/* Statlogia 建設中の札（タイトルの横）。紐で下げた紙の札：生成りの紙に紺の枠、朱の文字、少し傾ける */
+.logo .mark{position:relative;margin-right:3.2em}
+.logo .mark .kaiso{
+  position:absolute;left:100%;top:.2em;margin-left:1.1em;white-space:nowrap;
+  display:inline-block;padding:.22em .62em .18em;
+  background:#FBF8F0;color:var(--stamp);border:1.5px solid var(--ink);border-radius:3px;
+  font-family:"Shippori Mincho",serif;font-size:.42em;font-weight:800;letter-spacing:.22em;line-height:1.3;
+  transform:rotate(-5deg);transform-origin:top left;
+  box-shadow:1px 2px 0 rgba(31,42,68,.25);
+}
+/* 札の穴と紐 */
+.logo .mark .kaiso::before{content:"";position:absolute;left:50%;top:-.95em;width:1.5px;height:.95em;background:var(--ink);transform:translateX(-50%)}
+.logo .mark .kaiso::after{content:"";position:absolute;left:50%;top:.14em;width:.22em;height:.22em;border-radius:50%;background:var(--ink);transform:translateX(-50%);opacity:.75}
 .logo .mark .xf{margin-right:-.12em}
 /* 10-19 扉絵の上の細い帯（人物の頭が高い絵）。スマホは他と同じく絵の下に札 */
 @media(min-width:761px){
@@ -205,3 +193,8 @@ body.annex main a{ color:var(--annex-navy); }
 .hf--tt .hf-text h1{font-size:clamp(1.1rem,2.5cqi,1.4rem);margin:0 auto 2px}
 }
 .logo .mark .xf{margin-top:-.9em}
+
+/* 動きを減らす設定の人には、浮き上がりや拡大をしない */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+}

@@ -1,5 +1,5 @@
 // =====================================================
-// Countopia Stats - 標本調査の「誤差の幅」の目安
+// Statlogia - 標本調査の「誤差の幅」の目安
 // src/lib/sampling-error.js
 //
 // 数字のもとは src/data/sampling-error.json（総務省統計局の公表資料から作った控え）
@@ -21,7 +21,7 @@
 // 作り直し：統計局のExcel（2021gosaA007/A008/A013、hyohon2023 の 2-1・3）から
 //   ~/gosa/py/build_se.py で src/data/sampling-error.json を書き出す（家計は使う品目コードだけ）
 // =====================================================
-import SE from '../data/sampling-error.json';
+import SE from '../data/sampling-error.json' with { type: 'json' };
 
 const Z = 1.96;
 

@@ -7,12 +7,12 @@ import HeroFig from '../../components/HeroFig.astro';
 const data = await getMuniFinanceData();
 import GrowthTool from '../../components/GrowthTool.astro';
 ---
-<BaseLayout title="わが町の財政と教育費｜Countopia Stats" description="市区町村を選んで、財政力指数と住民1人あたりの教育費をご覧いただける窓口。財政力指数の推移と全国ベスト5つき。" backHref="/annex/" backLabel="暮らしの台帳">
+<BaseLayout title="わが町の財政と教育費｜Statlogia" description="市区町村を選んで、財政力指数と住民1人あたりの教育費をご覧いただける窓口。財政力指数の推移と全国ベスト5つき。" backHref="/dashboard/" backLabel="情報棟">
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
   <main class="tp">
     <HeroFig src="/images/icon/town-finance-large.webp" alt="算盤と帳簿、赤いランドセルが並ぶ窓辺の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">別館・暮らしの台帳</p>
+      <p class="tp-kicker">閲覧室｜町のお金</p>
       <h1>わが町の財政と教育費</h1>
       <p class="tp-lead">
         市区町村を選んで、町の財政力指数と、住民1人あたりの教育費をご覧ください。<br />
@@ -20,8 +20,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </p>
     </HeroFig>
 
-    <Talk speaker="shiori">
-      うちの帳場では、歳入と歳出の帳簿を、毎晩金庫にしまってから帰るんです。ここは市区町村の財政の帳場ですよ。財政力指数は、町の標準的な収入を標準的な支出で割った数なんです。1を超えると、収入が支出を上回る計算になります。
+    <Talk speaker="chiaki">
+      ここは市区町村の財政の窓口だ。財政力指数は、町の標準的な収入を標準的な支出で割った数だ。1を超えると、収入が支出を上回る計算になる。
     </Talk>
 
     <section class="tp-selector">
@@ -44,7 +44,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
         <canvas id="finChart" data-growth="diff" height="120"></canvas>
       </div>
 
-      <Talk speaker="shiori"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
+      <Talk speaker="chiaki"><span id="keiLine"></span> <span id="toukoLine"></span></Talk>
     </section>
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
@@ -174,8 +174,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
       function updateLines(a) {
         const fin = a.v[FIN], edu = a.v[EDU];
         const kei = document.getElementById('keiLine');
-        const TOUKO_LINES = ["財政力指数は、町の標準的な収入を、標準的な支出で割った数なんです。", "教育費の欄には、学校や公民館に使ったお金が入るんですよ。", "1人あたりに直すと、大きな町と小さな町を同じ物差しで並べられます。"];
-        // 栞（別館の案内人）の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
+        const TOUKO_LINES = ["財政力指数は、1を超えると収入が支出を上回る計算なんですね。", "教育費には、学校や公民館に使ったお金が入るんですね。", "1人あたりに直すと、大きな町と小さな町を同じ物差しで並べられるんですね。"];
+        // 一葉の一言は順位や値を言い直さず、帳簿の欄の読み方を言う（値のない町の一言はそのまま）
         const touko = { set textContent(v) { const el = document.getElementById('toukoLine'); if (/値のない|定めのない|ない町|0校/.test(v)) { el.textContent = v; return; } const k = document.getElementById('keiLine').textContent || ''; let h = 0; for (const ch of k) h = (h * 31 + ch.charCodeAt(0)) >>> 0; el.textContent = TOUKO_LINES[h % TOUKO_LINES.length]; } };
         let k = '';
         const hasFin = typeof fin === 'number';
@@ -185,7 +185,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
           const r = rankMap[FIN][a.c];
           if (r) k += ` ${rankMap[FIN]._total}市区町村中${r}位です。`;
         } else {
-          k = '財政力指数は、この町の値がありません。';
+          k = '財政力指数は、この町の値がない。';
         }
         if (hasEdu) k += ` 住民1人あたりの教育費は${Math.round(edu).toLocaleString('ja-JP')}円です。`;
         else k += ' 住民1人あたりの教育費は、この町の値がありません。';

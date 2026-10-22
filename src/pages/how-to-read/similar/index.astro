@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="似た町と並べてみる｜統計の歩き方 - Countopia Stats" description="人口と産業の構成が近い町と並べる「類似団体」の考え方。全国の平均だけでは見えない差を読む。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="似た町と並べてみる｜講義室 - Statlogia" description="人口と産業の構成が近い町と並べる「類似団体」の考え方。全国の平均だけでは見えない差を読む。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/similar-large.webp" alt="人口や町並みの似た二つの町の地図を机に並べて見くらべる京と橙子の水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/similar-large.webp" alt="窓辺の木の机に二枚の町の地図を並べ、知秋が指し棒で片方を指し、一葉が机に手をついて見くらべる水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">似た町と</span><span class="nw">並べてみる</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、わたくしの町の数字を47都道府県の平均とくらべたら、ずいぶん離れていたの。でも、東京や大阪とくらべるのは、そもそも無理があるのではないかしら。
+    <Talk speaker="hitoha">
+      先生、小さな町の数字を47都道府県の平均とくらべたら、ずいぶん離れていました。でも、東京や大阪とくらべるのは、そもそも無理があるのではないでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      そのとおりです。人の数も、働き方も大きくちがう町と並べると、差の大部分は、もともとの町の大きさや顔ぶれのちがいで説明されてしまいます。そこで、条件の似た町を選んで並べる方法があります。
+    <Talk speaker="chiaki-work">
+      そのとおりだ。人の数も、働き方も大きくちがう町と並べると、差の大部分は、もともとの町の大きさや顔ぶれのちがいで説明されてしまう。そこで、条件の似た町を選んで並べる方法がある。
     </Talk>
 
     <section class="art-diagram">
@@ -41,7 +41,7 @@ import HeroFig from '../../../components/HeroFig.astro';
         全国の平均とくらべるより、自分の町の位置がずっと読みやすくなります。
       </p>
       <p>
-        この国の窓口では、これにならって、市区町村なら総人口（大きさのちがいをならすため対数をとります）と、第2次＋第3次産業で働く人の割合、第3次産業で働く人の割合の三つを使っています。
+        この都市の窓口では、これにならって、市区町村なら総人口（大きさのちがいをならすため対数をとります）と、第2次＋第3次産業で働く人の割合、第3次産業で働く人の割合の三つを使っています。
         三つの物差しは単位も散らばりもちがうので、それぞれの散らばり（標準偏差）でそろえてから、距離の近い順に4つを選びます。
         都道府県は数が少ないので、人口の近さだけで選んでいます。
       </p>
@@ -67,20 +67,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      似た町と並べてみて、それでも離れている数字があったら、そこを見ればいいのね。
+    <Talk speaker="hitoha">
+      似た町と並べてみて、それでも離れている数字があったら、そこを見ればいいんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。似た町とのちがいは、自分の町をくわしく見るための入り口になります。
+    <Talk speaker="chiaki-work">
+      うむ。似た町とのちがいは、自分の町をくわしく見るための入り口になる。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/shift-share/">増えた分を、三つに分ける →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

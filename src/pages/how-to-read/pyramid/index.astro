@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="人口の形を読む｜統計の歩き方 - Countopia Stats" description="年齢と男女ごとの人口の割合を積み上げた人口ピラミッドの読み方。山の形・つぼの形と、全国の形と重ねて比べる見方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="人口の形を読む｜講義室 - Statlogia" description="年齢と男女ごとの人口の割合を積み上げた人口ピラミッドの読み方。山の形・つぼの形と、全国の形と重ねて比べる見方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/pyramid-large.webp" alt="春の昼下がり、高台から見下ろした町。公園で遊ぶ子どもと若い親、坂道を歩く学生や会社員、ベンチや縁側でくつろぐ年配の人たちが描かれた水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/pyramid-large.webp" alt="木の台に板を積み上げた山形の模型を、知秋が指し棒で指し、一葉がかがんで下の段を見る水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">人口の形を</span><span class="nw">読む</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、人口が同じくらいの町でも、なんだか顔つきがちがうように思えるの。何がちがうのかしら。
+    <Talk speaker="hitoha">
+      先生、人口が同じくらいの町でも、なんだか顔つきがちがうように思えます。何がちがうんでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      年齢ごとの人の数を並べてみると分かります。下を若い人、上をお年寄りにして、左右に男女を積み上げた図を、人口ピラミッドといいます。
+    <Talk speaker="chiaki-work">
+      年齢ごとの人の数を並べてみると分かる。下を若い人、上をお年寄りにして、左右に男女を積み上げた図を、人口ピラミッドという。
     </Talk>
 
     <section class="art-diagram">
@@ -37,7 +37,7 @@ import HeroFig from '../../../components/HeroFig.astro';
     <section class="art-sec">
       <h2>人数ではなく、割合で描く</h2>
       <p>
-        人数で描くと、大きな町ほど図が大きくなり、形が比べにくくなります。この国では、町の人口全体に占める割合で描いています。こうすると、人口のちがう町どうしでも、形だけを比べられます。
+        人数で描くと、大きな町ほど図が大きくなり、形が比べにくくなります。この都市では、町の人口全体に占める割合で描いています。こうすると、人口のちがう町どうしでも、形だけを比べられます。
       </p>
       <p>
         さらに、全国（市区町村なら、その県）の形を線で重ねています。棒が線より外に出ている年代は全国より割合が大きく、内側にある年代は小さい、ということです。
@@ -61,20 +61,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      わたくしの時代の村は、きっと裾の広い山の形だったのね。
+    <Talk speaker="hitoha">
+      裾の広い山の形と、上がふくらんだ形があるんですね。
     </Talk>
-    <Talk speaker="kei">
-      そうかもしれません。形を見れば、その町にどんな年代の人が暮らしているかが、ひと目で分かります。
+    <Talk speaker="chiaki-work">
+      そうだ。形を見れば、その町にどんな年代の人が暮らしているかが、ひと目で分かる。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/per-capita/">人口あたりで見るということ →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

@@ -1,6 +1,7 @@
 import { makeYearBook } from './year-pick.js';
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - わが町の医療 データ取得モジュール
+// Statlogia - わが町の医療 データ取得モジュール
 // src/lib/muni-medical.js
 //
 // 社会・人口統計体系 市区町村データ
@@ -59,9 +60,7 @@ function getAppId() {
 
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
-  const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
-  if (!res.ok) throw new Error(`[muni-medical.js] API HTTP ${res.status}: ${path}`);
-  return await res.json();
+  return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`);
 }
 
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);

@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - これからの人口の見込み（将来推計人口）
+// Statlogia - これからの人口の見込み（将来推計人口）
 // src/lib/future-pop.js → /data/future-pop.json
 //
 // 社会・人口統計体系の「将来推計人口」A191002（2025年）〜A191007（2050年）。国立社会保障・人口問題研究所の推計。
@@ -17,7 +18,7 @@ async function get(params) {
   let last;
   for (let i = 0; i < 3; i++) {
     try {
-      const j = await (await fetch(`${API}?${qs}`)).json();
+      const j = await cachedJsonFetch(`${API}?${qs}`);
       const st = j.GET_STATS_DATA?.RESULT?.STATUS;
       if (st !== 0 && st !== 1) throw new Error(j.GET_STATS_DATA?.RESULT?.ERROR_MSG || 'e-Stat');
       return j.GET_STATS_DATA.STATISTICAL_DATA;

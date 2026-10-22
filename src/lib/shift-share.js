@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - シフトシェア分析用のデータ（都道府県・事業従事者数・業種大分類）
+// Statlogia - シフトシェア分析用のデータ（都道府県・事業従事者数・業種大分類）
 // src/lib/shift-share.js → /data/shift-share.json
 //
 // 経済センサス‐活動調査の2時点（平成28年＝2016年6月1日、令和3年＝2021年6月1日）の
@@ -26,8 +27,7 @@ async function get(params) {
     const ctl = new AbortController();
     const t = setTimeout(() => ctl.abort(), 120000);
     try {
-      const r = await fetch(`${API}?${qs}`, { signal: ctl.signal });
-      const j = await r.json();
+      const j = await cachedJsonFetch(`${API}?${qs}`, { signal: ctl.signal });
       if (j.GET_STATS_DATA?.RESULT?.STATUS !== 0) throw new Error(j.GET_STATS_DATA?.RESULT?.ERROR_MSG || 'e-Stat');
       return asArray(j.GET_STATS_DATA.STATISTICAL_DATA?.DATA_INF?.VALUE);
     } catch (e) { last = e; await new Promise((s) => setTimeout(s, 3000 * (i + 1))); } finally { clearTimeout(t); }
@@ -66,7 +66,7 @@ const CODE_2016 = { '04216': '04423', '40231': '40305' }; // 富谷市（富谷�
 let townCache = null;
 async function areaNames(statsDataId) {
   const qs = new URLSearchParams({ appId: appId(), lang: 'J', statsDataId });
-  const j = await (await fetch(`https://api.e-stat.go.jp/rest/3.0/app/json/getMetaInfo?${qs}`)).json();
+  const j = await cachedJsonFetch(`https://api.e-stat.go.jp/rest/3.0/app/json/getMetaInfo?${qs}`);
   const o = asArray(j.GET_META_INFO?.METADATA_INF?.CLASS_INF?.CLASS_OBJ).find((x) => x['@id'] === 'area');
   return Object.fromEntries(asArray(o?.CLASS).map((c) => [c['@code'], String(c['@name']).trim()]));
 }

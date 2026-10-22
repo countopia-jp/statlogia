@@ -3,24 +3,24 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="二つの数字が、そろって動くとき｜統計の歩き方 - Countopia Stats" description="散布図、相関係数、回帰直線、残差の読み方。そろって動くことと、理由になっていることは別のもの。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="二つの数字が、そろって動くとき｜講義室 - Statlogia" description="散布図、相関係数、回帰直線、残差の読み方。そろって動くことと、理由になっていることは別のもの。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/correlation-large.webp" alt="縁側のある庭で、背の高さのちがう向日葵と大きさのちがうじょうろが並び、いちばん背の高い向日葵を橙子が見上げる水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/correlation-large.webp" alt="コンクリートの塀の前に並んだ背丈のちがうひまわりを、一葉が見上げる水彩画。足元にじょうろ" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">二つの数字が、</span><span class="nw">そろって動くとき</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、見くらべの間で二つの項目を並べたら、点がきれいに右上がりに並んだの。図書館の多い県ほど、病院も多いのですって。
+    <Talk speaker="hitoha">
+      先生、見くらべの間で二つの項目を並べたら、点がきれいに右上がりに並んだんです。図書館の多い県ほど、病院も多いのだそうです。
     </Talk>
-    <Talk speaker="kei">
-      きれいに並びましたね。では、図書館を建てると病院が増えると思いますか。
+    <Talk speaker="chiaki-work">
+      きれいに並んだね。では、図書館を建てると病院が増えると思うかね。
     </Talk>
-    <Talk speaker="touko">
-      それは、ないでしょうね。
+    <Talk speaker="hitoha">
+      それは、ないと思います。
     </Talk>
-    <Talk speaker="kei">
-      ええ。そろって動くことと、片方がもう片方の理由になっていることは、別のものなのです。
+    <Talk speaker="chiaki-work">
+      うむ。そろって動くことと、片方がもう片方の理由になっていることは、別のものなのだ。
     </Talk>
 
     <section class="art-diagram">
@@ -68,21 +68,21 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      並んだ点を見ていると、つい理由を言いたくなるわね。
+    <Talk speaker="hitoha">
+      並んだ点を見ていると、つい理由を言いたくなりますね。
     </Talk>
-    <Talk speaker="kei">
-      ええ。散布図が教えてくれるのは「そろって動いているか」までです。理由を確かめるのは、その先の仕事です。
+    <Talk speaker="chiaki-work">
+      うむ。散布図が教えてくれるのは「そろって動いているか」までだ。理由を確かめるのは、その先の仕事だ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/similar/">似た町と並べてみる →</a><br />
       <a href="/compare/">見くらべの間へ →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

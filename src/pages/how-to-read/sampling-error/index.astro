@@ -3,18 +3,18 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Talk from '../../../components/Talk.astro';
 import HeroFig from '../../../components/HeroFig.astro';
 ---
-<BaseLayout title="調べ直したら、順位は入れかわるか｜統計の歩き方 - Countopia Stats" description="一部を調べた統計（標本調査）の値には幅がある。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方。" backHref="/how-to-read/" backLabel="歩き方">
+<BaseLayout title="調べ直したら、順位は入れかわるか｜講義室 - Statlogia" description="一部を調べた統計（標本調査）の値には幅がある。誤差の幅（95％の目安）と、幅が重なるときの順位の読み方。" backHref="/how-to-read/" backLabel="講義室">
   <main class="art">
-    <HeroFig src="/images/icon/sampling-error-large.webp" alt="たくさんの家の中から何軒かに札を立てて調べる様子を、京と橙子が見ている水彩画" width={1400} height={782} eager>
+    <HeroFig src="/images/icon/sampling-error-large.webp" alt="丘の上で、知秋が指し棒で遠くの町を指し、一葉がクリップボードを持ってその先を見る水彩画" width={1400} height={782} eager>
       <p class="art-kicker">HOW TO READ</p>
       <h1><span class="nw">調べ直したら、</span><span class="nw">順位は入れかわるか</span></h1>
     </HeroFig>
 
-    <Talk speaker="touko">
-      京、この展示ではA県が1位で51.0％、B県が2位で49.5％なのね。A県のほうが、たしかに多いということかしら。
+    <Talk speaker="hitoha">
+      先生、この表ではA県が1位で51.0％、B県が2位で49.5％なんですね。A県のほうが、たしかに多いということでしょうか。
     </Talk>
-    <Talk speaker="kei">
-      この数字は、県に住むすべての人ではなく、選ばれた一部の人に聞いた結果です。選ばれる人が変われば、値も少し動きます。その動きうる幅をいっしょに見てみましょう。
+    <Talk speaker="chiaki-work">
+      この数字は、県に住むすべての人ではなく、選ばれた一部の人に聞いた結果だ。選ばれる人が変われば、値も少し動く。その動きうる幅をいっしょに見てみよう。
     </Talk>
 
     <section class="art-diagram">
@@ -36,7 +36,7 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
       <p>
         国は、調査ごとに、このゆれの大きさの目安（標準誤差、値に対する割合にしたものが標準誤差率）を公表しています。
-        この国では、値に標準誤差の1.96倍を足し引きした幅を「誤差の幅（95％の目安）」として添えています。同じ調べ方を何度もくり返したとき、およそ95％の回で本当の値がこの幅に入る、という意味の幅です。
+        この都市では、値に標準誤差の1.96倍を足し引きした幅を「誤差の幅（95％の目安）」として添えています。同じ調べ方を何度もくり返したとき、およそ95％の回で本当の値がこの幅に入る、という意味の幅です。
       </p>
     </section>
 
@@ -63,20 +63,20 @@ import HeroFig from '../../../components/HeroFig.astro';
       </p>
     </section>
 
-    <Talk speaker="touko">
-      順位がついていても、その順番がかならず決まっているとは限らないのね。
+    <Talk speaker="hitoha">
+      順位がついていても、その順番がかならず決まっているとは限らないんですね。
     </Talk>
-    <Talk speaker="kei">
-      はい。とくに上位が僅差のときは、幅が重なっていないかを、いっしょに見てください。
+    <Talk speaker="chiaki-work">
+      うむ。とくに上位が僅差のときは、幅が重なっていないかを、いっしょに見たまえ。
     </Talk>
 
     <p class="art-links">
       <a href="/how-to-read/surveys/">数字のもとになった調査 →</a><br />
-      <a href="/how-to-read/">歩き方の一覧へ →</a>
+      <a href="/how-to-read/">講義室の一覧へ →</a>
     </p>
   </main>
   <style>
-    .art { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
     .art-hero { text-align: center; padding: 32px 0 16px; }
     .art-hero-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
     .art-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: #b23a2f; }

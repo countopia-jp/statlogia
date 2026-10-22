@@ -1,5 +1,6 @@
+import { cachedJsonFetch } from './estat-cache.js';
 // =====================================================
-// Countopia Stats - 市区町村版 財政・教育費 取得モジュール
+// Statlogia - 市区町村版 財政・教育費 取得モジュール
 // src/lib/muni-finance.js
 //   財政 : 市区町村データ 基礎データ 0000020104（# 不要）
 //   人口 : 市区町村データ 基礎データ 0000020101（# 不要, A1101総人口）
@@ -51,9 +52,7 @@ function getAppId() {
 }
 async function apiGet(path, params) {
   const qs = new URLSearchParams({ appId: getAppId(), lang: 'J', ...params });
-  const res = await fetch(`${API_BASE}/${path}?${qs.toString()}`);
-  if (!res.ok) throw new Error(`[muni-finance.js] API HTTP ${res.status}: ${path}`);
-  return await res.json();
+  return await cachedJsonFetch(`${API_BASE}/${path}?${qs.toString()}`);
 }
 const asArray = (x) => (Array.isArray(x) ? x : x ? [x] : []);
 
