@@ -22,12 +22,14 @@ export const TOWN_TAX = {
     '1人あたりの額は、その年の総人口（国勢調査、いちばん近い年）で割っています。',
     '地方税は市区町村が集める税の合計、市町村民税は個人と法人にかかる住民税の町の分、固定資産税は土地・家屋・償却資産にかかる税です。',
     '市町村税の徴収率は、e-Stat の表では2018年度までしか収録されていないため、この窓口には載せていません。',
+    '市町村民税と固定資産税の内訳は、市と東京23区のぶんだけが公表されています（約810市区）。町村を選んだときは、1人あたりの地方税だけが出ます。順位と全国の値も、値のある市区の中でのものです。',
+    '東京23区の固定資産税は東京都が課すため、区の値は0になります（都区財政調整制度）。'
   ],
   cross: [['/town-revenue/', '町のお金の入り口'], ['/town-debt/', 'わが町の借金と貯え'], ['/town-income/', 'わが町の所得']],
   indicators: [
     { key: 'taxPer', label: '1人あたりの地方税', unit: '万円', decimals: 1, rankWord: '多い順', needs: [[D, 'D320101'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('D320101'), g('A1101'), 0.1) },
-    { key: 'residentPer', label: '1人あたりの市町村民税', unit: '万円', decimals: 1, rankWord: '多い順', needs: [[D, 'D420102'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('D420102'), g('A1101'), 0.1) },
-    { key: 'propPer', label: '1人あたりの固定資産税', unit: '万円', decimals: 1, rankWord: '多い順', needs: [[D, 'D420202'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('D420202'), g('A1101'), 0.1) },
-    { key: 'propShare', label: '地方税に占める固定資産税の割合', unit: '％', decimals: 1, rankWord: '高い順', needs: [[D, 'D420202'], [D, 'D320101']], calc: (g) => per(g('D420202'), g('D320101'), 100) },
+    { key: 'residentPer', label: '1人あたりの市町村民税', unit: '万円', decimals: 1, rankWord: '多い順', minCoverage: 0.4, note: '市と東京23区のぶんだけが公表されています。町村には値がありません', needs: [[D, 'D420102'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('D420102'), g('A1101'), 0.1) },
+    { key: 'propPer', label: '1人あたりの固定資産税', unit: '万円', decimals: 1, rankWord: '多い順', minCoverage: 0.4, note: '市と東京23区のぶんだけが公表されています。町村には値がありません', needs: [[D, 'D420202'], [A, 'A1101']], carry: ['A1101'], calc: (g) => per(g('D420202'), g('A1101'), 0.1) },
+    { key: 'propShare', label: '地方税に占める固定資産税の割合', unit: '％', decimals: 1, rankWord: '高い順', minCoverage: 0.4, note: '市と東京23区のぶんだけが公表されています。町村には値がありません', needs: [[D, 'D420202'], [D, 'D320101']], calc: (g) => per(g('D420202'), g('D320101'), 100) },
   ],
 };

@@ -10,7 +10,7 @@
 //         scripts/verify-data.mjs（手元で単独に流す）
 // =====================================================
 import { ROOMS } from '../data/rooms/index.js';
-import { getRoomData } from './room-engine.js';
+import { getRoomData, dropped } from './room-engine.js';
 import { getPopulationData } from './population.js';
 import { getLivingData } from './living.js';
 import { getIctData } from './ict.js';
@@ -172,7 +172,8 @@ const sampleTowns = (areas, n = 30) => {
 };
 
 export async function verifyAll() {
-  const res = { generated: new Date().toISOString().slice(0, 10), checked: 0, errors: [], warnings: [], sets: [] };
+  const res = { generated: new Date().toISOString().slice(0, 10), checked: 0, errors: [], warnings: [], sets: [], dropped: [] };
+  dropped.length = 0;
   const run = async (name, fn) => {
     const before = res.checked, e0 = res.errors.length;
     // e-Stat への接続が一時的に切れることがあるので、3回まで間をおいて取り直す。
@@ -333,5 +334,6 @@ export async function verifyAll() {
     });
   }
 
+  res.dropped = dropped.slice();
   return res;
 }

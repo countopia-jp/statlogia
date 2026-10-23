@@ -146,6 +146,10 @@ import { seForRoom } from './sampling-error.js';
 import { cachedJsonFetch } from './estat-cache.js';
 const cache = new Map();
 
+// 10-24 「揃っている時点がないため外した」指標の控え。照合（verify-data）が最後に一覧で出す。
+// 警告を標準出力に流すだけだと、何百行もあるログに埋もれて何か月も気づけないため。
+export const dropped = [];
+
 export async function getRoomData(room) {
   if (cache.has(room.id)) return cache.get(room.id);
 
@@ -224,6 +228,9 @@ export async function getRoomData(room) {
     useTimes = useTimes.slice(-maxYears);
     if (ind.onlyLatest) useTimes = useTimes.slice(-1); // 10-20 推計の版が複数ある項目（将来推計人口など）は、いちばん新しい版だけ
     if (useTimes.length === 0) {
+      // 10-24 黙って外れると気づけないので、集めておいて照合の最後に一覧で出す
+      const best = times.reduce((m, t) => Math.max(m, areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length), 0);
+      dropped.push({ room: room.id, key: ind.key, label: ind.label || ind.key, best, rankCount, need });
       console.warn(`[room-engine] ${room.id}/${ind.key}: 揃っている時点がないため外します`);
       continue;
     }
@@ -260,12 +267,15 @@ export async function getRoomData(room) {
       // 全市区町村（政令市の区を除く）のもとの数を足し上げてから同じ計算をして、全国の値とする
       if (natT === null && room.indicators.find((x) => x.key === ind.key)?.needs) {
         const sums = {};
+        // 10-24 足し上げる相手は「その項目が計算できる地域」だけにする。
+        // 市町村民税のように市と特別区にしか値がない項目で、分子を市だけ・分母を全市区町村で
+        // 合計してしまうと、全国の値が低く出て、どの市も全国を大きく上回って見えてしまうため。
+        const usable = areaList.filter((a) => !a.x && calcAt(a.c, tLast) !== null).map((a) => a.c);
         const sumOf = (code) => {
           if (code in sums) return sums[code];
           let tot = 0, n = 0;
-          for (const a of areaList) {
-            if (a.x) continue;
-            const v = getter(a.c, tLast)(code);
+          for (const c of usable) {
+            const v = getter(c, tLast)(code);
             if (typeof v === 'number') { tot += v; n++; }
           }
           return (sums[code] = n ? tot : null);
