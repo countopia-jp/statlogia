@@ -200,3 +200,14 @@ h1 .h1b,h3 .h1b{display:block}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+/* =====================================================
+   10-23 ページ末尾の「別の場所へ」の札。<p class="tab-links"><a class="tab-link" href>…</a></p>
+   玄関の出典一覧・案内所の札と同じ形（紺の丸い札、乗せると反転、矢印が動く）
+   ===================================================== */
+.tab-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;margin:32px 0 0;font-size:.86rem}
+.tab-link,.tab-link:visited{display:inline-flex;align-items:center;gap:8px;padding:6px 12px 6px 14px;border:1.5px solid var(--ink);border-radius:999px;color:var(--ink);background:rgba(255,255,255,.6);text-decoration:none;font-weight:600;line-height:1.2;transition:background .2s,color .2s,transform .2s}
+.tab-link::after{content:"→";transition:transform .2s}
+.tab-link:hover,.tab-link:focus-visible{background:var(--ink);color:#fff;transform:translateY(-1px)}
+.tab-link:hover::after,.tab-link:focus-visible::after{transform:translateX(3px)}
+.tab-link--ext{border-style:dashed}

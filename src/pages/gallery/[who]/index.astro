@@ -45,7 +45,11 @@ const items = galleryOf(who);
       </ol>
     )}
 
-    <p class="gl-foot"><a href="/gallery/">イラスト集の入口へ →</a>｜<a href="/guide/">研究員の紹介へ →</a>｜<a href={`/gallery/${who === 'chiaki' ? 'hitoha' : 'chiaki'}/`}>{who === 'chiaki' ? '一葉' : '知秋'}の日々へ →</a></p>
+    <p class="tab-links">
+      <a class="tab-link" href="/gallery/">イラスト集の入口へ</a>
+      <a class="tab-link" href="/guide/">研究員の紹介へ</a>
+      <a class="tab-link" href={`/gallery/${who === 'chiaki' ? 'hitoha' : 'chiaki'}/`}>{who === 'chiaki' ? '一葉' : '知秋'}の日々へ</a>
+    </p>
   </main>
   <script>
     // 絵をタップしたら一度だけ揺れる（連打しても最初から揺れ直す）
