@@ -22,8 +22,8 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
 <BaseLayout title="見くらべの間｜Statlogia" description="閲覧室の窓口をまたいで、気温・住まい・医療・家計などの項目を4つまで選び、47都道府県の値と順位を一つの表に並べて見くらべる部屋です。" backHref="/" backLabel="玄関">
   <main class="cp">
     <HeroFig src="/images/icon/compare-large.webp" alt="コンクリートの壁の部屋。木の机に開いた帳面を4冊並べ、一葉が両手をついて見くらべる水彩画" width={1376} height={768}>
-      <p class="cp-kicker">COMPARE</p>
-      <h1>見くらべの間</h1>
+      <p class="cp-kicker">研究棟</p>
+      <h1>見くらべの間｜項目をならべて見る</h1>
       <p class="cp-lead">窓口をまたいで、項目を4つまで選び、<br />47都道府県の値と順位を一つの表に並べます。</p>
     </HeroFig>
 
@@ -330,7 +330,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
   .cp > section { padding: 0; }
   .cp-hero { text-align: center; padding: 32px 0 8px; }
   .cp-hero-figure { display: block; width: 100%; max-width: 860px; height: auto; border-radius: 6px; margin: 0 auto 20px; }
-  .cp-kicker { letter-spacing: .2em; font-size: .8rem; color: #2d6a4f; }
+  .cp-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
   .cp-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
   .cp-lead { color: #555; line-height: 1.9; }
   .cp-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 28px 0 16px; }

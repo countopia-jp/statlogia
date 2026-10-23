@@ -15,9 +15,9 @@ const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/i
 ---
 <BaseLayout title="読み解きの間｜目的別の分析｜Statlogia" description="教育、暮らしなど、目的を決めて統計を読み解く部屋。国の統計の手引きにならい、問い・計画・データ・分析・結論の順に進めます。" backHref="/" backLabel="玄関">
   <main class="ai">
-    <HeroFig src="/images/icon/analysis-large.webp" alt="本棚のある木造の書庫。窓辺の机で帳面を開き虫めがねを手にした京が、板壁に糸でつながって下がる5枚の札を見上げる水彩画" width={1376} height={768}>
-      <p class="ai-kicker">ANALYSIS</p>
-      <h1>読み解きの間</h1>
+    <HeroFig src="/images/icon/analysis-large.webp" alt="打ちっぱなしコンクリートの部屋。本棚を背に椅子に座り、帳面を開いたまま指し棒で壁の板に下がる札を指す知秋の水彩画" width={1376} height={768}>
+      <p class="ai-kicker">研究棟</p>
+      <h1>読み解きの間｜問いから、数字を組む</h1>
       <p class="ai-lead">知りたいことを先に決めて、それに合う数字の組を読み解く部屋です。<br />県を一つ選ぶと、問いから結論までが一枚にそろいます。</p>
     </HeroFig>
 
@@ -79,7 +79,7 @@ const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/i
     .ai > section { padding: 0; }
     .ai-hero { text-align: center; padding: 32px 0 8px; }
     .ai-hero-figure { display: block; width: 100%; max-width: 860px; height: auto; border-radius: 6px; margin: 0 auto 20px; }
-    .ai-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .76rem; color: #b23a2f; }
+    .ai-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .ai-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
     .ai-lead { color: #555; line-height: 1.9; }
     .ai-ppdac { margin: 28px 0 8px; }

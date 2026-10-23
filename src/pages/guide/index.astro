@@ -16,14 +16,14 @@ const duoPoint = img('duo-point-scene.webp');
 <BaseLayout title="研究員｜知秋と一葉｜Statlogia" description="Statlogia を案内する二人の研究員、白衣の小さな先生・知秋と、見習いの一葉のご紹介。名前の由来と、二人の話し方。" backHref="/" backLabel="玄関">
   <main class="guide-page">
     <header class="guide-hero">
-      <p class="guide-kicker">GUIDE</p>
+      <p class="guide-kicker">案内</p>
       <h1>この都市の研究員</h1>
       <p class="guide-lead">
         Statlogia を案内する、二人の研究員をご紹介します。<br />
         小さな先生の知秋と、見習いの一葉。年の順と教える順が、逆さまの二人です。
       </p>
       <p class="guide-gallery-line"><a class="guide-gallery-btn" href="/gallery/"><i aria-hidden="true">GALLERY</i>日々のイラスト集<em aria-hidden="true">→</em></a></p>
-      {duoPoint && <img class="guide-duo" src={duoPoint} width="1376" height="768" alt="身をかがめて話しかける一葉と、指し棒を担いで笑う知秋" loading="eager" />}
+      {duoPoint && <img class="guide-duo" src={duoPoint} width="1376" height="768" alt="紙を留めたコルクボードの前に並んで立つ一葉と知秋" loading="eager" />}
     </header>
 
     <section class="guide-profile" id="chiaki">
@@ -75,7 +75,7 @@ const duoPoint = img('duo-point-scene.webp');
     .guide-page { max-width: 1040px; margin: 0 auto; padding: 0 16px 56px; }
     .guide-hero { text-align: center; padding: 32px 0 8px; }
     .guide-duo { display: block; width: 100%; max-width: 900px; height: auto; margin: 22px auto 0; border-radius: 6px; }
-    .guide-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: 0.3em; font-size: 0.72rem; color: var(--stamp); }
+    .guide-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .guide-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
     .guide-lead { color: var(--ink-soft); line-height: 1.9; }
     /* イラスト集への札：玄関の出典一覧・情報棟の案内所と同じ形 */

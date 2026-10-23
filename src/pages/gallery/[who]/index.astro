@@ -13,11 +13,14 @@ export function getStaticPaths() {
 const { who } = Astro.params;
 const p = PEOPLE[who];
 const items = galleryOf(who);
+// 会話つきの絵を先に、会話のない絵をあとに（会話つきは1列で大きく、ない絵は2列で並べる）
+const withTalk = items.filter((g) => g.talk && g.talk.length);
+const noTalk = items.filter((g) => !(g.talk && g.talk.length));
 ---
 <BaseLayout title={`${p.title}｜Statlogia`} description={`${p.name}の日々のイラスト集。${p.lead}`} backHref="/gallery/" backLabel="イラスト集">
   <main class="gl">
     <header class="gl-hero">
-      <p class="gl-kicker">GALLERY ｜ {p.romaji}</p>
+      <p class="gl-kicker">記録｜{p.name}</p>
       <h1>{p.title}</h1>
       <p class="gl-lead">{p.lead}</p>
     </header>
@@ -25,24 +28,44 @@ const items = galleryOf(who);
     {items.length === 0 ? (
       <p class="gl-empty">まだ一枚もありません。</p>
     ) : (
-      <ol class="gl-list">
-        {items.map((g) => (
-          <li class={`gl-item ${g.h > g.w ? 'gl-item--tall' : ''}`}>
-            <figure>
-              <img src={`/images/chara/${g.file}`} alt={`${p.name}：${g.title}。${g.caption}`} width={g.w} height={g.h} loading="lazy" />
-              <figcaption>
-                <b>{g.title}</b>
-                <span>{g.caption}</span>
-              </figcaption>
-            </figure>
-            {g.talk && (
-              <div class="gl-talk">
-                {g.talk.map(([sp, text]) => <Talk speaker={sp}>{text}</Talk>)}
-              </div>
-            )}
-          </li>
-        ))}
-      </ol>
+      <>
+        {withTalk.length > 0 && (
+          <ol class="gl-list gl-list--talk">
+            {withTalk.map((g) => (
+              <li class={`gl-item ${g.h > g.w ? 'gl-item--tall' : ''}`}>
+                <figure>
+                  <img src={`/images/chara/${g.file}`} alt={`${p.name}：${g.title}。${g.caption}`} width={g.w} height={g.h} loading="lazy" />
+                  <figcaption>
+                    <b>{g.title}</b>
+                    <span>{g.caption}</span>
+                  </figcaption>
+                </figure>
+                <div class="gl-talk">
+                  {g.talk.map(([sp, text]) => <Talk speaker={sp}>{text}</Talk>)}
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+        {noTalk.length > 0 && (
+          <>
+            {withTalk.length > 0 && <p class="gl-sep">ほかの日の記録</p>}
+            <ol class="gl-list">
+              {noTalk.map((g) => (
+                <li class={`gl-item ${g.h > g.w ? 'gl-item--tall' : ''}`}>
+                  <figure>
+                    <img src={`/images/chara/${g.file}`} alt={`${p.name}：${g.title}。${g.caption}`} width={g.w} height={g.h} loading="lazy" />
+                    <figcaption>
+                      <b>{g.title}</b>
+                      <span>{g.caption}</span>
+                    </figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
+      </>
     )}
 
     <p class="tab-links">
@@ -69,11 +92,15 @@ const items = galleryOf(who);
     .gl-talk :global(.say) { margin-top: 8px; }
     .gl-talk :global(.say .bubble) { font-size: .88rem; }
     .gl-hero { text-align: center; padding: 32px 0 8px; }
-    .gl-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .74rem; color: var(--stamp); font-weight: 600; margin: 0; }
+    .gl-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .gl-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 10px; }
     .gl-lead { color: var(--ink-soft); margin: 0; }
     .gl-empty { text-align: center; color: var(--ink-soft); margin: 40px 0; }
     .gl-list { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+    /* 会話つきは1枚ずつ大きく（絵の下に二人のやりとりが続く） */
+    .gl-list--talk { grid-template-columns: minmax(0, 1fr); gap: 34px; max-width: 760px; margin-left: auto; margin-right: auto; }
+    .gl-sep { margin: 44px 0 0; text-align: center; font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .26em; color: var(--ink-soft); }
+    .gl-sep::before, .gl-sep::after { content: ""; display: inline-block; width: 38px; height: 1px; background: var(--line); vertical-align: middle; margin: 0 14px; }
     .gl-item figure { margin: 0; background: #FFFDF8; border: 1px solid #D9D4C7; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 14px rgba(31,42,68,.08); }
     /* タップ（クリック）で、画鋲で留めた紙のように揺れる */
     .gl-item figure { cursor: pointer; transform-origin: 50% 0; }

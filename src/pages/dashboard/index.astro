@@ -209,6 +209,16 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">都道府県</p>
           </div>
         </a>
+        <a class="rr-card" href="/water/">
+          {thumbOf('water') && <img class="rr-card-img" src={thumbOf('water')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>水とトイレ</h3>
+          <p class="rr-card-desc">
+            上水道と下水道の普及、汚水処理、トイレの水洗化率、1人が1日に使う水の量。都道府県ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（水道統計ほか）</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -283,6 +293,16 @@ import { ROOM_COUNT } from '../../data/page-names.js';
             都道府県を選んで、JR・私鉄・バス・タクシー・飛行機・船に乗った人の数を1人あたりで。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（国土交通省の鉄道・航空・港湾・自動車の統計ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/energy/">
+          {thumbOf('energy') && <img class="rr-card-img" src={thumbOf('energy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>電気とガソリン</h3>
+          <p class="rr-card-desc">
+            県内の電気の自給率、1人あたりの電力需要、ガソリンの販売量、エネルギー消費量。都道府県ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（電力調査統計ほか）</p>
           </div>
         </a>
       </div>
@@ -828,6 +848,26 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（公害苦情調査ほか）</p>
           </div>
         </a>
+        <a class="rr-card" href="/waste/">
+          {thumbOf('waste') && <img class="rr-card-img" src={thumbOf('waste')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>ごみとリサイクル</h3>
+          <p class="rr-card-desc">
+            1人1日あたりのごみの量、リサイクル率、集団回収、埋め立て量、最終処分場の残り年数。都道府県ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（一般廃棄物処理実態調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-waste/">
+          {thumbOf('town-waste') && <img class="rr-card-img" src={thumbOf('town-waste')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町のごみ</h3>
+          <p class="rr-card-desc">
+            1人1日あたりのごみの量、リサイクル率、集団回収、埋め立て量、トイレの水洗化率。市区町村ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（一般廃棄物処理実態調査）</p>
+          </div>
+        </a>
       </div>
     </section>
 
@@ -973,7 +1013,7 @@ import { ROOM_COUNT } from '../../data/page-names.js';
       :global(.hf--l .hf-text h1) { line-height: 1.4; }
     }
     .rr-figure { display: block; width: 100%; max-width: 780px; height: auto; border-radius: 4px; margin: 0 auto 20px; }
-    .rr-kicker { letter-spacing: 0.2em; font-size: 0.8rem; color: #2d6a4f; }
+    .rr-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .rr-hero h1 { margin: 4px 0 12px; }
     .rr-lead { color: #555; line-height: 1.9; }
     .rr-intro { max-width: 980px; margin: 0 auto; }

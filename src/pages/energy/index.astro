@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Room from '../../components/Room.astro';
+import { ENERGY } from '../../data/rooms/energy.js';
+const room = ENERGY;
+---
+<BaseLayout title={`${room.title}｜Statlogia`} description={room.description} backHref="/dashboard/" backLabel="情報棟">
+  <Room room={room} />
+</BaseLayout>

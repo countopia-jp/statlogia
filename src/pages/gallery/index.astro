@@ -5,24 +5,29 @@
 // =====================================================
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { PEOPLE, GALLERY, galleryOf } from '../../data/gallery.js';
-// 「新しい絵」は同じファイル（二人並びの絵）を1回だけ。名前は併記
+// 二人のカードの顔は、その人ひとりが写っている最新の絵（二人並びと対の絵は避ける）
 const sorted = [...GALLERY].sort((a, b) => (a.date < b.date ? 1 : -1));
-const seen = new Map();
-for (const g of sorted) {
-  if (!seen.has(g.file)) seen.set(g.file, { ...g, whos: [g.who] });
-  else seen.get(g.file).whos.push(g.who);
-}
-const recent = [...seen.values()].slice(0, 6);
-// 二人のカードの顔は、その人だけが写っている最新の絵（二人並びは避ける）
+const keyOf = (g) => (g.pair ? `pair:${g.pair}` : g.file);
 const soloOf = (who) => {
   const items = galleryOf(who);
-  return items.find((g) => sorted.filter((x) => x.file === g.file).length === 1) || items[0];
+  return items.find((g) => g.file.startsWith(`${who}-`)) || items.find((g) => !g.pair) || items[0];
 };
+const tops = Object.keys(PEOPLE).map((who) => soloOf(who)).filter(Boolean);
+const topKeys = new Set(tops.map(keyOf));
+// 「新しい絵」は、同じファイルと対の絵（pair）を1枚にまとめ、上のカードに出した絵は外す
+const seen = new Map();
+for (const g of sorted) {
+  const key = keyOf(g);
+  if (topKeys.has(key)) continue;
+  if (!seen.has(key)) seen.set(key, { ...g, whos: [g.who] });
+  else seen.get(key).whos.push(g.who);
+}
+const recent = [...seen.values()].slice(0, 6);
 ---
 <BaseLayout title="日々のイラスト集｜Statlogia" description="知秋と一葉の、数字のない時間の記録。研究室の外での二人のイラスト集です。" backHref="/guide/" backLabel="研究員">
   <main class="gx">
     <header class="gx-hero">
-      <p class="gx-kicker">GALLERY</p>
+      <p class="gx-kicker">記録</p>
       <h1>日々のイラスト集</h1>
       <p class="gx-lead">白衣を着たまま、数字のない時間を過ごす二人の記録です。</p>
     </header>
@@ -65,7 +70,7 @@ const soloOf = (who) => {
   <style>
     .gx { max-width: 1040px; margin: 0 auto; padding: 0 16px 56px; }
     .gx-hero { text-align: center; padding: 32px 0 8px; }
-    .gx-kicker { font-family: "IBM Plex Mono", monospace; letter-spacing: .3em; font-size: .74rem; color: var(--stamp); font-weight: 600; margin: 0; }
+    .gx-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .gx-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 10px; }
     .gx-lead { color: var(--ink-soft); margin: 0; }
     .gx-people { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; margin: 28px 0 0; padding: 0; }

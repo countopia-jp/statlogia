@@ -45,23 +45,23 @@ const stampDate = buildJst.slice(0, 7);
       {(duoImg || chiakiImg || hitohaImg) && (
         <div class="gate-figs">
           <svg class="gate-charts" viewBox="0 0 1000 560" aria-hidden="true" preserveAspectRatio="none">
-            <!-- 壁の模様：一葉の左にレーダー図、上に右上がりの折れ線と点、知秋の前（指し棒の下・足元）に棒グラフ。どれも薄く -->
+            <!-- 壁の模様：二人の頭より上の帯にレーダー図（掲示物にも人物にもかからない位置）、上に右上がりの折れ線と点、知秋の前（指し棒の下・足元）に棒グラフ。どれも薄く -->
             <g fill="none" stroke="#1F2A44" stroke-linecap="round" stroke-linejoin="round" opacity=".07">
-              <path d="M400 200 H860" stroke-width="1.5" />
-              <path d="M420 176 L470 158 L570 136 L670 108 L770 82 L850 58" stroke-width="2.5" />
-              <polygon points="95,178 157,214 157,286 95,322 33,286 33,214"/><polygon points="95,214 126,232 126,268 95,286 64,268 64,232" stroke-width="1"/><path d="M95 250 L95 178"/><path d="M95 250 L157 214"/><path d="M95 250 L157 286"/><path d="M95 250 L95 322"/><path d="M95 250 L33 286"/><path d="M95 250 L33 214"/><polygon points="95,189 132,228 151,282 95,282 51,275 61,230" stroke-width="2.2" fill="#1F2A44" fill-opacity=".35"/>
-              <path d="M790 530 H950" stroke-width="1.5" /><rect x="806" y="455" width="26" height="75" /><rect x="842" y="405" width="26" height="125" /><rect x="878" y="432" width="26" height="98" /><rect x="914" y="365" width="26" height="165" />
+              <rect x="482" y="34" width="394" height="176" rx="4" stroke-width="1" opacity=".5" /><path d="M490 200 H860" stroke-width="1.5" />
+              <path d="M505 150 L570 136 L670 108 L770 82 L850 58" stroke-width="2.5" />
+              <g transform="translate(90,-60) scale(0.8)"><polygon points="95.0,178.0 157.4,214.0 157.4,286.0 95.0,322.0 32.6,286.0 32.6,214.0"/><polygon points="95.0,214.0 126.2,232.0 126.2,268.0 95.0,286.0 63.8,268.0 63.8,232.0" stroke-width="1"/><path d="M95 250 L95.0 178.0"/><path d="M95 250 L157.4 214.0"/><path d="M95 250 L157.4 286.0"/><path d="M95 250 L95.0 322.0"/><path d="M95 250 L32.6 286.0"/><path d="M95 250 L32.6 214.0"/><polygon points="95.0,188.1 133.7,227.7 143.6,278.1 95.0,287.4 51.4,275.2 58.8,229.1" stroke-width="2.2" fill="#1F2A44" fill-opacity=".35"/></g>
+              <rect x="784" y="345" width="178" height="195" rx="4" stroke-width="1" opacity=".5" /><path d="M790 530 H950" stroke-width="1.5" /><rect x="800" y="455" width="24" height="75" /><rect x="830" y="405" width="24" height="125" /><rect x="860" y="432" width="24" height="98" /><rect x="890" y="365" width="24" height="165" /><rect x="920" y="390" width="24" height="140" />
             </g>
             <g fill="#1F2A44" opacity=".07">
-              <circle cx="445" cy="170" r="3.5" /><circle cx="520" cy="146" r="3.5" /><circle cx="620" cy="120" r="3.5" /><circle cx="720" cy="96" r="3.5" /><circle cx="810" cy="68" r="3.5" />
+              <circle cx="520" cy="146" r="3.5" /><circle cx="620" cy="120" r="3.5" /><circle cx="720" cy="96" r="3.5" /><circle cx="810" cy="68" r="3.5" />
             </g>
-            <g fill="none" stroke="#B3402A" stroke-width="1.5" stroke-dasharray="5 9" opacity=".12"><path d="M420 164 L850 72" /></g>
+            <g fill="none" stroke="#B3402A" stroke-width="1.5" stroke-dasharray="5 9" opacity=".12"><path d="M505 146 L850 72" /></g>
           </svg>
           {duoImg ? (
-            <a class="fig-link fig-duo" href="/guide/" title="二人の紹介へ"><img src={duoImg} width="866" height="716" fetchpriority="high" decoding="async" alt="指し棒で先を指して歩く知秋と、クリップボードを抱えて付いていく一葉" /></a>
+            <a class="fig-link fig-duo" href="/guide/" title="二人の紹介へ"><img src={duoImg} width="832" height="725" fetchpriority="high" decoding="async" alt="指し棒を高く掲げて先を示しながら歩く知秋と、クリップボードを抱えて付いていく一葉" /></a>
           ) : (
             <>
-              {hitohaImg && <a class="fig-link fig-hitoha" href="/guide/#hitoha" title="一葉の紹介へ"><img src={hitohaImg} width="518" height="1300" alt="眼鏡をかけてクリップボードを抱えた見習い研究員・一葉" /></a>}
+              {hitohaImg && <a class="fig-link fig-hitoha" href="/guide/#hitoha" title="一葉の紹介へ"><img src={hitohaImg} width="758" height="1300" alt="眼鏡をかけてクリップボードを抱えた見習い研究員・一葉" /></a>}
               {chiakiImg && <a class="fig-link fig-chiaki" href="/guide/#chiaki" title="知秋の紹介へ"><img src={chiakiImg} width="539" height="1100" alt="指し棒を担いだ知秋教授" /></a>}
             </>
           )}
@@ -120,7 +120,7 @@ const stampDate = buildJst.slice(0, 7);
         <Talk speaker="hitoha">一葉です。先生の下で見習い中です。分からないことは、その場で先生に聞きます。……先生、どこの国の方ですか？</Talk>
         <Talk speaker="chiaki">分からぬ。わたしのデータにはない。</Talk>
       </div>
-      {heroImg && <a class="gate-scene-link" href="/guide/" title="二人の紹介へ"><span class="gate-scene-photo"><img class="gate-scene" src={heroImg} alt="打ちっぱなしコンクリートの研究室。机を挟んで同じ方眼紙を見る一葉と知秋の水彩画" width="1400" height="782" loading="lazy" /></span><span class="gate-scene-cap">二人のことをくわしく →</span></a>}
+      {heroImg && <a class="gate-scene-link" href="/guide/" title="二人の紹介へ"><span class="gate-scene-photo"><img class="gate-scene" src={heroImg} alt="書架の並ぶ研究室。帳面を開いて見せる一葉と、指し棒を手にそれを見る知秋の水彩画" width="1400" height="782" loading="lazy" /></span><span class="gate-scene-cap">二人のことをくわしく →</span></a>}
     </section>
   </main>
   <style>
@@ -129,7 +129,7 @@ const stampDate = buildJst.slice(0, 7);
     .notice { position: relative; align-self: start; margin-top: 70px; padding: 34px 40px 30px 36px; background: #FFFDF8; border: 1px solid #D9D4C7; box-shadow: 0 1px 0 #fff inset, 0 6px 18px rgba(31,42,68,.10); transform: rotate(-.6deg); }
     .notice::before, .notice::after { content: ""; position: absolute; top: -7px; width: 14px; height: 14px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #e8e8e8, #8d8d8d 60%, #5c5c5c); box-shadow: 0 1px 2px rgba(0,0,0,.35); }
     .notice::before { left: 22px; } .notice::after { right: 22px; }
-    .gate-kicker { margin: 0; font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .22em; color: var(--stamp); font-weight: 600; }
+    .gate-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .notice h1 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: clamp(1.5rem, 2.6vw, 2.05rem); line-height: 1.45; margin: 8px 0 12px; }
     .gate-lead { color: var(--ink-soft); line-height: 1.95; margin: 0; }
     .gate-lead .nw { display: inline-block; }
@@ -165,7 +165,7 @@ const stampDate = buildJst.slice(0, 7);
     .gate-figs img { display: block; width: 100%; height: auto; }
     .fig-link { display: block; transition: transform .15s ease; }
     .fig-link:hover, .fig-link:focus-visible { transform: translateY(-4px); }
-    .fig-duo { width: 92%; }
+    .fig-duo { width: 87%; }
     .fig-hitoha { width: 52%; }
     .fig-chiaki { width: 28%; margin-left: -3%; }
     .gate-wings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 30px 8px 0; padding: 0; }
@@ -198,7 +198,7 @@ const stampDate = buildJst.slice(0, 7);
     .ex-head { position: relative; z-index: 1; display: flex; flex-direction: column; }
     .ex-top { display: flex; align-items: baseline; gap: 14px; margin: 2px 0 8px; }
     .ex-h2 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem; line-height: 1.2; }
-    .ex-kicker { margin: 0; font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .24em; color: var(--ink-soft); }
+    .ex-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .ex-role { font-size: .8rem; letter-spacing: .3em; color: var(--ink-soft); }
     .ex-desc { font-size: .9rem; line-height: 1.8; color: #333; margin: 0; flex: 1; }
     /* パネル全体を検証室への入口にする：ドア札の当たり判定を板いっぱいに広げ、案件札だけ上に出す */

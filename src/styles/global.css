@@ -150,11 +150,12 @@ h1 .h1b,h3 .h1b{display:block}
   box-shadow:0 0 36px 22px rgba(255,253,247,.55);-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
 .hf .hf-text > *{margin-left:auto;margin-right:auto}
 .hf .hf-text > p{margin-top:0;margin-bottom:0;max-width:none}
-.hf .hf-text h1{margin:2px auto 8px;font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.4rem,3.45cqi,2.1rem);line-height:1.35}
-.hf .hf-text > p:last-child:not(:first-child){font-size:clamp(.8rem,1.67cqi,.95rem);line-height:1.8;color:#3d3528}
+.hf .hf-text h1{margin:2px auto 8px;font-family:"Shippori Mincho",serif;font-weight:800;font-size:clamp(1.18rem,2.62cqi,1.62rem);line-height:1.35}
+.hf .hf-text > p:last-child:not(:first-child){font-size:clamp(.76rem,1.5cqi,.88rem);line-height:1.8;color:#3d3528}
 .hf .hf-text .h1a,.hf .hf-text .h1b{display:block}
 .hf .hf-text h1 .h1b{font-size:.78em}
 .hf .hf-text h1 .nw,h1 .nw,.hf .hf-text p .nw{display:inline-block}
+.hf .hf-text > p:first-child{font-family:"IBM Plex Mono",monospace;font-size:.74rem;letter-spacing:.22em;font-weight:600;color:var(--stamp);margin:0}
 .hf .hf-text .no{display:block;font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600;font-size:.76rem;letter-spacing:.24em}
 .hf--t .hf-text{left:50%;top:4%;transform:translateX(-50%);width:min(66%,600px)}
 .hf--c .hf-text{left:50%;top:50%;transform:translate(-50%,-50%);width:min(72%,640px)}
@@ -166,8 +167,7 @@ h1 .h1b,h3 .h1b{display:block}
 .hf--bl .hf-text{left:3%;bottom:5%;width:40%}
 .hf--tl .hf-text,.hf--tr .hf-text,.hf--l .hf-text,.hf--r .hf-text,.hf--br .hf-text,.hf--bl .hf-text{padding:14px 18px 12px}
 .hf--tl .hf-text br,.hf--tr .hf-text br,.hf--l .hf-text br,.hf--r .hf-text br,.hf--br .hf-text br,.hf--bl .hf-text br{display:none}
-.hf--tl .hf-text h1,.hf--tr .hf-text h1,.hf--l .hf-text h1,.hf--r .hf-text h1,.hf--br .hf-text h1,.hf--bl .hf-text h1{font-size:clamp(1.1rem,2.42cqi,1.5rem);margin:2px auto 6px}
-.hf--br .hf-text > p:last-child:not(:first-child),.hf--bl .hf-text > p:last-child:not(:first-child),.hf--tl .hf-text > p:last-child:not(:first-child),.hf--tr .hf-text > p:last-child:not(:first-child),.hf--l .hf-text > p:last-child:not(:first-child),.hf--r .hf-text > p:last-child:not(:first-child){font-size:clamp(.74rem,1.44cqi,.85rem);line-height:1.7}
+.hf--tl .hf-text h1,.hf--tr .hf-text h1,.hf--l .hf-text h1,.hf--r .hf-text h1,.hf--br .hf-text h1,.hf--bl .hf-text h1{margin:2px auto 6px}
 .hf--under .hf-text{position:relative;width:auto;margin:-22px 16px 0;padding:16px 20px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
 .hf--noimg{padding:28px 0 8px !important}
 .hf--noimg .hf-text{position:static;transform:none;width:auto;background:none;box-shadow:none;-webkit-backdrop-filter:none;backdrop-filter:none}
@@ -192,7 +192,7 @@ h1 .h1b,h3 .h1b{display:block}
 /* 10-19 扉絵の上の細い帯（人物の頭が高い絵）。スマホは他と同じく絵の下に札 */
 @media(min-width:761px){
 .hf--tt .hf-text{left:50%;top:2.5%;transform:translate(-50%);width:min(72%,660px);padding:8px 18px 6px;box-shadow:0 0 16px 8px rgba(255,253,247,.55)}
-.hf--tt .hf-text h1{font-size:clamp(1.1rem,2.5cqi,1.4rem);margin:0 auto 2px}
+.hf--tt .hf-text h1{margin:0 auto 2px}
 }
 .logo .mark .xf{margin-top:-.9em}
 
