@@ -20,7 +20,7 @@ export const GALLERY = [
   { who: 'hitoha', file: 'hitoha-nightnoodle.webp', w: 1376, h: 774, date: '2026-10-22', title: '夜食', caption: '寮の台所で。湯を注いで三分、その間に帳面を一ページ。' },
   { who: 'chiaki', file: 'chiaki-deskbar.webp', w: 1376, h: 774, date: '2026-10-22', title: '片手で昼食', caption: '三つの画面を見ながら、シリアルバーを片手で。昼休みを取る時間が惜しい日。' },
   { who: 'chiaki', file: 'duo-cookie.webp', w: 1376, h: 774, date: '2026-10-25', title: 'ルーレットクッキー', caption: '懇親会の余興用。激辛が1枚だけ入っているはずだった。', talk: [['hitoha', '懇親会で使うルーレットクッキーです。'], ['hitoha', '激辛クッキーが1枚入ってます。'], ['chiaki', 'それはわたしにくれたまえ。'], ['hitoha', '先生、ゲームになりません。']] },
-  { who: 'hitoha', file: 'duo-cookie-b.webp', w: 1376, h: 774, date: '2026-10-25', title: '一枚だけ', caption: 'ルーレットクッキーの激辛は二十枚に一枚。先生は一枚目で引いた。', talk: [['hitoha', '激辛は二十枚に一枚ですよ。一枚目で引きますか、ふつう。'], ['chiaki', '確率二十分の一は、起きないという意味ではない。'], ['hitoha', '……先生、香りで探ってますよね？']] },
+  { who: 'hitoha', file: 'duo-cookie-b.webp', w: 1376, h: 774, date: '2026-10-25', title: '一枚だけ', caption: 'ルーレットクッキーの激辛は二十枚に一枚。先生は一枚目で引いた。', talk: [['hitoha', '激辛は二十枚に一枚ですよ。一枚目で引きますか、ふつう。'], ['chiaki', '確率二十分の一は、起きないという意味ではない。'], ['hitoha', '……先生、香りで探ってません？'], ['chiaki', 'バレたか。つまり確率一分の一だ。']] },
 ];
 
 export const galleryOf = (who) => GALLERY.filter((g) => g.who === who).sort((a, b) => (a.date < b.date ? 1 : -1));

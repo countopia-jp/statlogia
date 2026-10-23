@@ -196,8 +196,9 @@ const cur = (href) => (href === '/' ? here === '/' : here.startsWith(href)) ? 'p
       transition: background .15s, border-color .15s;
     }
     .foot-source:hover, .foot-sister:hover { background: #ffffff14; border-color: #f0b78a88; }
-    .foot-source { grid-column: 1 / 3; }
-    .foot-sister { grid-column: 3 / -1; }
+    .foot-source { grid-column: 1 / 3; grid-row: 2; }
+    .foot-sister { grid-column: 3 / -1; grid-row: 2; }
+    .foot-source, .foot-sister { align-self: stretch; margin-top: 8px; }
     .fs-label {
       flex-shrink: 0; font-family: "IBM Plex Mono", monospace;
       font-size: .62rem; letter-spacing: .24em; opacity: .6;
