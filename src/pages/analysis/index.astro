@@ -67,6 +67,11 @@ const thumbOf = (id) => (fs.existsSync(path.join(process.cwd(), 'public/images/i
       {duoBoard && <img class="ai-rule-duo" src={duoBoard} width="1376" height="768" alt="クリップボードの数字を見せる一葉と、それをのぞき込む知秋" loading="lazy" />}
     </section>
 
+    <p class="tab-links">
+      <a class="tab-link" href="/verify/">検証室（言い伝えを数字で確かめる）へ</a>
+      <a class="tab-link" href="/compare/">見くらべの間へ</a>
+    </p>
+
     <footer class="ai-source"><p>分析の進め方は、総務省統計局 統計データ利活用センター『データ利活用実践ガイドブック EBPMのための』のPPDACサイクルにならっています。数字は各窓口の出典のとおりです。</p></footer>
   </main>
   <style>

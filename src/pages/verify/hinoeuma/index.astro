@@ -1,0 +1,150 @@
+---
+// =====================================================
+// Statlogia - 検証室 CASE 01 丙午生まれは、少ない
+// src/pages/verify/hinoeuma/index.astro
+// =====================================================
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+import { CASES, VERDICT } from '../../../data/verify.js';
+import { getHinoeumaData } from '../../../lib/verify-lore.js';
+import fs from 'node:fs';
+import path from 'node:path';
+const c = CASES.find((x) => x.id === 'hinoeuma');
+const d = await getHinoeumaData();
+const hero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/verify-hinoeuma-large.webp')) ? '/images/icon/verify-hinoeuma-large.webp' : null;
+const fmt = (n) => (n == null ? '—' : Math.round(n).toLocaleString('ja-JP'));
+const man = (n) => (n == null ? '—' : (n / 10000).toFixed(0) + '万');
+const pct = (n) => (n == null ? '—' : (n > 0 ? '+' : '') + n.toFixed(1) + '%');
+// グラフ用：1950〜1980 を抜き出し（1966 がよく見える範囲）
+const win = d.series.filter((x) => x.year >= 1950 && x.year <= 1980);
+const full = d.series.filter((x) => x.year >= 1900);
+const verdict = VERDICT[c.verdict];
+---
+<BaseLayout title={`${c.title}｜検証室｜Statlogia`} description={`${c.lore} ${c.restate}`} backHref="/verify/" backLabel="検証室">
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <main class="vc">
+    {hero ? (
+      <HeroFig src={hero} alt={c.imageAlt} width={1400} height={788} pos="t">
+        <p class="vc-kicker">{c.kicker}</p>
+        <h1>{c.title}</h1>
+      </HeroFig>
+    ) : (
+      <header class="vc-hero"><p class="vc-kicker">{c.kicker}</p><h1>{c.title}</h1></header>
+    )}
+
+    <section class="vc-box vc-lore">
+      <h2>言い伝え</h2>
+      <p>{c.lore}</p>
+      <p class="vc-restate"><b>数字にすると</b>{c.restate}</p>
+    </section>
+
+    <Talk speaker="chiaki-work">丙午は60年に一度。1906年と1966年、二回ぶんの数字がある。次は2026年だ。</Talk>
+    <Talk speaker="hitoha">今年じゃないですか。</Talk>
+    <Talk speaker="chiaki-work">うむ。だから今年の数字が出る前に、過去の二回を見ておこう。</Talk>
+
+    <section class="vc-box">
+      <h2>使った数字</h2>
+      <p>全国の年ごとの出生数（人口動態統計）。1899年から最新年まで、毎年の値がある。「前後の年の平均と比べて、丙午の年がどれだけ少ないか」を見る。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>結果</h2>
+      <div class="vc-grid2">
+        <div class="vc-stat">
+          <span class="vc-stat-y">1906年（明治39年）の丙午</span>
+          <span class="vc-stat-v">{man(d.y1906.cur)}人</span>
+          <span class="vc-stat-s">前年 {man(d.y1906.prev)}・翌年 {man(d.y1906.next)}／前後の平均との差 <b>{pct(d.y1906.dropPct)}</b></span>
+        </div>
+        <div class="vc-stat vc-stat--hit">
+          <span class="vc-stat-y">1966年（昭和41年）の丙午</span>
+          <span class="vc-stat-v">{man(d.y1966.cur)}人</span>
+          <span class="vc-stat-s">前年 {man(d.y1966.prev)}・翌年 {man(d.y1966.next)}／前後の平均との差 <b>{pct(d.y1966.dropPct)}</b></span>
+        </div>
+      </div>
+      <div class="vc-chart"><canvas id="vcWin" height="300" aria-label="1950〜1980年の出生数の折れ線" role="img"></canvas></div>
+      <p class="vc-cap">1950〜1980年の出生数。1966年だけが谷になり、翌1967年に跳ね返っている。</p>
+      <div class="vc-chart"><canvas id="vcFull" height="260" aria-label="1900年から最新年までの出生数の折れ線" role="img"></canvas></div>
+      <p class="vc-cap">1900年から最新年（{d.latest.year}年 {man(d.latest.value)}人）まで。1906年にも小さな谷があり、1966年の谷が際立つ。</p>
+    </section>
+
+    <section class={`vc-box vc-verdict vc-verdict--${c.verdict}`}>
+      <h2>判定：{verdict.label}</h2>
+      <p>1966年は、前後の平均より約{Math.abs(d.y1966.dropPct).toFixed(0)}％少ない。年ごとの出生数が一年だけこれほど動く例は、戦争や災害の年を除けばほかにない。当時の厚生省の分析では、中絶の増加はほとんどなく、主に避妊で産む年を変えた結果とされる。1906年にも約{Math.abs(d.y1906.dropPct).toFixed(0)}％の谷があるが、こちらは事情が違う。明治39年後半の出生は男児の割合が異常に高く、翌年初めは女児が多い。丙午生まれの女児を前後の年の生まれとして届ける「生れ年の祭り替へ」が広く行われ、谷の大部分は届け出のずらしによる見かけ上のものと見られている。言い伝えのとおりに出産が避けられたと言えるのは、1966年だ。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>言えること・言えないこと</h2>
+      <ul>
+        <li><b>言える</b>：1966年の出生数は前後より大きく少なく、翌年に増えた。つまり「産まない」より「ずらした」人が多かった。</li>
+        <li><b>言える</b>：1906年の谷の多くは、生まれた年の届け出をずらしたもの。明治の親は産まずに済ませたのではなく、帳簿のほうをずらした。</li>
+        <li><b>言えない</b>：1906年に実際どれだけ産み控えがあったか。届け出のずらしと、この数字では分けられない。</li>
+        <li><b>言えない</b>：丙午生まれの人の気性。そういう統計はない。</li>
+      </ul>
+    </section>
+
+    <section class="vc-theory">
+      <p class="vc-theory-k"><span>知秋理論</span>まだ検証されていない仮説</p>
+      <Talk speaker="chiaki-work">明治は届け出をずらし、昭和は避妊で産む年を変えた。手段が変わっただけで、俗説にしたがう人は両方の年にいた。昭和のほうが深く落ちたのは、避妊が全国に行き渡ったことに加えて、新聞とテレビが「今年は丙午」を繰り返し、知らない人がいなくなったからではないか。俗説の強さではなく、俗説を知る速さと、したがう手段──というのがわたしの仮説だ。</Talk>
+      <Talk speaker="hitoha">それは数字から読めることですか。それとも、先生の仮説ですか。</Talk>
+      <Talk speaker="chiaki-work">半分は読める。届け出のずらしは、男女の割合の偏りから明治の統計学者がすでに見抜いていた。避妊が主因だというのも当時の厚生省の分析だ。読めないのは、報道がどれだけ効いたかという部分で、だから札を付けてある。そして2026年の数字が出れば、三回目の答え合わせができる。</Talk>
+    </section>
+
+    <p class="vc-source">出典：{d.source}。出生数は日本における日本人。</p>
+    <p class="vc-source">参考：呉文聰『戦後之出生 附丙午の迷信』（1911）／村井隆重「ひのえうま総決算」『厚生の指標』15巻5号（1968）／厚生省『昭和41年人口動態統計』（1967）／<a href="https://www.jil.go.jp/institute/zassi/backnumber/2007/12/pdf/017-028.pdf" rel="noopener">赤林英夫「丙午世代のその後」『日本労働研究雑誌』569号（2007、PDF）</a>／<a href="https://www.pref.tottori.lg.jp/item/453461.htm" rel="noopener">鳥取県立公文書館「俗説をかわす人たち：丙午の周辺で」</a></p>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/verify/">検証室の一覧へ</a>
+      <a class="tab-link" href="/verify/okinawa-longevity/">次の言い伝え：沖縄は長寿の県</a>
+      <a class="tab-link" href="/how-to-read/growth/">伸び率の読み方（講義室）</a>
+    </p>
+  </main>
+
+  <script is:inline define:vars={{ win, full }}>
+    const ink = '#1F2A44', stamp = '#B3402A';
+    function draw(id, data, hl) {
+      const el = document.getElementById(id); if (!el || !window.Chart) return;
+      new Chart(el, {
+        type: 'line',
+        data: { labels: data.map((d) => d.year), datasets: [{ data: data.map((d) => d.value / 10000), borderColor: ink, borderWidth: 2, pointRadius: data.map((d) => (hl.includes(d.year) ? 5 : 0)), pointBackgroundColor: stamp, pointBorderColor: stamp, tension: .15 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.parsed.y.toFixed(0)}万人` } } },
+          scales: { y: { title: { display: true, text: '万人' }, grid: { color: '#e4e2dc' } }, x: { ticks: { maxTicksLimit: 12 }, grid: { display: false } } } },
+      });
+    }
+    const go = () => { if (!window.Chart) return setTimeout(go, 150); draw('vcWin', win, [1966]); draw('vcFull', full, [1906, 1966]); };
+    go();
+  </script>
+
+  <style is:global>
+    .vc { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .vc-hero { text-align: center; padding: 32px 0 8px; }
+    .vc-kicker { font-family: "IBM Plex Mono", monospace; font-size: .75rem; letter-spacing: .3em; color: var(--stamp); margin: 0; }
+    .vc h1 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: clamp(1.4rem, 3.8vw, 2rem); margin: 6px 0 10px; }
+    .vc-box { margin: 22px 0; padding: 18px 22px; border: 1px solid var(--line); border-radius: 10px; background: #fffdf7; }
+    .vc-box h2 { font-family: "Shippori Mincho", serif; font-size: 1.1rem; margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .vc-box p, .vc-box li { font-size: .92rem; line-height: 1.9; color: #333; }
+    .vc-box p { margin: 0 0 8px; }
+    .vc-box ul { margin: 0; padding-left: 1.2em; }
+    .vc-lore { border-left: 5px solid var(--stamp); }
+    .vc-restate b { display: inline-block; margin-right: .6em; padding: 0 .5em; font-size: .74rem; color: #fff; background: var(--ink); border-radius: 3px; line-height: 1.7; vertical-align: .1em; }
+    .vc-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .vc-stat { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .vc-stat--hit { border-color: var(--stamp); background: #fff6f3; }
+    .vc-stat-y { display: block; font-size: .78rem; color: var(--ink-soft); }
+    .vc-stat-v { display: block; font-family: "IBM Plex Mono", monospace; font-size: 1.6rem; font-weight: 600; color: var(--ink); margin: 2px 0; }
+    .vc-stat-s { display: block; font-size: .8rem; color: #555; line-height: 1.6; }
+    .vc-stat-s b { color: var(--stamp); }
+    .vc-chart { position: relative; height: 300px; margin: 6px 0 4px; }
+    .vc-chart:nth-of-type(2) { height: 260px; }
+    .vc-cap { font-size: .8rem; color: var(--ink-soft); margin: 0 0 14px !important; }
+    .vc-verdict { border-width: 2px; }
+    .vc-verdict--true { border-color: #2d6a4f; } .vc-verdict--true h2 { color: #2d6a4f; border-color: #2d6a4f; }
+    .vc-verdict--half { border-color: #b8862a; } .vc-verdict--half h2 { color: #b8862a; border-color: #b8862a; }
+    .vc-verdict--unknown { border-color: var(--ink-soft); } .vc-verdict--unknown h2 { color: var(--ink-soft); }
+    .vc-theory { margin: 22px 0; padding: 14px 18px 6px; border: 2px dotted var(--stamp); border-radius: 10px; }
+    .vc-theory-k { margin: 0 0 6px; font-size: .78rem; color: var(--ink-soft); }
+    .vc-theory-k span { display: inline-block; margin-right: .6em; padding: .1em .6em; font-family: "Shippori Mincho", serif; font-weight: 800; color: var(--stamp); border: 1.5px solid var(--stamp); border-radius: 3px; font-size: .82rem; }
+    .vc-source { font-size: .78rem; color: var(--ink-soft); line-height: 1.7; margin: 18px 0 0; }
+    @media (max-width: 600px) { .vc-grid2 { grid-template-columns: 1fr; } }
+  </style>
+</BaseLayout>

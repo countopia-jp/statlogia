@@ -1,0 +1,154 @@
+---
+// =====================================================
+// Statlogia - 検証室 CASE 02 沖縄は長寿の県
+// src/pages/verify/okinawa-longevity/index.astro
+// =====================================================
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+import { CASES, VERDICT } from '../../../data/verify.js';
+import { getOkinawaData } from '../../../lib/verify-lore.js';
+import fs from 'node:fs';
+import path from 'node:path';
+const c = CASES.find((x) => x.id === 'okinawa-longevity');
+const d = await getOkinawaData();
+const hero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/verify-okinawa-longevity-large.webp')) ? '/images/icon/verify-okinawa-longevity-large.webp' : null;
+const verdict = VERDICT[c.verdict];
+const last = d.years.length - 1;
+const diff = (s, i) => (s.okinawa[i] != null && s.japan[i] != null ? s.okinawa[i] - s.japan[i] : null);
+const fd = (n) => (n == null ? '—' : (n > 0 ? '+' : '') + n.toFixed(1) + '歳');
+// 女性・男性それぞれ、全国との差が最大だった年
+const peak = (s) => d.years.reduce((b, y, i) => { const v = diff(s, i); return v != null && (b.v == null || v > b.v) ? { y, v, rank: s.rank[i] } : b; }, { y: null, v: null, rank: null });
+const pf = peak(d.female), pm = peak(d.male);
+const rows = d.years.map((y, i) => ({ y, fo: d.female.okinawa[i], fj: d.female.japan[i], fr: d.female.rank[i], mo: d.male.okinawa[i], mj: d.male.japan[i], mr: d.male.rank[i] }));
+const chart = { years: d.years, fo: d.female.okinawa, fj: d.female.japan, mo: d.male.okinawa, mj: d.male.japan };
+---
+<BaseLayout title={`${c.title}｜検証室｜Statlogia`} description={`${c.lore} ${c.restate}`} backHref="/verify/" backLabel="検証室">
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <main class="vc">
+    {hero ? (
+      <HeroFig src={hero} alt={c.imageAlt} width={1400} height={788} pos="t">
+        <p class="vc-kicker">{c.kicker}</p>
+        <h1>{c.title}</h1>
+      </HeroFig>
+    ) : (
+      <header class="vc-hero"><p class="vc-kicker">{c.kicker}</p><h1>{c.title}</h1></header>
+    )}
+
+    <section class="vc-box vc-lore">
+      <h2>言い伝え</h2>
+      <p>{c.lore}</p>
+      <p class="vc-restate"><b>数字にすると</b>{c.restate}</p>
+    </section>
+
+    <Talk speaker="chiaki-work">「長寿県」という言い方は、いつの数字を指しているのか。それを確かめるのがこの部屋の仕事だ。</Talk>
+    <Talk speaker="hitoha">看板って、一度立つと下ろさないですからね。</Talk>
+
+    <section class="vc-box">
+      <h2>使った数字</h2>
+      <p>都道府県別生命表の「0歳の平均余命」（いわゆる平均寿命）、男女別、{d.years[0]}年から{d.years[last]}年まで5年ごと。沖縄の値と全国の値、それに47県の中での沖縄の順位を並べる。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>結果</h2>
+      <div class="vc-grid2">
+        <div class="vc-stat vc-stat--hit">
+          <span class="vc-stat-y">女性：全国との差がいちばん大きかった年</span>
+          <span class="vc-stat-v">{pf.y}年 {fd(pf.v)}</span>
+          <span class="vc-stat-s">47県中 <b>{pf.rank}位</b>。{d.years[last]}年は {fd(diff(d.female, last))}、{d.female.rank[last]}位</span>
+        </div>
+        <div class="vc-stat">
+          <span class="vc-stat-y">男性：全国との差がいちばん大きかった年</span>
+          <span class="vc-stat-v">{pm.y}年 {fd(pm.v)}</span>
+          <span class="vc-stat-s">47県中 <b>{pm.rank}位</b>。{d.years[last]}年は {fd(diff(d.male, last))}、{d.male.rank[last]}位</span>
+        </div>
+      </div>
+      <div class="vc-chart"><canvas id="vcLife" height="320" aria-label="沖縄と全国の平均寿命の推移（男女）" role="img"></canvas></div>
+      <p class="vc-cap">実線が沖縄、点線が全国。朱が女性、紺が男性。</p>
+      <table class="vc-table">
+        <thead><tr><th>年</th><th>女性 沖縄</th><th>全国</th><th>順位</th><th>男性 沖縄</th><th>全国</th><th>順位</th></tr></thead>
+        <tbody>{rows.map((r) => (<tr><td>{r.y}</td><td>{r.fo?.toFixed(2)}</td><td>{r.fj?.toFixed(2)}</td><td>{r.fr}位</td><td>{r.mo?.toFixed(2)}</td><td>{r.mj?.toFixed(2)}</td><td>{r.mr}位</td></tr>))}</tbody>
+      </table>
+    </section>
+
+    <section class={`vc-box vc-verdict vc-verdict--${c.verdict}`}>
+      <h2>判定：{verdict.label}</h2>
+      <p>女性は{d.years[0]}年から2005年ごろまで全国1位が続き、{pf.y}年には全国より{pf.v.toFixed(1)}歳長かった。これは「長寿県」と呼んで差し支えない。しかし{d.years[last]}年には全国との差が{fd(diff(d.female, last))}まで縮み、順位は{d.female.rank[last]}位。男性は{pm.y}年の{pm.rank}位から{d.years[last]}年の{d.male.rank[last]}位まで下がり、全国平均を下回っている。言い伝えは、昭和の終わりから平成のはじめの数字でできている。ただし、下がったのは「お年寄りの寿命」ではない。2020年の75歳の平均余命は、沖縄が男性2位・女性1位。平均寿命を押し下げているのは20〜64歳の死亡率で、こちらは1980年の女性1位・男性21位から、2020年には女性45位・男性46位まで落ちた。長寿のお年寄りと、早く亡くなる働き盛りが、同じ県の中にいる。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>言えること・言えないこと</h2>
+      <ul>
+        <li><b>言える</b>：沖縄の平均寿命は伸びている。下がったのではなく、他県の伸びに追い抜かれた。</li>
+        <li><b>言える</b>：男性のほうが先に、大きく順位を落とした。1995年の4位から2000年の26位への急落は、県内で「26ショック」と呼ばれた。</li>
+        <li><b>言える</b>：高齢者はいまも長寿。2020年の75歳の平均余命は男性2位・女性1位（都道府県別生命表）。</li>
+        <li><b>言える</b>：順位を落としたのは働き盛り。20〜64歳の年齢調整死亡率の順位は、1980年の女性1位・男性21位から2020年の女性45位・男性46位へ。肝疾患の死亡率は男性で全国の約3倍、女性で約2倍（沖縄県衛生環境研究所）。</li>
+        <li><b>言えない</b>：働き盛りの死亡率がなぜ高いのか。肥満（40〜64歳男性の49.5％、全国38.3％）、飲酒、車に頼る暮らしが候補に挙がるが、この表からはどれとも言えない。</li>
+        <li><b>言えない</b>：「沖縄の人は健康か」。平均寿命は死亡の統計であって、健康状態の統計ではない。</li>
+      </ul>
+    </section>
+
+    <section class="vc-theory">
+      <p class="vc-theory-k"><span>知秋理論</span>まだ検証されていない仮説</p>
+      <Talk speaker="chiaki-work">昔の長寿は、戦前に生まれて伝統的な食事で育った世代の数字だった。戦後に生まれ、食事と暮らしが大きく変わった世代が働き盛りになって、死亡率を押し上げている。お年寄りの余命はいまも全国一で、働き盛りの死亡率は全国最下位級──同じ県に二つの世代が同居している。この世代が入れ替わりきったとき、沖縄は本当に長寿県ではなくなる、というのがわたしの仮説だ。</Talk>
+      <Talk speaker="hitoha">それは数字から読めることですか。それとも、先生の仮説ですか。</Talk>
+      <Talk speaker="chiaki-work">半分は読める。世代で差があることは、年齢別の余命と死亡率の順位が示している。読めないのは、それが食事のせいか、酒か、車か、所得か。それと、男性が1980年代に1位だったのは、沖縄戦を生き延びた頑丈な世代の数字が一時的に出ただけだ、という研究もある。確かめるなら、同じ生まれ年の人たちを何十年も追うことになる。</Talk>
+    </section>
+
+    <p class="vc-source">出典：{d.source}。平均余命は完全生命表・都道府県別生命表に基づく5年ごとの値。</p>
+    <p class="vc-source">参考：<a href="https://www.mhlw.go.jp/toukei/saikin/hw/life/tdfk20/index.html" rel="noopener">厚生労働省「令和2年都道府県別生命表の概況」</a>（75歳の平均余命）／<a href="https://www.pref.okinawa.lg.jp/_res/projects/default_project/_page_/001/006/578/news48_kenkochoju.pdf" rel="noopener">沖縄県衛生環境研究所「衛環研ニュース」第48号（2024、PDF）</a>（20〜64歳の年齢調整死亡率・肝疾患死亡率・肥満者割合）／<a href="https://www.hws-kyokai.or.jp/images/ronbun/all/202211-02.pdf" rel="noopener">岡本悦司「沖縄長寿の神話──戦前・戦後を通じた沖縄県民死亡率のコホート分析」『厚生の指標』69巻13号（2022、PDF）</a></p>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/verify/">検証室の一覧へ</a>
+      <a class="tab-link" href="/verify/hinoeuma/">前の言い伝え：丙午の年</a>
+      <a class="tab-link" href="/how-to-read/position/">順位の読み方（講義室）</a>
+    </p>
+  </main>
+
+  <script is:inline define:vars={{ chart }}>
+    const go = () => {
+      if (!window.Chart) return setTimeout(go, 150);
+      const el = document.getElementById('vcLife'); if (!el) return;
+      const ds = (label, data, color, dash) => ({ label, data, borderColor: color, borderWidth: 2, borderDash: dash ? [6, 5] : [], pointRadius: 3, pointBackgroundColor: color, tension: .15 });
+      new Chart(el, { type: 'line', data: { labels: chart.years, datasets: [ds('沖縄・女性', chart.fo, '#B3402A'), ds('全国・女性', chart.fj, '#B3402A', true), ds('沖縄・男性', chart.mo, '#1F2A44'), ds('全国・男性', chart.mj, '#1F2A44', true)] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } }, scales: { y: { title: { display: true, text: '歳' }, grid: { color: '#e4e2dc' } }, x: { grid: { display: false } } } } });
+    };
+    go();
+  </script>
+
+  <style is:global>
+    .vc { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .vc-hero { text-align: center; padding: 32px 0 8px; }
+    .vc-kicker { font-family: "IBM Plex Mono", monospace; font-size: .75rem; letter-spacing: .3em; color: var(--stamp); margin: 0; }
+    .vc h1 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: clamp(1.4rem, 3.8vw, 2rem); margin: 6px 0 10px; }
+    .vc-box { margin: 22px 0; padding: 18px 22px; border: 1px solid var(--line); border-radius: 10px; background: #fffdf7; }
+    .vc-box h2 { font-family: "Shippori Mincho", serif; font-size: 1.1rem; margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .vc-box p, .vc-box li { font-size: .92rem; line-height: 1.9; color: #333; }
+    .vc-box p { margin: 0 0 8px; }
+    .vc-box ul { margin: 0; padding-left: 1.2em; }
+    .vc-lore { border-left: 5px solid var(--stamp); }
+    .vc-restate b { display: inline-block; margin-right: .6em; padding: 0 .5em; font-size: .74rem; color: #fff; background: var(--ink); border-radius: 3px; line-height: 1.7; vertical-align: .1em; }
+    .vc-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .vc-stat { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .vc-stat--hit { border-color: var(--stamp); background: #fff6f3; }
+    .vc-stat-y { display: block; font-size: .78rem; color: var(--ink-soft); }
+    .vc-stat-v { display: block; font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin: 2px 0; }
+    .vc-stat-s { display: block; font-size: .8rem; color: #555; line-height: 1.6; }
+    .vc-stat-s b { color: var(--stamp); }
+    .vc-chart { position: relative; height: 320px; margin: 6px 0 4px; }
+    .vc-cap { font-size: .8rem; color: var(--ink-soft); margin: 0 0 14px !important; }
+    .vc-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .vc-table th, .vc-table td { padding: 5px 6px; text-align: right; border-bottom: 1px solid #e4e2dc; }
+    .vc-table th:first-child, .vc-table td:first-child { text-align: left; }
+    .vc-table th { font-weight: 600; color: var(--ink-soft); font-size: .74rem; }
+    .vc-verdict { border-width: 2px; }
+    .vc-verdict--true { border-color: #2d6a4f; } .vc-verdict--true h2 { color: #2d6a4f; border-color: #2d6a4f; }
+    .vc-verdict--half { border-color: #b8862a; } .vc-verdict--half h2 { color: #b8862a; border-color: #b8862a; }
+    .vc-verdict--unknown { border-color: var(--ink-soft); } .vc-verdict--unknown h2 { color: var(--ink-soft); }
+    .vc-theory { margin: 22px 0; padding: 14px 18px 6px; border: 2px dotted var(--stamp); border-radius: 10px; }
+    .vc-theory-k { margin: 0 0 6px; font-size: .78rem; color: var(--ink-soft); }
+    .vc-theory-k span { display: inline-block; margin-right: .6em; padding: .1em .6em; font-family: "Shippori Mincho", serif; font-weight: 800; color: var(--stamp); border: 1.5px solid var(--stamp); border-radius: 3px; font-size: .82rem; }
+    .vc-source { font-size: .78rem; color: var(--ink-soft); line-height: 1.7; margin: 18px 0 0; }
+    @media (max-width: 600px) { .vc-grid2 { grid-template-columns: 1fr; } .vc-table { font-size: .74rem; } .vc-table th, .vc-table td { padding: 4px 3px; } }
+  </style>
+</BaseLayout>

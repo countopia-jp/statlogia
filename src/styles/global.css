@@ -154,7 +154,7 @@ h1 .h1b,h3 .h1b{display:block}
 .hf .hf-text > p:last-child:not(:first-child){font-size:clamp(.8rem,1.67cqi,.95rem);line-height:1.8;color:#3d3528}
 .hf .hf-text .h1a,.hf .hf-text .h1b{display:block}
 .hf .hf-text h1 .h1b{font-size:.78em}
-.hf .hf-text h1 .nw,h1 .nw{display:inline-block}
+.hf .hf-text h1 .nw,h1 .nw,.hf .hf-text p .nw{display:inline-block}
 .hf .hf-text .no{display:block;font-family:"IBM Plex Mono",monospace;color:var(--stamp);font-weight:600;font-size:.76rem;letter-spacing:.24em}
 .hf--t .hf-text{left:50%;top:4%;transform:translateX(-50%);width:min(66%,600px)}
 .hf--c .hf-text{left:50%;top:50%;transform:translate(-50%,-50%);width:min(72%,640px)}

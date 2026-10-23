@@ -41,8 +41,8 @@ export function buildSearchIndex() {
   for (const [href, p] of byPage) {
     const roomName = ROOM_NAMES[href];
     if (!roomName) continue; // 名前の無いページ（下書きなど）は出さない
-    const kind = '閲覧室';
-    const name = roomName.replace(/^閲覧室\s+/, '');
+    const kind = roomName.startsWith('検証室') ? '検証室' : '閲覧室';
+    const name = roomName.replace(/^(閲覧室|検証室)\s+/, '');
     const desc = roomByPath.get(href)?.description || descFromPage(href);
     // 計算にだけ使う人口などは、名前に「の計算に使用」が付いているので外す
     // 人口あたりに直すために読んでいる「総人口」も、人口の窓口以外では出さない

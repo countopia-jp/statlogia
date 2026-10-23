@@ -12,13 +12,14 @@ import { ROOM_COUNT } from '../data/page-names.js';
 import { THEMES } from '../data/analysis.js';
 import { news } from '../data/news.js';
 import { INDICATOR_COUNT, TABLE_COUNT } from '../lib/counts.js';
+import { CASES, CASE_COUNT } from '../data/verify.js';
 
 const img = (name) => (fs.existsSync(path.join(process.cwd(), 'public/images', name)) ? `/images/${name}` : null);
 const heroImg = img('icon/research-large.webp');
 const chiakiImg = img('chara/chiaki-stand.webp');
 const hitohaImg = img('chara/hitoha-stand.webp');
 const duoImg = img('chara/duo-walk.webp');
-const wingArt = { info: img('icon/reading-room-thumb.webp'), research: img('icon/research-thumb.webp'), lecture: img('icon/training-thumb.webp') };
+const wingArt = { info: img('icon/reading-room-thumb.webp'), research: img('icon/research-thumb.webp'), lecture: img('icon/training-thumb.webp'), verify: img('icon/verify-thumb.webp') };
 const themeCount = THEMES.length;
 const toolCount = fs.readdirSync(path.join(process.cwd(), 'src/pages/how-to-read'), { withFileTypes: true }).filter((d) => d.isDirectory()).length;
 const updated = (news[0]?.date || '').replace(/-/g, '.');
@@ -72,27 +73,43 @@ const stampDate = buildJst.slice(0, 7);
       <a class="wing" href="/dashboard/">
         {wingArt.info && <img class="wing-art" src={wingArt.info} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
         <span class="wing-plate"><b>01</b>INFORMATION WING</span>
-                <h2>情報棟</h2>
-        <p class="wing-role">引く</p>
+        <span class="wing-head"><span class="wing-title"><h2>情報棟</h2><span class="wing-role">引く</span></span><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M20 19h24v26H20zM20 27.5h24M20 36h24M29 23.3h6M29 31.8h6M29 40.3h6"/></svg></span>
         <p class="wing-desc">閲覧室の{ROOM_COUNT}の窓口。県や町を選んで、人口・住まい・仕事・お金・医療・教育・自然の数字を台帳から取り寄せます。</p>
-        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M20 19h24v26H20zM20 27.5h24M20 36h24M29 23.3h6M29 31.8h6M29 40.3h6"/></svg><span class="wing-go">閲覧室へ →</span></span>
       </a>
       <a class="wing" href="/analysis/">
         {wingArt.research && <img class="wing-art" src={wingArt.research} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
         <span class="wing-plate"><b>02</b>RESEARCH WING</span>
-                <h2>研究棟</h2>
-        <p class="wing-role">考える</p>
-        <p class="wing-desc">見くらべの間で指標を並べ、読み解きの間で{themeCount}のテーマを追う。偏差値、似た県、散布図と相関、増減の分解。</p>
-        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><circle cx="29" cy="29" r="11"/><path d="M37 37l8 8" stroke-width="2.6"/><path d="M22 34l5-4 4 2 6-6" stroke-width="1.6"/><circle cx="24" cy="31" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="28" cy="27" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="32" cy="30" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="35" cy="25" r="1.3" fill="var(--ink)" stroke="none"/></svg><span class="wing-go">研究室へ →</span></span>
+        <span class="wing-head"><span class="wing-title"><h2>研究棟</h2><span class="wing-role">考える</span></span><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><circle cx="29" cy="29" r="11"/><path d="M37 37l8 8" stroke-width="2.6"/><path d="M22 34l5-4 4 2 6-6" stroke-width="1.6"/><circle cx="24" cy="31" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="28" cy="27" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="32" cy="30" r="1.3" fill="var(--ink)" stroke="none"/><circle cx="35" cy="25" r="1.3" fill="var(--ink)" stroke="none"/></svg></span>
+        <p class="wing-desc">見くらべの間で指標を並べ、読み解きの間で{themeCount}のテーマを追い、検証室で言い伝えを確かめる。偏差値、似た県、散布図と相関。</p>
       </a>
       <a class="wing" href="/how-to-read/">
         {wingArt.lecture && <img class="wing-art" src={wingArt.lecture} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
         <span class="wing-plate"><b>03</b>LECTURE WING</span>
-                <h2>講義棟</h2>
-        <p class="wing-role">学ぶ</p>
+        <span class="wing-head"><span class="wing-title"><h2>講義棟</h2><span class="wing-role">学ぶ</span></span><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M18 21h28v20H18zM32 41v5M26 46h12"/><path d="M22 36l6-6 5 4 9-9" stroke-width="2.2"/></svg></span>
         <p class="wing-desc">統計の道具{toolCount}本の使い方。位置と散らばり、伸び率、特化係数、相関、誤差の幅、人口の形。</p>
-        <span class="wing-foot"><svg class="wing-crest" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="25" stroke-width="1"/><path d="M18 21h28v20H18zM32 41v5M26 46h12"/><path d="M22 36l6-6 5 4 9-9" stroke-width="2.2"/></svg><span class="wing-go">講義室へ →</span></span>
       </a>
+    </section>
+
+    <!-- 特別室：検証室。三棟とは別枠の黒い板。最新の案件を札で並べる -->
+    <section class="gate-ex" aria-label="検証室（特別室）">
+      <span class="wing-plate ex-plate"><b>EX</b>SPECIAL ROOM</span>
+      <a class="ex-link" href="/verify/" aria-label="検証室へ"></a>
+      {wingArt.verify && <img class="ex-art" src={wingArt.verify} alt="" aria-hidden="true" width="560" height="313" loading="lazy" />}
+      <div class="ex-spacer" aria-hidden="true"></div>
+      <div class="ex-head">
+        <p class="ex-kicker">研究棟 別室</p>
+        <p class="ex-top"><span class="ex-h2">検証室</span><span class="ex-role">確かめる</span></p>
+        <p class="ex-desc">言い伝え、都市伝説、俗説。統計の数字だけを頼りに「本当」「半分本当」「数字では分からない」の三段階で判定します。いま{CASE_COUNT}件。</p>
+      </div>
+      <ul class="ex-cases">
+        {CASES.slice(-3).reverse().map((c) => (
+          <li><a class="ex-case" href={`/verify/${c.id}/`}>
+            <span class="ex-case-k">{c.kicker}</span>
+            <span class="ex-case-t">{c.title}</span>
+            <span class="ex-case-v">判定は？ →</span>
+          </a></li>
+        ))}
+      </ul>
     </section>
 
     <section class="gate-guide" aria-label="案内人">
@@ -101,7 +118,7 @@ const stampDate = buildJst.slice(0, 7);
         <h2>この都市の研究員</h2>
         <Talk speaker="chiaki">わたしは知秋。この都市で数字を読む研究員だ。数字から読めることは読み、読めないことは「分からぬ」と言う。それがここの流儀だよ。</Talk>
         <Talk speaker="hitoha">一葉です。先生の下で見習い中です。分からないことは、その場で先生に聞きます。……先生、どこの国の方ですか？</Talk>
-        <Talk speaker="chiaki">見て分からんのかね。生粋のジャパニーズだ。</Talk>
+        <Talk speaker="chiaki">分からぬ。わたしのデータにはない。</Talk>
       </div>
       {heroImg && <a class="gate-scene-link" href="/guide/" title="二人の紹介へ"><span class="gate-scene-photo"><img class="gate-scene" src={heroImg} alt="打ちっぱなしコンクリートの研究室。机を挟んで同じ方眼紙を見る一葉と知秋の水彩画" width="1400" height="782" loading="lazy" /></span><span class="gate-scene-cap">二人のことをくわしく →</span></a>}
     </section>
@@ -152,8 +169,8 @@ const stampDate = buildJst.slice(0, 7);
     .fig-hitoha { width: 52%; }
     .fig-chiaki { width: 28%; margin-left: -3%; }
     .gate-wings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 30px 8px 0; padding: 0; }
-    .wing { position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 44px 22px 18px; min-height: 290px; background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.75); border-top: 3px solid var(--ink); border-radius: 8px; color: inherit; text-decoration: none; backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 8px 24px rgba(31,42,68,.08), inset 0 1px 0 rgba(255,255,255,.9); transition: transform .15s, box-shadow .15s; }
-    .wing-art { position: absolute; right: -10%; top: -2%; width: 82%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; opacity: .95; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 75% 85% at 70% 30%, #000 40%, transparent 80%); mask-image: radial-gradient(ellipse 75% 85% at 70% 30%, #000 40%, transparent 80%); }
+    .wing { position: relative; overflow: hidden; display: flex; flex-direction: column; padding: 44px 22px 18px; min-height: 0; background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.75); border-top: 3px solid var(--ink); border-radius: 8px; color: inherit; text-decoration: none; backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 8px 24px rgba(31,42,68,.08), inset 0 1px 0 rgba(255,255,255,.9); transition: transform .15s, box-shadow .15s; }
+    .wing-art { position: absolute; right: -5%; top: -2%; width: 78%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; opacity: .97; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 72% 88% at 70% 32%, #000 52%, transparent 92%); mask-image: radial-gradient(ellipse 72% 88% at 70% 32%, #000 52%, transparent 92%); }
     .wing > *:not(.wing-art) { position: relative; z-index: 1; }
     .wing:hover, .wing:focus-visible { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31,42,68,.14), inset 0 1px 0 rgba(255,255,255,.9); }
     .wing-art { transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .3s; }
@@ -162,15 +179,40 @@ const stampDate = buildJst.slice(0, 7);
     .wing-plate { position: absolute; left: 0; top: 0; z-index: 2; margin: 0; padding: .35em 1em .35em .95em; border-radius: 0 0 6px 0; font-family: "IBM Plex Mono", monospace; font-size: .62rem; letter-spacing: .22em; color: #F7F6F2; background: var(--ink); border-radius: 0 3px 3px 0; box-shadow: 0 2px 4px rgba(0,0,0,.18); }
     .wing-plate b { color: #F0B78A; font-weight: 600; margin-right: .9em; }
     .wing > .wing-plate { position: absolute; }
-    .wing-foot { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 14px; }
-    /* 棟の紋章：紺一色の二重丸に、帳面の棚／方眼紙と虫めがね／黒板と折れ線 */
-    .wing-crest { width: 52px; height: 52px; flex: none; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .55; transition: opacity .2s, transform .3s; }
+    /* 題の右下に紋章、説明の右（絵の下の余白）にドア札 */
+    .wing-head { display: flex; align-items: flex-end; gap: 10px; }
+    .wing-title { display: flex; flex-direction: column; }
+    .wing-crest { width: 46px; height: 46px; flex: none; margin-bottom: -24px; fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; opacity: .55; transition: opacity .2s, transform .3s; }
     .wing:hover .wing-crest, .wing:focus-visible .wing-crest { opacity: .9; transform: rotate(-6deg); }
     .wing h2 { font-family: "Shippori Mincho", serif; font-size: 1.5rem; margin: 4px 0 0; }
-    .wing-role { font-size: .8rem; letter-spacing: .3em; color: var(--ink-soft); margin: 0 0 10px; }
-    .wing-desc { font-size: .92rem; line-height: 1.85; color: #333; flex: 1; max-width: 66%; margin-top: 44px; }
-    .wing-go { margin: 0; font-size: .86rem; color: var(--ink); font-weight: 500; padding: .35em 1em .35em .9em; border: 1.5px solid var(--ink); border-radius: 10px 10px 3px 3px; background: rgba(255,255,255,.5); transition: background .2s, color .2s; }
-    .wing:hover .wing-go, .wing:focus-visible .wing-go { background: var(--ink); color: #fff; }
+    .wing-role { font-size: .8rem; letter-spacing: .3em; color: var(--ink-soft); margin: 0; }
+    .wing-desc { font-size: .92rem; line-height: 1.85; color: #333; flex: 1; margin: 56px 0 6px; }
+    /* 特別室：三棟と同じガラス板。朱の上線と朱の札で「別枠」を示す */
+    .gate-ex { position: relative; display: grid; grid-template-columns: 330px minmax(0, 1fr) minmax(0, 40%); gap: 26px; margin: 18px 8px 0; padding: 30px 26px 22px 28px; align-items: center; background: rgba(255,255,255,.42); border: 1px solid rgba(255,255,255,.75); border-top: 3px solid var(--ink); border-radius: 8px; backdrop-filter: blur(10px) saturate(1.1); -webkit-backdrop-filter: blur(10px) saturate(1.1); box-shadow: 0 8px 24px rgba(31,42,68,.08), inset 0 1px 0 rgba(255,255,255,.9); overflow: hidden; }
+    .ex-plate { position: absolute !important; left: 0; top: 0; background: var(--stamp); }
+    .ex-plate b { color: #F1CF6B; }
+    /* 検証室の絵も三棟と同じく、ガラス板に溶け込ませる。グリッドの1列目は絵のための空き */
+    .ex-art { position: absolute; z-index: 0; left: -3%; top: 0; width: auto; height: 100%; aspect-ratio: 16 / 9; object-fit: cover; opacity: .97; pointer-events: none; -webkit-mask-image: radial-gradient(ellipse 66% 82% at 48% 50%, #000 48%, transparent 92%); mask-image: radial-gradient(ellipse 66% 82% at 48% 50%, #000 48%, transparent 92%); transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+    .gate-ex:hover .ex-art { transform: scale(1.04); }
+    .ex-spacer { min-height: 150px; }
+    .ex-head { position: relative; z-index: 1; display: flex; flex-direction: column; }
+    .ex-top { display: flex; align-items: baseline; gap: 14px; margin: 2px 0 8px; }
+    .ex-h2 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.5rem; line-height: 1.2; }
+    .ex-kicker { margin: 0; font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .24em; color: var(--ink-soft); }
+    .ex-role { font-size: .8rem; letter-spacing: .3em; color: var(--ink-soft); }
+    .ex-desc { font-size: .9rem; line-height: 1.8; color: #333; margin: 0; flex: 1; }
+    /* パネル全体を検証室への入口にする：ドア札の当たり判定を板いっぱいに広げ、案件札だけ上に出す */
+    .ex-link { position: absolute; inset: 0; z-index: 1; }
+    .ex-cases, .ex-plate { position: relative; z-index: 2; }
+    .gate-ex:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(31,42,68,.14), inset 0 1px 0 rgba(255,255,255,.9); }
+    .gate-ex { transition: transform .15s, box-shadow .15s; }
+    .ex-cases { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; align-content: center; }
+    .ex-case { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 10px 14px; border: 1px solid var(--line); border-left: 4px solid var(--ink); border-radius: 6px; background: #fffdf7; color: inherit; text-decoration: none; transition: box-shadow .2s, transform .15s; }
+    .ex-case:hover, .ex-case:focus-visible { box-shadow: 0 6px 16px rgba(31,42,68,.12); transform: translateX(3px); }
+    .ex-case-k { font-family: "IBM Plex Mono", monospace; font-size: .66rem; letter-spacing: .22em; color: var(--ink-soft); }
+    .ex-case-t { font-family: "Shippori Mincho", serif; font-size: 1.02rem; line-height: 1.5; }
+    .ex-case-v { font-size: .76rem; font-weight: 600; color: var(--stamp); padding: 3px 10px; border-radius: 999px; border: 1.5px dashed var(--stamp); white-space: nowrap; transition: background .2s, color .2s; }
+    .ex-case:hover .ex-case-v, .ex-case:focus-visible .ex-case-v { background: var(--stamp); color: #fff; border-style: solid; }
     .gate-guide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: center; margin: 40px 8px 0; padding: 28px 0 0; border-top: 1px solid var(--line); }
     .gate-guide h2 { font-family: "Shippori Mincho", serif; font-size: 1.4rem; margin: 6px 0 14px; }
     /* 研究員の区画の絵はコルクボード：木枠のボードに、白ふちの写真を画鋲で留める。札も画鋲で */
@@ -183,9 +225,18 @@ const stampDate = buildJst.slice(0, 7);
     .gate-scene { display: block; width: 100%; height: auto; border-radius: 0; }
     .gate-scene-cap { position: absolute; right: 26px; bottom: 13px; font-size: .78rem; letter-spacing: .06em; color: var(--ink); padding: .32em .9em .32em 1.45em; background: #FCFAF2; box-shadow: 0 1px 1px rgba(0,0,0,.1), 0 4px 10px -3px rgba(60,40,20,.4); transform: rotate(1.6deg); }
     .gate-scene-cap::before { content: ""; position: absolute; left: 7px; top: 50%; width: 9px; height: 9px; margin-top: -5px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f4b4a4, #B3402A 60%, #7a2a1c); box-shadow: 0 2px 3px rgba(0,0,0,.35); }
+    @media (max-width: 1100px) {
+      .gate-ex { grid-template-columns: 260px minmax(0, 1fr); }
+      .ex-cases { grid-column: 1 / -1; }
+    }
     @media (max-width: 900px) {
       .gate-hero, .gate-guide { grid-template-columns: minmax(0, 1fr); }
       .gate-wings { grid-template-columns: minmax(0, 1fr); }
+      .gate-ex { grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 26px 18px 22px; }
+      .ex-art { position: relative; left: 0; top: 0; width: 100%; -webkit-mask-image: none; mask-image: none; border-radius: 6px; }
+      .ex-spacer { display: none; }
+      .ex-case { grid-template-columns: minmax(0, 1fr) auto; }
+      .ex-case-k { grid-column: 1 / -1; }
       .gate-lead .nw, .notice h1 .nw { display: inline; }
       .notice { min-width: 0; }
       .gate-scale, .gate-dates { margin-right: 0; }
