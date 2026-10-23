@@ -10,6 +10,8 @@ export const PEOPLE = {
 };
 
 export const GALLERY = [
+  { who: 'chiaki', file: 'chiaki-vending.webp', w: 1376, h: 768, date: '2026-10-25', title: '自販機の前で', caption: '缶コーヒーと新聞。数字の載っている面から読む。' },
+  { who: 'hitoha', file: 'hitoha-camp.webp', w: 1376, h: 768, date: '2026-10-25', title: '森で一泊', caption: '焚き火とマグカップ。リュックからクリップボードがのぞいている。' },
   { who: 'chiaki', file: 'duo-sushi.webp', w: 1376, h: 768, date: '2026-10-24', title: 'わさび山', caption: '回転寿司。皿の数より、わさびの量のほうが先に限界に来た。', talk: [['hitoha', '先生、わさびは薬味です。主食ではありません。'], ['chiaki', '比率の問題だ。一貫に一山、それがわたしの標準だ。'], ['hitoha', 'その標準、全国平均からどれだけ離れているか計算しましょうか。']] },
   { who: 'hitoha', file: 'duo-sushi-b.webp', w: 1376, h: 774, date: '2026-10-24', title: '隣の山は見ない', caption: '同じ店、同じ席。見てはいけないものは、見ないことにしている。', talk: [['chiaki', '君、さっきから皿が進んでいないな。'], ['hitoha', '隣の山が気になって。'], ['chiaki', '見なければよい。標本に入れなければ、存在しないのと同じだ。'], ['hitoha', '……先生、それ、お寿司のほうが薬味ですよね？']] },
   { who: 'chiaki', file: 'chiaki-ramen.webp', w: 1376, h: 768, date: '2026-10-23', title: '七味は多めで', caption: '町のラーメン屋。瓶が空になるまで振る。店主はもう何も言わない。', talk: [['hitoha', '先生、このごろ辛いものの統計ばかり引いていませんか。'], ['chiaki', '食の統計は重要だ。君こそ、甘味の表を引くときだけ口数が三倍になる。'], ['hitoha', '……あれは、データが豊富なので。']] },
