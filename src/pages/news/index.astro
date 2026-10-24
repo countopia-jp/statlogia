@@ -13,9 +13,13 @@ import { news } from '../../data/news.js';
 <BaseLayout title="掲示板｜更新のお知らせ｜Statlogia" description="Statlogia の更新のお知らせ。窓口やテーマの追加、数字の写し替えの記録です。" backHref="/" backLabel="玄関">
   <main class="np">
     <header class="np-hero">
-      <img class="np-figure" src="/images/icon/icon-news.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
-      <p class="np-kicker">お知らせ</p>
-      <h1>掲示板</h1>
+      <div class="np-head">
+        <img class="np-figure" src="/images/icon/icon-news.webp" alt="" aria-hidden="true" width="160" height="160" loading="lazy" />
+        <div class="np-title">
+          <p class="np-kicker">お知らせ</p>
+          <h1>掲示板</h1>
+        </div>
+      </div>
       <p class="np-lead">研究都市の、新しいお知らせを貼り出しています。</p>
     </header>
     <div class="np-intro">
@@ -46,9 +50,12 @@ import { news } from '../../data/news.js';
     .np { max-width: 680px; margin: 0 auto; padding: 0 16px 56px; }
     .np-hero { text-align: center; padding: 28px 0 8px; }
     .np-duo { display: block; width: 100%; max-width: 760px; height: auto; margin: 10px auto 4px; border-radius: 6px; }
-    .np-figure { width: 96px; height: 96px; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 4px; }
+    /* 10-24 コルクボードの絵は題の左横に。絵と題で一組にして、まとめて中央に置く */
+    .np-head { display: flex; align-items: center; justify-content: center; gap: 16px; }
+    .np-title { text-align: left; }
+    .np-figure { width: 96px; height: 96px; object-fit: contain; mix-blend-mode: multiply; margin: 0; flex: none; }
     .np-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
-    .np-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 12px; }
+    .np-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 2px 0 0; }
     .np-lead { color: #555; line-height: 1.9; }
     .np-list { list-style: none; padding: 0; margin: 28px 0 0; }
     .np-list li {

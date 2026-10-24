@@ -31,15 +31,18 @@ const stampDate = buildJst.slice(0, 7);
     <section class="gate-hero">
       <div class="notice">
         <p class="gate-kicker">STATLOGIA ｜ 数字の研究都市</p>
-        <h1>数字の背景を、<br class="pc" />別の数字で読み解く。</h1>
+        <h1>数字の背景を、<br />別の数字で読み解く。</h1>
         <p class="gate-lead"><span class="nw">都道府県・市区町村の統計を引き、くらべ、</span><br class="pc" /><span class="nw">読み解く研究都市です。</span></p>
         <p class="gate-scale"><span><b>{ROOM_COUNT}</b>の窓口</span><span><b>{TABLE_COUNT}</b>の統計表</span><span><b>{INDICATOR_COUNT.toLocaleString('ja-JP')}</b>の指標</span><a class="gate-src" href="/sources/"><i aria-hidden="true">SOURCES</i>出典一覧<em aria-hidden="true">→</em></a></p>
         <p class="gate-dates"><span>最終更新 <b>{updated}</b></span><span>数字の取得 <b>{buildJst}</b></span></p>
-        <div class="stamp" aria-hidden="true">
-          <span class="top">RESEARCH PASS</span>
-          <span class="big">STATLOGIA</span>
-          <span class="date">{stampDate}</span>
-          <span class="bottom">入館を許可する</span>
+        <div class="stamp-row">
+          {duoImg && <img class="notice-fig" src={duoImg} width="832" height="725" alt="" aria-hidden="true" />}
+          <div class="stamp" aria-hidden="true">
+            <span class="top">RESEARCH PASS</span>
+            <span class="big">STATLOGIA</span>
+            <span class="date">{stampDate}</span>
+            <span class="bottom">入館を許可する</span>
+          </div>
         </div>
       </div>
       {(duoImg || chiakiImg || hitohaImg) && (
@@ -166,6 +169,9 @@ const stampDate = buildJst.slice(0, 7);
     .fig-link { display: block; transition: transform .15s ease; }
     .fig-link:hover, .fig-link:focus-visible { transform: translateY(-4px); }
     .fig-duo { width: 87%; }
+    /* 10-24 入館印の横の小さい歩き絵はスマホ専用。パソコンでは右半分の大きいほうを使う */
+    .notice-fig { display: none; }
+    .stamp-row { display: contents; }
     /* 10-24 歩き絵は押すと二度跳ねてから紹介へ進む。跳ぶ前と着地のたびに少しつぶれる（スクワッシュ）。
        高さは一跳び目 28px、二跳び目 15px。transform は :hover のものと同じ枠を使うので、
        跳ねているあいだは transition を切って、戻りが二重に効かないようにする */
@@ -262,11 +268,14 @@ const stampDate = buildJst.slice(0, 7);
       .gate-lead .nw, .notice h1 .nw { display: inline; }
       .notice { min-width: 0; }
       .gate-scale, .gate-dates { margin-right: 0; }
-      .gate-figs { max-width: 440px; margin: 0 auto; }
-      .gate-charts { display: none; }
+      /* 10-24 スマホでは、歩き絵を縮めて入館印の左に並べる。
+         絵は札の中（.stamp-row）に置いた小さいほうを使い、右半分にあった .gate-figs は隠す */
+      .gate-figs, .gate-charts { display: none; }
       .notice { margin-top: 18px; padding: 26px 22px 22px; transform: none; }
-      .stamp { position: static; width: 150px; font-size: 14px; margin: 14px 0 -6px auto; }
-        .notice h1 .pc, .gate-lead .pc { display: none; }
+      .stamp-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 10px; }
+      .notice-fig { display: block; width: 56%; max-width: 230px; height: auto; margin-bottom: -6px; }
+      .stamp { position: static; width: 136px; font-size: 13px; margin: 0 0 -4px; flex: none; }
+        .gate-lead .pc { display: none; }
     }
     /* 10-23 スマホでは棟の札も縦に：絵を上、題と説明を下に積む（横に並べると本文が一行3〜4字になる） */
     @media (max-width: 600px) {

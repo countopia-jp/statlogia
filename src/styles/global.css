@@ -11,6 +11,14 @@
   --wall:#E6E7E9;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+/* 10-24 中途半端な改行をなくす。balance は行の長さをそろえ（題の最後に1字だけ残らない）、
+   auto-phrase は日本語を文節で折る。pretty は本文の最後の行に1語だけ残すのを避ける。
+   どれも対応していない閲覧環境では黙って無視されるだけ */
+h1,h2,h3{text-wrap:balance;word-break:auto-phrase}
+p{text-wrap:pretty}
+.hf .hf-text p,main [class*="-lead"],main [class*="-note"],main [class*="-desc"],.foot-desc,.foot-brand .tag,.disclaimer-line,.foot-note{word-break:auto-phrase}
+/* 短い段落は行の長さもそろえる（中央ぞろえの免責やフッターの一文で、最後の行だけ極端に短くならないように） */
+.disclaimer-line,.foot-brand .tag,.hf .hf-text > p:last-child:not(:first-child){text-wrap:balance}
 html{scroll-behavior:smooth;font-size:112.5%}
 body{
   /* 10-23 入館印の「ポン」など、一瞬だけ枠の外へ出る動きで横スクロールが生まれないように。
