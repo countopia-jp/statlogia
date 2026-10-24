@@ -1,0 +1,161 @@
+---
+// =====================================================
+// Statlogia - 検証室 CASE 03 岡山は「晴れの国」
+// src/pages/verify/okayama-sunny/index.astro
+// =====================================================
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+import { CASES, VERDICT } from '../../../data/verify.js';
+import { getOkayamaData } from '../../../lib/verify-lore.js';
+import fs from 'node:fs';
+import path from 'node:path';
+const c = CASES.find((x) => x.id === 'okayama-sunny');
+const d = await getOkayamaData();
+const hero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/verify-okayama-sunny-large.webp')) ? '/images/icon/verify-okayama-sunny-large.webp' : null;
+const verdict = VERDICT[c.verdict];
+const KEYS = ['rainDays', 'sun', 'rain', 'clear'];
+const S = KEYS.map((k) => d[k]);
+const fmt = (n, u) => (n == null ? '—' : n.toLocaleString('ja-JP') + u);
+// 推移のグラフは、看板の根拠である降水日数で見る
+const g = d.rainDays;
+const chart = { years: g.years, okayama: g.okayama, japan: g.japan };
+---
+<BaseLayout title={`${c.title}｜検証室｜Statlogia`} description={`${c.lore} ${c.restate}`} backHref="/verify/" backLabel="検証室">
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <main class="vc">
+    {hero ? (
+      <HeroFig src={hero} alt={c.imageAlt} width={1376} height={768} pos="t">
+        <p class="vc-kicker">検証室｜{c.kicker}</p>
+        <h1>{c.title}</h1>
+      </HeroFig>
+    ) : (
+      <header class="vc-hero"><p class="vc-kicker">検証室｜{c.kicker}</p><h1>{c.title}</h1></header>
+    )}
+
+    <section class="vc-box vc-lore">
+      <h2>言い伝え</h2>
+      <p>{c.lore}</p>
+      <p class="vc-restate"><b>数字にすると</b>{c.restate}</p>
+    </section>
+
+    <Talk speaker="chiaki-work">「晴れている」は、一つの数字ではない。雨の降らない日が多いことか、日が長く照ることか、雨の量が少ないことか。測り方で順位は入れ替わる。</Talk>
+    <Talk speaker="hitoha">どれも「晴れ」だと思っていました。</Talk>
+
+    <section class="vc-box">
+      <h2>使った数字</h2>
+      <p>気象庁の観測による四つの指標を、47都道府県で並べる。降水日数（{d.rainDays.year}年）、日照時間（{d.sun.year}年）、降水量（{d.rain.year}年）、快晴日数（{d.clear.year}年）。快晴日数だけ年が古いのは、雲の目視観測が2019年から順に自動化され、2024年までに終わったためで、統計表がそこで止まっている。</p>
+      <p>観測しているのは気象官署、原則として県庁所在地の一地点である。県のどこでも同じ天気というわけではない。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>結果</h2>
+      <div class="vc-grid2">
+        {S.map((s) => (
+          <div class:list={['vc-stat', s.rank === 1 && 'vc-stat--hit']}>
+            <span class="vc-stat-y">{s.label}（{s.word}）</span>
+            <span class="vc-stat-v">{s.rank}位</span>
+            <span class="vc-stat-s">岡山 {fmt(s.value, s.unit)}。1位は{s.top[0]?.name} {fmt(s.top[0]?.v, s.unit)}（{s.year}年）</span>
+          </div>
+        ))}
+      </div>
+      <table class="vc-table">
+        <thead><tr><th>測り方</th><th>年</th><th>岡山</th><th>順位</th><th>47県平均</th><th>1位の県</th></tr></thead>
+        <tbody>
+          {S.map((s) => (
+            <tr>
+              <td>{s.label}</td>
+              <td>{s.year}</td>
+              <td>{fmt(s.value, s.unit)}</td>
+              <td>{s.rank}位</td>
+              <td>{fmt(s.japan[s.japan.length - 1], s.unit)}</td>
+              <td>{s.top[0]?.name} {fmt(s.top[0]?.v, s.unit)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p class="vc-cap">「順位」は、降水日数と降水量は少ない順、日照時間と快晴日数は多い順。</p>
+      <div class="vc-chart"><canvas id="vcChart"></canvas></div>
+      <p class="vc-cap">降水日数（年間）の移りかわり。岡山と、47県の平均。</p>
+    </section>
+
+    <section class:list={['vc-box', 'vc-verdict', `vc-verdict--${c.verdict}`]}>
+      <h2>判定：{verdict.label}</h2>
+      <p>{c.lead}</p>
+      <p>雨の降る日が少ないことは、たしかに全国一である。{d.rainDays.year}年の岡山は{fmt(d.rainDays.value, d.rainDays.unit)}で、47県平均の{fmt(d.rainDays.japan[d.rainDays.japan.length - 1], d.rainDays.unit)}を大きく下回る。看板の根拠そのものは、数字のとおりだ。</p>
+      <p>ただし日照時間は{d.sun.rank}位、降水量の少なさは{d.rain.rank}位、快晴日数は{d.clear.rank}位。いずれも47県平均より上ではあるが、先頭ではない。「晴れの国」は、<b>雨の降る日が少ない国</b>という意味でなら本当で、<b>いちばん日が照る国</b>という意味なら本当ではない。</p>
+    </section>
+
+    <section class="vc-box">
+      <h2>言えること・言えないこと</h2>
+      <ul>
+        <li>言えること：降水日数の少なさで、岡山は{d.rainDays.year}年に全国1位である。</li>
+        <li>言えないこと：「晴れ」の定義は一つではない。どの指標を選ぶかで順位は入れ替わり、選び方しだいで結論が変わる。</li>
+        <li>言えないこと：観測は県庁所在地の一地点のもので、県北の山あいと瀬戸内の沿岸を同じようには表していない。</li>
+        <li>言えないこと：快晴日数は雲の目視観測に頼る指標で、観測の自動化とともに統計が止まっている。いまの状態は、この指標では確かめられない。</li>
+      </ul>
+    </section>
+
+    <div class="vc-theory">
+      <p class="vc-theory-k"><span>知秋理論</span>データの外に出た、まだ検証されていない仮説</p>
+      <p>降水日数が少ないのに日照時間が先頭でないのは、瀬戸内に特有の「降らないが晴れもしない」日——薄曇りが多いためではないか、というのがわたしの仮説だ。山に挟まれて雨雲は入りにくいが、海から湿った空気は流れ込む。雨にはならず、雲だけが残る。</p>
+      <p>確かめるなら、雲量の平年値（日平均雲量）を県ごとに並べる。降水日数の少ない県のなかで、岡山の雲量だけが高ければ、薄曇りの説明がつく。</p>
+    </div>
+
+    <p class="vc-source">出典：{d.source}。「晴れの国」の呼び名と、その根拠とされる降水日数については、岡山県および気象庁の公表資料による。</p>
+  </main>
+
+  <script is:inline define:vars={{ chart }}>
+    const go = () => {
+      if (!window.Chart) return setTimeout(go, 150);
+      const el = document.getElementById('vcChart'); if (!el) return;
+      new Chart(el, {
+        type: 'line',
+        data: { labels: chart.years, datasets: [
+          { label: '岡山', data: chart.okayama, borderColor: '#B3402A', borderWidth: 2, pointRadius: 0, tension: .2 },
+          { label: '47県の平均', data: chart.japan, borderColor: '#7F97A8', borderDash: [6, 5], borderWidth: 1.5, pointRadius: 0, tension: .2 },
+        ] },
+        options: { responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: { legend: { position: 'bottom' } },
+          scales: { y: { title: { display: true, text: '日' }, grid: { color: '#e4e2dc' } }, x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } } } },
+      });
+    };
+    go();
+  </script>
+
+  <style is:global>
+    .vc { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .vc-hero { text-align: center; padding: 32px 0 8px; }
+    .vc-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .vc-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; font-size: clamp(1.4rem, 3.8vw, 2rem); margin: 6px 0 10px; }
+    .vc-box { margin: 22px 0; padding: 18px 22px; border: 1px solid var(--line); border-radius: 10px; background: #fffdf7; }
+    .vc-box h2 { font-family: "Shippori Mincho", serif; font-size: 1.1rem; margin: 0 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--line); }
+    .vc-box p, .vc-box li { font-size: .92rem; line-height: 1.9; color: #333; }
+    .vc-box p { margin: 0 0 8px; }
+    .vc-box ul { margin: 0; padding-left: 1.2em; }
+    .vc-lore { border-left: 5px solid var(--stamp); }
+    .vc-restate b { display: inline-block; margin-right: .6em; padding: 0 .5em; font-size: .74rem; color: #fff; background: var(--ink); border-radius: 3px; line-height: 1.7; vertical-align: .1em; }
+    .vc-grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+    .vc-stat { padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .vc-stat--hit { border-color: var(--stamp); background: #fff6f3; }
+    .vc-stat-y { display: block; font-size: .78rem; color: var(--ink-soft); }
+    .vc-stat-v { display: block; font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; color: var(--ink); margin: 2px 0; }
+    .vc-stat-s { display: block; font-size: .8rem; color: #555; line-height: 1.6; }
+    .vc-stat-s b { color: var(--stamp); }
+    .vc-chart { position: relative; height: 320px; margin: 6px 0 4px; }
+    .vc-cap { font-size: .8rem; color: var(--ink-soft); margin: 0 0 14px !important; }
+    .vc-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; }
+    .vc-table th, .vc-table td { padding: 5px 6px; text-align: right; border-bottom: 1px solid #e4e2dc; }
+    .vc-table th:first-child, .vc-table td:first-child { text-align: left; }
+    .vc-table th { font-weight: 600; color: var(--ink-soft); font-size: .74rem; }
+    .vc-verdict { border-width: 2px; }
+    .vc-verdict--true { border-color: #4B5570; } .vc-verdict--true h2 { color: #4B5570; border-color: #4B5570; }
+    .vc-verdict--half { border-color: #b8862a; } .vc-verdict--half h2 { color: #b8862a; border-color: #b8862a; }
+    .vc-verdict--unknown { border-color: #6b4fa0; background: #f8f6fd; } .vc-verdict--unknown h2 { color: #6b4fa0; border-color: #6b4fa0; }
+    .vc-theory { margin: 22px 0; padding: 14px 18px 6px; border: 2px dotted var(--stamp); border-radius: 10px; }
+    .vc-theory-k { margin: 0 0 6px; font-size: .78rem; color: var(--ink-soft); }
+    .vc-theory-k span { display: inline-block; margin-right: .6em; padding: .1em .6em; font-family: "Shippori Mincho", serif; font-weight: 800; color: var(--stamp); border: 1.5px solid var(--stamp); border-radius: 3px; font-size: .82rem; }
+    .vc-source { font-size: .78rem; color: var(--ink-soft); line-height: 1.7; margin: 18px 0 0; }
+    @media (max-width: 600px) { .vc-grid2 { grid-template-columns: 1fr; } .vc-table { font-size: .74rem; } .vc-table th, .vc-table td { padding: 4px 3px; } }
+  </style>
+</BaseLayout>

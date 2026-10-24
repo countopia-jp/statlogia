@@ -62,3 +62,52 @@ export async function getOkinawaData() {
     female: { okinawa: pick('I1102', '47000'), japan: pick('I1102', '00000'), rank: rankOf('I1102') },
   };
 }
+
+const PREF = Object.fromEntries(['北海道','青森県','岩手県','宮城県','秋田県','山形県','福島県','茨城県','栃木県','群馬県','埼玉県','千葉県','東京都','神奈川県','新潟県','富山県','石川県','福井県','山梨県','長野県','岐阜県','静岡県','愛知県','三重県','滋賀県','京都府','大阪府','兵庫県','奈良県','和歌山県','鳥取県','島根県','岡山県','広島県','山口県','徳島県','香川県','愛媛県','高知県','福岡県','佐賀県','長崎県','熊本県','大分県','宮崎県','鹿児島県','沖縄県']
+  .map((n, i) => [String(i + 1).padStart(2, '0') + '000', n]));
+
+/** 晴れの国おかやま：気象の4指標（社会・人口統計体系 B自然環境 表番号 0000010102）
+ *  B4106 降水日数（年間）／B4108 日照時間（年間）／B4109 降水量（年間）／B4104 快晴日数（年間）
+ *  ※全国(00000)の行はあるが値が空なので、47県の単純平均を自分で作る。
+ *  ※快晴日数は雲の目視観測が2019〜2024年に順に終わったため、統計表が途中で止まっている。
+ */
+export async function getOkayamaData() {
+  const SPECS = [
+    { key: 'rainDays', code: 'B4106', label: '降水日数（年間）', unit: '日', dir: 'asc', word: '少ない順' },
+    { key: 'sun', code: 'B4108', label: '日照時間（年間）', unit: '時間', dir: 'desc', word: '多い順' },
+    { key: 'rain', code: 'B4109', label: '降水量（年間）', unit: 'mm', dir: 'asc', word: '少ない順' },
+    { key: 'clear', code: 'B4104', label: '快晴日数（年間）', unit: '日', dir: 'desc', word: '多い順' },
+  ];
+  const v = await statsData({ statsDataId: '0000010102', cdCat01: SPECS.map((s) => s.code).join(','), limit: 100000 });
+  const t = {};
+  const names = {};
+  for (const x of v) {
+    const code = x['@cat01'], area = x['@area'], y = x['@time'].slice(0, 4), val = num(x['$']);
+    if (val == null || area === '00000') continue;
+    ((t[code] ||= {})[y] ||= {})[area] = val;
+  }
+  const OKAYAMA = '33000';
+  const out = {};
+  for (const s of SPECS) {
+    const byYear = t[s.code] || {};
+    // 47県そろう年だけを使う（観測の終わった年の半端な行を拾わない）
+    const years = Object.keys(byYear).filter((y) => Object.keys(byYear[y]).length >= 47).sort();
+    const last = years[years.length - 1];
+    const row = last ? Object.entries(byYear[last]).sort((a, b) => (s.dir === 'desc' ? b[1] - a[1] : a[1] - b[1])) : [];
+    const rank = row.findIndex(([a]) => a === OKAYAMA) + 1;
+    const mean = (y) => { const vs = Object.values(byYear[y]); return vs.reduce((m, x2) => m + x2, 0) / vs.length; };
+    out[s.key] = {
+      label: s.label, unit: s.unit, word: s.word, year: last,
+      value: last ? byYear[last][OKAYAMA] ?? null : null,
+      rank: rank || null,
+      top: row.slice(0, 5).map(([a, x2]) => ({ area: a, name: PREF[a] || a, v: x2 })),
+      years,
+      okayama: years.map((y) => byYear[y][OKAYAMA] ?? null),
+      japan: years.map((y) => Math.round(mean(y) * 10) / 10),
+    };
+  }
+  return {
+    source: '気象庁の観測値（e-Stat 社会・人口統計体系 表番号 0000010102、B4106・B4108・B4109・B4104）',
+    ...out,
+  };
+}
