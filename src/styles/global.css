@@ -13,6 +13,9 @@
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;font-size:112.5%}
 body{
+  /* 10-23 入館印の「ポン」など、一瞬だけ枠の外へ出る動きで横スクロールが生まれないように。
+     clip は hidden と違ってスクロール箱を作らないので、ヘッダーの sticky はそのまま効く */
+  overflow-x:clip;
   font-family:"Zen Kaku Gothic New",sans-serif;
   color:var(--ink);
   background-color:var(--paper);
