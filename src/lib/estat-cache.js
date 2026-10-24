@@ -4,7 +4,9 @@
 //
 // 各 lib の apiGet はここの cachedJsonFetch を通す。URL ごとに .cache/estat/ へ JSON を保存し、
 // ESTAT_CACHE_DAYS（既定30）日以内ならネットに出ない。ESTAT_FRESH=1（npm run build:fresh）で無視。
-// Cloudflare のビルドは毎回まっさらなので常に取り直し＝月初の再ビルドで数字が新しくなるのは変わらない。
+// Cloudflare のビルドは毎回まっさらなので常に取り直し＝定期の再ビルド（月2回）で数字が新しくなる。
+// 既定30日はあくまで手元のビルド用。月2回だと2回目が30日以内に入るが、手元で最新を取りたいときは
+// npm run build:fresh（ESTAT_FRESH=1）を使う。
 // appId はキャッシュの鍵から除く（鍵は表・コード・ページ位置だけ）。
 // =====================================================
 import fs from 'node:fs';
