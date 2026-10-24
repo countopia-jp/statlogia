@@ -11,6 +11,8 @@ const img = (name) => (fs.existsSync(path.join(process.cwd(), 'public/images/cha
 const chiakiDesk = img('chiaki-desk.webp');
 const hitohaDesk = img('hitoha-desk.webp');
 const duoPoint = img('duo-point-scene.webp');
+const chiakiShrine = img('chiaki-shrine.webp');
+const hitohaBike = img('hitoha-bike.webp');
 ---
 
 <BaseLayout title="研究員｜知秋と一葉｜Statlogia" description="Statlogia を案内する二人の研究員、白衣の小さな先生・知秋と、見習いの一葉のご紹介。名前の由来と、二人の話し方。" backHref="/" backLabel="玄関">
@@ -27,12 +29,20 @@ const duoPoint = img('duo-point-scene.webp');
     </header>
 
     <section class="guide-profile" id="chiaki">
-      {chiakiDesk && (
-        <a class="guide-portrait" href="/gallery/chiaki/" title="知秋の日々（イラスト集）へ">
-          <span class="guide-portrait-mat"><img src={chiakiDesk} alt="研究室の机で、方眼紙を虫めがねでのぞきこむ知秋。机の端に丼と七味" width="1376" height="768" loading="lazy" /></span>
-          <span class="guide-portrait-cap">知秋の日々 →</span>
-        </a>
-      )}
+      <div class="guide-frames">
+        {chiakiDesk && (
+          <a class="guide-portrait" href="/gallery/chiaki/" title="知秋の日々（イラスト集）へ">
+            <span class="guide-portrait-mat"><img src={chiakiDesk} alt="研究室の机で、方眼紙を虫めがねでのぞきこむ知秋。机の端に丼と七味" width="1376" height="768" loading="lazy" /></span>
+            <span class="guide-portrait-cap">知秋の日々 →</span>
+          </a>
+        )}
+        {chiakiShrine && (
+          <figure class="guide-portrait guide-snap">
+            <span class="guide-portrait-mat"><img src={chiakiShrine} alt="杉木立の参道。白い着物に鶴の模様、巾着を提げて歩く知秋。奥に朱の鳥居と石段" width="1376" height="768" loading="lazy" /></span>
+            <figcaption class="guide-portrait-cap">初詣</figcaption>
+          </figure>
+        )}
+      </div>
       <div class="guide-text">
         <span class="guide-no">RESEARCHER 01</span>
         <h2>知秋<span class="guide-romaji">CHIAKI</span><span class="guide-role">教授</span></h2>
@@ -44,12 +54,20 @@ const duoPoint = img('duo-point-scene.webp');
     </section>
 
     <section class="guide-profile" id="hitoha">
-      {hitohaDesk && (
-        <a class="guide-portrait" href="/gallery/hitoha/" title="一葉の日々（イラスト集）へ">
-          <span class="guide-portrait-mat"><img src={hitohaDesk} alt="研究室の机で、クリップボードにメモを取る一葉。机にフィナンシェと紅茶" width="1376" height="768" loading="lazy" /></span>
-          <span class="guide-portrait-cap">一葉の日々 →</span>
-        </a>
-      )}
+      <div class="guide-frames">
+        {hitohaDesk && (
+          <a class="guide-portrait" href="/gallery/hitoha/" title="一葉の日々（イラスト集）へ">
+            <span class="guide-portrait-mat"><img src={hitohaDesk} alt="研究室の机で、クリップボードにメモを取る一葉。机にフィナンシェと紅茶" width="1376" height="768" loading="lazy" /></span>
+            <span class="guide-portrait-cap">一葉の日々 →</span>
+          </a>
+        )}
+        {hitohaBike && (
+          <figure class="guide-portrait guide-snap">
+            <span class="guide-portrait-mat"><img src={hitohaBike} alt="田舎道のカーブ。ヘルメットをかぶり、白衣を風になびかせて小さなバイクで走る一葉" width="1376" height="768" loading="lazy" /></span>
+            <figcaption class="guide-portrait-cap">町へ出る日</figcaption>
+          </figure>
+        )}
+      </div>
       <div class="guide-text">
         <span class="guide-no">RESEARCHER 02</span>
         <h2>一葉<span class="guide-romaji">HITOHA</span><span class="guide-role">研究員（見習い）</span></h2>
@@ -89,6 +107,15 @@ const duoPoint = img('duo-point-scene.webp');
     .guide-gallery-btn:visited { color: var(--ink); }
     .guide-profile { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; margin: 48px 0; scroll-margin-top: 90px; }
     /* 机まわりの絵は壁に掛けたフォトフレーム：木の額＋厚紙のマット＋下に小さな銘板（イラスト集への入口） */
+    /* 10-24 研究員ひとりにつき額を2枚。1枚目は日々のイラスト集への入口、2枚目は休みの日の一枚。
+       広い画面では横に並べ、720px以下では縦に積む */
+    .guide-frames { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; width: 100%; max-width: 860px; align-items: start; }
+    @media (max-width: 720px) { .guide-frames { grid-template-columns: minmax(0, 1fr); gap: 24px; max-width: 460px; } }
+    .guide-snap { margin: 0; }
+    .guide-snap:hover { transform: none; }
+    /* 2枚目は押せないので、札の下線（押せる合図）は付けない */
+    .guide-snap .guide-portrait-cap { border-bottom: none; }
+
     .guide-portrait { position: relative; display: block; color: inherit; text-decoration: none; padding: 7px; border-radius: 2px; background: linear-gradient(160deg, #7a6250 0%, #5a4636 40%, #6a533f 70%, #4e3b2c 100%); box-shadow: inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.4), 0 14px 30px -10px rgba(31,42,68,.35), 0 3px 6px rgba(0,0,0,.14); transition: transform .25s ease, box-shadow .25s ease; }
     .guide-portrait:hover, .guide-portrait:focus-visible { transform: rotate(0) translateY(-3px); box-shadow: inset 1px 1px 0 rgba(255,255,255,.28), inset -1px -1px 0 rgba(0,0,0,.35), 0 1px 0 rgba(255,255,255,.4), 0 22px 40px -12px rgba(31,42,68,.4), 0 3px 6px rgba(0,0,0,.14); }
     .guide-portrait-mat { display: block; background: #F4F0E6; padding: 22px 22px 46px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.05); }
@@ -96,6 +123,8 @@ const duoPoint = img('duo-point-scene.webp');
     .guide-portrait-cap { position: absolute; left: 50%; bottom: 17px; transform: translateX(-50%); white-space: nowrap; font-family: "Shippori Mincho", serif; font-size: .8rem; letter-spacing: .14em; color: #4B5570; padding: 0 .4em .15em; border-bottom: 1px solid rgba(75,85,112,.45); }
     #chiaki .guide-portrait { transform: rotate(-.6deg); }
     #hitoha .guide-portrait { transform: rotate(.5deg); }
+    #chiaki .guide-snap { transform: rotate(.7deg); }
+    #hitoha .guide-snap { transform: rotate(-.6deg); }
     #chiaki .guide-portrait:hover, #hitoha .guide-portrait:hover, #chiaki .guide-portrait:focus-visible, #hitoha .guide-portrait:focus-visible { transform: rotate(0) translateY(-3px); }
     .guide-no { display: block; text-align: center; font-family: "IBM Plex Mono", monospace; letter-spacing: 0.2em; font-size: 0.72rem; color: var(--ink-soft); }
     .guide-text { max-width: 640px; text-align: left; }
