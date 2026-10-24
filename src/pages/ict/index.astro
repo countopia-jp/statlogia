@@ -56,6 +56,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <div class="ict-line-wrap">
         <p class="ict-line-title">端末整備の推移（小学校・1台当たり児童数）</p>
         <canvas id="pcLineChart" data-growth="level" height="120"></canvas>
+        <p class="cmp-dash-note">点線は47都道府県の平均です。「ほかの県と並べる」で県を足すと、その県の線も重なります。</p>
         <p class="ict-line-note">※教育用コンピュータ1台を何人で使っているか。右肩下がりは、1台あたりの児童数が減ったことを表します（この数え方は2022年度まで）</p>
       </div>
 
@@ -63,9 +64,10 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <Talk speaker="hitoha"><span id="toukoLine">どんな教室でしょうか。</span></Talk>
     </section>
 
-    <CompareAddon level="pref" selectId="prefSelect" src="/data/ict.json" />
 
     <!-- ===== 散布図 ===== -->
+    <CompareAddon level="pref" selectId="prefSelect" src="/data/ict.json" />
+
     <section class="ict-scatter-sec" aria-label="大型提示装置とデジタル教科書の散布図">
       <h2>教室の機器 見取り図</h2>
       <p class="ict-note">横軸が大型提示装置のある普通教室の割合、縦軸がデジタル教科書の整備率（どちらも小学校）。右へ行くほど大きな画面のある教室が多く、上へ行くほどデジタル教科書の整備率が高い県です。</p>
@@ -75,6 +77,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
     </section>
 
     <!-- ===== ランキング ===== -->
+
     <section class="ict-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>
       <div class="ict-tabs" role="tablist">
@@ -112,6 +115,62 @@ import GrowthTool from '../../components/GrowthTool.astro';
     (async function () {
       const res = await fetch('/data/ict.json');
       const data = await res.json();
+
+      // 10-24 比べる県の線と、47都道府県の平均の点線（engine の窓口と同じ作り）
+      // この表には全国の行が無いので、engine の nationalIsAvg と同じく47県の単純平均を作り、その旨を書き添える
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null, _avgByYear = null;
+      function __prefAvg() {
+        if (_avgByYear) return _avgByYear;
+        const acc = {};
+        for (const x of data.areas) for (const q of (x.series || [])) {
+          if (typeof q.value === 'number') (acc[q.year] = acc[q.year] || []).push(q.value);
+        }
+        _avgByYear = {};
+        for (const y in acc) _avgByYear[y] = acc[y].reduce((t, v) => t + v, 0) / acc[y].length;
+        return _avgByYear;
+      }
+      function __cmpSets(area, label) {
+        curArea = area;
+        const labels = area.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (area.n || label),
+          data: area.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = data.areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        const avg = __prefAvg();
+        sets.push({
+          label: '47都道府県の平均',
+          data: labels.map((y) => (typeof avg[y] === 'number' ? avg[y] : null)),
+          borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false, tension: 0.2, spanGaps: false,
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'prefSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('pcLineChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const IND = data.indicators;
       const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
       const meta = Object.fromEntries(IND.map((ind) => [ind.code, ind]));
@@ -212,18 +271,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: area.series.map((p) => p.year),
-            datasets: [{
-              label: '1台当たり児童数',
-              data: area.series.map((p) => p.value),
-              borderColor: '#1F2A44',
-              backgroundColor: '#1F2A4422',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(area, '1台当たり児童数'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14, filter: (it) => it.text !== '47都道府県の平均' } } },
             scales: { y: { ticks: { callback: (v) => v.toFixed(1) + '人' } } },
           },
         });
@@ -285,8 +337,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         const hasD = typeof dRank === 'number';
         const hasT = typeof tRank === 'number';
         const k = '小学校で見ると、' +
-          (hasD ? `大型提示装置のある教室の割合は${stats['E9417'].total}県中${dRank}位、` : '大型提示装置は、この県の値がありません。') +
-          (hasT ? `デジタル教科書の整備率は${stats['E9421'].total}県中${tRank}位です。` : 'デジタル教科書は、この県の値がありません。');
+          (hasD ? `大型提示装置のある教室の割合は${stats['E9417'].total}県中${dRank}位、` : '大型提示装置は、この県の値が無い。') +
+          (hasT ? `デジタル教科書の整備率は${stats['E9421'].total}県中${tRank}位だ。` : 'デジタル教科書は、この県の値が無い。');
         kei.textContent = k;
         if (!hasD || !hasT) { toukoEl.textContent = '値のない欄もあるんですね。'; return; }
         let h = 0;

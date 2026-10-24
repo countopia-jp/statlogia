@@ -16,7 +16,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
   <main class="tp">
     <HeroFig src="/images/icon/town-medical-large.webp" alt="診療所の前の通りを、看護師や近所の人、子どもたちが行き交う水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室｜医療・福祉・安全</p>
+      <p class="tp-kicker">閲覧室｜医療・介護と安全</p>
       <h1>わが町の医療</h1>
       <p class="tp-lead">
         市区町村を選んで、その町にどれだけの医療があるかをご覧ください。<br />
@@ -60,7 +60,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
     <CompareAddon level="town" selectId="townSelect" global="CTP_CMP" />
 
-    <p class="tp-cross">あわせて見る：<a href="/town-daycare/">介護は、近いか</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="https://countopia.com/how-to-read/per-capita/" rel="noopener">人口あたりで見るということ（Countopia）</a></p>
+    <p class="tp-cross">あわせて見る：<a href="/town-daycare/">介護は、近いか</a>｜<a href="/town-population/">わが町の人口</a>｜<a href="/how-to-read/per-capita/">数えた数は、割ってから並べる</a></p>
 
     <footer class="tp-source">
       <p>
@@ -76,6 +76,45 @@ import GrowthTool from '../../components/GrowthTool.astro';
       const IND = TP.indicators;
       window.CTP_CMP = TP;
       const areas = TP.areas;
+
+      // 10-24 「ほかの市区町村と並べる」で足した町を、図にも線で出す（engine の窓口と同じ作り）
+      // 市区町村の窓口には全国の線を出さない（engine も県のみ。市区町村の表に全国行が無いため）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null;
+      function __cmpSets(a, label) {
+        curArea = a;
+        const labels = a.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (a.n || label),
+          data: a.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'townSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('medChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const HOSPITAL = 0, CLINIC = 1, DENTAL = 2, DOCTOR = 3, PHARMACIST = 4, BEDS = 5;
 
       const fmt = (i, val) => {
@@ -123,18 +162,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: a.series.map((p) => p.year),
-            datasets: [{
-              label: 'お医者さんの数',
-              data: a.series.map((p) => p.value),
-              borderColor: '#4B5570',
-              backgroundColor: '#4B557022',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(a, 'お医者さんの数'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14 } } },
             scales: { y: { ticks: { callback: (v) => v.toLocaleString('ja-JP') + '人' } } },
           },
         });

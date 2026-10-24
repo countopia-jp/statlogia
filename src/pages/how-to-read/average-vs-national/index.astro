@@ -1,0 +1,112 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="全国の値と、47県の平均は違う｜講義室 - Statlogia" description="全国値は人数で重みをつけた平均、47県の単純平均は県を一つずつ同じ重さで数えたもの。どちらを比べる相手にするかで、話が変わります。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/average-vs-national-large.webp" alt="コンクリートの壁の部屋。木の机に置いた天秤の片方に大きな積み木がひとつ、もう片方に小さな積み木がみっつ。知秋が皿の傾きを見ている水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">全国の値と、</span><span class="nw">47県の平均は違う</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、全国平均を上回っている県を数えたら、30県もありました。平均なのに、半分より多いのはおかしくないですか。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      おかしくない。その「全国平均」は、県を47個ならべた平均ではなく、<b>人の頭数で重みをつけた平均</b>だからだ。人の多い県が低ければ、全国の値は下に引かれる。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="人口の多い県と少ない県を、人数で重みをつけて平均した場合と、県ごとに同じ重さで平均した場合のちがいを示す図">
+        <text x="0" y="18" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">3つの県で考える</text>
+        <g font-size="12" fill="#333">
+          <rect x="20" y="40" width="150" height="34" fill="#8E99AE"/><text x="180" y="62" fill="#333">A県　900万人　値 40</text>
+          <rect x="20" y="86" width="40" height="34" fill="#8E99AE"/><text x="180" y="108" fill="#333">B県　100万人　値 70</text>
+          <rect x="20" y="132" width="40" height="34" fill="#8E99AE"/><text x="180" y="154" fill="#333">C県　100万人　値 70</text>
+        </g>
+        <text x="20" y="190" font-size="13" fill="#B3402A" font-weight="600">全国値（人数で重みづけ）＝ 45.5</text>
+        <text x="20" y="212" font-size="13" fill="#1F2A44" font-weight="600">47県の単純平均（県ごとに同じ重さ）＝ 60</text>
+        <text x="0" y="238" font-size="12" fill="#777">→ 全国値45.5を上回る県は3県中2県。単純平均60を上回る県も2県だが、値の位置がまるで違う</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。棒の長さは人口を表しています。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>全国値は、人数で重みをつけた平均</h2>
+      <p>
+        国の統計の「全国」は、たいてい全国の合計を全国の人数で割ったものです。
+        人口の多い県の数字が、そのぶん強く効きます。これを加重平均といいます。
+        「日本全体でならすとどうか」を表す値なので、国の姿を言うときはこちらが正しい。
+      </p>
+      <p>
+        そのかわり、47都道府県のまんなかとは一致しません。
+        人口の多い県が低い側にかたまっていれば、全国値は下に引かれ、「全国平均を上回る県」が半分を超えます。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>47県の単純平均は、県を一つずつ同じ重さで数えたもの</h2>
+      <p>
+        47県の値を足して47で割ると、鳥取県と東京都が同じ重さになります。
+        「県という単位で見たときの、ふつうの県はどのあたりか」を表す値です。
+        県どうしを比べている最中なら、比べる相手としてはこちらのほうが素直です。
+      </p>
+      <p>
+        ただし、これは国の数字ではありません。「全国の単純平均」という言い方で国の姿を語ると、人口の少ない県を過大に、多い県を過小に扱うことになります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>情報棟の窓口での扱い</h2>
+      <p>
+        窓口のグラフに出る「全国」は、次の決まりで作っています。
+      </p>
+      <ul>
+        <li><b>国の統計表に全国の行があるとき</b>はその値を使います。多くは人数で重みをつけた全国値です。</li>
+        <li><b>全国の行が空のとき</b>は、47都道府県の単純平均を自分で計算して、そのことを添えます。</li>
+        <li><b>全国の行が「47県の合計」にあたるとき</b>（施設の数、面積など、ならした値ではなく足し上げた値のとき）は、グラフの相手を47県の平均に切りかえます。合計と一つの県を並べても意味がないからです。</li>
+        <li><b>市区町村の窓口</b>では、全国の行が無いことが多い。割合の項目にかぎり、分子と分母をそれぞれ全市区町村で足し上げてから同じ割り算をして、全国の値としています。割合でない項目は、全国を出しません。</li>
+      </ul>
+      <p>
+        どれに当たるかは、窓口のグラフと出典の注記に書いてあります。
+        「全国を上回っている」と言うときは、その全国がどちらなのかを添えてください。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      上回った県が30あっても、おかしくはないんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      うむ。おかしいのは、二つの別の平均を同じ言葉で呼んでしまうことのほうだ。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/per-capita/">数えた数は、割ってから並べる</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

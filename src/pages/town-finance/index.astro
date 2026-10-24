@@ -75,6 +75,45 @@ import GrowthTool from '../../components/GrowthTool.astro';
       const IND = TP.indicators;
       window.CTP_CMP = TP;
       const areas = TP.areas;
+
+      // 10-24 「ほかの市区町村と並べる」で足した町を、図にも線で出す（engine の窓口と同じ作り）
+      // 市区町村の窓口には全国の線を出さない（engine も県のみ。市区町村の表に全国行が無いため）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null;
+      function __cmpSets(a, label) {
+        curArea = a;
+        const labels = a.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (a.n || label),
+          data: a.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'townSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('finChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const FIN = 0, EDU = 1;
 
       const fmt = (i, val) => {
@@ -133,18 +172,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: a.series.map((p) => p.year),
-            datasets: [{
-              label: '財政力指数',
-              data: a.series.map((p) => p.value),
-              borderColor: '#1F2A44',
-              backgroundColor: '#1F2A4422',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(a, '財政力指数'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14 } } },
             scales: { y: { ticks: { callback: (v) => v.toFixed(2) } } },
           },
         });
@@ -183,12 +215,12 @@ import GrowthTool from '../../components/GrowthTool.astro';
         if (hasFin) {
           k = `財政力指数は${fin.toFixed(2)}。`;
           const r = rankMap[FIN][a.c];
-          if (r) k += ` ${rankMap[FIN]._total}市区町村中${r}位です。`;
+          if (r) k += ` ${rankMap[FIN]._total}市区町村中${r}位だ。`;
         } else {
           k = '財政力指数は、この町の値がない。';
         }
-        if (hasEdu) k += ` 住民1人あたりの教育費は${Math.round(edu).toLocaleString('ja-JP')}円です。`;
-        else k += ' 住民1人あたりの教育費は、この町の値がありません。';
+        if (hasEdu) k += ` 住民1人あたりの教育費は${Math.round(edu).toLocaleString('ja-JP')}円だ。`;
+        else k += ' 住民1人あたりの教育費は、この町の値が無い。';
         kei.textContent = k;
         touko.textContent = hasFin
           ? (fin >= 1 ? '1を超えているんですね。' : '1より小さいんですね。')

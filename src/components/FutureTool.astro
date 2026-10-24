@@ -11,7 +11,7 @@ const isTown = level === 'town';
 ---
 <section class="ftr" hidden data-level={level} data-select={selectId} aria-label="これからの人口の見込み">
   <h2>これからの人口の見込み</h2>
-  <p class="ftr-note">2020年の国勢調査の人口を100として、2050年までの見込みの人口を線で描きました。{isTown ? '県と全国の線も重ねています。' : '全国の線も重ねています。'}</p>
+  <p class="ftr-note">2020年の国勢調査の人口を100として、2050年までの見込みの人口を線で描きました。{isTown ? '県と全国の線も重ねています。' : '全国の線も重ねています。'}{isTown ? '「ほかの市区町村とならべる」で足した町も、同じ図に重なります。' : '「ほかの県とならべる」で足した県も、同じ図に重なります。'}</p>
   <div class="ftr-fig"></div>
   <div class="ftr-tiles"></div>
   <p class="ftr-read"></p>
@@ -21,6 +21,10 @@ const isTown = level === 'town';
 <script is:inline>
 (function () {
   let DATA = null;
+  // 10-24 「ほかの地域とならべる」で足した地域も、この図に線で出す（色は比べる札とそろえる）
+  const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+  const CMP = {};   // セレクタのid → [{c,n}]
+  let CMP_PALETTE = CMP_COLORS;
   const load = async () => { if (DATA === null) { try { DATA = await (await fetch('/data/future-pop.json')).json(); } catch (e) { DATA = false; } } return DATA; };
   const idx = (a) => a.v.map((x) => (x === null || !a.v[0] ? null : (x / a.v[0]) * 100));
   const f1 = (v) => v.toFixed(1);
@@ -63,8 +67,17 @@ const isTown = level === 'town';
     const pref = sec.dataset.level === 'town' ? D.areas[code.slice(0, 2) + '000'] : null;
     sec.hidden = false;
     const myName = sec.dataset.level === 'town' ? short(me.n) : me.n;
-    const lines = [{ name: myName, v: idx(me), color: '#B3402A', w: 2.6, dots: true }];
-    if (pref) lines.push({ name: pref.n, v: idx(pref), color: '#4B5570', w: 1.8, dash: '6 3' });
+    const cmp = CMP[sec.dataset.select] || [];
+    const lines = [{ name: myName, v: idx(me), color: CMP_PALETTE[0], w: 2.6, dots: true }];
+    cmp.forEach((b, k) => {
+      let c = b.c;
+      if (sec.dataset.level === 'pref' && c.length === 2) c += '000';
+      const o = D.areas[c];
+      if (!o) return;
+      lines.push({ name: sec.dataset.level === 'town' ? short(o.n) : o.n, v: idx(o), color: CMP_PALETTE[(k + 1) % CMP_PALETTE.length], w: 2.2, dots: true });
+    });
+    // 県と全国は比べる相手ではなく下敷きなので、札の色とかぶらない灰青にして点線で引く
+    if (pref) lines.push({ name: pref.n, v: idx(pref), color: '#7F97A8', w: 1.8, dash: '6 3' });
     lines.push({ name: '全国', v: idx(nat), color: '#777', w: 1.6, dash: '2 3' });
     sec.querySelector('.ftr-fig').innerHTML = svg(D.years, lines);
     const fmt = (n) => Math.round(n).toLocaleString('ja-JP');
@@ -80,6 +93,13 @@ const isTown = level === 'town';
     sel.addEventListener('change', () => draw(sec));
     setTimeout(() => draw(sec), 1200);
   }
+  document.addEventListener('cmpx:change', (ev) => {
+    const d = ev.detail || {};
+    if (!d.select) return;
+    CMP[d.select] = d.compare || [];
+    if (Array.isArray(d.colors) && d.colors.length) CMP_PALETTE = d.colors;
+    for (const sec of document.querySelectorAll('.ftr')) if (sec.dataset.select === d.select) draw(sec);
+  });
 })();
 </script>
 

@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="数字は、どこから来たのか｜講義室 - Statlogia" description="この国の数字の出どころである政府統計の総合窓口（e-Stat）と、当所が加えている加工、そして元の統計表までたどる道すじ。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/data-source-large.webp" alt="コンクリートの壁の部屋。天井まである木の棚に同じ形の無地の箱が整然と並び、一葉が脚立の上で一つを引き出し、知秋が下から見上げる水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1>数字は、どこから来たのか</h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、ここに並んでいる数字は、どこから来ているんですか。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      すべて国の統計だ。政府統計の総合窓口〈e-Stat〉から、機械で取っている。手で書き写しているところは、ひとつも無い。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>e-Stat（政府統計の総合窓口）とは</h2>
+      <p>
+        各府省がおこなった統計調査の結果を、一か所に集めて公開している国のしくみです。
+        統計表には一つずつ番号が振られ、同じ番号を指せば誰でも同じ表にたどりつけます。
+        当所が出典に表番号を書いているのは、そのためです。
+      </p>
+      <p>
+        表は人が見るための画面だけでなく、機械が読むための窓口（API）でも配られています。
+        当所はこちらを使い、必要な表の必要な項目だけを取り出しています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>多くの窓口は「社会・人口統計体系」を通っている</h2>
+      <p>
+        当所の窓口でよく使っているのが、総務省統計局の<b>社会・人口統計体系</b>です。
+        これは新しく調べた統計ではなく、<b>いろいろな調査の結果を、都道府県や市区町村ごとに並べ直してまとめたもの</b>です。
+        人口はこの調査から、学校はあの調査から、気象はまた別のところから、という具合に集めてあります。
+      </p>
+      <p>
+        便利なかわりに、気をつける点があります。もとの調査がそれぞれ違うので、<b>項目によって調査の周期も、集計の単位も違う</b>のです。
+        たとえば気象の項目は、県全体の平均ではなく、各都道府県庁所在市にある気象台の観測値です。
+        項目を並べて比べるときは、それぞれが何を数えたものかを、出典まで戻って確かめてください。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>当所が加えている加工</h2>
+      <p>
+        取ってきた数字を、そのまま並べるだけではありません。次のような加工をしています。
+      </p>
+      <ul>
+        <li><b>割合や「あたり」に直す</b>…数の項目を、人口や世帯で割ります。大きい地域が上位を占めるだけの表にしないためです。</li>
+        <li><b>順位をつける</b>…同じ値は同じ順位にし、値の無い地域は順位の外に置きます。</li>
+        <li><b>全国の値をそろえる</b>…表に全国の行が無いときは、決まった手順で作ります。作った場合は、そう書き添えます。</li>
+        <li><b>年をそろえる</b>…十分な数の地域がそろっている年まで戻して並べます。</li>
+      </ul>
+      <p>
+        加工の中身は項目ごとに注記として添えています。<b>もとの数字そのものに手を入れることはしていません。</b>
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>元の表までたどる</h2>
+      <p>
+        <a href="/sources/">出典一覧</a>に、使っているすべての統計表を、表番号とともに並べています。
+        表番号が分かれば、e-Stat でその表を開き、当所の数字と突き合わせることができます。
+      </p>
+      <p>
+        窓口のページにも、その窓口が使っている表と年を書いています。
+        数字に疑いを持ったら、まず元の表に当たる。これが統計といちばん確実に付き合う方法です。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>国が統計を公開している理由</h2>
+      <p>
+        統計法は、公的統計を「国民にとって合理的な意思決定を行うための基盤となる重要な情報」と位置づけ、広く提供することを定めています。
+        誰でも元の表に当たれることが前提になっているからこそ、数字を引いた側は出典を示す義務を負います。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      出典をたどれば、わたしでも確かめられるんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      そのために番号を書いている。確かめられない数字は、研究の材料にはならない。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/surveys/">だれが、何を、どう数えたか</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

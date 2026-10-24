@@ -12,7 +12,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
   <main class="tp">
     <HeroFig src="/images/icon/town-migration-large.webp" alt="家族が家に帰り着く一方で、一人旅立つ人がいる郊外の道の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室｜人と家族</p>
+      <p class="tp-kicker">閲覧室｜人の出入り</p>
       <h1>わが町の人の出入り</h1>
       <p class="tp-lead">
         市区町村を選んで、1年間の人の出入り（転入・転出）をご覧ください。<br />
@@ -74,6 +74,45 @@ import GrowthTool from '../../components/GrowthTool.astro';
       const IND = TP.indicators;
       window.CTP_CMP = TP;
       const areas = TP.areas;
+
+      // 10-24 「ほかの市区町村と並べる」で足した町を、図にも線で出す（engine の窓口と同じ作り）
+      // 市区町村の窓口には全国の線を出さない（engine も県のみ。市区町村の表に全国行が無いため）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null;
+      function __cmpSets(a, label) {
+        curArea = a;
+        const labels = a.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (a.n || label),
+          data: a.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'townSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('migChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const SR_I = 4;
 
       const fmt = (i, val) => {
@@ -132,18 +171,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: a.series.map((p) => p.year),
-            datasets: [{
-              label: '社会増減率',
-              data: a.series.map((p) => p.value),
-              borderColor: '#B3402A',
-              backgroundColor: '#B3402A22',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(a, '社会増減率'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14 } } },
             scales: { y: { ticks: { callback: (v) => v.toFixed(1) } } },
           },
         });

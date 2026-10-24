@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+
+// 当所の窓口でよく通る調査。kind: all=全数 / sample=標本 / record=届け出・業務の記録
+const SURVEYS = [
+  { name: '国勢調査', who: '総務省', cycle: '5年', kind: 'all', what: '日本に住むすべての人と世帯を数える。人口、世帯の構成、就業の状態、通勤・通学など。市区町村より細かい地域まで集計される、もっとも基本になる調査。' },
+  { name: '人口動態統計', who: '厚生労働省', cycle: '毎年（月報もある）', kind: 'record', what: '出生・死亡・婚姻・離婚の届け出を集計したもの。調べるために聞くのではなく、役所に出された届けを数え上げている。' },
+  { name: '住民基本台帳人口移動報告', who: '総務省', cycle: '毎月', kind: 'record', what: '市区町村に出された転入届をもとにした、人の移り住み。届けを出さない移動は入らない。' },
+  { name: '経済センサス‐活動調査', who: '総務省・経済産業省', cycle: 'おおむね5年', kind: 'all', what: '全国の事業所と企業に、売上・付加価値・従業者を尋ねる。産業ごとの姿を見るときの土台。' },
+  { name: '学校基本調査', who: '文部科学省', cycle: '毎年', kind: 'all', what: '学校の数、在学者数、教職員数、卒業後の進路。すべての学校が対象。' },
+  { name: '家計調査', who: '総務省', cycle: '毎月', kind: 'sample', what: '選ばれた全国約9,000世帯に家計簿をつけてもらい、収入と、何にいくら使ったかを集める。市ごとの値は県庁所在市と政令指定都市のみ。' },
+  { name: '社会生活基本調査', who: '総務省', cycle: '5年', kind: 'sample', what: '一日の時間の使い方と、趣味・スポーツ・学習などを一年のうちにおこなった人の割合（行動者率）。' },
+  { name: '住宅・土地統計調査', who: '総務省', cycle: '5年', kind: 'sample', what: '住まいの広さ、建て方、建った年、持ち家か借家か、空き家の数。' },
+  { name: '小売物価統計調査（構造編）', who: '総務省', cycle: '毎年', kind: 'sample', what: '地域ごとの値段の水準。全国平均を100とした消費者物価地域差指数は、この調査から作られる。' },
+  { name: '地方財政状況調査', who: '総務省', cycle: '毎年', kind: 'record', what: '都道府県と市区町村の決算。歳入・歳出の内訳と、財政力指数などの指標。自治体が出した決算そのものを集めている。' },
+  { name: '気象庁の観測', who: '気象庁', cycle: '毎日', kind: 'record', what: '気温、降水量、日照時間など。都道府県別として並んでいる値は、各都道府県庁所在市にある気象台の観測値。' },
+];
+const KIND = { all: '全数', sample: '標本', record: '届け出・記録' };
+---
+<BaseLayout title="だれが、何を、どう数えたか｜講義室 - Statlogia" description="この国の数字は、だれが、何を、どのくらいの間隔で調べたものなのか。全数・標本・届け出という調べ方のちがいと、主な調査の一覧。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/surveys-large.webp" alt="日ざしの明るい坂の住宅街。腕章をつけた調査員が玄関先の人に封筒を渡し、向かいの建物の窓の中では職員が紙の束をそろえている水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">だれが、何を、</span><span class="nw">どう数えたか</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、同じ「人口」でも、窓口によって年がちがうことがあります。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      もとの調査が違うからだ。だれが、何を、どう数えたのか。そこまで戻ると、数字の性格が見えてくる。
+    </Talk>
+
+    <section class="art-sec">
+      <h2>調べ方は、三つに分けられる</h2>
+      <p>
+        <b>全数調査</b>は、対象をすべて調べます。国勢調査や学校基本調査がこれにあたります。
+        小さな地域まで数字が出せるかわりに、手間がかかるので間隔が長くなります。
+      </p>
+      <p>
+        <b>標本調査</b>は、選ばれた一部を調べて、全体を推し量ります。家計調査や住宅・土地統計調査がこれです。
+        短い間隔で出せるかわりに、値には<b>推計の幅</b>がついてまわります。小さな地域の値ほど幅が広く、順位の差が幅の中に収まってしまうこともあります。
+        この幅の読み方は<a href="/how-to-read/sampling-error/">調べ直したら、順位は入れかわるか</a>で扱っています。
+      </p>
+      <p>
+        <b>届け出・業務の記録</b>は、調査のために尋ねるのではなく、役所の仕事の記録を数え上げたものです。
+        転入届、出生届、自治体の決算、気象台の観測。短い間隔で出せて推計の幅もありませんが、<b>届けの外にあるものは入りません</b>。
+        届けを出さずに移り住んだ人は、移動の統計には現れません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>当所の窓口でよく通る調査</h2>
+      <table class="sv-table">
+        <thead><tr><th>調査</th><th>だれが</th><th>間隔</th><th>調べ方</th></tr></thead>
+        <tbody>
+          {SURVEYS.map((s) => (
+            <tr>
+              <td><b>{s.name}</b><span class="sv-what">{s.what}</span></td>
+              <td>{s.who}</td>
+              <td>{s.cycle}</td>
+              <td><span class:list={['sv-kind', `sv-kind--${s.kind}`]}>{KIND[s.kind]}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="art-sec">
+      <h2>多くは「社会・人口統計体系」を経由している</h2>
+      <p>
+        当所の窓口の数字は、これらの調査から直接取ることもあれば、総務省統計局の<b>社会・人口統計体系</b>を通して取ることもあります。
+        後者は、いろいろな調査の結果を都道府県や市区町村ごとに並べ直したまとめで、項目ごとにもとの調査が違います。
+      </p>
+      <p>
+        ですから、同じ表に並んでいる項目どうしでも、調査の周期も、集計の単位も違うことがあります。
+        並べて比べる前に、それぞれが何を数えたものかを<a href="/sources/">出典一覧</a>で確かめてください。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>くわしく知りたいとき</h2>
+      <p>
+        それぞれの調査には、国が出している調査の説明があり、どんな質問をして、どう集計したかが書かれています。
+        e-Stat の統計表からも、もとの調査の説明へたどることができます。表番号は<a href="/sources/">出典一覧</a>に載せています。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      同じ人口でも、数え方が違えば別の数字になるんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      そうだ。どちらが正しいかではなく、何を数えたのか。そこを取り違えなければ、たいていの読み違いは防げる。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/data-source/">数字は、どこから来たのか</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+    .sv-table { width: 100%; border-collapse: collapse; font-size: .86rem; margin-top: 6px; }
+    .sv-table th, .sv-table td { padding: 8px 8px; border-bottom: 1px solid #e4e2dc; vertical-align: top; text-align: left; }
+    .sv-table th { font-size: .74rem; font-weight: 600; color: var(--ink-soft); white-space: nowrap; }
+    .sv-table td { line-height: 1.8; }
+    .sv-table td:nth-child(2), .sv-table td:nth-child(3), .sv-table td:nth-child(4) { white-space: nowrap; font-size: .8rem; color: #555; }
+    .sv-what { display: block; font-size: .8rem; color: #555; line-height: 1.8; margin-top: 2px; }
+    .sv-kind { display: inline-block; padding: .1em .6em; border-radius: 3px; font-size: .74rem; border: 1px solid; }
+    .sv-kind--all { color: #1F2A44; border-color: #1F2A44; }
+    .sv-kind--sample { color: #B3402A; border-color: #B3402A; }
+    .sv-kind--record { color: #4a6b52; border-color: #4a6b52; }
+    @media (max-width: 600px) {
+      .sv-table, .sv-table tbody, .sv-table tr, .sv-table td { display: block; width: 100%; }
+      .sv-table thead { display: none; }
+      .sv-table tr { border-bottom: 1px solid #e4e2dc; padding: 8px 0; }
+      .sv-table td { border: none; padding: 1px 0; }
+      .sv-table td:nth-child(2), .sv-table td:nth-child(3) { display: inline-block; width: auto; margin-right: 10px; }
+    }
+  </style>
+</BaseLayout>

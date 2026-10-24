@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="数えた数は、割ってから並べる｜講義室 - Statlogia" description="数の多い少ないを、地域の大きさをそろえて比べる「あたり」の考え方。分母の選び方で意味が変わること、小さな地域ほど揺れること。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/per-capita-large.webp" alt="コンクリートの壁の部屋。木の机に大小ふたつの町の模型が木枠に入って並び、一葉がクリップボードを手に家の数を数えている水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">数えた数は、</span><span class="nw">割ってから並べる</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、病院の数を県ごとに並べたら、1位が東京でした。これは調べるまでもなかったのでは。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      そのとおりだ。数をそのまま並べると、人の多い地域が上に来るに決まっている。見ているのは病院ではなく、人口の大きさだ。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="施設の数をそのまま並べた順位と、人口10万人あたりに直した順位で、上下が入れ替わることを示す図">
+        <text x="0" y="18" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">数のまま</text>
+        <g font-size="12">
+          <rect x="20" y="36" width="190" height="26" fill="#8E99AE"/><text x="218" y="54" fill="#333">D県 1,400か所（人口 900万）</text>
+          <rect x="20" y="70" width="60" height="26" fill="#8E99AE"/><text x="218" y="88" fill="#333">E県 440か所（人口 120万）</text>
+          <rect x="20" y="104" width="34" height="26" fill="#8E99AE"/><text x="218" y="122" fill="#333">F県 250か所（人口 55万）</text>
+        </g>
+        <text x="0" y="158" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#B3402A">人口10万人あたり</text>
+        <g font-size="12">
+          <rect x="20" y="172" width="42" height="18" fill="#B3402A"/><text x="218" y="186" fill="#333">D県 15.6か所</text>
+          <rect x="20" y="194" width="99" height="18" fill="#B3402A"/><text x="218" y="208" fill="#333">E県 36.7か所</text>
+          <rect x="20" y="216" width="123" height="18" fill="#B3402A"/><text x="218" y="230" fill="#333">F県 45.5か所</text>
+        </g>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。順位がちょうど逆になっています。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>なぜ「あたり」に直すのか</h2>
+      <p>
+        施設の数、職員の数、件数。こうした「数えた数」の項目は、地域が大きいほど多くなります。
+        そのまま並べると、順位は人口の順位をなぞるだけになり、地域ごとの手厚さや密度は見えません。
+      </p>
+      <p>
+        そこで、人口など「大きさを表す数」で割ります。人口10万人あたり、人口千人あたり、1世帯あたり、1km²あたり。
+        こうすると、大きさのちがいが消えて、<b>一人（一世帯・一区画）に対してどれだけあるか</b>が残ります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>分母の選び方で、意味が変わる</h2>
+      <p>
+        同じ「あたり」でも、何で割るかで答える問いが変わります。
+      </p>
+      <ul>
+        <li><b>人口で割る</b>…住民一人に対する手厚さ。医療・福祉・学校など、人に向いたものに合います。</li>
+        <li><b>世帯で割る</b>…暮らしの単位あたり。住まいや家計に関わるものに合います。一人暮らしの多い地域では、人口で割った値と世帯で割った値が大きくずれます。</li>
+        <li><b>面積で割る</b>…土地の上の密度。交通や土地利用に合います。山林の広い県では、住んでいる場所の密度とはかけ離れます。</li>
+        <li><b>働く人で割る</b>…生産や所得の項目に合います。人口で割ると、子どもや高齢者の多い地域が低く出ます。</li>
+      </ul>
+      <p>
+        窓口では、項目ごとにこのどれかを選んでいます。どれで割った値かは、項目名と単位に書いてあります。
+        「人口あたり」とだけ覚えず、<b>何で割った値かまで見てください</b>。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>小さな地域ほど、大きく揺れる</h2>
+      <p>
+        分母が小さいと、分子が少し動いただけで値が大きく動きます。
+        人口5千人の町で施設が1つ増えれば、人口10万人あたりの値は20も動く。人口50万人の市なら0.2しか動きません。
+        そのため、人口あたりの順位の上下には、人口の少ない地域が並びやすくなります。
+      </p>
+      <p>
+        これは実力の差ではなく、分母の小ささによる揺れです。市区町村の窓口を読むときは、
+        <a href="/how-to-read/small-towns/">小さな町の1位は、あてにならない</a>をあわせてご覧ください。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>数そのものが要るときもある</h2>
+      <p>
+        「あたり」に直すと、規模が消えます。全国の施設の何割がそこにあるのか、人手が何人足りないのか。
+        こうした問いには、もとの数が要ります。割合と数のどちらも見るべき理由は、
+        <a href="/how-to-read/rate-and-count/">割れば濃さが残り、量が消える</a>で扱っています。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      割ってから並べ直すと、知らない県の名前が上に来ました。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      それが、人口の大きさを取りのぞいたあとに残る姿だ。そこからが、本当の比べはじめになる。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/rate-and-count/">割れば濃さが残り、量が消える</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

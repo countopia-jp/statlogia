@@ -1,0 +1,116 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="割れば濃さが残り、量が消える｜講義室 - Statlogia" description="割合に直すと見えるものと、見えなくなるもの。割合と実数は、どちらも手元に置いて読みます。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/rate-and-count-large.webp" alt="コンクリートの壁の部屋。木の机に、大きなガラス瓶と小さなガラス瓶。どちらも同じ割合で色の砂が層になっている。一葉が小さいほうを持ち上げる水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">割れば濃さが残り、</span><span class="nw">量が消える</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、人口あたりに直したら順位がすっかり入れ替わりました。これで公平に比べられますね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      公平にはなった。ただし、割ったぶん、消えたものがある。割合は「濃さ」を測る道具であって、「量」は測れない。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="同じ割合でも、もとの数がまるで違う二つの地域を並べた図">
+        <text x="0" y="18" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">どちらも「10人に1人」</text>
+        <g>
+          <rect x="20" y="40" width="280" height="54" fill="#eceaE4" stroke="#DEDFE3"/>
+          <rect x="20" y="40" width="28" height="54" fill="#B3402A"/>
+          <text x="310" y="72" font-size="12" fill="#333">G市　該当 9,000人 ／ 90,000人</text>
+        </g>
+        <g>
+          <rect x="20" y="110" width="40" height="54" fill="#eceaE4" stroke="#DEDFE3"/>
+          <rect x="20" y="110" width="4" height="54" fill="#B3402A"/>
+          <text x="310" y="142" font-size="12" fill="#333">H町　該当 120人 ／ 1,200人</text>
+        </g>
+        <text x="0" y="196" font-size="12" fill="#777">→ 割合は同じ10.0％。けれど、手当てに要る人手も費用も、75倍ちがう</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。横幅は人口の大きさを表していますが、H町の帯は見えるように実際の比より大きく描いています。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>割合で見えること</h2>
+      <p>
+        割合は、地域の大きさを取りのぞいたあとに残る「濃さ」です。
+        大きい地域と小さい地域を同じ土俵に乗せられるので、順位や比較にはこれを使います。
+        高齢化率、持ち家率、共働きの割合。どれも、人数そのままでは比べられません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>割合で見えなくなること</h2>
+      <p>
+        消えるのは、量です。同じ10％でも、9,000人と120人では、必要な施設も人手も費用もまるで違います。
+        政策の規模、市場の大きさ、全国に占める位置。これらは割合では測れません。
+      </p>
+      <p>
+        もうひとつ消えるのは、<b>分母が動いたのか分子が動いたのか</b>という区別です。
+        高齢化率が上がったとき、高齢者が増えたのか、若い人が出ていったのかは、割合だけを見ていても分かりません。
+        人口の減っている地域では、後者のほうが効いていることがよくあります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>割合どうしを足したり引いたりしない</h2>
+      <p>
+        地域ごとの割合を平均しても、全体の割合にはなりません。人口のちがう地域を同じ重さで数えてしまうからです。
+        全体の割合を出したいときは、<b>分子は分子どうし、分母は分母どうしで足してから割る</b>。
+        この話は<a href="/how-to-read/average-vs-national/">全国の値と、47県の平均は違う</a>と同じ根です。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>情報棟の窓口では、両方を並べています</h2>
+      <p>
+        窓口の表には、割合の項目と、もとの数の項目を、できるかぎり並べて置いています。
+        順位は割合で見て、規模はもとの数で確かめる。この二度見をしてはじめて、その地域の姿が立ちあがります。
+      </p>
+      <p>
+        研究棟の見くらべの間では、数の項目に「人口あたり」に直すはたらきを添えています。
+        切りかえる前と後の両方を見て、<b>順位がどう入れ替わるか</b>を見るのが、いちばん早い使い方です。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      割ったら終わり、ではないんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      うむ。割る前と割った後は、別のことを教えてくれる。どちらかを捨てる理由はない。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/base-100/">指数の100は、どこでもない</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

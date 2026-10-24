@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="統計には、届くまでの時間がある｜講義室 - Statlogia" description="国の統計はなぜ数年前の数字なのか。大きな調査の周期、調べてから数字になるまでの時間、そして止まってしまう統計の話。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/data-lag-large.webp" alt="初夏の緑がのぞく窓辺の机に、紅葉を一枚はさんだ帳面と日めくり、湯気の立つ湯のみ。白いカーテンが風にゆれる水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">統計には、</span><span class="nw">届くまでの時間がある</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、窓口の数字がどれも数年前のものでした。更新を忘れているのでしょうか。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      忘れてはいない。国の統計そのものが、そこで止まっているのだ。数字になるまでには、調べる時間と、まとめる時間が要る。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="調査の実施から、集計、公表までにかかる時間を示した帯">
+        <text x="0" y="18" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">大きな調査が、数字になるまで</text>
+        <rect x="20" y="40" width="120" height="30" fill="#4B5570"/><text x="80" y="60" text-anchor="middle" font-size="12" fill="#fff">調査の実施</text>
+        <rect x="140" y="40" width="200" height="30" fill="#8E99AE"/><text x="240" y="60" text-anchor="middle" font-size="12" fill="#fff">回収・審査・集計</text>
+        <rect x="340" y="40" width="130" height="30" fill="#B3402A"/><text x="405" y="60" text-anchor="middle" font-size="12" fill="#fff">速報の公表</text>
+        <rect x="470" y="40" width="150" height="30" fill="#d7a08f"/><text x="545" y="60" text-anchor="middle" font-size="12" fill="#5a3222">確定値・小地域</text>
+        <line x1="20" y1="86" x2="620" y2="86" stroke="#ccc"/>
+        <text x="20" y="104" font-size="11" fill="#777">調査の年</text>
+        <text x="340" y="104" text-anchor="middle" font-size="11" fill="#777">およそ1年後</text>
+        <text x="620" y="104" text-anchor="end" font-size="11" fill="#777">2年後以降</text>
+        <text x="0" y="140" font-size="12" fill="#777">→ 市区町村ごとの細かい集計は、いちばん最後に出てくる</text>
+        <text x="0" y="162" font-size="12" fill="#777">→ そのうえ大きな調査は5年に一度。次の調査まで、数字は動かない</text>
+      </svg>
+      <p class="art-diagram-note">※おおよその目安です。調査によって期間は異なります。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>理由その一　大きな調査は、五年に一度</h2>
+      <p>
+        国の基幹的な調査の多くは、五年おきです。国勢調査、住宅・土地統計調査、社会生活基本調査、経済センサス。
+        どれも全国規模で、人手も費用もかかるため、毎年は行えません。
+      </p>
+      <p>
+        つまり、調査の翌年に数字が出たとしても、<b>次の調査までの四年間は同じ数字のまま</b>です。
+        窓口で「いちばん新しい年」が数年前なのは、多くの場合これが理由です。
+      </p>
+      <p>
+        いっぽう、毎月・毎年おこなわれる統計もあります。人口動態統計、家計調査、住民基本台帳人口移動報告など。
+        窓口によって年が違うのは、もとになった調査の周期が違うからです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>理由その二　調べてから、数字になるまで時間がかかる</h2>
+      <p>
+        調査票を集めたあと、記入もれや矛盾を直し、分類を当て、集計します。
+        全国の値がまず出て、都道府県、そして市区町村と、細かい地域ほど後になります。
+        地域を細かく割るほど、一つひとつの数が小さくなり、個人や事業所が特定されないかの確認も要るためです。
+      </p>
+      <p>
+        そのため、同じ調査でも「全国はもう新しい年が出ているのに、市区町村はまだ前回のまま」ということが起こります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>止まってしまう数字もある</h2>
+      <p>
+        調査そのものが廃止されたり、観測や集計の方法が変わったりして、系列がそこで途切れることがあります。
+        そうなると、どれだけ待っても新しい年は出てきません。
+      </p>
+      <p>
+        方法が変わった場合は、変わる前と後をつないで読めないこともあります。
+        項目名が同じでも、数えているものが違っていれば、折れ線をつないだ時点で間違いになります。
+        窓口では、そうした断絶のある項目に注記を添えています。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>この国の数字の、取り直し方</h2>
+      <p>
+        当所では、月に2回、政府統計の総合窓口〈e-Stat〉をあらためて、新しい年が出ていれば取り直しています。
+        ですから「数年前の数字」は、取り直しを怠っているのではなく、<b>それが現在もっとも新しい公表値</b>だということです。
+      </p>
+      <p>
+        また、ある年の数字が一部の地域にしか無い場合は、その年を使わず、<b>十分な数の地域がそろっている年まで戻して</b>並べています。
+        そろっていない年を使うと、順位も平均も、その年だけ別のものになってしまうからです。
+      </p>
+      <p>
+        どの年の数字かは、窓口ごとに表と出典へ書いています。くわしくは<a href="/how-to-read/data-source/">データの出どころ</a>をご覧ください。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      いまこの瞬間を映した統計は、やっぱり無いんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      無い。統計は、過ぎたことを数え上げたものだ。いつの数字かを添えて読む。それだけで、ずいぶん間違いが減る。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/surveys/">だれが、何を、どう数えたか</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

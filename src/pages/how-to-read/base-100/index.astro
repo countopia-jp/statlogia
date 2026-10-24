@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="指数の100は、どこでもない｜講義室 - Statlogia" description="全国平均を100とした指数の読み方。100はどこかの県ではないこと、差は「ポイント」であって金額ではないこと、分類がちがえば別の指数であること。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/base-100-large.webp" alt="コンクリートの壁の部屋。壁に細い木の桟が水平に一本渡され、机に立つ高さのちがう木の棒が桟より高かったり低かったりする。知秋が指し棒で桟を指す水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1>指数の100は、どこでもない</h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、物価の指数が105の県と95の県がありました。10円ちがうということですか。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      円ではない。100というのは、全国の平均をそう呼ぶと決めただけの目盛りだ。105は「全国より5％高い」という意味で、金額は分からない。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="全国平均を100とした目盛りの上に、105の県と95の県を置いた図">
+        <line x1="40" y1="90" x2="600" y2="90" stroke="#ccc" stroke-width="2"/>
+        <line x1="320" y1="60" x2="320" y2="120" stroke="#1F2A44" stroke-width="2"/>
+        <text x="320" y="52" text-anchor="middle" font-size="13" font-weight="700" fill="#1F2A44">100</text>
+        <text x="320" y="138" text-anchor="middle" font-size="11" fill="#777">＝全国の平均</text>
+        <circle cx="460" cy="90" r="7" fill="#B3402A"/>
+        <text x="460" y="76" text-anchor="middle" font-size="12" fill="#B3402A">105</text>
+        <text x="460" y="138" text-anchor="middle" font-size="11" fill="#777">全国より5％高い</text>
+        <circle cx="180" cy="90" r="7" fill="#4B5570"/>
+        <text x="180" y="76" text-anchor="middle" font-size="12" fill="#4B5570">95</text>
+        <text x="180" y="138" text-anchor="middle" font-size="11" fill="#777">全国より5％安い</text>
+        <text x="0" y="168" font-size="12" fill="#777">→ 二つの県の差は10ポイント。これは「1割ちがう」という意味で、10円ではない</text>
+      </svg>
+    </section>
+
+    <section class="art-sec">
+      <h2>100は「全国平均」であって、どこかの県ではない</h2>
+      <p>
+        指数は、基準に選んだものを100と置いて、ほかをその何倍かで表した目盛りです。
+        物価の地域差指数なら、基準は全国平均。だから100という県は存在しないこともあるし、たまたま100に近い県があっても、その県が基準なのではありません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>差は「ポイント」であって、円ではない</h2>
+      <p>
+        105と95の差は10です。この10は、10円でも10％でもなく、<b>10ポイント</b>と呼びます。
+        意味としては「一方が他方より約1割高い」。実際の金額に直したければ、全国の平均額を別に調べて、それに1.05や0.95を掛けることになります。
+      </p>
+      <p>
+        指数そのものには、金額の情報がありません。高い安いの順番と、へだたりの大きさだけを表す目盛りです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>分類がちがえば、別の指数</h2>
+      <p>
+        物価の帳場では、総合のほかに食料・住居・光熱・教育といった分類ごとの指数を並べています。
+        これらは<b>それぞれ別の目盛り</b>です。住居の指数が120、食料の指数が101だったとして、「住居のほうが食料より高い」とは言えません。
+        どちらも「その分類の全国平均に対して」の値だからです。
+      </p>
+      <p>
+        比べてよいのは、<b>同じ分類の、県どうし</b>です。住居120の県と住居98の県なら、住まいに掛かる費用の水準を比べていることになります。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>基準を「最初の年」に取るものもある</h2>
+      <p>
+        指数の基準は、全国平均とはかぎりません。最初の年を100と置いて、そこからの伸び方を見る使い方もあります。
+        こちらは地域どうしの高い安いではなく、時間の中での増え方を比べる道具です。
+        同じ「100」でも別の意味になるので、<a href="/how-to-read/growth/">伸び方は、そろえてから比べる</a>とあわせて押さえてください。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      同じ100でも、何を100にしたかで読み方が変わるんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      そこが指数の要だ。数字より先に、基準を探すこと。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/data-lag/">統計には、届くまでの時間がある</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

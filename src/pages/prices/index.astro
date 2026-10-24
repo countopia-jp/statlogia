@@ -65,6 +65,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <Talk speaker="hitoha"><span id="plTouko">どんな値段なのでしょうか。</span></Talk>
     </section>
 
+
     <CompareAddon level="pref" selectId="plPref" src="/data/price-ledger.json" adapter="prices" />
 
     <section id="plLineSec" class="pl-line-sec" hidden aria-label="分類ごとの移りかわり">
@@ -75,6 +76,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
       </div>
       <p class="pl-note">点線は全国平均（100）です。</p>
     </section>
+
 
     <section class="pl-ranking" aria-label="全国の高い県・安い県">
       <h2>全国の高い県・安い県</h2>
@@ -235,6 +237,16 @@ import GrowthTool from '../../components/GrowthTool.astro';
         });
         tabs.appendChild(b);
       }
+      // 10-24 比べる県の線（全国平均の点線はもともと出している）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS;
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'plPref') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        drawLine();
+      });
       function drawLine() {
         if (!current) return;
         const a = current;
@@ -247,14 +259,19 @@ import GrowthTool from '../../components/GrowthTool.astro';
           data: {
             labels: YEARS,
             datasets: [
-              { label: a.n, data: series, borderColor: '#B3402A', backgroundColor: '#B3402A', tension: 0.2, pointRadius: 3 },
+              { label: a.n, data: series, borderColor: cmpColors[0], backgroundColor: cmpColors[0], tension: 0.2, pointRadius: 3 },
+              // 10-24 「ほかの県と並べる」で足した県も、同じ図に線で出す
+              ...cmpList.map((b, k) => {
+                const o = data.areas.find((x) => x.c === b.c);
+                return o ? { label: b.n, data: o.v[lineCat], borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length], tension: 0.2, pointRadius: 3, spanGaps: false } : null;
+              }).filter(Boolean),
               { label: '全国平均', data: YEARS.map(() => 100), borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 },
             ],
           },
           options: {
             responsive: true,
             plugins: {
-              legend: { display: false },
+              legend: { display: cmpList.length > 0, labels: { boxWidth: 14, filter: (it) => it.text !== '全国平均' } },
               tooltip: { callbacks: { label: (c) => `${c.dataset.label}：${Number(c.raw).toFixed(1)}` } },
             },
             scales: { y: { suggestedMin: 95, suggestedMax: 105 } },

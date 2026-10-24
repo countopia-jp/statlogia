@@ -99,6 +99,44 @@ import GrowthTool from '../../components/GrowthTool.astro';
     (async function () {
       const res = await fetch('/data/education.json');
       const data = await res.json();
+
+      // 10-24 「ほかの市区町村と並べる」で足した町を、図にも線で出す（市区町村なので全国線は出さない）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null;
+      function __cmpSets(area, label) {
+        curArea = area;
+        const labels = area.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (area.n || label),
+          data: area.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = data.areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'citySelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('studentLineChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const IND = data.indicators;
       const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
       const val = (a, code) => a.v[idx[code]];
@@ -196,13 +234,10 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: area.series.map((p) => p.year),
-            datasets: [{
-              label: '小学校児童数', data: area.series.map((p) => p.value),
-              borderColor: '#1F2A44', backgroundColor: '#1F2A4422', tension: 0.2, fill: true,
-            }],
+            datasets: __cmpSets(area, '小学校児童数'),
           },
           options: {
-            responsive: true, plugins: { legend: { display: false } },
+            responsive: true, plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14 } } },
             scales: { y: { ticks: { callback: (v) => v.toLocaleString('ja-JP') + '人' } } },
           },
         });

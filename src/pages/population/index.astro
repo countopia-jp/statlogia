@@ -29,7 +29,7 @@ import FutureTool from '../../components/FutureTool.astro';
 
   <main class="pop-dash">
     <HeroFig src="/images/icon/population-large.webp" alt="丘の上から見おろす、屋根の連なる町並みと遠い山" width={1400} height={788}>
-      <p class="pop-kicker">閲覧室｜人と家族</p>
+      <p class="pop-kicker">閲覧室｜人と世帯</p>
       <h1>国勢の間</h1>
       <p class="pop-lead">
         総人口、高齢化率、世帯数、出生率、婚姻率。<br />
@@ -62,6 +62,7 @@ import FutureTool from '../../components/FutureTool.astro';
       <div class="pop-chart-wrap">
         <p class="pop-chart-title">総人口の推移</p>
         <canvas id="popChart" data-growth="level" height="120"></canvas>
+        <p class="pop-chart-note">点線は47都道府県の平均です。「ほかの県と並べる」で県を足すと、その県の線も重なります。</p>
       </div>
 
       <Talk speaker="chiaki"><span id="keiLine">県を選ぶと、台帳を出そう。</span></Talk>
@@ -69,10 +70,12 @@ import FutureTool from '../../components/FutureTool.astro';
     </section>
 
     <CompareAddon level="pref" selectId="prefSelect" src="/data/population.json" />
-    <PyramidTool level="pref" selectId="prefSelect" />
+
     <FutureTool level="pref" selectId="prefSelect" />
+    <PyramidTool level="pref" selectId="prefSelect" />
 
     <!-- ===== ランキング ===== -->
+
     <section class="pop-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>
       <div class="pop-tabs" role="tablist">
@@ -160,30 +163,79 @@ import FutureTool from '../../components/FutureTool.astro';
         if (area) render(area);
       });
 
+      // 10-24 比べる地域の線と、47都道府県の平均の点線（engine の窓口と同じ作り）
+      // 総人口は「合計」の項目なので、くらべる相手は全国ではなく47県の平均にする
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [];
+      let cmpColors = CMP_COLORS;
+      let curArea = null;
+      let _avgByYear = null;
+      function prefAverageByYear() {
+        if (_avgByYear) return _avgByYear;
+        const acc = {};
+        for (const a of data.areas) for (const q of (a.series || [])) {
+          if (typeof q.value === 'number') (acc[q.year] = acc[q.year] || []).push(q.value);
+        }
+        _avgByYear = {};
+        for (const y in acc) _avgByYear[y] = acc[y].reduce((t, v) => t + v, 0) / acc[y].length;
+        return _avgByYear;
+      }
+
       function renderChart(area) {
         const ctx = document.getElementById('popChart');
         if (!ctx || !area.series || area.series.length === 0) return;
+        curArea = area;
+        const labels = area.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: area.n,
+          data: area.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = data.areas.find((a) => a.c === b.c);
+          if (!o || !o.series) return;
+          const byYear = {};
+          for (const q of o.series) byYear[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof byYear[y] === 'number' ? byYear[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        const avg = prefAverageByYear();
+        sets.push({
+          label: '47都道府県の平均',
+          data: labels.map((y) => (typeof avg[y] === 'number' ? avg[y] : null)),
+          borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false, tension: 0.2, spanGaps: false,
+        });
         if (window._popChartInstance) window._popChartInstance.destroy();
         window._popChartInstance = new Chart(ctx, {
           type: 'line',
-          data: {
-            labels: area.series.map((p) => p.year),
-            datasets: [{
-              label: '総人口',
-              data: area.series.map((p) => p.value),
-              borderColor: '#1F2A44',
-              backgroundColor: '#1F2A4422',
-              tension: 0.2,
-              fill: true,
-            }],
-          },
+          data: { labels, datasets: sets },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: {
+              legend: {
+                display: !alone,
+                labels: { boxWidth: 14, filter: (it) => it.text !== '47都道府県の平均' },
+              },
+            },
             scales: { y: { ticks: { callback: (v) => (v / 10000).toFixed(0) + '万人' } } },
           },
         });
       }
+
+      // 「ほかの県と並べる」で足し引きされたら、同じ線を図にも引く
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'prefSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        if (curArea) renderChart(curArea);
+      });
 
       function render(area) {
         document.getElementById('resultArea').hidden = false;
@@ -232,8 +284,8 @@ import FutureTool from '../../components/FutureTool.astro';
         const hasAging = typeof agingRank === 'number';
 
         let k = hasPop && hasAging
-          ? `総人口は${total}県中${popRank}位、高齢化率は${agingRank}位です。`
-          : `${hasPop ? `総人口は${total}県中${popRank}位です。` : '総人口は、この県の値がありません。'} ${hasAging ? `高齢化率は${agingRank}位です。` : '高齢化率は、この県の値がありません。'}`;
+          ? `総人口は${total}県中${popRank}位、高齢化率は${agingRank}位だ。`
+          : `${hasPop ? `総人口は${total}県中${popRank}位だ。` : '総人口は、この県の値が無い。'} ${hasAging ? `高齢化率は${agingRank}位だ。` : '高齢化率は、この県の値が無い。'}`;
         let t = '';
 
         if (!hasPop || !hasAging) {
@@ -349,6 +401,7 @@ import FutureTool from '../../components/FutureTool.astro';
     .pop-rank { color: #B3402A; font-weight: 700; }
     .pop-diff { color: #666; }
 
+    .pop-chart-note { font-size: .78rem; color: var(--ink-soft); line-height: 1.8; margin: 6px 0 0; }
     .pop-chart-wrap {
       margin: 28px 0 8px; padding: 16px; border: 1px solid #DEDFE3;
       border-radius: 8px; background: #fff;

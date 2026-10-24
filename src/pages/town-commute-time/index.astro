@@ -9,7 +9,7 @@ const data = await getMuniCommuteTimeData();
 <BaseLayout title="通勤に、どれだけかかるか｜Statlogia" description="市区町村を選んで、片道の通勤時間が30分未満・1時間以上・1時間30分以上の世帯の割合をご覧いただける窓口。全国ベスト5つき。" backHref="/dashboard/" backLabel="閲覧室">
   <main class="tp">
     <HeroFig src="/images/icon/town-commute-time-large.webp" alt="朝の郊外の駅のホーム。通勤鞄を提げた人と、電車を待つ人々。遠くまで伸びる線路を描いた水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室｜働く・通う</p>
+      <p class="tp-kicker">閲覧室｜通勤と交通</p>
       <h1>通勤に、どれだけかかるか</h1>
       <p class="tp-lead">
         市区町村を選んで、その町から通う人が、片道にどれだけの時間をかけているかをご覧ください。<br />
@@ -148,10 +148,10 @@ const data = await getMuniCommuteTimeData();
         let k = '';
         if (hasLong) {
           k = `片道1時間以上かけて通う世帯は${long.toFixed(1)}％。`;
-          if (hasVlong && vlong >= 5) k += ` そのうち1時間30分以上が${vlong.toFixed(1)}％です。`;
+          if (hasVlong && vlong >= 5) k += ` そのうち1時間30分以上が${vlong.toFixed(1)}％だ。`;
           k += long >= 30 ? ' 30％以上だ。'
-             : long >= 15 ? ' 15％以上です。'
-             : long < 5 ? ' 5％未満です。'
+             : long >= 15 ? ' 15％以上だ。'
+             : long < 5 ? ' 5％未満だ。'
              : '';
         } else {
           k = '片道1時間以上かけて通う世帯の割合は、この町の値がない。';

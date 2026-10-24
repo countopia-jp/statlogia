@@ -5,22 +5,67 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import HeroFig from '../../components/HeroFig.astro';
 const heroImg = fs.existsSync(path.join(process.cwd(), 'public/images/icon/training-large.webp')) ? '/images/icon/training-large.webp' : null;
 ---
-<BaseLayout title="講義棟｜Statlogia" description="統計の道具の使い方。散らばりの中の位置、伸び率、特化係数、相関、似た県、増減の分解、誤差の幅、業種の集まり方、人口の形を、知秋と一葉が解きほぐします。" backHref="/" backLabel="玄関">
+<BaseLayout title="講義棟｜Statlogia" description="統計の読み方を、知秋と一葉が解きほぐします。平均と中央値、全国平均、人口あたり、割合と実数、指数、統計の遅れ、出典、調査の素性。そして散らばりの中の位置、伸び率、特化係数、相関、似た県、増減の分解、誤差の幅、人口の形。" backHref="/" backLabel="玄関">
   <main>
     <section class="how">
       {heroImg ? (
         <HeroFig src={heroImg} alt="打ちっぱなしコンクリートの講義室。黒板に並ぶグラフを指し棒で指す知秋と、机でクリップボードにメモを取る一葉の水彩画" width={1400} height={782} eager>
           <p class="rr-kicker">講義棟</p>
-          <h1>講義室｜統計の道具を使う</h1>
-          <p class="rr-lead">数字は、道具の使い方ひとつで見え方が変わります。<br />情報棟と研究棟で使っている道具の読み方を、一つずつ。</p>
+          <h1>講義室</h1>
+          <p class="rr-lead">数字は、読み方ひとつで見え方が変わります。<br />土台になる話と、情報棟・研究棟で使う道具を、一つずつ。</p>
         </HeroFig>
       ) : (
         <div class="how-hero how-hero--text">
           <span class="no">TRAINING</span>
-          <h1>講義室｜統計の道具を使う</h1>
-          <p class="sub">数字は、道具の使い方ひとつで見え方が変わります。情報棟と研究棟で使っている道具の読み方を、一つずつ。</p>
+          <h1>講義室</h1>
+          <p class="sub">数字は、読み方ひとつで見え方が変わります。土台になる話と、情報棟・研究棟で使う道具を、一つずつ。</p>
         </div>
       )}
+
+      <h2 class="how-sec"><span class="how-sec-no">BASICS</span>数字を読む前に</h2>
+      <p class="how-sec-lead">平均、割合、指数、統計の年、調査の素性。窓口の数字を読むときの、土台になる話です。</p>
+      <div class="cards">
+        <a class="card" href="/how-to-read/median-vs-mean/">
+          <img class="card-img" src="/images/icon/median-vs-mean-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>平均は、まんなかとはかぎらない</h3>
+          <p>平均値は、ごく少数の大きな値に引っぱられます。中央値とのちがいと、どちらを見るべきかを、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/average-vs-national/">
+          <img class="card-img" src="/images/icon/average-vs-national-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>全国の値と、47県の平均は違う</h3>
+          <p>全国値は人数で重みをつけた平均、47県の単純平均は県を同じ重さで数えたもの。比べる相手の選び方を、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/per-capita/">
+          <img class="card-img" src="/images/icon/per-capita-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>数えた数は、割ってから並べる</h3>
+          <p>数の項目をそのまま並べると、人口の順位をなぞるだけになります。何で割るかで意味が変わる話を、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/rate-and-count/">
+          <img class="card-img" src="/images/icon/rate-and-count-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>割れば濃さが残り、量が消える</h3>
+          <p>割ると「濃さ」が残り、「量」が消えます。割合と実数を両方見る理由を、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/base-100/">
+          <img class="card-img" src="/images/icon/base-100-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>指数の100は、どこでもない</h3>
+          <p>全国平均を100とした指数の読み方。差は「ポイント」であって金額ではないことを、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/data-lag/">
+          <img class="card-img" src="/images/icon/data-lag-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>統計には、届くまでの時間がある</h3>
+          <p>大きな調査は5年に一度。調べてから数字になるまでの時間と、止まってしまう統計の話を、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/data-source/">
+          <img class="card-img" src="/images/icon/data-source-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>数字は、どこから来たのか</h3>
+          <p>この国の数字はどこから来て、どんな加工を経ているのか。元の表までたどる道すじを、知秋が説明します。</p>
+        </a>
+        <a class="card" href="/how-to-read/surveys/">
+          <img class="card-img" src="/images/icon/surveys-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <h3>だれが、何を、どう数えたか</h3>
+          <p>全数・標本・届け出という調べ方のちがいと、窓口でよく通る主な調査を、知秋がご案内します。</p>
+        </a>
+      </div>
 
       <h2 class="how-sec"><span class="how-sec-no">TOOLS</span>統計の道具</h2>
       <p class="how-sec-lead">情報棟の窓口や研究棟の見くらべ・読み解きで使っている、統計の道具の読み方です。散らばりの中の位置、伸び率、小さな町の揺れ、特化係数、相関と回帰、似た町、増減の分解、誤差の幅、業種の集まり方、人口の形。</p>

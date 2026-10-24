@@ -25,7 +25,7 @@ const word = isPref ? '県' : '市区町村';
     <h2>散らばりの中の位置</h2>
     <p class="cmpx-note">選んだ{word}が、{isPref ? '47都道府県' : '全国の市区町村'}の中のどのあたりにあるかを項目ごとに示します。{isPref ? '点は47都道府県の値（近い値は上に積んでいます）' : '箱は全国の市区町村の真ん中半分、線は5〜95％の範囲'}で、赤がこの{isPref ? '県' : '町'}です。</p>
     <div class="cmpx-pos-list"></div>
-    <p class="cmpx-note cmpx-foot2">「上位◯％」は値の大きい順に並べたときの位置です。偏差値は、分布の偏りが小さい項目にだけ出しています。数の項目は、総人口で割った「人口あたり」でも位置を示します。読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="https://countopia.com/how-to-read/per-capita/" rel="noopener">人口あたりで見るということ</a></p>
+    <p class="cmpx-note cmpx-foot2">「上位◯％」は値の大きい順に並べたときの位置です。偏差値は、分布の偏りが小さい項目にだけ出しています。数の項目は、総人口で割った「人口あたり」でも位置を示します。読み方：<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>｜<a href="/how-to-read/per-capita/">数えた数は、割ってから並べる</a></p>
   </div>
   <h2>ほかの{word}とならべる</h2>
   <p class="cmpx-note">{word}を4つまで足して、数字を横に並べます。</p>
@@ -246,6 +246,16 @@ const word = isPref ? '県' : '市区町村';
         }
         chips.appendChild(li);
       });
+      // 10-24 ページのグラフに、比べている地域を知らせる（engine の窓口は図に線が出るので、手書きもそろえる）
+      // 値はページ側が持っているので、ここでは地域のコードと名前、そして札と同じ色だけを渡す
+      try {
+        document.dispatchEvent(new CustomEvent('cmpx:change', { detail: {
+          select: sec.dataset.select, level,
+          current: current ? { c: current.c, n: nameOf(current) } : null,
+          compare: compare.map((a) => ({ c: a.c, n: nameOf(a) })),
+          colors: COLORS,
+        } }));
+      } catch (e) {}
       const wrap = sec.querySelector('.cmpx-wrap');
       const foot = sec.querySelector('.cmpx-foot');
       wrap.hidden = foot.hidden = compare.length === 0;

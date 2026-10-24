@@ -11,7 +11,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Talk from '../../components/Talk.astro';
 import { ROOMS } from '../../data/rooms/index.js';
 import HeroFig from '../../components/HeroFig.astro';
-const SHELF_ORDER = ['人と家族', '住まいと土地', '暮らしと家計', '働く・通う', '産業と稼ぎ', '田畑・海・観光', '医療・福祉・安全', '学校と学び', '文化と余暇', '空と大地', '県のお金', '町のお金'];
+const SHELF_ORDER = ['人と世帯', '人の出入り', '住まいと土地', '暮らしと家計', '働き方', '通勤と交通', '県の経済', '町の商いと産業', '医療・介護と安全', '子どもと高齢者', '学校と学び', '文化と学びの場', '余暇とスポーツ', '自然・田畑・海', '空と環境', '県のお金', '町のお金'];
 const rooms = Object.values(ROOMS)
   .filter((r) => r.scope === 'pref')
   .map((r) => ({ id: r.id, title: r.title, shelf: r.shelf || 'そのほか' }));

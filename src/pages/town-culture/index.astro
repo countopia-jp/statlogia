@@ -15,7 +15,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
   <main class="tp">
     <HeroFig src="/images/icon/town-culture-large.webp" alt="木の床と本棚の並ぶ図書館の窓辺で本を読む人々と、窓の外の公民館で寄り合いの支度をする住民の水彩画" width={1400} height={788}>
-      <p class="tp-kicker">閲覧室｜文化と余暇</p>
+      <p class="tp-kicker">閲覧室｜文化と学びの場</p>
       <h1>わが町の図書館と公民館</h1>
       <p class="tp-lead">
         市区町村を選んで、その町に図書館と公民館がいくつあるかをご覧ください。<br />
@@ -75,6 +75,45 @@ import GrowthTool from '../../components/GrowthTool.astro';
       const IND = TP.indicators;
       window.CTP_CMP = TP;
       const areas = TP.areas;
+
+      // 10-24 「ほかの市区町村と並べる」で足した町を、図にも線で出す（engine の窓口と同じ作り）
+      // 市区町村の窓口には全国の線を出さない（engine も県のみ。市区町村の表に全国行が無いため）
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null;
+      function __cmpSets(a, label) {
+        curArea = a;
+        const labels = a.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (a.n || label),
+          data: a.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'townSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('culChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const LIB = 0, KOMIN = 1, LIB_PER = 2;
 
       // 「およそ」と言うので端数を丸める（3桁目まで）
@@ -129,18 +168,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: a.series.map((p) => p.year),
-            datasets: [{
-              label: '公民館の数',
-              data: a.series.map((p) => p.value),
-              borderColor: '#4B5570',
-              backgroundColor: '#4B557022',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(a, '公民館の数'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14 } } },
             scales: { y: { beginAtZero: true, ticks: { precision: 0, callback: (v) => v.toLocaleString('ja-JP') + '館' } } },
           },
         });
@@ -181,9 +213,9 @@ import GrowthTool from '../../components/GrowthTool.astro';
         const hasKomin = typeof komin === 'number';
         let k = '';
         k += hasLib ? (lib === 0 ? '図書館は、この町にはない。' : `図書館が${Math.round(lib).toLocaleString('ja-JP')}館。`) : '図書館の数は、この町の値がない。';
-        if (hasKomin) k += komin === 0 ? (hasLib && lib === 0 ? ' 公民館も、数字の上ではありません。' : ' 公民館は、数字の上ではありません。') : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館です。`;
-        else k += ' 公民館の数は、この町の値がありません。';
-        if (hasLib && lib > 0 && typeof libPer === 'number') k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館です。`;
+        if (hasKomin) k += komin === 0 ? (hasLib && lib === 0 ? ' 公民館も、数字の上では無い。' : ' 公民館は、数字の上では無い。') : ` 公民館は${Math.round(komin).toLocaleString('ja-JP')}館だ。`;
+        else k += ' 公民館の数は、この町の値が無い。';
+        if (hasLib && lib > 0 && typeof libPer === 'number') k += ` 図書館は、およそ${roundPeople(libPer).toLocaleString('ja-JP')}人に1館だ。`;
         kei.textContent = k;
         const seed = parseInt(a.c, 10) || 0;
         const s = a.series || [];

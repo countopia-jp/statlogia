@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Talk from '../../../components/Talk.astro';
+import HeroFig from '../../../components/HeroFig.astro';
+---
+<BaseLayout title="平均は、まんなかとはかぎらない｜講義室 - Statlogia" description="平均値と中央値のちがい。少数の大きな値に引っぱられる平均と、並べたまんなかの中央値。どちらを見るべきかの判断。" backHref="/how-to-read/" backLabel="講義室">
+  <main class="art">
+    <HeroFig src="/images/icon/median-vs-mean-large.webp" alt="コンクリートの壁の部屋。高さのちがう木の棒が低い順に並び、右端の一本だけがとびぬけて高い。知秋が長い定規を渡して高さを見ている水彩画" width={1376} height={768} eager>
+      <p class="art-kicker">講義室</p>
+      <h1><span class="nw">平均は、</span><span class="nw">まんなかとはかぎらない</span></h1>
+    </HeroFig>
+
+    <Talk speaker="hitoha">
+      先生、県の平均給与を見たんですが、まわりの誰もそんなにもらっていません。統計が間違っているんでしょうか。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      統計は正しい。ただ、きみが見たのは平均値だ。平均値は、ごく少数の大きな値に引っぱられる。「平均のところに誰もいない」ことは、珍しくない。
+    </Talk>
+
+    <section class="art-diagram">
+      <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="10人の所得を低い順に並べた棒グラフ。平均値は7人目のあたりに、中央値は5人目と6人目のあいだにある">
+        <text x="0" y="18" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">10人の所得を、低い順に並べる</text>
+        <g fill="#8E99AE">
+          <rect x="20" y="150" width="40" height="30"/>
+          <rect x="68" y="144" width="40" height="36"/>
+          <rect x="116" y="138" width="40" height="42"/>
+          <rect x="164" y="134" width="40" height="46"/>
+          <rect x="212" y="130" width="40" height="50"/>
+          <rect x="260" y="126" width="40" height="54"/>
+          <rect x="308" y="120" width="40" height="60"/>
+          <rect x="356" y="112" width="40" height="68"/>
+          <rect x="404" y="100" width="40" height="80"/>
+        </g>
+        <rect x="452" y="34" width="40" height="146" fill="#B3402A"/>
+        <line x1="10" y1="180" x2="630" y2="180" stroke="#ccc"/>
+        <line x1="10" y1="118" x2="630" y2="118" stroke="#B3402A" stroke-width="1.5" stroke-dasharray="5 4"/>
+        <text x="505" y="114" font-size="12" fill="#B3402A">平均値</text>
+        <line x1="10" y1="128" x2="440" y2="128" stroke="#1F2A44" stroke-width="1.5" stroke-dasharray="2 3"/>
+        <text x="505" y="134" font-size="12" fill="#1F2A44">中央値</text>
+        <text x="452" y="28" font-size="11" fill="#B3402A">ひとり、とびぬけた人</text>
+        <text x="20" y="200" font-size="11" fill="#777">低い</text>
+        <text x="492" y="200" text-anchor="end" font-size="11" fill="#777">高い</text>
+        <text x="0" y="222" font-size="12" fill="#777">→ 10人のうち7人が、平均値より下にいる</text>
+      </svg>
+      <p class="art-diagram-note">※数値は説明用の仮の例です。</p>
+    </section>
+
+    <section class="art-sec">
+      <h2>平均値は、全部足して頭数で割ったもの</h2>
+      <p>
+        平均値は、みんなの値を合計して、人数で割ったものです。
+        計算が単純で、合計と人数さえあれば出せます。だから国の統計でもっともよく公表されるのが、この平均値です。
+      </p>
+      <p>
+        弱点は、とびぬけた値に弱いことです。10人のうち1人の所得が10倍あれば、平均値はその1人に引き上げられます。
+        引き上げられた平均値のところには、誰もいません。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>中央値は、並べたまんなかの人</h2>
+      <p>
+        中央値は、値を小さい順に並べて、ちょうどまんなかに来る人の値です。
+        とびぬけた1人がどれだけ大きくても、並び順のまんなかは動きません。
+        「ふつうの人はどのくらいか」を知りたいときは、こちらのほうが実感に近くなります。
+      </p>
+      <p>
+        弱点は、合計と結びつかないことです。中央値に人数をかけても、全体の合計にはなりません。
+        また、公表している統計が少ない。個票を並べ直さないと出せない値だからです。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>どちらが正しい、ということはない</h2>
+      <p>
+        二つは、別のことを測る道具です。値の散らばり方が左右対称に近いなら、平均値と中央値はほとんど重なります。
+        所得・資産・地価のように、下に多く上に長く尾を引く散らばり方をするものほど、二つは離れます。
+      </p>
+      <p>
+        離れているかどうかは、平均値と中央値の両方が公表されている項目で確かめられます。
+        離れていたら、その項目は「少数の大きな値に引っぱられる性質がある」と覚えておくと、ほかの年や地域を読むときにも効きます。
+      </p>
+    </section>
+
+    <section class="art-sec">
+      <h2>情報棟の窓口に出しているのは</h2>
+      <p>
+        窓口に並べている値は、国の統計表が持っている値をそのまま使っています。加工して中央値を作ることはしていません。
+        多くの項目は平均値で、中央値が公表されている項目はごく一部です。
+        だから「県の平均給与」のような項目は、<b>平均値であることを前提に読んでください</b>。実感と合わないとしたら、統計が間違っているのではなく、散らばりが大きいということです。
+      </p>
+      <p>
+        散らばりの大きさそのものを見たいときは、<a href="/how-to-read/position/">10位は、近いのか遠いのか</a>で扱っている、上位◯％や箱ひげの見方が使えます。
+      </p>
+    </section>
+
+    <Talk speaker="hitoha">
+      平均が実感と合わないのは、わたしの感覚がずれているからではなかったんですね。
+    </Talk>
+    <Talk speaker="chiaki-work">
+      そうだ。むしろ、ずれて当然の項目というものがある。どちらの数字を見ているのかを、いつも確かめることだ。
+    </Talk>
+
+    <p class="tab-links">
+      <a class="tab-link" href="/how-to-read/average-vs-national/">全国の値と、47県の平均は違う</a>
+      <a class="tab-link" href="/how-to-read/">講義室の一覧へ</a>
+    </p>
+  </main>
+  <style>
+    .art { max-width: 880px; margin: 0 auto; padding: 0 16px 56px; }
+    .art-hero { text-align: center; padding: 32px 0 16px; }
+    .art-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
+    .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
+
+    .art-diagram {
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
+      border-radius: 10px; background: #fff;
+    }
+    .art-diagram svg { display: block; width: 100%; height: auto; }
+    .art-diagram-note { font-size: 0.72rem; color: #999; text-align: right; margin: 8px 0 0; }
+
+    .art-sec { padding: 16px 0; }
+    .art-sec h2 {
+      font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
+    }
+    .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
+    .art-sec a { color: #B3402A; }
+    .art-sec ul { margin: 0 0 12px; padding-left: 1.2em; }
+    .art-sec li { line-height: 2; font-size: 0.92rem; color: #333; }
+  </style>
+</BaseLayout>

@@ -29,8 +29,8 @@ import { ROOM_COUNT } from '../../data/page-names.js';
       </div>
     </div>
 
-    <section class="rr-group" aria-label="人と家族">
-      <h2 class="rr-group-title">人と家族</h2>
+    <section class="rr-group" aria-label="人と世帯">
+      <h2 class="rr-group-title">人と世帯</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/population/">
           <img class="rr-card-img" src="/images/icon/population-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
@@ -72,6 +72,22 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（国勢調査）</p>
           </div>
         </a>
+        <a class="rr-card" href="/town-marriage/">
+          {thumbOf('town-marriage') && <img class="rr-card-img" src={thumbOf('town-marriage')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の結婚と離婚</h3>
+          <p class="rr-card-desc">
+            1年の婚姻件数と離婚件数を人口1000人あたりに直して、推移とともに。
+          </p>
+          <p class="rr-card-meta">市区町村</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="人の出入り">
+      <h2 class="rr-group-title">人の出入り</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/pref-migration/">
           {thumbOf('pref-migration') && <img class="rr-card-img" src={thumbOf('pref-migration')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -102,16 +118,6 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">都道府県</p>
           </div>
         </a>
-        <a class="rr-card" href="/town-daynight/">
-          {thumbOf('town-daynight') && <img class="rr-card-img" src={thumbOf('town-daynight')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>わが町の昼と夜</h3>
-          <p class="rr-card-desc">
-            昼間人口と昼夜間人口比率。県内・他県からどれだけ通ってきて、どれだけ出ていくか。
-          </p>
-          <p class="rr-card-meta">市区町村</p>
-          </div>
-        </a>
         <a class="rr-card" href="/town-foreign/">
           {thumbOf('town-foreign') && <img class="rr-card-img" src={thumbOf('town-foreign')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -122,12 +128,12 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">市区町村</p>
           </div>
         </a>
-        <a class="rr-card" href="/town-marriage/">
-          {thumbOf('town-marriage') && <img class="rr-card-img" src={thumbOf('town-marriage')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+        <a class="rr-card" href="/town-daynight/">
+          {thumbOf('town-daynight') && <img class="rr-card-img" src={thumbOf('town-daynight')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
-          <h3>わが町の結婚と離婚</h3>
+          <h3>わが町の昼と夜</h3>
           <p class="rr-card-desc">
-            1年の婚姻件数と離婚件数を人口1000人あたりに直して、推移とともに。
+            昼間人口と昼夜間人口比率。県内・他県からどれだけ通ってきて、どれだけ出ていくか。
           </p>
           <p class="rr-card-meta">市区町村</p>
           </div>
@@ -209,16 +215,6 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">都道府県</p>
           </div>
         </a>
-        <a class="rr-card" href="/water/">
-          {thumbOf('water') && <img class="rr-card-img" src={thumbOf('water')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>水とトイレ</h3>
-          <p class="rr-card-desc">
-            上水道と下水道の普及、汚水処理、トイレの水洗化率、1人が1日に使う水の量。都道府県ごとに。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（水道統計ほか）</p>
-          </div>
-        </a>
       </div>
     </section>
 
@@ -275,26 +271,6 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（全国消費実態調査、2014年まで）</p>
           </div>
         </a>
-        <a class="rr-card" href="/driving/">
-          {thumbOf('driving') && <img class="rr-card-img" src={thumbOf('driving')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>運転免許とクルマの保険</h3>
-          <p class="rr-card-desc">
-            運転免許を持つ人の数と75歳以上の割合、任意の自動車保険の普及率、歩道橋や地下道の数を都道府県で。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（運転免許統計・損害保険料率算出機構ほか）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/transport/">
-          {thumbOf('transport') && <img class="rr-card-img" src={thumbOf('transport')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>乗りものと運ぶもの</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、JR・私鉄・バス・タクシー・飛行機・船に乗った人の数を1人あたりで。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（国土交通省の鉄道・航空・港湾・自動車の統計ほか）</p>
-          </div>
-        </a>
         <a class="rr-card" href="/energy/">
           {thumbOf('energy') && <img class="rr-card-img" src={thumbOf('energy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -305,11 +281,21 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（電力調査統計ほか）</p>
           </div>
         </a>
+        <a class="rr-card" href="/water/">
+          {thumbOf('water') && <img class="rr-card-img" src={thumbOf('water')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>水とトイレ</h3>
+          <p class="rr-card-desc">
+            上水道と下水道の普及、汚水処理、トイレの水洗化率、1人が1日に使う水の量。都道府県ごとに。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（水道統計ほか）</p>
+          </div>
+        </a>
       </div>
     </section>
 
-    <section class="rr-group" aria-label="働く・通う">
-      <h2 class="rr-group-title">働く・通う</h2>
+    <section class="rr-group" aria-label="働き方">
+      <h2 class="rr-group-title">働き方</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/work-style/">
           {thumbOf('work-style') && <img class="rr-card-img" src={thumbOf('work-style')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
@@ -341,16 +327,22 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（国勢調査・経済センサス）</p>
           </div>
         </a>
-        <a class="rr-card" href="/town-workplace/">
-          {thumbOf('town-workplace') && <img class="rr-card-img" src={thumbOf('town-workplace')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+        <a class="rr-card" href="/time-use/">
+          {thumbOf('time-use') && <img class="rr-card-img" src={thumbOf('time-use')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
-          <h3>働きに出る町・来る町</h3>
+          <h3>一日の使い方</h3>
           <p class="rr-card-desc">
-            市区町村を選んで、町に住む人がどこで働いているかと、町の外から働きに来る人の割合を。
+            睡眠や食事の時間、仕事の時間、自由に使える時間が1日に何時間あるか。男女・働いている人別に、1976年から。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（国勢調査）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
           </div>
         </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="通勤と交通">
+      <h2 class="rr-group-title">通勤と交通</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/town-commute/">
           <img class="rr-card-img" src="/images/icon/town-commute-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -371,21 +363,41 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
           </div>
         </a>
-        <a class="rr-card" href="/time-use/">
-          {thumbOf('time-use') && <img class="rr-card-img" src={thumbOf('time-use')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+        <a class="rr-card" href="/town-workplace/">
+          {thumbOf('town-workplace') && <img class="rr-card-img" src={thumbOf('town-workplace')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
-          <h3>一日の使い方</h3>
+          <h3>働きに出る町・来る町</h3>
           <p class="rr-card-desc">
-            睡眠や食事の時間、仕事の時間、自由に使える時間が1日に何時間あるか。男女・働いている人別に、1976年から。
+            市区町村を選んで、町に住む人がどこで働いているかと、町の外から働きに来る人の割合を。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（国勢調査）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/driving/">
+          {thumbOf('driving') && <img class="rr-card-img" src={thumbOf('driving')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>運転免許とクルマの保険</h3>
+          <p class="rr-card-desc">
+            運転免許を持つ人の数と75歳以上の割合、任意の自動車保険の普及率、歩道橋や地下道の数を都道府県で。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（運転免許統計・損害保険料率算出機構ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/transport/">
+          {thumbOf('transport') && <img class="rr-card-img" src={thumbOf('transport')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>乗りものと運ぶもの</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、JR・私鉄・バス・タクシー・飛行機・船に乗った人の数を1人あたりで。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（国土交通省の鉄道・航空・港湾・自動車の統計ほか）</p>
           </div>
         </a>
       </div>
     </section>
 
-    <section class="rr-group" aria-label="産業と稼ぎ">
-      <h2 class="rr-group-title">産業と稼ぎ</h2>
+    <section class="rr-group" aria-label="県の経済">
+      <h2 class="rr-group-title">県の経済</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/pref-economy/">
           {thumbOf('pref-economy') && <img class="rr-card-img" src={thumbOf('pref-economy')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
@@ -437,6 +449,12 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（工業統計・商業統計・経済センサス・国勢調査・県民経済計算）</p>
           </div>
         </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="町の商いと産業">
+      <h2 class="rr-group-title">町の商いと産業</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/town-industry/">
           {thumbOf('town-industry') && <img class="rr-card-img" src={thumbOf('town-industry')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -490,54 +508,8 @@ import { ROOM_COUNT } from '../../data/page-names.js';
       </div>
     </section>
 
-    <section class="rr-group" aria-label="田畑・海・観光">
-      <h2 class="rr-group-title">田畑・海・観光</h2>
-      <div class="rr-grid">
-        <a class="rr-card" href="/farm-sea/">
-          <img class="rr-card-img" src="/images/icon/farm-sea-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>田畑と海</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、農業産出額・田畑の広さ・耕作放棄地と、海の漁獲量や養殖の収獲量を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（農林水産省の調べ）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/forest-river/">
-          {thumbOf('forest-river') && <img class="rr-card-img" src={thumbOf('forest-river')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>森と川のめぐみ</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、林業の生産額・林道の長さ、川や湖の漁獲量、農産物直売所の数と販売額を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（県民経済計算・内水面漁業統計・6次産業化総合調査ほか）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/town-farm/">
-          {thumbOf('town-farm') && <img class="rr-card-img" src={thumbOf('town-farm')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>わが町の農家</h3>
-          <p class="rr-card-desc">
-            市区町村を選んで、販売農家と自給的農家の数、販売農家のうち専業農家の割合を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（農林業センサス）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/stay/">
-          <img class="rr-card-img" src="/images/icon/stay-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>宿と観光</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、延べ宿泊者数・外国人の宿泊・客室稼働率と、旅館・ホテルの数を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（宿泊旅行統計ほか）</p>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <section class="rr-group" aria-label="医療・福祉・安全">
-      <h2 class="rr-group-title">医療・福祉・安全</h2>
+    <section class="rr-group" aria-label="医療・介護と安全">
+      <h2 class="rr-group-title">医療・介護と安全</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/medical-staff/">
           {thumbOf('medical-staff') && <img class="rr-card-img" src={thumbOf('medical-staff')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
@@ -569,6 +541,32 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（2023年度）</p>
           </div>
         </a>
+        <a class="rr-card" href="/fire-ems/">
+          {thumbOf('fire-ems') && <img class="rr-card-img" src={thumbOf('fire-ems')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>消防と救急</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、消防署・消防団・救急車の数と、救急の出動や火事の件数を、人口あたりで。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（消防庁の調べ）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/disaster/">
+          {thumbOf('disaster') && <img class="rr-card-img" src={thumbOf('disaster')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>自然災害の帳場</h3>
+          <p class="rr-card-desc">
+            自然災害の被害額・水につかった建物・被害を受けた世帯と人の数を、年ごとに。
+          </p>
+          <p class="rr-card-meta">都道府県</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="子どもと高齢者">
+      <h2 class="rr-group-title">子どもと高齢者</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/care-places/">
           {thumbOf('care-places') && <img class="rr-card-img" src={thumbOf('care-places')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -585,16 +583,6 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <h3>わが町の保育所と子どもの施設</h3>
           <p class="rr-card-desc">
             市区町村を選んで、保育所等の数（公営・民営）と公営の割合、児童館なども含む児童福祉施設等の数を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会福祉施設等調査）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/town-elderly/">
-          {thumbOf('town-elderly') && <img class="rr-card-img" src={thumbOf('town-elderly')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>わが町の老人ホーム</h3>
-          <p class="rr-card-desc">
-            市区町村を選んで、老人福祉施設・特別養護老人ホーム・有料老人ホームの数と定員を、全国と県内の順位で。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系（社会福祉施設等調査）</p>
           </div>
@@ -619,24 +607,14 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（2018年度）</p>
           </div>
         </a>
-        <a class="rr-card" href="/fire-ems/">
-          {thumbOf('fire-ems') && <img class="rr-card-img" src={thumbOf('fire-ems')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+        <a class="rr-card" href="/town-elderly/">
+          {thumbOf('town-elderly') && <img class="rr-card-img" src={thumbOf('town-elderly')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
-          <h3>消防と救急</h3>
+          <h3>わが町の老人ホーム</h3>
           <p class="rr-card-desc">
-            都道府県を選んで、消防署・消防団・救急車の数と、救急の出動や火事の件数を、人口あたりで。
+            市区町村を選んで、老人福祉施設・特別養護老人ホーム・有料老人ホームの数と定員を、全国と県内の順位で。
           </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（消防庁の調べ）</p>
-          </div>
-        </a>
-        <a class="rr-card" href="/disaster/">
-          {thumbOf('disaster') && <img class="rr-card-img" src={thumbOf('disaster')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>自然災害の帳場</h3>
-          <p class="rr-card-desc">
-            自然災害の被害額・水につかった建物・被害を受けた世帯と人の数を、年ごとに。
-          </p>
-          <p class="rr-card-meta">都道府県</p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会福祉施設等調査）</p>
           </div>
         </a>
       </div>
@@ -695,16 +673,6 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（2017・2022・2023年度）</p>
           </div>
         </a>
-        <a class="rr-card" href="/learning-places/">
-          {thumbOf('learning-places') && <img class="rr-card-img" src={thumbOf('learning-places')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
-          <div class="rr-card-body">
-          <h3>学びの場と集い</h3>
-          <p class="rr-card-desc">
-            公民館に似た施設や青少年教育施設、各世代向けの講座の数、NPO法人の数、老人クラブの会員の割合を。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
-          </div>
-        </a>
         <a class="rr-card" href="/school-costs/">
           {thumbOf('school-costs') && <img class="rr-card-img" src={thumbOf('school-costs')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -728,8 +696,8 @@ import { ROOM_COUNT } from '../../data/page-names.js';
       </div>
     </section>
 
-    <section class="rr-group" aria-label="文化と余暇">
-      <h2 class="rr-group-title">文化と余暇</h2>
+    <section class="rr-group" aria-label="文化と学びの場">
+      <h2 class="rr-group-title">文化と学びの場</h2>
       <div class="rr-grid">
         <a class="rr-card" href="/culture/">
           {thumbOf('culture') && <img class="rr-card-img" src={thumbOf('culture')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
@@ -762,6 +730,22 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（施設は2021年度、人口は2020年度）</p>
           </div>
         </a>
+        <a class="rr-card" href="/learning-places/">
+          {thumbOf('learning-places') && <img class="rr-card-img" src={thumbOf('learning-places')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>学びの場と集い</h3>
+          <p class="rr-card-desc">
+            公民館に似た施設や青少年教育施設、各世代向けの講座の数、NPO法人の数、老人クラブの会員の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（社会教育調査ほか）</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="余暇とスポーツ">
+      <h2 class="rr-group-title">余暇とスポーツ</h2>
+      <div class="rr-grid">
         <a class="rr-card" href="/sports-fields/">
           {thumbOf('sports-fields') && <img class="rr-card-img" src={thumbOf('sports-fields')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
           <div class="rr-card-body">
@@ -802,22 +786,22 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系（社会生活基本調査）</p>
           </div>
         </a>
+        <a class="rr-card" href="/stay/">
+          <img class="rr-card-img" src="/images/icon/stay-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>宿と観光</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、延べ宿泊者数・外国人の宿泊・客室稼働率と、旅館・ホテルの数を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（宿泊旅行統計ほか）</p>
+          </div>
+        </a>
       </div>
     </section>
 
-    <section class="rr-group" aria-label="空と大地">
-      <h2 class="rr-group-title">空と大地</h2>
+    <section class="rr-group" aria-label="自然・田畑・海">
+      <h2 class="rr-group-title">自然・田畑・海</h2>
       <div class="rr-grid">
-        <a class="rr-card" href="/sky/">
-          <img class="rr-card-img" src="/images/icon/sky-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
-          <div class="rr-card-body">
-          <h3>空の帳場</h3>
-          <p class="rr-card-desc">
-            都道府県を選んで、気温・降水・雪・日照・湿度を。全国の順位と、長い年月の移りかわりつき。
-          </p>
-          <p class="rr-card-meta">出典：社会・人口統計体系（気象庁の観測値）</p>
-          </div>
-        </a>
         <a class="rr-card" href="/nature/">
           <img class="rr-card-img" src="/images/icon/nature-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -828,6 +812,36 @@ import { ROOM_COUNT } from '../../data/page-names.js';
           <p class="rr-card-meta">出典：社会・人口統計体系</p>
           </div>
         </a>
+        <a class="rr-card" href="/forest-river/">
+          {thumbOf('forest-river') && <img class="rr-card-img" src={thumbOf('forest-river')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>森と川のめぐみ</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、林業の生産額・林道の長さ、川や湖の漁獲量、農産物直売所の数と販売額を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（県民経済計算・内水面漁業統計・6次産業化総合調査ほか）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/farm-sea/">
+          <img class="rr-card-img" src="/images/icon/farm-sea-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>田畑と海</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、農業産出額・田畑の広さ・耕作放棄地と、海の漁獲量や養殖の収獲量を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（農林水産省の調べ）</p>
+          </div>
+        </a>
+        <a class="rr-card" href="/town-farm/">
+          {thumbOf('town-farm') && <img class="rr-card-img" src={thumbOf('town-farm')} alt="" aria-hidden="true" width="560" height="315" loading="lazy" />}
+          <div class="rr-card-body">
+          <h3>わが町の農家</h3>
+          <p class="rr-card-desc">
+            市区町村を選んで、販売農家と自給的農家の数、販売農家のうち専業農家の割合を。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（農林業センサス）</p>
+          </div>
+        </a>
         <a class="rr-card" href="/town-forest/">
           <img class="rr-card-img" src="/images/icon/town-forest-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
           <div class="rr-card-body">
@@ -836,6 +850,22 @@ import { ROOM_COUNT } from '../../data/page-names.js';
             市区町村を選んで、町の面積・人が住める土地・森林の広さと割合を、全国と県内の順位で。
           </p>
           <p class="rr-card-meta">出典：社会・人口統計体系</p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="rr-group" aria-label="空と環境">
+      <h2 class="rr-group-title">空と環境</h2>
+      <div class="rr-grid">
+        <a class="rr-card" href="/sky/">
+          <img class="rr-card-img" src="/images/icon/sky-thumb.webp" alt="" aria-hidden="true" width="560" height="315" loading="lazy" />
+          <div class="rr-card-body">
+          <h3>空の帳場</h3>
+          <p class="rr-card-desc">
+            都道府県を選んで、気温・降水・雪・日照・湿度を。全国の順位と、長い年月の移りかわりつき。
+          </p>
+          <p class="rr-card-meta">出典：社会・人口統計体系（気象庁の観測値）</p>
           </div>
         </a>
         <a class="rr-card" href="/environment/">
@@ -1034,8 +1064,7 @@ import { ROOM_COUNT } from '../../data/page-names.js';
       font-family: "Shippori Mincho", serif; font-size: 1.15rem;
       border-left: 4px solid #4B5570; padding-left: 12px; margin: 0 0 16px;
     }
-    /* どの棚もカードの幅をそろえる（横4列。2枚の棚は左から詰める） */
-    /* 棚はどれも4窓口なので、横長カードを1段2枚（2×2）。カードの高さは全棚でそろえる */
+    /* 10-24 棚を主題で組み直した（12棚→17棚、1棚あたり4〜7窓口）。横長カードを1段2枚（2×2）、高さは全棚でそろえる */
     .rr-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 1fr; gap: 14px; max-width: 1280px; margin: 0 auto; }
     /* 絵が左に入るので、2列は1101px以上だけ。高さは全棚でそろえる */
     @media (max-width: 1100px) { .rr-grid { grid-template-columns: 1fr; } }

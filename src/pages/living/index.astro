@@ -52,9 +52,10 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <Talk speaker="chiaki"><span id="keiLine">県を選ぶと、見積書の欄が埋まるよ。</span> <span id="toukoLine"></span></Talk>
     </section>
 
-    <CompareAddon level="pref" selectId="prefSelect" src="/data/living.json" />
 
     <!-- ===== 散布図 ===== -->
+    <CompareAddon level="pref" selectId="prefSelect" src="/data/living.json" />
+
     <section class="liv-scatter-sec" aria-label="稼ぎと家賃の散布図">
       <h2>稼ぎと家賃の見取り図</h2>
       <p class="liv-note">横軸が給与（男）、縦軸が1畳当たり家賃。右上ほど「稼げるが住居費も高い」県です。</p>
@@ -68,10 +69,12 @@ import GrowthTool from '../../components/GrowthTool.astro';
       <h2 id="lineTitle">最低賃金の推移</h2>
       <div class="liv-line-wrap">
         <canvas id="wageLineChart" data-growth="level" height="120"></canvas>
+        <p class="cmp-dash-note">点線は47都道府県の平均です。「ほかの県と並べる」で県を足すと、その県の線も重なります。</p>
       </div>
     </section>
 
     <!-- ===== ランキング ===== -->
+
     <section class="liv-ranking" aria-label="ランキング">
       <h2>全国ベスト5</h2>
       <div class="liv-tabs" role="tablist">
@@ -104,6 +107,62 @@ import GrowthTool from '../../components/GrowthTool.astro';
     (async function () {
       const res = await fetch('/data/living.json');
       const data = await res.json();
+
+      // 10-24 比べる県の線と、47都道府県の平均の点線（engine の窓口と同じ作り）
+      // この表には全国の行が無いので、engine の nationalIsAvg と同じく47県の単純平均を作り、その旨を書き添える
+      const CMP_COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
+      let cmpList = [], cmpColors = CMP_COLORS, curArea = null, _avgByYear = null;
+      function __prefAvg() {
+        if (_avgByYear) return _avgByYear;
+        const acc = {};
+        for (const x of data.areas) for (const q of (x.series || [])) {
+          if (typeof q.value === 'number') (acc[q.year] = acc[q.year] || []).push(q.value);
+        }
+        _avgByYear = {};
+        for (const y in acc) _avgByYear[y] = acc[y].reduce((t, v) => t + v, 0) / acc[y].length;
+        return _avgByYear;
+      }
+      function __cmpSets(area, label) {
+        curArea = area;
+        const labels = area.series.map((p) => p.year);
+        const alone = cmpList.length === 0;
+        const sets = [{
+          label: alone ? label : (area.n || label),
+          data: area.series.map((p) => p.value),
+          borderColor: cmpColors[0], backgroundColor: alone ? cmpColors[0] + '22' : cmpColors[0],
+          tension: 0.2, fill: alone, pointRadius: 2,
+        }];
+        cmpList.forEach((b, k) => {
+          const o = data.areas.find((x) => x.c === b.c);
+          if (!o || !o.series) return;
+          const by = {}; for (const q of o.series) by[q.year] = q.value;
+          sets.push({
+            label: b.n, data: labels.map((y) => (typeof by[y] === 'number' ? by[y] : null)),
+            borderColor: cmpColors[(k + 1) % cmpColors.length], backgroundColor: cmpColors[(k + 1) % cmpColors.length],
+            tension: 0.2, fill: false, pointRadius: 2, spanGaps: false,
+          });
+        });
+        const avg = __prefAvg();
+        sets.push({
+          label: '47都道府県の平均',
+          data: labels.map((y) => (typeof avg[y] === 'number' ? avg[y] : null)),
+          borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5,
+          pointRadius: 0, fill: false, tension: 0.2, spanGaps: false,
+        });
+        return sets;
+      }
+      document.addEventListener('cmpx:change', (ev) => {
+        const d = ev.detail || {};
+        if (d.select !== 'prefSelect') return;
+        cmpList = d.compare || [];
+        if (Array.isArray(d.colors) && d.colors.length) cmpColors = d.colors;
+        const cv = document.getElementById('wageLineChart');
+        const ch = cv && window.Chart && Chart.getChart(cv);
+        if (!ch || !curArea) return;
+        ch.data.datasets = __cmpSets(curArea, ch.data.datasets[0] ? ch.data.datasets[0].label : '');
+        ch.options.plugins.legend.display = cmpList.length > 0;
+        ch.update();
+      });
       const IND = data.indicators;
       const idx = Object.fromEntries(IND.map((ind, i) => [ind.code, i]));
       const meta = Object.fromEntries(IND.map((ind) => [ind.code, ind]));
@@ -212,8 +271,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
         const hasOwn = typeof ownRank === 'number';
 
         let k = hasWage && hasRent && hasArea
-          ? `給与は${total}県中${wageRank}位、家賃の安さは${rentRank}位、家の広さは${areaRank}位です。`
-          : `${hasWage ? `給与は${total}県中${wageRank}位です。` : '給与は、この県の値がありません。'} ${hasRent ? `家賃の安さは${rentRank}位です。` : '家賃は、この県の値がありません。'} ${hasArea ? `家の広さは${areaRank}位です。` : '家の広さは、この県の値がありません。'}`;
+          ? `給与は${total}県中${wageRank}位、家賃の安さは${rentRank}位、家の広さは${areaRank}位だ。`
+          : `${hasWage ? `給与は${total}県中${wageRank}位だ。` : '給与は、この県の値が無い。'} ${hasRent ? `家賃の安さは${rentRank}位だ。` : '家賃は、この県の値が無い。'} ${hasArea ? `家の広さは${areaRank}位だ。` : '家の広さは、この県の値が無い。'}`;
         let t = '';
 
         if (!hasWage || !hasRent || !hasArea) {
@@ -235,8 +294,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
           t = ['二つの順位が、近いところにあるんですね。', '順位がそろっているんですね。'][seed % 2];
         }
 
-        if (hasOwn && ownRank <= 5) k += ` 持ち家率は${ownRank}位です。`;
-        if (hasOwn && ownRank >= 43) k += ` 持ち家率は${ownRank}位です。`;
+        if (hasOwn && ownRank <= 5) k += ` 持ち家率は${ownRank}位だ。`;
+        if (hasOwn && ownRank >= 43) k += ` 持ち家率は${ownRank}位だ。`;
 
         kei.textContent = k;
         touko.textContent = t;
@@ -310,18 +369,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'line',
           data: {
             labels: area.series.map((p) => p.year),
-            datasets: [{
-              label: '最低賃金',
-              data: area.series.map((p) => p.value),
-              borderColor: '#B3402A',
-              backgroundColor: '#B3402A22',
-              tension: 0.2,
-              fill: true,
-            }],
+            datasets: __cmpSets(area, '最低賃金'),
           },
           options: {
             responsive: true,
-            plugins: { legend: { display: false } },
+            plugins: { legend: { display: cmpList.length > 0, labels: { boxWidth: 14, filter: (it) => it.text !== '47都道府県の平均' } } },
             scales: { y: { ticks: { callback: (v) => v + '円' } } },
           },
         });

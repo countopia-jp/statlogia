@@ -185,6 +185,10 @@ h1 .h1b,h3 .h1b{display:block}
   .hf .hf-text{position:relative;left:auto;right:auto;top:auto;transform:none;width:auto;margin:-22px 12px 0;padding:14px 16px 12px;box-shadow:0 4px 14px rgba(60,40,20,.12);background:rgba(255,253,247,.97)}
   .hf .hf-text br{display:none}
 }
+/* 10-24 グラフの点線（全国・47県平均）の説明。手書きの窓口で使う */
+.cmp-dash-note{font-size:.78rem;color:var(--ink-soft);line-height:1.8;margin:6px 0 0}
+/* 10-24 構築中のことわり（フッターの直上）。札だけだと何が構築中か分からないため */
+.building-line{max-width:860px;margin:26px auto 0;padding:0 16px;text-align:center;font-size:.76rem;line-height:1.9;color:var(--ink-soft)}
 /* Statlogia 建設中の札（タイトルの横）。紐で下げた紙の札：生成りの紙に紺の枠、朱の文字、少し傾ける */
 .logo .mark{position:relative;margin-right:3.2em}
 .logo .mark .kaiso{

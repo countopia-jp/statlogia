@@ -13,7 +13,6 @@ export const ROOM_NAMES = {
   '/analysis/': '読み解きの間',
   '/verify/': '検証室',
   '/verify/hinoeuma/': '検証室　丙午生まれは、少ない',
-  '/verify/okinawa-longevity/': '検証室　沖縄は長寿の県',
   '/analysis/education/': '読み解きの間　教育を読み解く',
   '/analysis/industry/': '読み解きの間　産業の稼ぐ力を読み解く',
   '/analysis/family/': '読み解きの間　人口と家族を読み解く',
