@@ -171,10 +171,23 @@ const sampleTowns = (areas, n = 30) => {
   return list.filter((_, i) => i % step === 0).slice(0, n);
 };
 
-export async function verifyAll() {
-  const res = { generated: new Date().toISOString().slice(0, 10), checked: 0, errors: [], warnings: [], sets: [], dropped: [] };
+// 10-24 only を渡すと、名前がそれを含む範囲だけを流す（1回で全部流すと時間がかかるため、小分けに流せるように）
+//   例： verifyAll({ only: '国勢' })  node scripts/verify-data.mjs 国勢
+export async function verifyAll({ only = '' } = {}) {
+  const res = { generated: new Date().toISOString().slice(0, 10), checked: 0, errors: [], warnings: [], sets: [], dropped: [], only };
   dropped.length = 0;
+  // only は二通り。名前の一部（'国勢'）か、通し番号の範囲（'#1-20'）。
+  // 番号は run を呼ぶ順で、窓口→手書きのページの並び。1回の実行時間を区切りたいときに使う。
+  const range = /^#(\d+)-(\d+)$/.exec(only);
+  let idx = 0;
+  const pick = (name) => {
+    idx++;
+    if (!only) return true;
+    if (range) return idx >= Number(range[1]) && idx <= Number(range[2]);
+    return name.includes(only);
+  };
   const run = async (name, fn) => {
+    if (!pick(name)) return;
     const before = res.checked, e0 = res.errors.length;
     // e-Stat への接続が一時的に切れることがあるので、3回まで間をおいて取り直す。
     // それでも取れないときは「照合できなかった」として warnings に入れる（数字の食い違いではないので、ビルドは止めない）
