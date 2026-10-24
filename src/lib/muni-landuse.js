@@ -35,10 +35,10 @@ const val = (v, code) => (v[code] === undefined ? null : v[code]);
 
 // 積み上げ棒の並び順＝住まい寄りから工業寄りへ
 export const ZONES = [
-  { key: '住居専用', code: 'H810401', color: '#2d6a4f' },
+  { key: '住居専用', code: 'H810401', color: '#4B5570' },
   { key: '住居', code: 'H810402', color: '#5a9367' },
   { key: '近隣商業', code: 'H810403', color: '#c08a3e' },
-  { key: '商業', code: 'H810404', color: '#b23a2f' },
+  { key: '商業', code: 'H810404', color: '#B3402A' },
   { key: '準工業', code: 'H810405', color: '#8a7a63' },
   { key: '工業', code: 'H810406', color: '#6b6157' },
   { key: '工業専用', code: 'H810407', color: '#4a453f' },

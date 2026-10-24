@@ -248,41 +248,41 @@ const data = await getMuniLanduseData();
     .tp-lead { color: #555; line-height: 1.9; }
     .tp-selector { margin: 24px 0; display: flex; flex-direction: column; gap: 12px; align-items: center; }
     .tp-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; align-items: flex-start; }
-    .tp-selector select { width: 280px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+    .tp-selector select { width: 280px; max-width: 100%; padding: 10px 12px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: 1rem; }
     .tp-selector select:disabled { background: #f0f0ea; color: #999; }
     .tp-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
-    .tp-nodata { text-align: center; font-size: .85rem; color: #b23a2f; line-height: 1.8; margin: 0 0 16px; }
+    .tp-nodata { text-align: center; font-size: .85rem; color: #B3402A; line-height: 1.8; margin: 0 0 16px; }
     .tp-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     @media (max-width: 560px) { .tp-cards { grid-template-columns: 1fr 1fr; } }
-    .tp-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
-    .tp-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .06em; }
-    .tp-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; margin: 6px 0 2px; color: #1b4332; }
-    .tp-card-meta { font-size: .72rem; color: #b23a2f; font-weight: 700; }
+    .tp-card { border: 1px solid #DEDFE3; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
+    .tp-card-label { font-size: .78rem; color: #4B5570; letter-spacing: .06em; }
+    .tp-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.35rem; font-weight: 700; margin: 6px 0 2px; color: #1F2A44; }
+    .tp-card-meta { font-size: .72rem; color: #B3402A; font-weight: 700; }
 
     .tp-chart-wrap {
-      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #DEDFE3;
       border-radius: 8px; background: #fff;
     }
     .tp-chart-title {
-      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      font-size: 0.8rem; color: #4B5570; letter-spacing: 0.06em;
       margin: 0 0 10px; text-align: center;
     }
 
     .tp-ranking { margin-top: 44px; }
     .tp-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .tp-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
-    .tp-tab { padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: .85rem; }
-    .tp-tab.is-active { background: #1b4332; color: #fff; }
-    .tp-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
-    .tp-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .tp-tab { padding: 8px 16px; border: 1px solid #1F2A44; border-radius: 999px; background: #fff; cursor: pointer; font-size: .85rem; }
+    .tp-tab.is-active { background: #1F2A44; color: #fff; }
+    .tp-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8; }
+    .tp-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer; }
     .tp-rank-list li:last-child { border-bottom: none; }
-    .tp-rank-list li::before { content: counter(rank); font-weight: 700; color: #b23a2f; margin-right: 12px; min-width: 1.4em; text-align: center; }
-    .tp-rank-list li:hover { background: #f4f7f4; }
+    .tp-rank-list li::before { content: counter(rank); font-weight: 700; color: #B3402A; margin-right: 12px; min-width: 1.4em; text-align: center; }
+    .tp-rank-list li:hover { background: #F3F4F7; }
     .tp-rank-name { flex: 1; }
     .tp-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
     .tp-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
     .tp-cross { margin-top: 36px; font-size: .9rem; text-align: center; }
-    .tp-cross a { color: #b23a2f; }
+    .tp-cross a { color: #B3402A; }
     .tp-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
   </style>
 </BaseLayout>

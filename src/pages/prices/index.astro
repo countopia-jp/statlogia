@@ -247,8 +247,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
           data: {
             labels: YEARS,
             datasets: [
-              { label: a.n, data: series, borderColor: '#b23a2f', backgroundColor: '#b23a2f', tension: 0.2, pointRadius: 3 },
-              { label: '全国平均', data: YEARS.map(() => 100), borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 },
+              { label: a.n, data: series, borderColor: '#B3402A', backgroundColor: '#B3402A', tension: 0.2, pointRadius: 3 },
+              { label: '全国平均', data: YEARS.map(() => 100), borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 },
             ],
           },
           options: {
@@ -311,30 +311,30 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .pl-selector { margin: 24px 0; display: flex; justify-content: center; }
     .pl-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
     .pl-selector select {
-      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1F2A44;
       border-radius: 6px; background: #fff; font-size: 1rem;
     }
     .pl-selector--small { margin: 12px 0 20px; }
 
     .pl-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
     .pl-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-width: 520px; margin: 0 auto; }
-    .pl-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px; background: #fff; text-align: center; }
-    .pl-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
-    .pl-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.6rem; font-weight: 600; margin: 6px 0 2px; color: #1b4332; }
-    .pl-card-meta { font-size: 0.75rem; color: #b23a2f; font-weight: 700; }
+    .pl-card { border: 1px solid #DEDFE3; border-radius: 8px; padding: 16px; background: #fff; text-align: center; }
+    .pl-card-label { font-size: 0.78rem; color: #4B5570; letter-spacing: 0.08em; }
+    .pl-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.6rem; font-weight: 600; margin: 6px 0 2px; color: #1F2A44; }
+    .pl-card-meta { font-size: 0.75rem; color: #B3402A; font-weight: 700; }
 
     .pl-sub { text-align: center; margin: 32px 0 6px; font-family: "Shippori Mincho", serif; font-size: 1.05rem; }
     .pl-note { font-size: 0.8rem; color: #666; text-align: center; line-height: 1.8; }
 
-    .pl-bars { list-style: none; padding: 16px; margin: 12px 0 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+    .pl-bars { list-style: none; padding: 16px; margin: 12px 0 8px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
     .pl-bar { display: grid; grid-template-columns: 7.5em 1fr 7em; align-items: center; gap: 10px; font-size: 0.88rem; }
-    .pl-bar-name { color: #1b4332; }
-    .pl-bar-track { position: relative; height: 12px; background: linear-gradient(90deg, transparent calc(50% - 1px), #4A6355 calc(50% - 1px), #4A6355 calc(50% + 1px), transparent calc(50% + 1px)); }
+    .pl-bar-name { color: #1F2A44; }
+    .pl-bar-track { position: relative; height: 12px; background: linear-gradient(90deg, transparent calc(50% - 1px), #7F97A8 calc(50% - 1px), #7F97A8 calc(50% + 1px), transparent calc(50% + 1px)); }
     .pl-bar-fill { position: absolute; top: 1px; bottom: 1px; border-radius: 99px; min-width: 3px; }
-    .pl-bar--up .pl-bar-fill { left: 50%; background: #b23a2f; }
-    .pl-bar--down .pl-bar-fill { right: 50%; background: #3a6b52; }
-    .pl-bar--even .pl-bar-fill { left: calc(50% - 1.5px); background: #4A6355; }
-    .pl-bar--axis { margin-top: 2px; padding-top: 8px; border-top: 1px dashed #e0e0d8; }
+    .pl-bar--up .pl-bar-fill { left: 50%; background: #B3402A; }
+    .pl-bar--down .pl-bar-fill { right: 50%; background: #4B5570; }
+    .pl-bar--even .pl-bar-fill { left: calc(50% - 1.5px); background: #7F97A8; }
+    .pl-bar--axis { margin-top: 2px; padding-top: 8px; border-top: 1px dashed #DEDFE3; }
     .pl-axis { display: flex; justify-content: space-between; font-family: "IBM Plex Mono", monospace; font-size: 0.72rem; color: #888; }
     .pl-axis-note { font-size: 0.7rem; color: #888; text-align: right; }
     .pl-bar-val { font-family: "IBM Plex Mono", monospace; text-align: right; white-space: nowrap; }
@@ -346,28 +346,28 @@ import GrowthTool from '../../components/GrowthTool.astro';
 
     .pl-line-sec { margin-top: 44px; }
     .pl-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
-    .pl-line-wrap { padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+    .pl-line-wrap { padding: 16px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; margin-bottom: 8px; }
     .pl-tabs { display: flex; gap: 6px; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; }
-    .pl-tab { padding: 6px 12px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: 0.8rem; }
-    .pl-tab.is-active { background: #1b4332; color: #fff; }
+    .pl-tab { padding: 6px 12px; border: 1px solid #1F2A44; border-radius: 999px; background: #fff; cursor: pointer; font-size: 0.8rem; }
+    .pl-tab.is-active { background: #1F2A44; color: #fff; }
 
     .pl-ranking { margin-top: 44px; }
     .pl-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .pl-rank-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
     @media (max-width: 600px) { .pl-rank-cols { grid-template-columns: 1fr; } }
     .pl-rank-head { text-align: center; font-size: 0.95rem; margin: 0 0 8px; font-family: "Shippori Mincho", serif; }
-    .pl-rank-head--hi { color: #b23a2f; }
-    .pl-rank-head--lo { color: #3a6b52; }
-    .pl-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
-    .pl-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .pl-rank-head--hi { color: #B3402A; }
+    .pl-rank-head--lo { color: #4B5570; }
+    .pl-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8; }
+    .pl-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer; }
     .pl-rank-list li:last-child { border-bottom: none; }
-    .pl-rank-list li:hover { background: #f4f7f4; }
-    .pl-rank-pos { font-weight: 700; color: #b23a2f; min-width: 1.4em; text-align: center; }
+    .pl-rank-list li:hover { background: #F3F4F7; }
+    .pl-rank-pos { font-weight: 700; color: #B3402A; min-width: 1.4em; text-align: center; }
     .pl-rank-name { flex: 1; }
     .pl-rank-val { font-weight: 600; font-family: "IBM Plex Mono", monospace; }
 
     .pl-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; line-height: 1.9; }
-    .pl-cross a { color: #b23a2f; }
+    .pl-cross a { color: #B3402A; }
     .pl-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
   <GrowthTool />

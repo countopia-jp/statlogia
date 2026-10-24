@@ -142,7 +142,7 @@ import FutureTool from '../../../components/FutureTool.astro';
 
   <script is:inline define:vars={{ CFG: cfg }}>
   (async function () {
-    const COLORS = ['#b23a2f', '#2d6a4f', '#4a6fa5', '#c99a2e'];
+    const COLORS = ['#B3402A', '#4B5570', '#4a6fa5', '#c99a2e'];
     const IND = CFG.indicators;
     // ---- 読みこみ（同じファイルは1回だけ） ----
     const files = {};
@@ -312,7 +312,7 @@ import FutureTool from '../../../components/FutureTool.astro';
         const sets = who.map((c, k) => { const r = idx(m.series.by[c]); return r && { label: NAMES[c], data: r.data, borderColor: COLORS[k], backgroundColor: COLORS[k], pointRadius: 1.5, tension: 0.2, spanGaps: true, k0: r.k0 }; }).filter(Boolean);
         const nat = idx(m.series.nat);
         if (!sets.length || !nat) return;
-        sets.push({ label: '全国（平均）', data: nat.data, borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: true });
+        sets.push({ label: '全国（平均）', data: nat.data, borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: true });
         const last = (arr) => { for (let k = arr.length - 1; k >= 0; k--) if (typeof arr[k] === 'number') return arr[k]; return null; };
         const first = (arr) => { for (let k = 0; k < arr.length; k++) if (typeof arr[k] === 'number') return arr[k]; return null; };
         out.push({ m, share, me: last(sets[0].data), me0: first(sets[0].data), nat: last(nat.data), nat0: first(nat.data), y0: ys[sets[0].k0], y1: ys[ys.length - 1] });
@@ -518,39 +518,39 @@ import FutureTool from '../../../components/FutureTool.astro';
   <style is:global>
     .an-ss { margin: 8px 0 20px; }
     .an-sstown { margin: 4px 0 24px; padding: 14px 16px; border: 1px dashed #c9c2ae; border-radius: 10px; background: #fdfcf6; }
-    .an-sstown-h { font-weight: 700; color: #1b4332; font-size: .9rem; margin: 0 0 8px; }
+    .an-sstown-h { font-weight: 700; color: #1F2A44; font-size: .9rem; margin: 0 0 8px; }
     .an-sstown label { display: flex; align-items: center; gap: 10px; font-size: .86rem; flex-wrap: wrap; }
     .an-sstown select { padding: 6px 8px; border: 1px solid #c9c2ae; border-radius: 8px; font-size: .9rem; background: #fff; min-width: 12em; }
     .an-sstown .an-note { margin: 8px 0 4px; }
     .an-sstown-name { font-weight: 700; margin: 10px 0 6px; }
     .an-ssbars { display: flex; flex-direction: column; gap: 6px; }
     .an-ssr { display: grid; grid-template-columns: 7em 1fr 5em 7.5em; gap: 10px; align-items: center; font-size: .86rem; }
-    .an-ssl { color: #1b4332; font-weight: 700; }
+    .an-ssl { color: #1F2A44; font-weight: 700; }
     .an-sst { position: relative; height: 16px; background: #f4f1e8; border-radius: 3px; }
     .an-ssmid { position: absolute; left: 50%; top: -3px; bottom: -3px; border-left: 1.5px dashed #555; }
     .an-sst i { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
     .an-ssr b { font-family: "IBM Plex Mono", monospace; text-align: right; }
     .an-ssr small { font-family: "IBM Plex Mono", monospace; color: #777; font-size: .74rem; text-align: right; }
     .an-ssb--t, .an-ssk--t { background: #555; }
-    .an-ssb--n, .an-ssk--n { background: #8a9a8f; }
+    .an-ssb--n, .an-ssk--n { background: #8A90A0; }
     .an-ssb--m, .an-ssk--m { background: #4a6fa5; }
-    .an-ssb--r, .an-ssk--r { background: #b23a2f; }
+    .an-ssb--r, .an-ssk--r { background: #B3402A; }
     .an-ssnote { font-size: .78rem; color: #666; margin: 8px 0 12px; }
     .an-hhi { margin: 8px 0 20px; }
     .an-hhinum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
     .an-hhinum > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
     .an-hhinum span { font-size: .76rem; color: #555; }
-    .an-hhinum b { font-size: 1.3rem; color: #1b4332; }
+    .an-hhinum b { font-size: 1.3rem; color: #1F2A44; }
     .an-hhistrip { margin: 14px 4px 4px; }
-    .an-hhiline { position: relative; height: 22px; border-bottom: 1px solid #9aa79d; }
+    .an-hhiline { position: relative; height: 22px; border-bottom: 1px solid #9AA0AE; }
     .an-hhid { position: absolute; bottom: 4px; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: rgba(74,111,165,.45); }
-    .an-hhid.is-me { background: #b23a2f; width: 13px; height: 13px; margin-left: -6.5px; bottom: 2px; z-index: 2; }
+    .an-hhid.is-me { background: #B3402A; width: 13px; height: 13px; margin-left: -6.5px; bottom: 2px; z-index: 2; }
     .an-hhiticks { position: relative; height: 18px; font-size: .72rem; color: #666; }
     .an-hhiticks span { position: absolute; transform: translateX(-50%); top: 2px; }
     .an-hhistrip p { font-size: .78rem; color: #666; margin: 6px 0 0; }
     @media (max-width: 600px) { .an-hhinum { grid-template-columns: 1fr; } }
     .an-sslists { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .an-sslists h4 { margin: 0 0 6px; font-size: .86rem; color: #1b4332; }
+    .an-sslists h4 { margin: 0 0 6px; font-size: .86rem; color: #1F2A44; }
     .an-sslists ol { margin: 0; padding-left: 1.4em; font-size: .84rem; }
     .an-sslists li { margin: 3px 0; }
     .an-sslists li b { font-family: "IBM Plex Mono", monospace; margin-left: 8px; }
@@ -558,13 +558,13 @@ import FutureTool from '../../../components/FutureTool.astro';
     @media (max-width: 600px) { .an-ssr { grid-template-columns: 6em 1fr 4.5em; } .an-ssr small { display: none; } .an-sslists { grid-template-columns: 1fr; } }
     .an-lq { display: flex; flex-direction: column; gap: 8px; margin: 8px 0 20px; }
     .an-lqr { display: grid; grid-template-columns: 13em 1fr; gap: 10px; align-items: center; padding: 6px 0; border-bottom: 1px dashed #e0dccf; }
-    .an-lqn { font-size: .86rem; font-weight: 700; color: #1b4332; line-height: 1.4; }
+    .an-lqn { font-size: .86rem; font-weight: 700; color: #1F2A44; line-height: 1.4; }
     .an-lqbars { position: relative; display: flex; flex-direction: column; gap: 3px; }
     .an-lqbars::after { content: ''; position: absolute; top: -3px; bottom: -3px; left: var(--one); border-left: 1.5px dashed #555; }
     .an-lqb { position: relative; display: flex; align-items: center; height: 12px; }
     .an-lqb i { display: block; height: 100%; border-radius: 2px; }
     .an-lqb em { font-style: normal; font-family: "IBM Plex Mono", monospace; font-size: .7rem; margin-left: 6px; color: #444; white-space: nowrap; }
-    .an-lqb--va i, .an-lqk--va { background: #b23a2f; }
+    .an-lqb--va i, .an-lqk--va { background: #B3402A; }
     .an-lqb--wk i, .an-lqk--wk { background: #4a6fa5; }
     .an-lqb--pr i, .an-lqk--pr { background: #c99a2e; }
     .an-lqk { display: inline-block; color: #fff; font-size: .72rem; padding: 0 6px; border-radius: 3px; margin: 0 2px; }
@@ -576,32 +576,32 @@ import FutureTool from '../../../components/FutureTool.astro';
     .an-kicker { font-family: "IBM Plex Mono", monospace; font-size: .74rem; letter-spacing: .22em; font-weight: 600; color: var(--stamp); margin: 0; }
     .an-hero h1 { margin: 4px 0 12px; font-family: "Shippori Mincho", serif; font-weight: 800; }
     .an-lead { color: #555; line-height: 1.9; max-width: 40em; margin: 0 auto; }
-    .an-pick { position: sticky; top: 0; z-index: 5; background: rgba(247,245,239,.95); backdrop-filter: blur(4px); margin: 20px -16px 8px; padding: 12px 16px; border-bottom: 1px solid #e0e0d8; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
+    .an-pick { position: sticky; top: 0; z-index: 5; background: rgba(247,245,239,.95); backdrop-filter: blur(4px); margin: 20px -16px 8px; padding: 12px 16px; border-bottom: 1px solid #DEDFE3; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; }
     .an-pick label { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: #555; }
-    .an-pick select { padding: 8px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; min-width: 160px; }
+    .an-pick select { padding: 8px 10px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: .95rem; min-width: 160px; }
     .an-sim { margin: 0; font-size: .8rem; color: #555; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-    .an-sim button { font: inherit; font-size: .78rem; padding: 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; cursor: pointer; color: #2d6a4f; }
+    .an-sim button { font: inherit; font-size: .78rem; padding: 3px 10px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; cursor: pointer; color: #4B5570; }
     .an-sim button:disabled { opacity: .45; cursor: default; }
-    .an-sim-any { font: inherit; font-size: .78rem; padding: 3px 8px; border: 1px dashed #c9d3c6; border-radius: 999px; background: #fff; color: #2d6a4f; max-width: 100%; }
+    .an-sim-any { font: inherit; font-size: .78rem; padding: 3px 8px; border: 1px dashed #CBCDD3; border-radius: 999px; background: #fff; color: #4B5570; max-width: 100%; }
     .an-sim-any:disabled { opacity: .55; }
     .an-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; width: 100%; }
-    .an-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .82rem; }
+    .an-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px 3px 10px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; font-size: .82rem; }
     .an-chips i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
     .an-chips button { border: 0; background: none; cursor: pointer; color: #888; font-size: 1rem; min-width: 26px; min-height: 26px; }
-    .an-step { margin: 36px 0 0; padding-top: 18px; border-top: 1px solid #e0e0d8; }
-    .an-step-no { font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .2em; color: #2d6a4f; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
-    .an-step-no b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1b4332; color: #fff; letter-spacing: 0; font-size: .8rem; }
+    .an-step { margin: 36px 0 0; padding-top: 18px; border-top: 1px solid #DEDFE3; }
+    .an-step-no { font-family: "IBM Plex Mono", monospace; font-size: .72rem; letter-spacing: .2em; color: #4B5570; margin: 0 0 6px; display: flex; align-items: center; gap: 8px; }
+    .an-step-no b { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #1F2A44; color: #fff; letter-spacing: 0; font-size: .8rem; }
     .an-step h2 { font-family: "Shippori Mincho", serif; font-size: 1.2rem; margin: 0 0 12px; line-height: 1.6; }
     .an-h3 { font-family: "Shippori Mincho", serif; font-size: 1.02rem; margin: 30px 0 10px; }
     .an-qs, .an-plan, .an-cautions, .an-can, .an-cannot { margin: 0; padding-left: 1.2em; line-height: 1.95; font-size: .92rem; color: #333; }
-    .an-plan b { color: #1b4332; }
+    .an-plan b { color: #1F2A44; }
     .an-cautions { margin-top: 12px; font-size: .82rem; color: #666; }
     .an-note { font-size: .8rem; color: #666; margin: 0 0 10px; }
-    .an-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; }
+    .an-wrap { overflow-x: auto; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; }
     .an-data { width: 100%; border-collapse: collapse; font-size: .82rem; }
     .an-data th, .an-data td { padding: 8px 10px; border-bottom: 1px solid #ecece4; text-align: left; vertical-align: top; }
-    .an-data thead th { background: #f6f8f4; color: #1b4332; font-weight: 600; white-space: nowrap; }
-    .an-data tbody th { font-weight: 400; color: #2d6a4f; min-width: 12em; }
+    .an-data thead th { background: #f6f8f4; color: #1F2A44; font-weight: 600; white-space: nowrap; }
+    .an-data tbody th { font-weight: 400; color: #4B5570; min-width: 12em; }
     .an-data td.an-y, .an-data td.an-u { white-space: nowrap; color: #555; }
     /* 10-20 スマホは表をやめて、項目ごとのまとまり（項目名／年・単位／注意）に */
     @media (max-width: 600px) {
@@ -613,25 +613,25 @@ import FutureTool from '../../../components/FutureTool.astro';
       .an-data tr > td:last-child { grid-column: 1 / -1; }
       .an-data tr > td:last-child:empty { display: none; }
     }
-    .an-prof { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 6px 14px 10px; }
+    .an-prof { border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; padding: 6px 14px 10px; }
     .an-empty { color: #888; text-align: center; padding: 20px 0; margin: 0; }
     .an-row { display: grid; grid-template-columns: minmax(10em, 1.5fr) minmax(7em, .9fr) minmax(140px, 2fr) 3.2em; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0efe8; font-size: .84rem; }
-    .an-lab { color: #2d6a4f; }
+    .an-lab { color: #4B5570; }
     .an-lab small, .an-val small { display: block; font-size: .68rem; color: #999; }
     .an-val { text-align: right; font-family: "IBM Plex Mono", monospace; font-weight: 600; }
     .an-track { position: relative; height: 16px; background: linear-gradient(90deg, #f6f3ea 0 25%, #fbfaf5 25% 75%, #f6f3ea 75%); border-radius: 3px; }
-    .an-mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: #1b4332; opacity: .5; }
-    .an-bar { position: absolute; top: 4px; height: 8px; background: #b23a2f; opacity: .28; border-radius: 2px; }
+    .an-mid { position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: #1F2A44; opacity: .5; }
+    .an-bar { position: absolute; top: 4px; height: 8px; background: #B3402A; opacity: .28; border-radius: 2px; }
     .an-mk { position: absolute; top: 50%; width: 11px; height: 11px; border-radius: 50%; transform: translate(-50%, -50%); border: 1.5px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.15); }
-    .an-dev { text-align: right; font-family: "IBM Plex Mono", monospace; color: #b23a2f; font-weight: 600; }
+    .an-dev { text-align: right; font-family: "IBM Plex Mono", monospace; color: #B3402A; font-weight: 600; }
     .an-scale { display: grid; grid-template-columns: minmax(10em, 1.5fr) minmax(7em, .9fr) minmax(140px, 2fr) 3.2em; gap: 10px; font-size: .66rem; color: #999; padding-top: 4px; }
     .an-scale span { display: none; }
     .an-pairs, .an-trends { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-    .an-pair, .an-trend { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px; }
-    .an-pair-q { margin: 0 0 6px; font-size: .85rem; color: #1b4332; font-weight: 600; }
+    .an-pair, .an-trend { border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; padding: 12px; }
+    .an-pair-q { margin: 0 0 6px; font-size: .85rem; color: #1F2A44; font-weight: 600; }
     .an-pair-q small { display: block; font-weight: 400; font-size: .7rem; color: #888; }
     .an-pair-r { margin: 8px 0 0; font-size: .8rem; line-height: 1.8; color: #444; }
-    .an-pair-r b { font-family: "IBM Plex Mono", monospace; color: #b23a2f; }
+    .an-pair-r b { font-family: "IBM Plex Mono", monospace; color: #B3402A; }
     .an-can li, .an-cannot li { margin-bottom: 6px; }
     .an-cannot { color: #555; }
     .an-theory { margin: 28px 0 0; padding: 14px 18px 6px; border: 1px dashed var(--stamp); border-radius: 10px; background: rgba(179,64,42,.04); }
@@ -639,7 +639,7 @@ import FutureTool from '../../../components/FutureTool.astro';
     .an-theory-seal { display: inline-block; padding: .1em .6em; border: 1.5px solid var(--stamp); color: var(--stamp); border-radius: 3px; font-family: "Shippori Mincho", serif; font-weight: 800; font-size: .82rem; letter-spacing: .18em; transform: rotate(-3deg); }
     .an-theory-tag small { color: var(--ink-soft); font-size: .76rem; }
     .an-cross { margin-top: 36px; font-size: .88rem; text-align: center; line-height: 1.9; }
-    .an-cross a { color: #b23a2f; }
+    .an-cross a { color: #B3402A; }
     .an-source { margin-top: 28px; font-size: .74rem; color: #888; line-height: 1.8; }
     @media (max-width: 720px) {
       .an-pairs, .an-trends { grid-template-columns: 1fr; }

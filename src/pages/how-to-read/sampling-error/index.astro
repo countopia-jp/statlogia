@@ -19,9 +19,9 @@ import HeroFig from '../../../components/HeroFig.astro';
 
     <section class="art-diagram">
       <svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="三つの県の値と、その値が動きうる幅を横の帯で示した図。1位と2位の帯は重なり、3位の帯は離れている">
-        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1b4332">値と、調べ直したときに動きうる幅（95％）</text>
+        <text x="0" y="20" font-family="Shippori Mincho, serif" font-size="15" font-weight="700" fill="#1F2A44">値と、調べ直したときに動きうる幅（95％）</text>
         <line x1="110" y1="40" x2="110" y2="160" stroke="#eee"/><text x="110" y="176" text-anchor="middle" font-size="10" fill="#999">40％</text><line x1="230" y1="40" x2="230" y2="160" stroke="#eee"/><text x="230" y="176" text-anchor="middle" font-size="10" fill="#999">44％</text><line x1="350" y1="40" x2="350" y2="160" stroke="#eee"/><text x="350" y="176" text-anchor="middle" font-size="10" fill="#999">48％</text><line x1="470" y1="40" x2="470" y2="160" stroke="#eee"/><text x="470" y="176" text-anchor="middle" font-size="10" fill="#999">52％</text><line x1="590" y1="40" x2="590" y2="160" stroke="#eee"/><text x="590" y="176" text-anchor="middle" font-size="10" fill="#999">56％</text>
-        <text x="0" y="67" font-size="13" font-weight="700" fill="#1b4332">A県（1位）</text><rect x="356" y="57" width="168" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="440" cy="62" r="6" fill="#b23a2f"/><text x="635" y="67" text-anchor="end" font-size="12" fill="#555">51.0％ ±2.8</text><text x="0" y="107" font-size="13" font-weight="700" fill="#1b4332">B県（2位）</text><rect x="305" y="97" width="180" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="395" cy="102" r="6" fill="#b23a2f"/><text x="635" y="107" text-anchor="end" font-size="12" fill="#555">49.5％ ±3.0</text><text x="0" y="147" font-size="13" font-weight="700" fill="#1b4332">C県（3位）</text><rect x="164" y="137" width="132" height="10" rx="4" fill="#b23a2f" fill-opacity="0.2" stroke="#b23a2f" stroke-opacity="0.6"/><circle cx="230" cy="142" r="6" fill="#b23a2f"/><text x="635" y="147" text-anchor="end" font-size="12" fill="#555">44.0％ ±2.2</text>
+        <text x="0" y="67" font-size="13" font-weight="700" fill="#1F2A44">A県（1位）</text><rect x="356" y="57" width="168" height="10" rx="4" fill="#B3402A" fill-opacity="0.2" stroke="#B3402A" stroke-opacity="0.6"/><circle cx="440" cy="62" r="6" fill="#B3402A"/><text x="635" y="67" text-anchor="end" font-size="12" fill="#555">51.0％ ±2.8</text><text x="0" y="107" font-size="13" font-weight="700" fill="#1F2A44">B県（2位）</text><rect x="305" y="97" width="180" height="10" rx="4" fill="#B3402A" fill-opacity="0.2" stroke="#B3402A" stroke-opacity="0.6"/><circle cx="395" cy="102" r="6" fill="#B3402A"/><text x="635" y="107" text-anchor="end" font-size="12" fill="#555">49.5％ ±3.0</text><text x="0" y="147" font-size="13" font-weight="700" fill="#1F2A44">C県（3位）</text><rect x="164" y="137" width="132" height="10" rx="4" fill="#B3402A" fill-opacity="0.2" stroke="#B3402A" stroke-opacity="0.6"/><circle cx="230" cy="142" r="6" fill="#B3402A"/><text x="635" y="147" text-anchor="end" font-size="12" fill="#555">44.0％ ±2.2</text>
         <text x="0" y="202" font-size="12" fill="#555">A県とB県の帯は重なる → 調べ直すと、順番が入れかわることがある</text>
         <text x="0" y="222" font-size="12" fill="#555">B県とC県の帯は重ならない → この差は、調べ方のゆれだけでは説明しにくい</text>
       </svg>
@@ -83,7 +83,7 @@ import HeroFig from '../../../components/HeroFig.astro';
     .art-hero h1 { font-family: "Shippori Mincho", serif; font-weight: 800; margin: 6px 0 0; font-size: 1.5rem; }
 
     .art-diagram {
-      margin: 24px 0; padding: 20px; border: 1px solid #e0e0d8;
+      margin: 24px 0; padding: 20px; border: 1px solid #DEDFE3;
       border-radius: 10px; background: #fff;
     }
     .art-diagram svg { display: block; width: 100%; height: auto; }
@@ -92,12 +92,12 @@ import HeroFig from '../../../components/HeroFig.astro';
     .art-sec { padding: 16px 0; }
     .art-sec h2 {
       font-family: "Shippori Mincho", serif; font-weight: 800; font-size: 1.05rem;
-      border-left: 4px solid #1b4332; padding-left: 10px; margin-bottom: 10px;
+      border-left: 4px solid #1F2A44; padding-left: 10px; margin-bottom: 10px;
     }
     .art-sec p { line-height: 2; font-size: 0.92rem; color: #333; margin: 0 0 12px; }
-    .art-sec a { color: #b23a2f; }
+    .art-sec a { color: #B3402A; }
 
     .art-links { text-align: center; margin-top: 32px; font-size: 0.9rem; line-height: 2.2; }
-    .art-links a { color: #b23a2f; }
+    .art-links a { color: #B3402A; }
   </style>
 </BaseLayout>

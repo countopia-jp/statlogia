@@ -198,7 +198,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
             labels: area.series.map((p) => p.year),
             datasets: [{
               label: '小学校児童数', data: area.series.map((p) => p.value),
-              borderColor: '#1b4332', backgroundColor: '#1b433222', tension: 0.2, fill: true,
+              borderColor: '#1F2A44', backgroundColor: '#1F2A4422', tension: 0.2, fill: true,
             }],
           },
           options: {
@@ -243,7 +243,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
           type: 'bar',
           data: {
             labels: GROUPS.map((g) => g.label),
-            datasets: [{ label: '学校数', data: counts, backgroundColor: ['#c9a227', '#1b4332', '#2d6a4f', '#b23a2f'], borderRadius: 4 }],
+            datasets: [{ label: '学校数', data: counts, backgroundColor: ['#c9a227', '#1F2A44', '#4B5570', '#B3402A'], borderRadius: 4 }],
           },
           options: {
             plugins: { legend: { display: false } },
@@ -321,14 +321,14 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .edu-select-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
     .edu-select-row label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
     .edu-select-row select {
-      min-width: 220px; padding: 10px 12px; border: 1px solid #1b4332;
+      min-width: 220px; padding: 10px 12px; border: 1px solid #1F2A44;
       border-radius: 6px; background: #fff; font-size: 1rem;
     }
 
     .edu-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
     .edu-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-    .edu-card { border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fdfdf8; text-align: center; }
-    .edu-card-label { font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.1em; }
+    .edu-card { border: 1px solid #DEDFE3; border-radius: 8px; padding: 14px; background: #fdfdf8; text-align: center; }
+    .edu-card-label { font-size: 0.8rem; color: #4B5570; letter-spacing: 0.1em; }
     .edu-card-num { font-size: 1.9rem; font-weight: 700; margin: 4px 0; }
     .edu-card-unit { font-size: 0.9rem; margin-left: 2px; font-weight: 400; }
     .edu-card-sub { font-size: 0.75rem; color: #777; }
@@ -337,11 +337,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .edu-note { font-size: 0.85rem; color: #555; text-align: center; }
 
     .edu-line-wrap {
-      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #DEDFE3;
       border-radius: 8px; background: #fff;
     }
     .edu-line-title {
-      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      font-size: 0.8rem; color: #4B5570; letter-spacing: 0.06em;
       margin: 0 0 10px; text-align: center;
     }
 
@@ -349,16 +349,16 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .edu-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .edu-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
     .edu-tab {
-      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      padding: 8px 16px; border: 1px solid #1F2A44; border-radius: 999px;
       background: #fff; cursor: pointer; font-size: 0.85rem;
     }
-    .edu-tab.is-active { background: #1b4332; color: #fff; }
+    .edu-tab.is-active { background: #1F2A44; color: #fff; }
 
-    .edu-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
-    .edu-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+    .edu-rank-list { list-style: none; counter-reset: rank; padding: 8px 20px; max-width: 560px; margin: 0 auto 8px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8; }
+    .edu-rank-list li { counter-increment: rank; display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer; }
     .edu-rank-list li:last-child { border-bottom: none; }
-    .edu-rank-list li::before { content: counter(rank); font-weight: 700; color: #b23a2f; margin-right: 12px; min-width: 1.4em; text-align: center; }
-    .edu-rank-list li:hover { background: #f4f7f4; }
+    .edu-rank-list li::before { content: counter(rank); font-weight: 700; color: #B3402A; margin-right: 12px; min-width: 1.4em; text-align: center; }
+    .edu-rank-list li:hover { background: #F3F4F7; }
     .edu-rank-name { flex: 1; }
     .edu-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
 

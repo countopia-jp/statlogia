@@ -44,7 +44,7 @@ const word = isPref ? '県' : '市区町村';
   const sec = document.currentScript.previousElementSibling;
   if (!sec || !sec.classList.contains('cmpx')) return;
   const isPref = sec.dataset.level === 'pref';
-  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5', '#7a5c99'];
+  const COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
   const MAXCMP = 4;
   const PREF_NAMES = {'01':'北海道','02':'青森県','03':'岩手県','04':'宮城県','05':'秋田県','06':'山形県','07':'福島県','08':'茨城県','09':'栃木県','10':'群馬県','11':'埼玉県','12':'千葉県','13':'東京都','14':'神奈川県','15':'新潟県','16':'富山県','17':'石川県','18':'福井県','19':'山梨県','20':'長野県','21':'岐阜県','22':'静岡県','23':'愛知県','24':'三重県','25':'滋賀県','26':'京都府','27':'大阪府','28':'兵庫県','29':'奈良県','30':'和歌山県','31':'鳥取県','32':'島根県','33':'岡山県','34':'広島県','35':'山口県','36':'徳島県','37':'香川県','38':'愛媛県','39':'高知県','40':'福岡県','41':'佐賀県','42':'長崎県','43':'熊本県','44':'大分県','45':'宮崎県','46':'鹿児島県','47':'沖縄県'};
   const prefOf = (a) => a.c.slice(0, 2);
@@ -115,12 +115,12 @@ const word = isPref ? '県' : '市区町村';
         const placed = S.vals.map((x) => { const b = Math.round((X(x) - PAD) / STEP); const k = (bins[b] = (bins[b] ?? -1) + 1); return { b, k, x }; });
         const maxK = Math.max(...placed.map((p) => p.k)), base = 4 + R + maxK * STEP, H = base + R + 4;
         const me = placed.find((p) => Math.abs(p.x - v) < 1e-9);
-        const dots = placed.map((p) => (p === me ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1b4332" fill-opacity=".38"/>`)).join('');
+        const dots = placed.map((p) => (p === me ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1F2A44" fill-opacity=".38"/>`)).join('');
         const mx = me ? PAD + me.b * STEP : X(v), my = me ? base - me.k * STEP : base;
-        return `<svg viewBox="0 0 ${W} ${H.toFixed(1)}" aria-hidden="true"><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1b4332" stroke-opacity=".2"/>${dots}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#b23a2f" stroke="#fff" stroke-width="1"/></svg>`;
+        return `<svg viewBox="0 0 ${W} ${H.toFixed(1)}" aria-hidden="true"><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1F2A44" stroke-opacity=".2"/>${dots}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#B3402A" stroke="#fff" stroke-width="1"/></svg>`;
       }
       const p5 = X(S.q(0.05)), p25 = X(S.q(0.25)), p50 = X(S.q(0.5)), p75 = X(S.q(0.75)), p95 = X(S.q(0.95));
-      return `<svg viewBox="0 0 ${W} 18" aria-hidden="true"><line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1b4332" stroke-opacity=".35"/><rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1b4332" fill-opacity=".14" stroke="#1b4332" stroke-opacity=".35"/><line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1b4332" stroke-opacity=".6"/><circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#b23a2f" stroke="#fff" stroke-width="1.2"/></svg>`;
+      return `<svg viewBox="0 0 ${W} 18" aria-hidden="true"><line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1F2A44" stroke-opacity=".35"/><rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1F2A44" fill-opacity=".14" stroke="#1F2A44" stroke-opacity=".35"/><line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1F2A44" stroke-opacity=".6"/><circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#B3402A" stroke="#fff" stroke-width="1.2"/></svg>`;
     };
     function renderPos() {
       const box = sec.querySelector('.cmpx-pos');
@@ -294,9 +294,9 @@ const word = isPref ? '県' : '市区町村';
 
 <style is:global>
   .cmpx-sim { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; margin: 4px 0 10px; font-size: .8rem; color: #555; }
-  .cmpx-sim button { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; color: #1b4332; font-size: .8rem; cursor: pointer; line-height: 1.3; }
+  .cmpx-sim button { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 10px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; color: #1F2A44; font-size: .8rem; cursor: pointer; line-height: 1.3; }
   .cmpx-sim button small { font-size: .64rem; color: #888; }
-  .cmpx-sim button:hover:not(:disabled) { border-color: #1b4332; background: #f6f8f4; }
+  .cmpx-sim button:hover:not(:disabled) { border-color: #1F2A44; background: #f6f8f4; }
   .cmpx-sim button:disabled { opacity: .45; cursor: default; }
   .cmpx { max-width: 860px; margin: 40px auto 0; }
   .cmpx h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
@@ -304,35 +304,35 @@ const word = isPref ? '県' : '市区町村';
   .cmpx-foot { text-align: left; font-size: .75rem; color: #888; }
   .cmpx-sel { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 0 0 14px; }
   .cmpx-sel label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; }
-  .cmpx-sel select { min-width: 200px; padding: 8px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; }
+  .cmpx-sel select { min-width: 200px; padding: 8px 10px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: .95rem; }
   .cmpx-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0 0 14px; }
-  .cmpx-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .85rem; }
+  .cmpx-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; font-size: .85rem; }
   .cmpx-chips i, .cmpx-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .cmpx-chips button { border: 0; background: none; cursor: pointer; font-size: 1rem; line-height: 1; color: #888; padding: 2px 4px; min-width: 28px; min-height: 28px; }
-  .cmpx-chips button:hover { color: #b23a2f; }
-  .cmpx-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .cmpx-chips button:hover { color: #B3402A; }
+  .cmpx-wrap { overflow-x: auto; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; margin-bottom: 8px; }
   .cmpx-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
   .cmpx-table caption { caption-side: top; text-align: left; font-size: .75rem; color: #666; padding: 8px 10px 0; }
   .cmpx-table th, .cmpx-table td { padding: 9px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
   .cmpx-table tbody tr:last-child th, .cmpx-table tbody tr:last-child td { border-bottom: 0; }
-  .cmpx-table thead th { font-weight: 600; color: #1b4332; white-space: nowrap; background: #f6f8f4; }
+  .cmpx-table thead th { font-weight: 600; color: #1F2A44; white-space: nowrap; background: #f6f8f4; }
   .cmpx-table thead th i { margin-right: 5px; }
   .cmpx-table thead th:first-child, .cmpx-table tbody th { text-align: left; }
-  .cmpx-table tbody th { font-weight: 400; color: #2d6a4f; min-width: 9em; position: sticky; left: 0; background: #fff; }
+  .cmpx-table tbody th { font-weight: 400; color: #4B5570; min-width: 9em; position: sticky; left: 0; background: #fff; }
   .cmpx-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
   .cmpx-table small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
   .cmpx-pos { margin: 0 0 36px; }
-  .cmpx-pos-list { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 4px 12px; }
+  .cmpx-pos-list { border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; padding: 4px 12px; }
   .cmpx-pos-row { display: grid; grid-template-columns: minmax(8em, 1.4fr) minmax(7em, 1fr) minmax(120px, 1.6fr) minmax(7em, 1fr); gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid #ecece4; font-size: .85rem; }
   .cmpx-pos-row:last-child { border-bottom: 0; }
-  .cmpx-pos-row--pc { border-top: 0; padding-top: 0; font-size: .8rem; color: #2d6a4f; }
-  .cmpx-pos-lab { color: #2d6a4f; }
+  .cmpx-pos-row--pc { border-top: 0; padding-top: 0; font-size: .8rem; color: #4B5570; }
+  .cmpx-pos-lab { color: #4B5570; }
   .cmpx-pos-lab small, .cmpx-pos-val small { display: block; font-size: .68rem; color: #888; }
   .cmpx-pos-val { font-family: "IBM Plex Mono", monospace; font-weight: 600; text-align: right; }
   .cmpx-pos-svg svg { display: block; width: 100%; max-width: 240px; height: auto; margin: 0 auto; }
   .cmpx-pos-txt { font-size: .75rem; color: #555; }
   .cmpx-foot2 { text-align: left; font-size: .74rem; color: #888; margin-top: 8px; }
-  .cmpx-foot2 a { color: #b23a2f; }
+  .cmpx-foot2 a { color: #B3402A; }
   @media (max-width: 600px) { .cmpx-pos-row { grid-template-columns: 1fr auto; } .cmpx-pos-svg { grid-column: 1 / -1; } .cmpx-pos-txt { grid-column: 1 / -1; text-align: center; } }
   @media (max-width: 600px) { .cmpx-table { font-size: .8rem; } .cmpx-table tbody th { min-width: 6.5em; } .cmpx-table th, .cmpx-table td { padding: 8px 7px; } .cmpx-sel select { min-width: 150px; } }
 </style>

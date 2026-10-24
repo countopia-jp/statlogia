@@ -234,19 +234,19 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
       const Hp = base + R + 4;
       const vRounded = v;
       for (const p of placed) if (selBin === null && Math.abs(p.x - vRounded) < 1e-9) { selBin = p.b; selRow = p.k; }
-      body = placed.map((p) => (p.b === selBin && p.k === selRow ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1b4332" fill-opacity=".38"/>`)).join('');
+      body = placed.map((p) => (p.b === selBin && p.k === selRow ? '' : `<circle cx="${(PAD + p.b * STEP).toFixed(1)}" cy="${(base - p.k * STEP).toFixed(1)}" r="${R}" fill="#1F2A44" fill-opacity=".38"/>`)).join('');
       const mx = selBin === null ? X(v) : PAD + selBin * STEP;
       const my = selBin === null ? base : base - selRow * STEP;
       const tipP = '47都道府県の値を、近いものは上に積んで点で並べたもの。赤がこの県';
-      return `<svg class="rm-dist" viewBox="0 0 ${W} ${Hp.toFixed(1)}" role="img" aria-label="${tipP}"><title>${tipP}</title><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1b4332" stroke-opacity=".2"/>${body}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#b23a2f" stroke="#fff" stroke-width="1"/></svg>`;
+      return `<svg class="rm-dist" viewBox="0 0 ${W} ${Hp.toFixed(1)}" role="img" aria-label="${tipP}"><title>${tipP}</title><line x1="${PAD}" y1="${(base + R + 1.5).toFixed(1)}" x2="${W - PAD}" y2="${(base + R + 1.5).toFixed(1)}" stroke="#1F2A44" stroke-opacity=".2"/>${body}<circle cx="${mx.toFixed(1)}" cy="${my.toFixed(1)}" r="${R + 1.2}" fill="#B3402A" stroke="#fff" stroke-width="1"/></svg>`;
     } else {
       const p5 = X(S.q(0.05)), p25 = X(S.q(0.25)), p50 = X(S.q(0.5)), p75 = X(S.q(0.75)), p95 = X(S.q(0.95));
-      body = `<line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1b4332" stroke-opacity=".35"/>` +
-        `<rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1b4332" fill-opacity=".14" stroke="#1b4332" stroke-opacity=".35"/>` +
-        `<line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1b4332" stroke-opacity=".6"/>`;
+      body = `<line x1="${p5}" y1="9" x2="${p95}" y2="9" stroke="#1F2A44" stroke-opacity=".35"/>` +
+        `<rect x="${p25}" y="4" width="${Math.max(1, p75 - p25)}" height="10" fill="#1F2A44" fill-opacity=".14" stroke="#1F2A44" stroke-opacity=".35"/>` +
+        `<line x1="${p50}" y1="3" x2="${p50}" y2="15" stroke="#1F2A44" stroke-opacity=".6"/>`;
     }
     const out = !isPref && (v < lo || v > hi);
-    const mark = `<circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#b23a2f" stroke="#fff" stroke-width="1.2"/>`;
+    const mark = `<circle cx="${X(v).toFixed(1)}" cy="9" r="4.2" fill="#B3402A" stroke="#fff" stroke-width="1.2"/>`;
     const tip = isPref ? '47都道府県の値を点で並べたもの。赤がこの県' : '真ん中の箱は全国の市区町村の真ん中半分、線は5〜95％の範囲。赤がこの町' + (out ? '（端の外にあるため端に置いています）' : '');
     return `<svg class="rm-dist" viewBox="0 0 ${W} ${H}" role="img" aria-label="${tip}"><title>${tip}</title>${body}${mark}</svg>`;
   };
@@ -274,7 +274,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   // ---- 帳面 ----
   let current = null;
   let compare = [];
-  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5', '#7a5c99'];
+  const COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5', '#7a5c99'];
   const MAXCMP = 4;
   function extraOf(ind, a, isLatest) {
     if (!isLatest || a.x) return '';
@@ -597,11 +597,11 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const sel = [current, ...compare].filter((b) => F.byCode[b.c]);
     const sets = [
       { type: 'scatter', label: '市区町村', data: F.pts.map((p) => ({ x: p.n, y: clampY((p.y / p.n) * per) })), backgroundColor: 'rgba(27,67,50,.16)', pointRadius: 2, pointHoverRadius: 3 },
-      { type: 'line', label: '全国の率', data: [{ x: nMin, y: F.m * per }, { x: nMax, y: F.m * per }], borderColor: '#1b4332', borderWidth: 1.5, pointRadius: 0 },
+      { type: 'line', label: '全国の率', data: [{ x: nMin, y: F.m * per }, { x: nMax, y: F.m * per }], borderColor: '#1F2A44', borderWidth: 1.5, pointRadius: 0 },
       { type: 'line', label: '95％', data: lim(1.96, 1), borderColor: '#c99a2e', borderDash: [5, 4], borderWidth: 1.2, pointRadius: 0 },
       { type: 'line', label: '95％下', data: lim(1.96, -1), borderColor: '#c99a2e', borderDash: [5, 4], borderWidth: 1.2, pointRadius: 0 },
-      { type: 'line', label: '99.8％', data: lim(3.09, 1), borderColor: '#b23a2f', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
-      { type: 'line', label: '99.8％下', data: lim(3.09, -1), borderColor: '#b23a2f', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
+      { type: 'line', label: '99.8％', data: lim(3.09, 1), borderColor: '#B3402A', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
+      { type: 'line', label: '99.8％下', data: lim(3.09, -1), borderColor: '#B3402A', borderDash: [2, 3], borderWidth: 1.2, pointRadius: 0 },
       ...sel.map((b, k) => { const p = F.byCode[b.c]; return { type: 'scatter', label: isPref ? b.n : shortName(b), data: [{ x: p.n, y: clampY((p.y / p.n) * per) }], backgroundColor: COLORS[k], borderColor: '#fff', borderWidth: 1.5, pointRadius: 6, pointHoverRadius: 7 }; }),
     ];
     if (funChart) funChart.destroy();
@@ -685,7 +685,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     if (isPref) {
       const useAvg = D.nationalIsAvg[ind.key] || (D.nationalIsTotal && D.nationalIsTotal[ind.key]);
       const natLabel = useAvg ? '47都道府県の平均' : '全国';
-      sets.push({ label: natLabel, data: spread(useAvg && D.prefAverage ? D.prefAverage[ind.key] : D.national[ind.key]), borderColor: '#4A6355', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: false });
+      sets.push({ label: natLabel, data: spread(useAvg && D.prefAverage ? D.prefAverage[ind.key] : D.national[ind.key]), borderColor: '#7F97A8', borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0, spanGaps: false });
       noteParts.push(`点線は${natLabel}です。`);
     }
     if (gaps) noteParts.push(isPref ? '線が途切れている年は、どこかの県の値が欠けていて、くらべられない年です。' : '線が途切れている年は、値のそろわない年です。');
@@ -838,7 +838,7 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
     const W = 600, PAD = 10, x0 = lo.v, x1 = hi.v;
     const X = (v) => (x1 > x0 ? PAD + ((v - x0) / (x1 - x0)) * (W - PAD * 2) : W / 2);
     const cur = current && prefOf(current) === pref ? current.c : null;
-    const dots = P.list.map((o) => `<circle cx="${X(o.v).toFixed(1)}" cy="22" r="${o.a.c === cur ? 6 : 4}" fill="${o.a.c === cur ? '#b23a2f' : '#1b4332'}" fill-opacity="${o.a.c === cur ? 1 : 0.35}"${o.a.c === cur ? ' stroke="#fff" stroke-width="1.2"' : ''}><title>${shortName(o.a)} ${f(o.v)}</title></circle>`).join('');
+    const dots = P.list.map((o) => `<circle cx="${X(o.v).toFixed(1)}" cy="22" r="${o.a.c === cur ? 6 : 4}" fill="${o.a.c === cur ? '#B3402A' : '#1F2A44'}" fill-opacity="${o.a.c === cur ? 1 : 0.35}"${o.a.c === cur ? ' stroke="#fff" stroke-width="1.2"' : ''}><title>${shortName(o.a)} ${f(o.v)}</title></circle>`).join('');
     const svg = `<svg class="rm-spread-svg" viewBox="0 0 ${W} 44" role="img" aria-label="${PREF_NAMES[pref]}の市区町村の値を点で並べた図。箱は真ん中の半分の範囲"><rect x="${X(P.q25).toFixed(1)}" y="10" width="${Math.max(1, X(P.q75) - X(P.q25)).toFixed(1)}" height="24" fill="#c99a2e" fill-opacity=".18" stroke="#c99a2e" stroke-opacity=".7"/><line x1="${X(P.q50).toFixed(1)}" y1="6" x2="${X(P.q50).toFixed(1)}" y2="38" stroke="#c99a2e"/>${dots}</svg>`;
     const curO = cur ? P.list.find((o) => o.a.c === cur) : null;
     box.innerHTML = head + `<div class="rm-spread-tiles"><div><span>真ん中の半分の幅</span><b>${f(P.iqr)}</b><span>${f(P.q25)}〜${f(P.q75)}</span></div><div><span>真ん中の町の値（中央値）</span><b>${f(P.q50)}</b><span>${P.n}の市区町村</span></div>${(() => { const rk = rankOf(P), rs = prefs.filter((x) => x.iqr < P.iqr - 1e-12).length + 1; return rk <= rs ? `<div><span>${prefs.length}都道府県で、幅が大きいほうから</span><b>${rk}番目</b><span>いちばん大きいのは${PREF_NAMES[prefs[0].p]}（${f(prefs[0].iqr)}）</span></div>` : `<div><span>${prefs.length}都道府県で、幅が小さいほうから</span><b>${rs}番目</b><span>いちばん小さいのは${PREF_NAMES[prefs[prefs.length - 1].p]}（${f(prefs[prefs.length - 1].iqr)}）</span></div>`; })()}</div>
@@ -876,31 +876,31 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
 
   .rm-selector { margin: 24px 0; display: flex; gap: 12px 20px; justify-content: center; flex-wrap: wrap; }
   .rm-selector label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; }
-  .rm-selector select { width: 260px; max-width: 100%; padding: 10px 12px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: 1rem; }
+  .rm-selector select { width: 260px; max-width: 100%; padding: 10px 12px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: 1rem; }
   .rm-selector select:disabled { background: #f0f0ea; color: #999; }
   .rm-selector--small { margin: 12px 0 20px; }
 
   .rm-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
   .rm-cards { display: grid; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); gap: 12px; }
   @media (max-width: 720px) { .rm-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  .rm-card { display: flex; flex-direction: column; border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
-  .rm-card-label { font-size: .78rem; color: #2d6a4f; letter-spacing: .04em; line-height: 1.5; }
-  .rm-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; margin: 6px 0 0; color: #1b4332; }
+  .rm-card { display: flex; flex-direction: column; border: 1px solid #DEDFE3; border-radius: 8px; padding: 14px; background: #fff; text-align: center; }
+  .rm-card-label { font-size: .78rem; color: #4B5570; letter-spacing: .04em; line-height: 1.5; }
+  .rm-card-num { font-family: "IBM Plex Mono", monospace; font-size: 1.4rem; font-weight: 600; margin: 6px 0 0; color: #1F2A44; }
   .rm-card-num small { font-family: "Zen Kaku Gothic New", sans-serif; font-size: .75rem; margin-left: 3px; font-weight: 500; }
   .rm-card-year { font-size: .7rem; color: #999; margin-bottom: 6px; }
-  .rm-card-meta { font-size: .74rem; color: #b23a2f; font-weight: 700; margin-top: auto; }
+  .rm-card-meta { font-size: .74rem; color: #B3402A; font-weight: 700; margin-top: auto; }
   .rm-card-meta span { font-weight: 400; display: inline-block; }
   .rm-card-meta--soft { color: #777; font-weight: 400; margin-top: 2px; }
   .rm-card-note { font-size: .66rem; color: #999; margin-top: 4px; line-height: 1.5; }
 
-  .rm-card-pc { margin-top: 6px; font-size: .74rem; color: #2d6a4f; }
-  .rm-card-pc b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1b4332; margin: 0 2px; }
-  .rm-card-pc span { display: block; color: #b23a2f; font-weight: 600; }
+  .rm-card-pc { margin-top: 6px; font-size: .74rem; color: #4B5570; }
+  .rm-card-pc b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1F2A44; margin: 0 2px; }
+  .rm-card-pc span { display: block; color: #B3402A; font-weight: 600; }
   .rm-card-dist { margin-top: 8px; }
   .rm-dist { display: block; width: 100%; max-width: 220px; height: auto; margin: 0 auto; }
   .rm-card-pos { font-size: .7rem; color: #666; margin-top: 2px; }
-  .rm-card-lq { margin-top: 6px; font-size: .74rem; color: #2d6a4f; }
-  .rm-card-lq b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1b4332; margin: 0 2px; }
+  .rm-card-lq { margin-top: 6px; font-size: .74rem; color: #4B5570; }
+  .rm-card-lq b { font-family: "IBM Plex Mono", monospace; font-size: .9rem; color: #1F2A44; margin: 0 2px; }
   .rm-card-lq span { display: block; color: #777; font-size: .68rem; }
   .rm-fun { margin-top: 40px; }
   .rm-fun h2 { text-align: center; font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 8px; }
@@ -909,73 +909,73 @@ const hasHero = fs.existsSync(path.join(process.cwd(), 'public', heroImage));
   .rm-fun-read span { display: block; padding: 6px 0; border-bottom: 1px dashed #d8dcd2; }
   .rm-fun-read span:last-child { border-bottom: 0; }
   .rm-mode { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; margin: 0 0 10px; }
-  .rm-mode button { font: inherit; font-size: .78rem; padding: 4px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; color: #2d6a4f; cursor: pointer; }
-  .rm-mode button.is-active { background: #2d6a4f; border-color: #2d6a4f; color: #fff; }
+  .rm-mode button { font: inherit; font-size: .78rem; padding: 4px 12px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; color: #4B5570; cursor: pointer; }
+  .rm-mode button.is-active { background: #4B5570; border-color: #4B5570; color: #fff; }
   .rm-cmp { margin-top: 40px; }
   .rm-sim { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 8px; margin: 4px 0 10px; font-size: .8rem; color: #555; }
-  .rm-sim button { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 10px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; color: #1b4332; font-size: .8rem; cursor: pointer; line-height: 1.3; }
+  .rm-sim button { display: inline-flex; flex-direction: column; align-items: center; padding: 4px 10px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; color: #1F2A44; font-size: .8rem; cursor: pointer; line-height: 1.3; }
   .rm-sim button small { font-size: .64rem; color: #888; }
-  .rm-sim button:hover:not(:disabled) { border-color: #1b4332; background: #f6f8f4; }
+  .rm-sim button:hover:not(:disabled) { border-color: #1F2A44; background: #f6f8f4; }
   .rm-sim button:disabled { opacity: .45; cursor: default; }
   .rm-cmp h2 { text-align: center; margin: 0 0 8px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
   .rm-chips { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0 0 14px; }
-  .rm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #c9d3c6; border-radius: 999px; background: #fff; font-size: .85rem; }
+  .rm-chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 12px; border: 1px solid #CBCDD3; border-radius: 999px; background: #fff; font-size: .85rem; }
   .rm-chip i, .rm-cmp-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .rm-chip button { border: 0; background: none; cursor: pointer; font-size: 1rem; line-height: 1; color: #888; padding: 2px 4px; min-width: 28px; min-height: 28px; }
-  .rm-chip button:hover { color: #b23a2f; }
-  .rm-cmp-wrap { overflow-x: auto; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .rm-chip button:hover { color: #B3402A; }
+  .rm-cmp-wrap { overflow-x: auto; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; margin-bottom: 8px; }
   .rm-cmp-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
   .rm-cmp-table th, .rm-cmp-table td { padding: 9px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
   .rm-cmp-table tbody tr:last-child th, .rm-cmp-table tbody tr:last-child td { border-bottom: 0; }
-  .rm-cmp-table thead th { font-weight: 600; color: #1b4332; white-space: nowrap; background: #f6f8f4; }
+  .rm-cmp-table thead th { font-weight: 600; color: #1F2A44; white-space: nowrap; background: #f6f8f4; }
   .rm-cmp-table thead th i { margin-right: 5px; }
   .rm-cmp-table thead th:first-child, .rm-cmp-table tbody th { text-align: left; }
-  .rm-cmp-table tbody th { font-weight: 400; color: #2d6a4f; min-width: 9em; position: sticky; left: 0; background: #fff; }
+  .rm-cmp-table tbody th { font-weight: 400; color: #4B5570; min-width: 9em; position: sticky; left: 0; background: #fff; }
   .rm-cmp-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
   .rm-cmp-table small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
   @media (max-width: 600px) { .rm-cmp-table { font-size: .8rem; } .rm-cmp-table tbody th { min-width: 6.5em; } .rm-cmp-table th, .rm-cmp-table td { padding: 8px 7px; } }
   .rm-line-sec { margin-top: 44px; }
   .rm-line-sec h2 { text-align: center; margin: 0 0 12px; font-family: "Shippori Mincho", serif; font-size: 1.15rem; }
-  .rm-line-wrap { padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; margin-bottom: 8px; }
+  .rm-line-wrap { padding: 16px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; margin-bottom: 8px; }
   .rm-tabs { display: flex; gap: 6px; justify-content: center; margin: 0 0 14px; flex-wrap: wrap; }
-  .rm-tab { padding: 6px 12px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; cursor: pointer; font-size: .8rem; }
-  .rm-tab.is-active { background: #1b4332; color: #fff; }
+  .rm-tab { padding: 6px 12px; border: 1px solid #1F2A44; border-radius: 999px; background: #fff; cursor: pointer; font-size: .8rem; }
+  .rm-tab.is-active { background: #1F2A44; color: #fff; }
   .rm-note { font-size: .8rem; color: #666; text-align: center; line-height: 1.8; }
 
   .rm-ranking { margin-top: 44px; }
   .rm-spread { margin-top: 40px; }
   .rm-spread h2 { text-align: center; font-family: "Shippori Mincho", serif; }
-  .rm-spread-ind { font-weight: 700; color: #1b4332; margin: 12px 0 8px; }
+  .rm-spread-ind { font-weight: 700; color: #1F2A44; margin: 12px 0 8px; }
   .rm-spread-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
   .rm-spread-tiles > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; }
   .rm-spread-tiles span { font-size: .76rem; color: #555; }
-  .rm-spread-tiles b { font-size: 1.2rem; color: #1b4332; }
+  .rm-spread-tiles b { font-size: 1.2rem; color: #1F2A44; }
   .rm-spread-svg { display: block; width: 100%; height: auto; margin: 14px 0 2px; }
   .rm-spread-ends { display: flex; justify-content: space-between; gap: 12px; font-size: .78rem; color: #555; margin: 0 0 6px; }
   .rm-spread-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .rm-spread-cols h3 { font-size: .9rem; margin: 0 0 6px; color: #1b4332; }
+  .rm-spread-cols h3 { font-size: .9rem; margin: 0 0 6px; color: #1F2A44; }
   .rm-spread-cols ol { margin: 0; padding-left: 1.4em; font-size: .86rem; }
   .rm-spread-cols li { margin: 4px 0; }
-  .rm-spread-cols li button { background: none; border: 0; padding: 0; color: #b23a2f; text-decoration: underline; cursor: pointer; font: inherit; margin-right: 8px; }
+  .rm-spread-cols li button { background: none; border: 0; padding: 0; color: #B3402A; text-decoration: underline; cursor: pointer; font: inherit; margin-right: 8px; }
   .rm-spread-cols li small { display: block; color: #777; font-size: .74rem; }
   @media (max-width: 600px) { .rm-spread-tiles, .rm-spread-cols { grid-template-columns: 1fr; } }
   .rm-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
   .rm-rank-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   @media (max-width: 600px) { .rm-rank-cols { grid-template-columns: 1fr; } }
   .rm-rank-head { text-align: center; font-size: .95rem; margin: 0 0 8px; font-family: "Shippori Mincho", serif; }
-  .rm-rank-head--hi { color: #b23a2f; }
-  .rm-rank-head--lo { color: #3a6b52; }
-  .rm-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
-  .rm-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer; }
+  .rm-rank-head--hi { color: #B3402A; }
+  .rm-rank-head--lo { color: #4B5570; }
+  .rm-rank-list { list-style: none; padding: 6px 16px; margin: 0; border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8; }
+  .rm-rank-list li { display: flex; align-items: center; gap: 10px; padding: 9px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer; }
   .rm-rank-list li:last-child { border-bottom: none; }
-  .rm-rank-list li:hover { background: #f4f7f4; }
+  .rm-rank-list li:hover { background: #F3F4F7; }
   .rm-rank-list li.rm-rank-more { cursor: default; color: #888; font-size: .8rem; justify-content: center; }
-  .rm-rank-pos { font-weight: 700; color: #b23a2f; min-width: 1.6em; text-align: center; }
+  .rm-rank-pos { font-weight: 700; color: #B3402A; min-width: 1.6em; text-align: center; }
   .rm-rank-name { flex: 1; }
   .rm-rank-name small { color: #888; font-size: .72rem; margin-left: 4px; }
   .rm-rank-val { font-weight: 600; font-family: "IBM Plex Mono", monospace; white-space: nowrap; }
 
   .rm-cross { margin-top: 36px; font-size: .9rem; text-align: center; line-height: 1.9; }
-  .rm-cross a { color: #b23a2f; }
+  .rm-cross a { color: #B3402A; }
   .rm-source { margin-top: 40px; font-size: .75rem; color: #888; line-height: 1.8; }
 </style>

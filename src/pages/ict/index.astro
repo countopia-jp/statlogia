@@ -215,8 +215,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
             datasets: [{
               label: '1台当たり児童数',
               data: area.series.map((p) => p.value),
-              borderColor: '#1b4332',
-              backgroundColor: '#1b433222',
+              borderColor: '#1F2A44',
+              backgroundColor: '#1F2A4422',
               tension: 0.2,
               fill: true,
             }],
@@ -313,9 +313,9 @@ import GrowthTool from '../../components/GrowthTool.astro';
                 data: points,
                 pointRadius: (c) => (c.raw && c.raw.c === selectedCode ? 8 : 4),
                 pointBackgroundColor: (c) =>
-                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f88',
+                  c.raw && c.raw.c === selectedCode ? '#B3402A' : '#4B557088',
                 pointBorderColor: (c) =>
-                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f',
+                  c.raw && c.raw.c === selectedCode ? '#B3402A' : '#4B5570',
               },
             ],
           },
@@ -402,7 +402,7 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .ict-selector { margin: 24px 0; display: flex; justify-content: center; }
     .ict-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
     .ict-selector select {
-      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1F2A44;
       border-radius: 6px; background: #fff; font-size: 1rem;
     }
 
@@ -414,17 +414,17 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .ict-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     @media (max-width: 560px) { .ict-cards { grid-template-columns: 1fr; } }
     .ict-card {
-      border: 1px solid #e0e0d8; border-radius: 8px; padding: 14px;
+      border: 1px solid #DEDFE3; border-radius: 8px; padding: 14px;
       background: #fff; text-align: center;
     }
-    .ict-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .ict-card-label { font-size: 0.78rem; color: #4B5570; letter-spacing: 0.08em; }
     .ict-card-num {
       font-family: "IBM Plex Mono", monospace; font-size: 1.4rem;
-      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+      font-weight: 700; margin: 6px 0 2px; color: #1F2A44;
     }
     .ict-card-sub { font-size: 0.7rem; color: #999; }
     .ict-card-meta { margin-top: 6px; font-size: 0.75rem; }
-    .ict-rank { color: #b23a2f; font-weight: 700; }
+    .ict-rank { color: #B3402A; font-weight: 700; }
 
     .ict-old { margin: 8px 0 22px; padding: 14px 16px; border: 1px dashed #cfcab8; border-radius: 8px; background: #fbfaf5; }
     .ict-old h3 { margin: 0; font-family: "Shippori Mincho", serif; font-size: 0.95rem; text-align: center; color: #555; }
@@ -434,11 +434,11 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .ict-old td { text-align: right; padding: 6px 4px; border-top: 1px solid #e6e2d4; white-space: nowrap; font-family: "IBM Plex Mono", monospace; }
     .ict-old td.ict-old-year { color: #999; font-family: inherit; font-size: 0.72rem; width: 5.5em; }
     .ict-line-wrap {
-      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #DEDFE3;
       border-radius: 8px; background: #fff;
     }
     .ict-line-title {
-      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      font-size: 0.8rem; color: #4B5570; letter-spacing: 0.06em;
       margin: 0 0 10px; text-align: center;
     }
     .ict-line-note {
@@ -455,30 +455,30 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .ict-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .ict-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
     .ict-tab {
-      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      padding: 8px 16px; border: 1px solid #1F2A44; border-radius: 999px;
       background: #fff; cursor: pointer; font-size: 0.85rem;
     }
-    .ict-tab.is-active { background: #1b4332; color: #fff; }
+    .ict-tab.is-active { background: #1F2A44; color: #fff; }
     .ict-rank-list {
       list-style: none; counter-reset: rank; padding: 8px 20px;
       max-width: 560px; margin: 0 auto 8px;
-      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+      border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8;
     }
     .ict-rank-list li {
       counter-increment: rank; display: flex; justify-content: space-between;
-      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer;
     }
     .ict-rank-list li:last-child { border-bottom: none; }
     .ict-rank-list li::before {
-      content: counter(rank); font-weight: 700; color: #b23a2f;
+      content: counter(rank); font-weight: 700; color: #B3402A;
       margin-right: 12px; min-width: 1.4em; text-align: center;
     }
-    .ict-rank-list li:hover { background: #f4f7f4; }
+    .ict-rank-list li:hover { background: #F3F4F7; }
     .ict-rank-name { flex: 1; }
     .ict-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
 
     .ict-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
-    .ict-cross a { color: #b23a2f; }
+    .ict-cross a { color: #B3402A; }
     .ict-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
   <GrowthTool />

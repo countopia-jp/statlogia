@@ -154,8 +154,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
             datasets: [{
               label: '財政力指数',
               data: area.series.map((p) => p.value),
-              borderColor: '#1b4332',
-              backgroundColor: '#1b433222',
+              borderColor: '#1F2A44',
+              backgroundColor: '#1F2A4422',
               tension: 0.2,
               fill: true,
             }],
@@ -286,35 +286,35 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .edb-selector { margin: 24px 0; display: flex; justify-content: center; }
     .edb-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
     .edb-selector select {
-      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1F2A44;
       border-radius: 6px; background: #fff; font-size: 1rem;
     }
 
     .edb-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
     .edb-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     .edb-card {
-      border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px;
+      border: 1px solid #DEDFE3; border-radius: 8px; padding: 16px;
       background: #fff; text-align: center;
     }
-    .edb-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .edb-card-label { font-size: 0.78rem; color: #4B5570; letter-spacing: 0.08em; }
     .edb-card-num {
       font-family: "IBM Plex Mono", monospace; font-size: 1.5rem;
-      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+      font-weight: 700; margin: 6px 0 2px; color: #1F2A44;
     }
     .edb-card-sub { font-size: 0.7rem; color: #999; }
     .edb-card-meta {
       display: flex; justify-content: center; gap: 10px;
       margin-top: 8px; font-size: 0.75rem;
     }
-    .edb-rank { color: #b23a2f; font-weight: 700; }
+    .edb-rank { color: #B3402A; font-weight: 700; }
     .edb-diff { color: #666; }
 
     .edb-chart-wrap {
-      margin: 24px 0 8px; padding: 16px; border: 1px solid #e0e0d8;
+      margin: 24px 0 8px; padding: 16px; border: 1px solid #DEDFE3;
       border-radius: 8px; background: #fff;
     }
     .edb-chart-title {
-      font-size: 0.8rem; color: #2d6a4f; letter-spacing: 0.06em;
+      font-size: 0.8rem; color: #4B5570; letter-spacing: 0.06em;
       margin: 0 0 10px; text-align: center;
     }
 
@@ -322,30 +322,30 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .edb-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .edb-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
     .edb-tab {
-      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      padding: 8px 16px; border: 1px solid #1F2A44; border-radius: 999px;
       background: #fff; cursor: pointer; font-size: 0.85rem;
     }
-    .edb-tab.is-active { background: #1b4332; color: #fff; }
+    .edb-tab.is-active { background: #1F2A44; color: #fff; }
     .edb-rank-list {
       list-style: none; counter-reset: rank; padding: 8px 20px;
       max-width: 560px; margin: 0 auto 8px;
-      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+      border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8;
     }
     .edb-rank-list li {
       counter-increment: rank; display: flex; justify-content: space-between;
-      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer;
     }
     .edb-rank-list li:last-child { border-bottom: none; }
     .edb-rank-list li::before {
-      content: counter(rank); font-weight: 700; color: #b23a2f;
+      content: counter(rank); font-weight: 700; color: #B3402A;
       margin-right: 12px; min-width: 1.4em; text-align: center;
     }
-    .edb-rank-list li:hover { background: #f4f7f4; }
+    .edb-rank-list li:hover { background: #F3F4F7; }
     .edb-rank-name { flex: 1; }
     .edb-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
 
     .edb-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
-    .edb-cross a { color: #b23a2f; }
+    .edb-cross a { color: #B3402A; }
     .edb-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
   <GrowthTool />

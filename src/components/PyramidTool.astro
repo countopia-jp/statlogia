@@ -42,7 +42,7 @@ const isTown = level === 'town';
     for (let i = 0; i < R; i++) {
       const yy = y(i);
       b += `<rect x="${(MID - GAP - sx(me.m[i])).toFixed(1)}" y="${yy + 1.5}" width="${sx(me.m[i]).toFixed(1)}" height="${RH - 3}" fill="#4a6fa5" fill-opacity=".75"><title>${groups[i]} 男 ${f1(me.m[i])}％</title></rect>`;
-      b += `<rect x="${MID + GAP}" y="${yy + 1.5}" width="${sx(me.f[i]).toFixed(1)}" height="${RH - 3}" fill="#b23a2f" fill-opacity=".7"><title>${groups[i]} 女 ${f1(me.f[i])}％</title></rect>`;
+      b += `<rect x="${MID + GAP}" y="${yy + 1.5}" width="${sx(me.f[i]).toFixed(1)}" height="${RH - 3}" fill="#B3402A" fill-opacity=".7"><title>${groups[i]} 女 ${f1(me.f[i])}％</title></rect>`;
       if (i % 2 === 0) b += `<text x="${MID}" y="${yy + RH - 4}" text-anchor="middle" font-size="10" fill="#555">${groups[i].replace('〜', '-').replace('歳', '').replace('以上', '+')}</text>`;
     }
     if (cmp) {
@@ -52,16 +52,16 @@ const isTown = level === 'town';
         ptsL.push(`${(MID - GAP - sx(cmp.m[i])).toFixed(1)},${y1}`, `${(MID - GAP - sx(cmp.m[i])).toFixed(1)},${y0}`);
         ptsR.push(`${(MID + GAP + sx(cmp.f[i])).toFixed(1)},${y1}`, `${(MID + GAP + sx(cmp.f[i])).toFixed(1)},${y0}`);
       }
-      b += `<polyline points="${ptsL.join(' ')}" fill="none" stroke="#1e3a2f" stroke-width="1.6"/><polyline points="${ptsR.join(' ')}" fill="none" stroke="#1e3a2f" stroke-width="1.6"/>`;
+      b += `<polyline points="${ptsL.join(' ')}" fill="none" stroke="#1F2A44" stroke-width="1.6"/><polyline points="${ptsR.join(' ')}" fill="none" stroke="#1F2A44" stroke-width="1.6"/>`;
     }
     const H = TOP + R * RH + 26;
-    b += `<text x="${MID - GAP - 4}" y="12" text-anchor="end" font-size="11" fill="#4a6fa5" font-weight="700">男</text><text x="${MID + GAP + 4}" y="12" font-size="11" fill="#b23a2f" font-weight="700">女</text>`;
+    b += `<text x="${MID - GAP - 4}" y="12" text-anchor="end" font-size="11" fill="#4a6fa5" font-weight="700">男</text><text x="${MID + GAP + 4}" y="12" font-size="11" fill="#B3402A" font-weight="700">女</text>`;
     b += `<text x="${MID}" y="12" text-anchor="middle" font-size="10" fill="#555">年齢</text>`;
     const tk = max >= 6 ? 2 : max >= 3 ? 1 : 0.5;
     for (let v = tk; v < max; v += tk) {
-      for (const xx of [MID - GAP - sx(v), MID + GAP + sx(v)]) b += `<line x1="${xx.toFixed(1)}" y1="${TOP}" x2="${xx.toFixed(1)}" y2="${TOP + R * RH}" stroke="#1e3a2f" stroke-opacity=".08"/><text x="${xx.toFixed(1)}" y="${TOP + R * RH + 13}" text-anchor="middle" font-size="9.5" fill="#777">${v}％</text>`;
+      for (const xx of [MID - GAP - sx(v), MID + GAP + sx(v)]) b += `<line x1="${xx.toFixed(1)}" y1="${TOP}" x2="${xx.toFixed(1)}" y2="${TOP + R * RH}" stroke="#1F2A44" stroke-opacity=".08"/><text x="${xx.toFixed(1)}" y="${TOP + R * RH + 13}" text-anchor="middle" font-size="9.5" fill="#777">${v}％</text>`;
     }
-    if (cmp) b += `<line x1="${W - 150}" y1="${H - 6}" x2="${W - 128}" y2="${H - 6}" stroke="#1e3a2f" stroke-width="1.6"/><text x="${W - 124}" y="${H - 2}" font-size="10.5" fill="#333">${cmpLabel}の形</text>`;
+    if (cmp) b += `<line x1="${W - 150}" y1="${H - 6}" x2="${W - 128}" y2="${H - 6}" stroke="#1F2A44" stroke-width="1.6"/><text x="${W - 124}" y="${H - 2}" font-size="10.5" fill="#333">${cmpLabel}の形</text>`;
     return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="5歳ごとの男女別人口の割合を示す人口ピラミッド。線は${cmpLabel}">${b}</svg>`;
   }
   async function draw(sec) {
@@ -125,13 +125,13 @@ const isTown = level === 'town';
   .pyr h2 { font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 6px; text-align: center; }
   .pyr-note, .pyr-src { font-size: .78rem; color: #666; line-height: 1.8; margin: 4px 0; }
   .pyr-mode { display: flex; gap: 8px; justify-content: center; margin: 8px 0 4px; }
-  .pyr-mode button { padding: 5px 12px; border: 1px solid #1b4332; border-radius: 999px; background: #fff; color: #1b4332; font-size: .82rem; cursor: pointer; }
-  .pyr-mode button.is-on { background: #1b4332; color: #fff; }
+  .pyr-mode button { padding: 5px 12px; border: 1px solid #1F2A44; border-radius: 999px; background: #fff; color: #1F2A44; font-size: .82rem; cursor: pointer; }
+  .pyr-mode button.is-on { background: #1F2A44; color: #fff; }
   .pyr-fig svg { display: block; width: 100%; max-width: 640px; height: auto; margin: 8px auto; }
   .pyr-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0; }
   .pyr-tiles > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
   .pyr-tiles span { font-size: .74rem; color: #555; }
-  .pyr-tiles b { font-size: 1.15rem; color: #1b4332; }
+  .pyr-tiles b { font-size: 1.15rem; color: #1F2A44; }
   .pyr-read { font-size: .9rem; line-height: 1.9; margin: 8px 0 4px; }
   @media (max-width: 600px) { .pyr-tiles { gap: 6px; } .pyr-tiles > div { padding: 6px 8px; } .pyr-tiles b { font-size: 1rem; } .pyr-tiles span { font-size: .68rem; } .pyr { padding: 14px 10px 10px; } }
 </style>

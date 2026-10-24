@@ -86,7 +86,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
 <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script is:inline>
 (function () {
-  const COLORS = ['#b23a2f', '#2d6a4f', '#c99a2e', '#4a6fa5'];
+  const COLORS = ['#B3402A', '#4B5570', '#c99a2e', '#4a6fa5'];
   const cache = {};
   const load = (id) => (cache[id] ||= fetch(`/data/room-${id}.json`).then((r) => r.json()));
   const slots = [...document.querySelectorAll('.cp-slot')];
@@ -208,7 +208,7 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
     scChart = new Chart(document.getElementById('cpScChart'), {
       type: 'scatter',
       data: { datasets: [
-        { label: '47都道府県', data: pts.map((d) => ({ x: d.x, y: d.y, n: d.p.n })), backgroundColor: pts.map((d) => (d.p.c === mine ? '#b23a2f' : 'rgba(27,67,50,.45)')), pointRadius: pts.map((d) => (d.p.c === mine ? 7 : 4)), pointHoverRadius: 7 },
+        { label: '47都道府県', data: pts.map((d) => ({ x: d.x, y: d.y, n: d.p.n })), backgroundColor: pts.map((d) => (d.p.c === mine ? '#B3402A' : 'rgba(27,67,50,.45)')), pointRadius: pts.map((d) => (d.p.c === mine ? 7 : 4)), pointHoverRadius: 7 },
         ...(same ? [] : [{ type: 'line', label: '回帰直線', data: [{ x: x0, y: a + b * x0 }, { x: x1, y: a + b * x1 }], borderColor: '#c99a2e', borderWidth: 2, pointRadius: 0 }]),
       ] },
       options: {
@@ -335,51 +335,51 @@ const groups = shelves.map((s) => ({ shelf: s, rooms: rooms.filter((r) => r.shel
   .cp-lead { color: #555; line-height: 1.9; }
   .cp-pick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 28px 0 16px; }
   @media (max-width: 720px) { .cp-pick { grid-template-columns: 1fr; } }
-  .cp-slot { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
-  .cp-slot-no { margin: 0; font-size: .8rem; color: #1b4332; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+  .cp-slot { border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .cp-slot-no { margin: 0; font-size: .8rem; color: #1F2A44; font-weight: 700; display: flex; align-items: center; gap: 6px; }
   .cp-slot-no i, .cp-table i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .cp-slot label, .cp-opts label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: #555; }
-  .cp-slot select, .cp-opts select { width: 100%; padding: 9px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .95rem; }
+  .cp-slot select, .cp-opts select { width: 100%; padding: 9px 10px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: .95rem; }
   .cp-slot select:disabled { background: #f0f0ea; color: #999; }
   .cp-opts { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: flex-end; justify-content: center; margin: 0 0 18px; }
   .cp-opts label { width: 240px; }
-  .cp-btn { padding: 9px 14px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; cursor: pointer; font-size: .85rem; min-height: 40px; }
-  .cp-btn:hover { background: #f4f7f4; }
-  .cp-empty { text-align: center; color: #888; padding: 28px 0; border: 1px dashed #c9d3c6; border-radius: 8px; }
-  .cp-wrap { overflow: auto; max-height: 80vh; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; }
+  .cp-btn { padding: 9px 14px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; cursor: pointer; font-size: .85rem; min-height: 40px; }
+  .cp-btn:hover { background: #F3F4F7; }
+  .cp-empty { text-align: center; color: #888; padding: 28px 0; border: 1px dashed #CBCDD3; border-radius: 8px; }
+  .cp-wrap { overflow: auto; max-height: 80vh; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; }
   .cp-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: .86rem; }
   .cp-table th, .cp-table td { padding: 8px 10px; border-bottom: 1px solid #ecece4; text-align: right; vertical-align: top; }
   .cp-table thead th { position: sticky; top: 0; z-index: 2; background: #f6f8f4; text-align: left; font-weight: 600; min-width: 9em; }
   .cp-table thead th:first-child { min-width: 6em; z-index: 3; left: 0; }
-  .cp-table thead button { all: unset; cursor: pointer; color: #1b4332; display: inline-flex; align-items: center; gap: 5px; line-height: 1.5; }
-  .cp-table thead button:hover { color: #b23a2f; }
+  .cp-table thead button { all: unset; cursor: pointer; color: #1F2A44; display: inline-flex; align-items: center; gap: 5px; line-height: 1.5; }
+  .cp-table thead button:hover { color: #B3402A; }
   .cp-table thead small, .cp-table td small { display: block; font-size: .68rem; color: #888; font-weight: 400; }
   .cp-table tbody th { position: sticky; left: 0; background: #fff; text-align: left; font-weight: 400; white-space: nowrap; }
   .cp-table td b { font-family: "IBM Plex Mono", monospace; font-weight: 600; white-space: nowrap; }
-  .cp-table tr.cp-nat th, .cp-table tr.cp-nat td { background: #fbfaf3; color: #4A6355; }
+  .cp-table tr.cp-nat th, .cp-table tr.cp-nat td { background: #fbfaf3; color: #7F97A8; }
   .cp-table tr.is-mine th, .cp-table tr.is-mine td { background: #fbe9e5; }
   .cp-note { font-size: .8rem; color: #666; line-height: 1.8; margin-top: 10px; }
-  .cp-warn { color: #b23a2f !important; }
+  .cp-warn { color: #B3402A !important; }
   .cp-sc { margin-top: 40px; }
   .cp-sc h2 { text-align: center; font-family: "Shippori Mincho", serif; font-size: 1.15rem; margin: 0 0 8px; }
   .cp-sc-lead { font-size: .85rem; color: #555; line-height: 1.8; text-align: center; margin: 0 0 14px; }
   .cp-sc-sel { display: flex; flex-wrap: wrap; gap: 12px 20px; justify-content: center; margin: 0 0 14px; }
   .cp-sc-sel label { display: flex; flex-direction: column; gap: 4px; font-size: .8rem; color: #555; width: 280px; max-width: 100%; }
-  .cp-sc-sel select { padding: 9px 10px; border: 1px solid #1b4332; border-radius: 6px; background: #fff; font-size: .9rem; }
-  .cp-sc-chart { border: 1px solid #e0e0d8; border-radius: 8px; background: #fff; padding: 12px; }
+  .cp-sc-sel select { padding: 9px 10px; border: 1px solid #1F2A44; border-radius: 6px; background: #fff; font-size: .9rem; }
+  .cp-sc-chart { border: 1px solid #DEDFE3; border-radius: 8px; background: #fff; padding: 12px; }
   .cp-sc-read { font-size: .92rem; line-height: 1.9; margin: 12px 0; }
-  .cp-sc-read b { font-family: "IBM Plex Mono", monospace; color: #b23a2f; }
+  .cp-sc-read b { font-family: "IBM Plex Mono", monospace; color: #B3402A; }
   .cp-sc-res { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   @media (max-width: 720px) { .cp-sc-res { grid-template-columns: 1fr; } }
-  .cp-sc-res h3 { font-size: .8rem; color: #2d6a4f; margin: 0 0 6px; font-weight: 600; }
-  .cp-sc-res ol { list-style: none; margin: 0; padding: 4px 10px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8; }
+  .cp-sc-res h3 { font-size: .8rem; color: #4B5570; margin: 0 0 6px; font-weight: 600; }
+  .cp-sc-res ol { list-style: none; margin: 0; padding: 4px 10px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8; }
   .cp-sc-res li { display: grid; grid-template-columns: 1fr auto auto; gap: 10px; padding: 7px 2px; border-bottom: 1px solid #ecece4; font-size: .85rem; }
   .cp-sc-res li:last-child { border-bottom: 0; }
   .cp-sc-res li span:nth-child(2), .cp-sc-res li span:nth-child(3) { font-family: "IBM Plex Mono", monospace; text-align: right; }
-  .cp-sc-res li span:nth-child(3) { color: #b23a2f; min-width: 5em; }
+  .cp-sc-res li span:nth-child(3) { color: #B3402A; min-width: 5em; }
   .cp-sc-res li.is-mine { background: #fbe9e5; }
   .cp-cross { margin-top: 32px; font-size: .9rem; text-align: center; line-height: 1.9; }
-  .cp-cross a { color: #b23a2f; }
+  .cp-cross a { color: #B3402A; }
   .cp-source { margin-top: 32px; font-size: .75rem; color: #888; line-height: 1.8; }
   @media (max-width: 600px) { .cp-table { font-size: .8rem; } .cp-table th, .cp-table td { padding: 7px 7px; } .cp-table thead th { min-width: 7.5em; } }
 </style>

@@ -34,7 +34,7 @@ const isTown = level === 'town';
     const Y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
     let b = '';
     const step = hi - lo > 40 ? 10 : 5;
-    for (let v = lo; v <= hi; v += step) b += `<line x1="${L}" y1="${Y(v).toFixed(1)}" x2="${W - R}" y2="${Y(v).toFixed(1)}" stroke="#1e3a2f" stroke-opacity="${v === 100 ? 0.45 : 0.08}" ${v === 100 ? 'stroke-dasharray="4 3"' : ''}/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#777">${v}</text>`;
+    for (let v = lo; v <= hi; v += step) b += `<line x1="${L}" y1="${Y(v).toFixed(1)}" x2="${W - R}" y2="${Y(v).toFixed(1)}" stroke="#1F2A44" stroke-opacity="${v === 100 ? 0.45 : 0.08}" ${v === 100 ? 'stroke-dasharray="4 3"' : ''}/><text x="${L - 6}" y="${(Y(v) + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="#777">${v}</text>`;
     years.forEach((y, i) => { b += `<text x="${X(i).toFixed(1)}" y="${H - 10}" text-anchor="middle" font-size="10" fill="#777">${y}</text>`; });
     const labels = [];
     for (const l of lines) {
@@ -63,8 +63,8 @@ const isTown = level === 'town';
     const pref = sec.dataset.level === 'town' ? D.areas[code.slice(0, 2) + '000'] : null;
     sec.hidden = false;
     const myName = sec.dataset.level === 'town' ? short(me.n) : me.n;
-    const lines = [{ name: myName, v: idx(me), color: '#b23a2f', w: 2.6, dots: true }];
-    if (pref) lines.push({ name: pref.n, v: idx(pref), color: '#2d6a4f', w: 1.8, dash: '6 3' });
+    const lines = [{ name: myName, v: idx(me), color: '#B3402A', w: 2.6, dots: true }];
+    if (pref) lines.push({ name: pref.n, v: idx(pref), color: '#4B5570', w: 1.8, dash: '6 3' });
     lines.push({ name: '全国', v: idx(nat), color: '#777', w: 1.6, dash: '2 3' });
     sec.querySelector('.ftr-fig').innerHTML = svg(D.years, lines);
     const fmt = (n) => Math.round(n).toLocaleString('ja-JP');
@@ -91,7 +91,7 @@ const isTown = level === 'town';
   .ftr-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 8px 0; }
   .ftr-tiles > div { background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
   .ftr-tiles span { font-size: .74rem; color: #555; }
-  .ftr-tiles b { font-size: 1.1rem; color: #1b4332; }
+  .ftr-tiles b { font-size: 1.1rem; color: #1F2A44; }
   .ftr-read { font-size: .9rem; line-height: 1.9; margin: 8px 0 4px; }
   @media (max-width: 600px) { .ftr-tiles { gap: 6px; } .ftr-tiles > div { padding: 6px 8px; } .ftr-tiles b { font-size: .95rem; } .ftr-tiles span { font-size: .68rem; } .ftr { padding: 14px 10px 10px; } }
 </style>

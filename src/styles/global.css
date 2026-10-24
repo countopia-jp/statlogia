@@ -118,7 +118,6 @@ footer.site{border-top:2px solid var(--ink);background:var(--ink);color:var(--pa
 .foot .mono{font-size:.8rem;opacity:.85}
 .foot .credit{font-size:.72rem;opacity:.65}
 @media(max-width:600px){
-  :root{--ink-soft:#2F473A}
   .card.pc .pc-kind{opacity:1}
   main [class*="-lead"]{text-align:left}
   main [class*="-lead"][class]{color:#333}

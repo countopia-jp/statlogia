@@ -66,8 +66,8 @@ const hero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/verify-l
     .vf-badge { padding: 10px 14px 11px; border-radius: 8px; border: 1px solid var(--line); border-left-width: 5px; background: #fffdf7; font-size: .82rem; line-height: 1.6; color: #444; }
     .vf-badge b { display: block; font-family: "Shippori Mincho", serif; font-size: 1rem; margin-bottom: 2px; }
     /* 判定の色：本当＝緑、半分本当＝山吹、数字では分からない＝紫 */
-    .vf-badge--true { border-color: #9cc3ae; border-left-color: #2d6a4f; background: #f6fbf8; }
-    .vf-badge--true b { color: #2d6a4f; }
+    .vf-badge--true { border-color: #9CB0C3; border-left-color: #4B5570; background: #f6fbf8; }
+    .vf-badge--true b { color: #4B5570; }
     .vf-badge--half { border-color: #e0c489; border-left-color: #b8862a; background: #fffaf0; }
     .vf-badge--half b { color: #b8862a; }
     .vf-badge--unknown { border-color: #bdb2d6; border-left-color: #6b4fa0; background: #f8f6fd; }
@@ -84,7 +84,7 @@ const hero = fs.existsSync(path.join(process.cwd(), 'public/images/icon/verify-l
     .vf-card-l { font-size: .84rem; color: #555; line-height: 1.8; }
     .vf-card-v { align-self: end; justify-self: start; font-size: .8rem; font-weight: 600; color: var(--stamp); padding: 3px 12px; border-radius: 999px; border: 1.5px dashed var(--stamp); transition: background .2s, color .2s; }
     .vf-card:hover .vf-card-v, .vf-card:focus-visible .vf-card-v { background: var(--stamp); color: #fff; border-style: solid; }
-    .vf-card-v.vf-badge--true { color: #2d6a4f; } .vf-card-v.vf-badge--half { color: #b8862a; } .vf-card-v.vf-badge--unknown { color: #6b4fa0; }
+    .vf-card-v.vf-badge--true { color: #4B5570; } .vf-card-v.vf-badge--half { color: #b8862a; } .vf-card-v.vf-badge--unknown { color: #6b4fa0; }
     @media (max-width: 720px) {
       .vf-legend { grid-template-columns: 1fr; }
       .vf-card { grid-template-columns: 1fr; grid-template-rows: auto; padding: 0 18px 16px; }

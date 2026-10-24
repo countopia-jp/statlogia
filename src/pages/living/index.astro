@@ -261,9 +261,9 @@ import GrowthTool from '../../components/GrowthTool.astro';
                 data: points,
                 pointRadius: (c) => (c.raw && c.raw.c === selectedCode ? 8 : 4),
                 pointBackgroundColor: (c) =>
-                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f88',
+                  c.raw && c.raw.c === selectedCode ? '#B3402A' : '#4B557088',
                 pointBorderColor: (c) =>
-                  c.raw && c.raw.c === selectedCode ? '#b23a2f' : '#2d6a4f',
+                  c.raw && c.raw.c === selectedCode ? '#B3402A' : '#4B5570',
               },
             ],
           },
@@ -313,8 +313,8 @@ import GrowthTool from '../../components/GrowthTool.astro';
             datasets: [{
               label: '最低賃金',
               data: area.series.map((p) => p.value),
-              borderColor: '#b23a2f',
-              backgroundColor: '#b23a2f22',
+              borderColor: '#B3402A',
+              backgroundColor: '#B3402A22',
               tension: 0.2,
               fill: true,
             }],
@@ -383,27 +383,27 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .liv-selector { margin: 24px 0; display: flex; justify-content: center; }
     .liv-selector label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; }
     .liv-selector select {
-      min-width: 240px; padding: 10px 12px; border: 1px solid #1b4332;
+      min-width: 240px; padding: 10px 12px; border: 1px solid #1F2A44;
       border-radius: 6px; background: #fff; font-size: 1rem;
     }
 
     .liv-result h2 { text-align: center; margin: 24px 0 16px; font-family: "Shippori Mincho", serif; }
     .liv-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     .liv-card {
-      border: 1px solid #e0e0d8; border-radius: 8px; padding: 16px;
+      border: 1px solid #DEDFE3; border-radius: 8px; padding: 16px;
       background: #fff; text-align: center;
     }
-    .liv-card-label { font-size: 0.78rem; color: #2d6a4f; letter-spacing: 0.08em; }
+    .liv-card-label { font-size: 0.78rem; color: #4B5570; letter-spacing: 0.08em; }
     .liv-card-num {
       font-family: "IBM Plex Mono", monospace; font-size: 1.5rem;
-      font-weight: 700; margin: 6px 0 2px; color: #1b4332;
+      font-weight: 700; margin: 6px 0 2px; color: #1F2A44;
     }
     .liv-card-sub { font-size: 0.7rem; color: #999; }
     .liv-card-meta {
       display: flex; justify-content: center; gap: 10px;
       margin-top: 8px; font-size: 0.75rem;
     }
-    .liv-rank { color: #b23a2f; font-weight: 700; }
+    .liv-rank { color: #B3402A; font-weight: 700; }
     .liv-diff { color: #666; }
     .liv-card-dir { font-size: 0.65rem; color: #aaa; margin-top: 2px; }
 
@@ -415,37 +415,37 @@ import GrowthTool from '../../components/GrowthTool.astro';
     .liv-line-sec { margin-top: 44px; }
     .liv-line-sec h2 { text-align: center; margin: 0 0 16px; font-family: "Shippori Mincho", serif; }
     .liv-line-wrap {
-      padding: 16px; border: 1px solid #e0e0d8; border-radius: 8px; background: #fff;
+      padding: 16px; border: 1px solid #DEDFE3; border-radius: 8px; background: #fff;
     }
 
     .liv-ranking { margin-top: 44px; }
     .liv-ranking h2 { text-align: center; font-family: "Shippori Mincho", serif; }
     .liv-tabs { display: flex; gap: 8px; justify-content: center; margin: 12px 0 16px; flex-wrap: wrap; }
     .liv-tab {
-      padding: 8px 16px; border: 1px solid #1b4332; border-radius: 999px;
+      padding: 8px 16px; border: 1px solid #1F2A44; border-radius: 999px;
       background: #fff; cursor: pointer; font-size: 0.85rem;
     }
-    .liv-tab.is-active { background: #1b4332; color: #fff; }
+    .liv-tab.is-active { background: #1F2A44; color: #fff; }
     .liv-rank-list {
       list-style: none; counter-reset: rank; padding: 8px 20px;
       max-width: 560px; margin: 0 auto 8px;
-      border: 1px solid #e0e0d8; border-radius: 8px; background: #fdfdf8;
+      border: 1px solid #DEDFE3; border-radius: 8px; background: #fdfdf8;
     }
     .liv-rank-list li {
       counter-increment: rank; display: flex; justify-content: space-between;
-      align-items: center; padding: 10px 4px; border-bottom: 1px solid #e0e0d8; cursor: pointer;
+      align-items: center; padding: 10px 4px; border-bottom: 1px solid #DEDFE3; cursor: pointer;
     }
     .liv-rank-list li:last-child { border-bottom: none; }
     .liv-rank-list li::before {
-      content: counter(rank); font-weight: 700; color: #b23a2f;
+      content: counter(rank); font-weight: 700; color: #B3402A;
       margin-right: 12px; min-width: 1.4em; text-align: center;
     }
-    .liv-rank-list li:hover { background: #f4f7f4; }
+    .liv-rank-list li:hover { background: #F3F4F7; }
     .liv-rank-name { flex: 1; }
     .liv-rank-val { font-weight: 700; font-family: "IBM Plex Mono", monospace; }
 
     .liv-cross { margin-top: 36px; font-size: 0.9rem; text-align: center; }
-    .liv-cross a { color: #b23a2f; }
+    .liv-cross a { color: #B3402A; }
     .liv-source { margin-top: 40px; font-size: 0.75rem; color: #888; line-height: 1.8; }
   </style>
   <GrowthTool />
