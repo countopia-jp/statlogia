@@ -41,7 +41,7 @@ export const HERO_POS = {
   'pref-workers': 't',
   'town-value': 't',
   'after-school': 'tr',
-  'analysis': 'br',
+  'analysis': 'l',   // 10-24 知秋の背中の方向（左）へ。右は指し棒と壁の札なので避ける
   'water': 'tr',
   'energy': 'tl',
   'waste': 'tr',
