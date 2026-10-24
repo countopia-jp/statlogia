@@ -166,6 +166,21 @@ const stampDate = buildJst.slice(0, 7);
     .fig-link { display: block; transition: transform .15s ease; }
     .fig-link:hover, .fig-link:focus-visible { transform: translateY(-4px); }
     .fig-duo { width: 87%; }
+    /* 10-24 歩き絵は押すと二度跳ねてから紹介へ進む。跳ぶ前と着地のたびに少しつぶれる（スクワッシュ）。
+       高さは一跳び目 28px、二跳び目 15px。transform は :hover のものと同じ枠を使うので、
+       跳ねているあいだは transition を切って、戻りが二重に効かないようにする */
+    .fig-duo { transform-origin: 50% 100%; }
+    .fig-duo.is-hop { transition: none; animation: figHop .62s cubic-bezier(.33,.7,.37,1); }
+    @keyframes figHop {
+      0%   { transform: translateY(0) scale(1, 1); }
+      8%   { transform: translateY(0) scale(1.05, .94); }
+      30%  { transform: translateY(-28px) scale(.98, 1.04); }
+      48%  { transform: translateY(0) scale(1.04, .95); }
+      66%  { transform: translateY(-15px) scale(.99, 1.02); }
+      84%  { transform: translateY(0) scale(1.03, .97); }
+      100% { transform: translateY(0) scale(1, 1); }
+    }
+    @media (prefers-reduced-motion: reduce) { .fig-duo.is-hop { animation: none; } }
     .fig-hitoha { width: 52%; }
     .fig-chiaki { width: 28%; margin-left: -3%; }
     .gate-wings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 30px 8px 0; padding: 0; }
@@ -261,4 +276,28 @@ const stampDate = buildJst.slice(0, 7);
       .wing-desc { grid-column: 1; grid-row: 3; }
     }
   </style>
+
+  <script>
+    // 10-24 玄関の歩き絵：押すと二度跳ねてから研究員の紹介へ。
+    // 跳ね終わるまで移動を待たせるので、待たせてよい場合だけに絞る
+    //   ・左クリック以外、修飾キーつき（別タブで開く）はそのまま通す
+    //   ・キーボードの Enter（detail が 0）もそのまま通す。待たされると操作しづらいため
+    //   ・動きを減らす設定の人はそのまま通す
+    // animationend が来ない場合に備えて、900ms で必ず進む保険を置く
+    const fig = document.querySelector('.fig-duo');
+    if (fig instanceof HTMLAnchorElement) {
+      fig.addEventListener('click', (e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        if (e.detail === 0) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (fig.classList.contains('is-hop')) return;
+        e.preventDefault();
+        fig.classList.add('is-hop');
+        let gone = false;
+        const go = () => { if (gone) return; gone = true; window.location.href = fig.href; };
+        fig.addEventListener('animationend', go, { once: true });
+        window.setTimeout(go, 900);
+      });
+    }
+  </script>
 </BaseLayout>
