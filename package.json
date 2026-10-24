@@ -7,6 +7,8 @@
     "build": "astro build",
     "build:quick": "SKIP_CHECK=1 astro build",
     "build:fresh": "SKIP_CHECK=1 ESTAT_FRESH=1 astro build",
+    "verify": "node scripts/verify-data.mjs",
+    "audit": "node scripts/audit-data.mjs",
     "preview": "astro preview"
   },
   "dependencies": {

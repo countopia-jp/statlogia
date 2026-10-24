@@ -150,6 +150,11 @@ const cache = new Map();
 // 警告を標準出力に流すだけだと、何百行もあるログに埋もれて何か月も気づけないため。
 export const dropped = [];
 
+// 10-24 指標ごとの台帳。scripts/audit-data.mjs が「そもそも何をどう出しているか」を一覧にするために使う。
+// 照合（verify-data）は出している値が合っているかしか見ないので、単位や分母の取り違えはここでしか捕まらない。
+// 外れた指標も dropped: true で1行入れる。
+export const ledger = [];
+
 export async function getRoomData(room) {
   if (cache.has(room.id)) return cache.get(room.id);
 
@@ -223,7 +228,11 @@ export async function getRoomData(room) {
     };
 
     // 揃っている時点だけを使う（県＝47すべて、町＝順位対象の8割以上）
-    const need = scope === 'pref' ? 47 : Math.ceil(rankCount * (ind.minCoverage ?? room.minCoverage ?? 0.8)); // 地価の商業地・工業地のように、もともと一部の町にしか無い項目は minCoverage で下げる
+    // 10-24 県も minCoverage を見る。既定は1＝47県すべて（これまでと同じ）。
+    //       以前は 47 固定で、県の窓口に minCoverage を書いても黙って無視されていた
+    const need = scope === 'pref'
+      ? Math.ceil(47 * (ind.minCoverage ?? room.minCoverage ?? 1))
+      : Math.ceil(rankCount * (ind.minCoverage ?? room.minCoverage ?? 0.8)); // 地価の商業地・工業地のように、もともと一部の町にしか無い項目は minCoverage で下げる
     let useTimes = times.filter((t) => areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length >= need);
     useTimes = useTimes.slice(-maxYears);
     if (ind.onlyLatest) useTimes = useTimes.slice(-1); // 10-20 推計の版が複数ある項目（将来推計人口など）は、いちばん新しい版だけ
@@ -231,6 +240,18 @@ export async function getRoomData(room) {
       // 10-24 黙って外れると気づけないので、集めておいて照合の最後に一覧で出す
       const best = times.reduce((m, t) => Math.max(m, areaList.filter((a) => !a.x && calcAt(a.c, t) !== null).length), 0);
       dropped.push({ room: room.id, key: ind.key, label: ind.label || ind.key, best, rankCount, need });
+      ledger.push({
+        room: room.id, scope, key: ind.key, label: ind.label || ind.key, dropped: true,
+        needs: ind.needs.map(([t, c]) => [t, c]),
+        estat: Object.fromEntries(ind.needs.map(([, c]) => [c, { name: raws[c]?.name || '', unit: raws[c]?.unit || '' }])),
+        unit: ind.unit ?? raws[baseCodes[0]].unit, unitFromRoom: ind.unit !== undefined, scale: ind.scale ?? 1, decimals: ind.decimals ?? 0,
+        calcCustom: !!room.indicators.find((x) => x.key === ind.key)?.calc,
+        carry: ind.carry, carryYears: {}, onlyLatest: !!ind.onlyLatest, dashAsZero: !!room.dashAsZero,
+        minCoverage: ind.minCoverage ?? room.minCoverage ?? null,
+        years: [], allYears: times.map((t) => t.slice(0, 4)),
+        have: best, rankCount, need, coverage: rankCount ? best / rankCount : null,
+        national: null, natFrom: null, lastMin: null, lastMax: null, note: ind.note || '', roomNotes: room.notes || [],
+      });
       console.warn(`[room-engine] ${room.id}/${ind.key}: 揃っている時点がないため外します`);
       continue;
     }
@@ -260,9 +281,11 @@ export async function getRoomData(room) {
     }
 
     // 10-18 市区町村の窓口でも、全国の値があれば持っておく（特化係数＝その町の割合÷全国の割合 に使う）
+    let natFrom = null; // 全国の値の出どころ：'row'＝表の全国行、'sum'＝全市区町村の足し上げ、null＝無し
     if (scope === 'town') {
       const tLast = useTimes[useTimes.length - 1];
       let natT = calcAt('00000', tLast);
+      natFrom = natT === null ? null : 'row';
       // 市区町村の表に全国の行が無いときは、計算で作る項目（分子・分母のコードがある割合）に限り、
       // 全市区町村（政令市の区を除く）のもとの数を足し上げてから同じ計算をして、全国の値とする
       if (natT === null && room.indicators.find((x) => x.key === ind.key)?.needs) {
@@ -283,6 +306,7 @@ export async function getRoomData(room) {
         try {
           const v = ind.calc(sumOf);
           natT = typeof v === 'number' && Number.isFinite(v) ? v * (ind.scale ?? 1) : null;
+          natFrom = natT === null ? null : 'sum';
         } catch {
           natT = null;
         }
@@ -305,6 +329,52 @@ export async function getRoomData(room) {
       // 標本調査の誤差の目安（ind.se = [表, 項目, 年] か ['kakei', 行]。県の標準誤差率％。年があればその年の値にだけ添える）
       ...(ind.se ? { se: seForRoom(ind.se) } : {}),
     });
+
+    // 10-24 台帳に1行。audit-data.mjs がここを読んで一覧と検算を出す
+    {
+      const tLast2 = useTimes[useTimes.length - 1];
+      const have = areaList.filter((a) => !a.x && calcAt(a.c, tLast2) !== null).length;
+      // もっと新しい時点が表にあるのに使えていないか（カバー率で落ちた＝§27の型）。maxYears は後ろから切るので新しい側は落とさない
+      const tNew = times[times.length - 1];
+      const missingAt = (t) => areaList.filter((a) => !a.x && calcAt(a.c, t) === null).map((a) => a.n);
+      const newerUnused = tNew && tNew > tLast2
+        ? { year: tNew.slice(0, 4), have: areaList.filter((a) => !a.x && calcAt(a.c, tNew) !== null).length, missing: missingAt(tNew) }
+        : null;
+      // 値のない地域の名前（注記に「どこに無いか」を書くための材料）。多いときは頭だけ
+      const missing = have < rankCount ? missingAt(tLast2) : [];
+      // carry を使う項目は、基準の年に対して実際どの年が拾われたかを見ておく（分母だけ古い、を見つけるため）
+      const carryYears = {};
+      for (const code of ind.carry) {
+        const r = raws[code];
+        const ys = new Set();
+        for (const a of areaList) {
+          if (a.x) continue;
+          for (let i = r.times.length - 1; i >= 0; i--) {
+            const tt = r.times[i];
+            if (tt <= tLast2 && r.byTime[tt]?.[a.c] !== undefined) { ys.add(tt.slice(0, 4)); break; }
+          }
+        }
+        carryYears[code] = [...ys].sort();
+      }
+      ledger.push({
+        room: room.id, scope, key: ind.key, label: ind.label || raws[baseCodes[0]].name, dropped: false,
+        needs: ind.needs.map(([t, c]) => [t, c]),
+        estat: Object.fromEntries(ind.needs.map(([, c]) => [c, { name: raws[c]?.name || '', unit: raws[c]?.unit || '' }])),
+        unit, unitFromRoom: ind.unit !== undefined, scale: ind.scale ?? 1, decimals: d,
+        calcCustom: !!room.indicators.find((x) => x.key === ind.key)?.calc,
+        carry: ind.carry, carryYears, onlyLatest: !!ind.onlyLatest, dashAsZero: !!room.dashAsZero,
+        minCoverage: ind.minCoverage ?? room.minCoverage ?? null,
+        years: useTimes.map((t) => t.slice(0, 4)), allYears: times.map((t) => t.slice(0, 4)),
+        have, rankCount, need, coverage: rankCount ? have / rankCount : null, newerUnused, missing,
+        nationalIsAvg: scope === 'pref' ? !!nationalIsAvg[ind.key] : undefined,
+        nationalIsTotal: scope === 'pref' ? !!nationalIsTotal[ind.key] : undefined,
+        national: scope === 'pref' ? national[ind.key]?.[national[ind.key].length - 1] ?? null : (national[ind.key] ?? null),
+        natFrom: scope === 'town' ? natFrom : (nationalIsAvg[ind.key] ? 'avg' : 'row'),
+        lastMin: (() => { const v = areaList.filter((a) => !a.x).map((a) => calcAt(a.c, tLast2)).filter((x) => x !== null); return v.length ? Math.min(...v) : null; })(),
+        lastMax: (() => { const v = areaList.filter((a) => !a.x).map((a) => calcAt(a.c, tLast2)).filter((x) => x !== null); return v.length ? Math.max(...v) : null; })(),
+        note: ind.note || '', roomNotes: room.notes || [],
+      });
+    }
   }
 
   // 10-18 人口あたりにそろえるための総人口（県＝毎年の推計、町＝国勢調査）。各地域のいちばん新しい値
