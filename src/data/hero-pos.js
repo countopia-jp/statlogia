@@ -56,6 +56,7 @@ export const HERO_POS = {
   'appliances': 't',
   'average-vs-national': 'tr',
   'base-100': 'tl',
+  'rate-and-count': 'tl',   // 10-24 一葉の頭が右上、瓶が中央なので左上の壁へ
   'care-places': 't',
   'colleges': 't',
   'compare': 'tl',
